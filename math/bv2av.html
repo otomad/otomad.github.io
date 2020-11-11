@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta http-equiv="refresh" content="0;url=bv2av/index.html">
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="math.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h4,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			.col-7-5 {
+				flex: 0 0 63%;
+				max-width: 63%;
+			}
+			.fa-times {
+				max-width: 12.56px;
+			}
+			.btn-times {
+				padding-left : 10px;
+				padding-right: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4 class="mb-3">AV/BV号转换</h4>
+			<div class="form-group mb-3">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<label class="input-group-text input-group-addon" for="txt1">BV号</span>
+					</div>
+					<input type="text" class="form-control" id="txt1">
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(1)"><i class="fa fa-times fa-fw"></i></button>
+					</div>
+				</div>
+			</div>
+			<div class="btn-group btn-block mb-3" role="group">
+				<button type="button" onclick="change(1)" id="to-down" class="btn btn-primary"><i class="fa fa-arrow-down"></i></button>
+				<button type="button" onclick="change(2)" id="to-up" class="btn btn-secondary"><i class="fa fa-arrow-up"></i></button>
+			</div>
+			<div class="form-group mb-3">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<label class="input-group-text input-group-addon" for="txt2">AV号</span>
+					</div>
+					<input type="text" class="form-control" id="txt2">
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(2)"><i class="fa fa-times fa-fw"></i></button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			
+			$("label").click(function() {
+				$("#" + $(this).attr("for")).select();
+			});
+			function clearText(id) {
+				$("#txt" + id).val("").select();
+			}
+			$(document).ready(function() {
+				// $('[data-toggle="tooltip"]').tooltip();
+				// math.config({number: 'BigNumber'});
+			});
+			document.onkeydown = function(e) {
+				// $('.input-group').tooltip('hide');
+				if (window.event.keyCode == 13) {
+					if($("#txt1").is(":focus")) $("#to-down").click();
+					if($("#txt2").is(":focus")) $("#to-up").click();
+				}
+			}
+			var password="fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF";
+			
+		</script>
+	</body>
+	<script src="../NightTime.js"></script>
+</html>

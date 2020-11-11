@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4>大写金额数字</h4>
+			<div class="form-group mb-2">
+				<label for="num">输入数字</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="num" placeholder="1234567890"></input>
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button" onclick="clearText()"><i class="fa fa-times fa-fw"></i></button>
+					</div>
+				</div>
+			</div>
+			<button class="btn btn-primary btn-block mb-2" onclick="change()">转换</button>
+			<div class="form-group mb-2">
+				<label for="lower">小写数字</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="lower" placeholder="一二三四五六七八九〇"></input>
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button" id="d_clip_button" data-clipboard-target="#resultText"
+						 onclick="copyToClipboard(0)">
+							<i class="fa fa-copy fa-fw"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div class="form-group mb-2">
+				<label for="upper">大写数字</label>
+				<div class="input-group">
+					<input type="text" class="form-control" id="upper" placeholder="壹贰叁肆伍陆柒捌玖零"></input>
+					<div class="input-group-append">
+						<button class="btn btn-outline-secondary" type="button" id="d_clip_button" data-clipboard-target="#resultText"
+						 onclick="copyToClipboard(1)">
+							<i class="fa fa-copy fa-fw"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			$(document).ready(function() {
+				// $('[data-toggle="tooltip"]').tooltip();
+			});
+
+			function clearText(id) {
+				$("#num").val("").select();
+			}
+
+			function copyToClipboard(id) {
+				var text = ["lower", "upper"],
+					item = $("#" + text[id]);
+				item.select();
+				document.execCommand("copy");
+				item.blur();
+			}
+
+			function change() {
+				var num = $("#num").val();
+				if (num == "") return false;
+				num = num - 0 + "";
+				if (num == "NaN") return false;
+				if(Math.abs(num-0)>1e16) {window.location.href="about:blank"; window.close();} //这精度，为了不让用户觉得比较奇怪，最好直接关掉它吧
+				/* for(var i=0;i<num.length;i++){
+					low+=lower[num[i]-0]
+					upp+=upper[num[i]-0]
+				} */
+				$("#num").val(num);
+				$("#lower").val(digitLowercase(num));
+				$("#upper").val(digitUppercase(num));
+			}
+			function digitUppercase(n) {
+				var fraction = ['角', '分', '厘', '毫'/*',丝','忽','微' ,'纤','沙','尘','埃','渺','漠','模糊','逡巡','须臾','瞬息','弹指','刹那','六德' */];
+				var digit = "零壹贰叁肆伍陆柒捌玖";
+				var unit = [
+					['圆', '萬', '億', '兆', '京'/*,'垓','秭','壤','沟','涧','正','载','极','恒河沙','阿僧祇','那由他','不可思议','净','清','空','虚' */],
+					['', '拾', '佰', '仟']
+				];
+				var head = n < 0 ? '欠' : '';
+				n = Math.abs(n);
+				var s = '';
+				for (var i = 0; i < fraction.length; i++) {
+					s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+				}
+				s = s || '整';
+				n = Math.floor(n);
+				for (var i = 0; i < unit[0].length && n > 0; i++) {
+					var p = '';
+					for (var j = 0; j < unit[1].length && n > 0; j++) {
+						p = digit[n % 10] + unit[1][j] + p;
+						n = Math.floor(n / 10);
+					}
+					s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
+				}
+				return head + s.replace(/(零.)*零圆/, '圆')
+					.replace(/(零.)+/g, '零')
+					.replace(/^整$/, '零圆整');
+			}
+			function digitLowercase(n){
+				s=digitUppercase(n);
+				var lower = "〇一二三四五六七八九元十百千万亿",
+					upper = "零壹贰叁肆伍陆柒捌玖圆拾佰仟萬億";
+				for(var i=0;i<upper.length;i++)
+					s = s.replace(new RegExp(upper[i], "g"), lower[i])
+				return s;
+			}
+		</script>
+		<script src="../NightTime.js"></script>
+	</body>
+</html>

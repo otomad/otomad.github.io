@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <title>Chobi</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
+  <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css">
+  <!-- <link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+   crossorigin="anonymous"> -->
+  <script type="text/javascript" src="Chobi.js"></script>
+  <style>
+    /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+    .row.content {height: 1500px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    #canvas{
+    	width: 100%;
+    	height: auto;
+		border: 0.5em solid var(--light);
+		border-radius: 10px;
+		background: repeating-linear-gradient(-45deg, white, #f0f0f0 10px);
+    }
+    
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;}
+    }
+	
+	h1 {
+		margin:0.75em 0 0.5em;
+	}
+	.navbar{
+		position: fixed;
+		width: 100%;
+		z-index: 10;
+	}
+  </style>
+  <style>
+  	::-webkit-scrollbar {
+  		width: 4px;
+  		height: 4px;
+  		scrollbar-arrow-color:red;
+  	}
+  	::-webkit-scrollbar-thumb {
+  		border-radius: 5px;
+  		-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  		background: rgba(0,0,0,0.2);
+  		scrollbar-arrow-color:red;
+  	}
+  	::-webkit-scrollbar-track {
+  		-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+  		border-radius: 0;
+  		background: rgba(0,0,0,0.1);
+  	}
+  </style>
+</head>
+<body>
+	<nav class="navbar navbar-light bg-light ms-depth-4">
+		<div>
+		<button class="btn btn-light" title="上传图片" data-toggle="tooltip" onclick="document.getElementById('image-chooser').click();"><i class="ms-Icon ms-Icon--OpenFile"></i></button>
+		<span data-toggle="modal" data-target="#input-path"><button class="btn btn-light" title="输入图片地址" data-toggle="tooltip"><i class="ms-Icon ms-Icon--PageLink"></i></button></span>
+		</div>
+		<span><strong>Chobi</strong> 图片滤镜</span>
+		<button class="btn btn-light" title="下载图片" data-toggle="tooltip" onclick="downloadImage()" style="margin-left:45px"><i class="ms-Icon ms-Icon--Download"></i></button>
+	</nav>
+	<!-- Modal -->
+	<div class="modal fade" id="input-path" tabindex="-1">
+	  <div class="modal-dialog modal-dialog-scrollable">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="ModalLabel">输入图片地址</h5>
+	        <button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span>&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+			<div class="input-group mb-2">
+				<input type="text" class="form-control" id="path" placeholder="在这里输入图片URL地址">
+			</div>
+			<hr>
+			<p style="text-align:center">&copy; 2016 Chobi-Javascript Library team (j0y)</p>
+	      </div>
+	      <div class="modal-footer">
+			<table style="width:100%">
+				<button type="button" class="btn btn-success" data-dismiss="modal" id="modal-ok-button">确定</button>
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+			</table>
+		  </div>
+	    </div>
+	  </div>
+	</div>
+	<div style="height:80px"></div>
+<div class="container-fluid">
+  <div class="row content">
+
+    <div class="col-lg-8">
+		<div class="alert alert-warning" id="error" style="display:none;">
+		  <strong>错误！</strong>你还没有上传图片。
+		</div>
+      	<canvas id="canvas" width="600" height="600" class="well ms-depth-64 mb-3"></canvas>
+    </div>
+	<div class="col-lg-4">
+		<div class="btn-group-03" id="filters" style="display:none;">
+			<h5>滤镜:</h5>
+			<button class="btn btn-success btn-sm mb-1" onclick="reset()">原图</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(0)">平均灰阶</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(10)">自然灰阶</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(20)">原色灰阶</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(1)">怀旧</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(2)">反色</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(3)">复古</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(4)">交叉冲印</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(9)">噪点</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(5)">亮度</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(6)">饱和度</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(7)">对比度</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(8)">色相</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(11)">蜡笔</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(12)">卡通</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(13)">晕影</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(14)">色差</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(15)">浮雕</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(16)">中亮度</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(17)">过饱和</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(18)">不透明</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(19)">白色到透明</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(21)">印度国旗</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(22)">黑白</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(23)">亮度反转</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(24)">饱和度反转</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(25)">模糊</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(26)">雕刻</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(27)">镜像</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="filter(28)">翻转</button>
+			<button class="btn btn-warning btn-sm mb-1" onclick="myFilter()">自定义滤镜</button>
+			<button class="btn btn-success btn-sm mb-1" onclick="document.getElementById('second').click()">水印</button>
+			<input id="second" type="file" onchange="showWatermark(this)" style="display:none;">
+			<div class="custom-control custom-checkbox" style="padding-top:5px;padding-bottom:5px;">
+				<input type="checkbox" class="custom-control-input" id="overlay" />
+				<label class="custom-control-label" for="overlay">叠加滤镜</label>
+			</div>
+			<div class="form-row mb-3">
+				<div class="form-group col-9 mb-0" style="padding-top:3.7px;padding-bottom:3.7px">
+					<input type="range" class="custom-range" name="points" min="-255" max="255" step="1" id="slider"/>
+				</div>
+				<div class="form-group col-3 mb-0">
+					<div class="input-group input-group-sm">
+						<input type="number" class="form-control" id="slider-num" value="0"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<input type="file" id="image-chooser" style="display:none" onchange="way=0;loadImage(this);">
+	</div>
+  </div>
+</div>
+
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('[data-toggle="tooltip"]').tooltip();
+	});
+
+	function showWatermark(imgElem){
+		//watermark parameters	(imageElement, amount, startX, startY, width, height, callback)
+		imgObj.watermark(imgElem,2,0,0,imgObj.imageData.width,imgObj.imageData.height,function(){
+			imgObj.loadImageToCanvas();
+		});
+	}
+
+	//custom filter (india flag)
+	function myFilter(){
+	var height = imgObj.imageData.height;
+		//orange
+		for(var i=0;i<imgObj.imageData.width;i++){
+			for(var j=0;j<(height/3);j++){
+				var pixel = imgObj.getColorAt(i,j);
+				pixel.red = (255+pixel.red)/2;
+				pixel.green = (165+pixel.green)/2;
+				pixel.blue /= 2;
+				imgObj.setColorAt(i,j,pixel);			
+			}
+		}
+		//white
+		for(var i=0;i<imgObj.imageData.width;i++){
+			for(var j=Math.floor(height/3);j<Math.floor(2*(height/3));j++){
+				var pixel = imgObj.getColorAt(i,j);
+				pixel.red = (255+pixel.red)/2;
+				pixel.green = (255+pixel.green)/2;
+				pixel.blue = (255+pixel.blue)/2;
+				imgObj.setColorAt(i,j,pixel);			
+			}
+		}
+		//green
+		for(var i=0;i<imgObj.imageData.width;i++){
+			for(var j=Math.floor(2*(height/3));j<Math.floor(height);j++){
+				var pixel = imgObj.getColorAt(i,j);
+				pixel.red = (0+pixel.red)/2;
+				pixel.green = (255+pixel.green)/2;
+				pixel.blue = (0+pixel.blue)/2;
+				imgObj.setColorAt(i,j,pixel);			
+			}
+		}
+		imgObj.loadImageToCanvas();
+	}
+
+	var imgObj = null; //global Chobi object
+	function loadImage(elem){
+		//you should probably check if file is image or not before passing it
+		imgObj = new Chobi(elem);
+		imgObj.ready(function(){
+			this.canvas = document.getElementById("canvas");
+			this.loadImageToCanvas();
+
+			//show filters to users
+			document.getElementById("filters").style.display = "block";
+		});
+	}
+
+	function downloadImage(){
+		if(imgObj == null){
+			document.getElementById("error").style.display="block";
+			setTimeout(function(){
+				document.getElementById("error").style.display="none";
+			}, 4000);
+			return;
+		}
+		imgObj.download(new Date().format("yyyyMMddhhmmss"),"png");
+	}
+
+
+	//0 -> Black and white
+	//10 -> Black and white2
+	//1 -> sepia
+	//2 -> negative
+	//3 -> vintage
+	//4 -> crossprocess
+	//5 -> Brightness increase
+	//6 -> Brightness decrease
+	//7 -> Contrast increase
+	//8 -> Contrast decrease
+	//9 -> Noise Effect
+	//11 -> Crayon effect
+	//12 -> Cartoonify
+	//13 -> Vignette
+	//filter chaining is also possible, like imgObj.brightness(-5).sepia().negative();
+	var fx=["blackAndWhite","sepia","negative","vintage","crossProcess",
+		"brightness","saturation","contrast","hue","noise","blackAndWhite2",
+		"crayon","cartoon","vignette","aberration","relief","midBright",
+		"maxSaturate","opaque","whiteToAlpha","blackAndWhite3","india","threshold",
+		"invertBright","invertSaturate","blur","carving","mirror","reverse"];
+	function filter(id){
+		if(imgObj == null){
+			alert("选择张照片先!");
+			return;
+		}
+		filterId=id;
+		var slider=document.getElementById("slider").value,
+			overlay=document.getElementById("overlay").checked;
+		if(!overlay) {
+			imgObj = new Chobi(way==0?$("#image-chooser")[0]:$("#path").val());
+			imgObj.ready(function(){
+				this.canvas = document.getElementById("canvas");
+				eval("imgObj."+fx[id]+"("+slider+")");
+				imgObj.loadImageToCanvas();
+			});
+		}
+		else{
+			eval("imgObj."+fx[id]+"("+slider+")");
+			imgObj.loadImageToCanvas();
+		}
+	}
+	function reset(){
+		filterId=-1;
+		loadImage(way==0?$("#image-chooser")[0]:$("#path").val());
+	}
+	var realTimeSlide,way=0,filterId=-1;
+	$("#slider").mousedown(function(){
+		realTimeSlide = setInterval(function() {
+			$("#slider-num").val($("#slider").val());
+		}, 0.01);
+	});
+	$("#slider").mouseup(function(){
+		clearInterval(realTimeSlide);
+		if(filterId>=0) filter(filterId);
+	});
+	$("#slider-num").on('input propertychange', function(){
+		if($(this).val()=="") return;
+		var v = parseInt($(this).val());
+		if(v>255) v=255;
+		if(v<-255) v=-255;
+		$(this).val(v);
+		$("#slider").val(v);
+	});
+	$("#modal-ok-button").click(function(){
+		way=1;
+		loadImage($("#path").val());
+	});
+	
+	Date.prototype.format = function(format) {
+		var o = {
+			"M+": this.getMonth() + 1, //month
+			"d+": this.getDate(), //day
+			"h+": this.getHours(), //hour
+			"m+": this.getMinutes(), //minute
+			"s+": this.getSeconds(), //second
+			"q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+			"S": this.getMilliseconds() //millisecond
+		}
+		if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+			(this.getFullYear() + "").substr(4 - RegExp.$1.length));
+		for (var k in o)
+			if (new RegExp("(" + k + ")").test(format))
+				format = format.replace(RegExp.$1,
+					RegExp.$1.length == 1 ? o[k] :
+					("00" + o[k]).substr(("" + o[k]).length));
+		return format;
+	}
+</script>
+</html>
+

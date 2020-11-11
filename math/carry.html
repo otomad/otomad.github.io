@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="math.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h4,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			.col-7-5 {
+				flex: 0 0 63%;
+				max-width: 63%;
+			}
+			.fa-times {
+				max-width: 12.56px;
+			}
+			.btn-times {
+				padding-left : 10px;
+				padding-right: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4 class="mb-3">进位制转换</h4>
+			<div class="form-group mb-4">
+				<label style="display:block">
+					选择转换模式
+				</label>
+				<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+					<label class="btn btn-outline-secondary active with-tooltip" title="不使用补码<br>支持小数" data-toggle="tooltip" data-html="true">
+						<input type="radio" name="mode" id="signed" checked>有符号
+					</label>
+					<label class="btn btn-outline-secondary with-tooltip" title="双字 (DWORD) 模式<br>不支持小数" data-toggle="tooltip" data-html="true">
+						<input type="radio" name="mode" id="unsigned">无符号
+					</label>
+				</div>
+			</div>
+			<div class="form-row mb-2">
+				<div class="form-group col-7 col-7-5 mb-0">
+					<div class="input-group">
+						<input type="text" class="form-control" id="txt1">
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(1)"><i class="fa fa-times fa-fw"></i></button>
+						</div>
+					</div>
+				</div>
+				<div class="form-group col mb-0">
+					<div class="input-group mb-2 with-tooltip" title="仅支持 2~36 进制内转换" data-toggle="tooltip">
+						<input type="number" class="form-control bitsize" id="txt3" value="10">
+						<div class="input-group-append">
+							<label class="input-group-text input-group-addon" for="txt3">进制</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btn-group btn-block mb-3" role="group">
+				<button type="button" onclick="change(1)" id="to-down" class="btn btn-primary"><i class="fa fa-arrow-down"></i></button>
+				<button type="button" onclick="change(2)" id="to-up" class="btn btn-secondary"><i class="fa fa-arrow-up"></i></button>
+			</div>
+			<div class="form-row mb-2">
+				<div class="form-group col-7 col-7-5 mb-0">
+					<div class="input-group">
+						<input type="text" class="form-control" id="txt2">
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(2)"><i class="fa fa-times fa-fw"></i></button>
+						</div>
+					</div>
+				</div>
+				<div class="form-group col mb-0">
+					<div class="input-group mb-2 with-tooltip" title="仅支持 2~36 进制内转换" data-toggle="tooltip">
+						<input type="number" class="form-control bitsize" id="txt4" value="16">
+						<div class="input-group-append">
+							<label class="input-group-text input-group-addon" for="txt4">进制</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			function change(num) {
+				//验证合法性部分
+				var d=$("#txt" + num).val(), z=parseInt($("#txt" + (num + 2)).val()), neg=0;
+				var n=d.split('.')[0].trim(), f=(d+'.').split('.')[1].trim();
+				if(n[0]=="-") neg=1;
+				n=noIllegal(n,z);
+				if(neg==1&&n!=0) n='-'+n;
+				f=noIllegal(f,z);
+				//有无符号
+				var signed=$("#signed").is(":checked")?1:0;
+				//计算部分
+				if(signed==1){
+					$("#txt" + num).val(f==0?n:n+'.'+f);
+					var ten = parseInt(n,z), z2=$("#txt" + (5 - num)).val();
+					var n2=ten.toString(z2), f2=fracTen2(frac2Ten(f,z),z2);
+					$("#txt" + (3 - num)).val(f2==0?n2:n2+'.'+f2);
+				}
+				else{
+					$("#txt" + num).val(n);
+					var signed, unsigned;
+					signed = parseInt(n,z);
+					unsigned = signed>>>0;
+					$("#txt" + (3 - num)).val(unsigned.toString($("#txt" + (5 - num)).val()));
+				}
+			}
+			function noIllegal(na,za){
+				var n=na,z=za,
+					l=n.length, zt=z;
+				if(z>10) zt=10;
+				for(var i=0;i<l;i++){
+					var dig=false,abc=false;
+					if(z>10)
+						if(n[i]>='a'&&n[i].charCodeAt()<z+87) abc=true;
+					if(n[i]>=0&&n[i]<zt) dig=true;
+					if(!abc&&!dig||n[i]==' ') {
+						n=n.slice(0,i)+n.slice(i+1);
+						i--;l--;
+					}
+				}
+				if(n=="") n="0";
+				return n;
+			}
+			$("label").click(function() {
+				$("#" + $(this).attr("for")).select();
+			});
+			function clearText(id) {
+				var input = $("#txt" + id);
+				input.val("");
+				input.select();
+			}
+			$(document).ready(function() {
+				$('[data-toggle="tooltip"]').tooltip();
+				math.config({number: 'BigNumber'});
+			});
+			$(".bitsize").on('input propertychange', function() {
+				$(this).val(Math.floor($(this).val()));
+				if ($(this).val() < 0) $(this).val(0);
+				if ($(this).val() > 36) $(this).val(36);
+			});
+			$(".bitsize").change(function() {
+				if ($(this).val() < 2) $(this).val(2);
+			});
+			$(".with-tooltip").mouseout(function(){
+				$(this).tooltip('hide');
+			});
+			
+			function fracTen2(f,z,accuracy=16){
+				var fn=parseFloat('.'+f), ans="", int;
+				while(!(fn==0||ans.length>=accuracy)){
+					// fn=accMul(fn,z);
+					fn=math.evaluate(fn+"*"+z);
+					int=Math.floor(fn);
+					ans+=int.toString(z);
+					// fn=accSub(fn,int);
+					fn=math.evaluate(fn+"-"+int);
+				}
+				return ans;
+			}
+			function frac2Ten(fa,z){
+				var ans=0 ,f=fa.toString();
+				for(var i=0;i<f.length;i++)
+					ans+=math.evaluate(parseInt(f[i],z)+"*"+math.pow(z,-i-1));
+				ans=(ans.toString()+".0").split('.')[1];
+				return ans;
+			}
+			document.onkeydown = function(e) {
+				$('.input-group').tooltip('hide');
+				if (window.event.keyCode == 13) {
+					if($("#txt1,#txt3").is(":focus")) $("#to-down").click();
+					if($("#txt2,#txt4").is(":focus")) $("#to-up").click();
+				}
+			}
+		</script>
+	</body>
+	<script src="../NightTime.js"></script>
+</html>

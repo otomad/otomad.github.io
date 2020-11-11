@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>桌面课程表</title>
+		<!-- <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" /> -->
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<!-- <script src="../../math/rgbaster.min.js"></script> -->
+		<style>
+			body {
+				background: black url(http://www.neweb.top/bing.php) top left no-repeat;
+				background-size: cover;
+				background-attachment: fixed;
+				background-position: center;
+				transition: all 250ms ease-in-out !important;
+				user-select: none;
+			}
+
+			.tablebox {
+				color: white;
+				position: fixed;
+				background-color: rgba(0, 0, 0, 0.75);
+				bottom: 40px;
+				left: 40px;
+				padding: 20px 0 30px;
+				border-radius: 10px;
+				box-shadow: 0px 9px 13px 0px rgba(0, 0, 0, 0.3);
+			}
+
+			.timepart {
+				padding: 0 30px;
+			}
+
+			#time {
+				font-size: 400%;
+			}
+
+			#date,
+			#lunardate {
+				font-weight: lighter;
+				font-size: 125%;
+			}
+
+			#date {
+				margin-bottom: 5px;
+			}
+
+			.class-item {
+				padding: 10px 30px;
+				margin: 0;
+				transition: all 100ms ease-out;
+			}
+
+			.class-item:hover {
+				background-color: rgba(255, 255, 255, 0.15);
+			}
+
+			.class-list {
+				padding-bottom: 2px;
+			}
+
+			.active {
+				/* background-color: rgba(255, 255, 0, 0.75); */
+				/* color: black; */
+				font-weight: bold;
+				/* box-shadow: 0px 9px 13px 0px rgba(0, 0, 0, 0.3); */
+			}
+
+			.active:hover {
+				/* background-color: rgba(255, 255, 0, 0.9); */
+			}
+
+			.indicator {
+				position: absolute;
+				left: 40px;
+				/* bottom: 357px; */
+				top: -500px;
+				transition: all 500ms ease-out;
+				z-index: 1;
+				opacity: 0.25;
+				height: 41px;
+				overflow: hidden;
+			}
+
+			.indicator:hover {
+				opacity: 0.15;
+			}
+
+			.indicator-bar {
+				float: left;
+				background-color: white;
+				box-shadow: 0px 9px 5px 0px rgba(0, 0, 0, 0.3);
+				width: 294.75px;
+				height: 41px;
+				border-radius: 7px 0 0 7px;
+			}
+
+			.indicator-triangle {
+				float: right;
+				/* box-shadow: 0px 9px 13px 0px rgba(0, 0, 0, 0.3); */
+				width: 0;
+				height: 0;
+				border-left: 20.5px solid white;
+				border-top: 20.5px solid transparent;
+				border-bottom: 20.5px solid transparent;
+			}
+		</style>
+	</head>
+	<body scroll=no>
+		<div class="indicator">
+			<div class="indicator-bar"></div>
+			<div class="indicator-triangle"></div>
+		</div>
+		<div class="tablebox">
+			<div class="class-list">
+				<p id="class1" class="class-item /*active*/">--</p>
+				<p id="class2" class="class-item">--</p>
+				<p id="class3" class="class-item">--</p>
+				<p id="class4" class="class-item">--</p>
+			</div>
+			<div class="timepart">
+				<hr />
+				<div id="time">14:00:00</div>
+				<div id="date">10月1日 周日</div>
+				<div id="lunardate">甲子(鼠)年 正月初一</div>
+			</div>
+		</div>
+		<script src="lunar.js"></script>
+		<script src="classtable.json"></script>
+		<script>
+			//SHOW TIME
+			window.onload = function() {
+				getTime();
+			}
+			window.onresize = function() {
+				getTime();
+			}
+			var N = course.time.length,
+				a, j = 8;
+			setInterval("getTime()", 1000);
+
+			function getTime() {
+				//Time part
+				var date = new Date(); //创建对象
+				var h = date.getHours(); //时
+				var minute = date.getMinutes() //分
+				var s = date.getSeconds(); //秒
+				var yy = date.getFullYear();
+				var mm = m = date.getMonth() + 1; //获取月份  返回0-11
+				var dd = d = date.getDate(); // 获取日
+				var w = date.getDay(); //获取星期几  返回0-6   (0=星期天) 
+				var ww = '日一二三四五六'.charAt(new Date().getDay()); //星期几
+				if (h < 10) h = "0" + h;
+				if (minute < 10) minute = "0" + minute;
+				if (s < 10) s = "0" + s;
+				if (yy < 100) yy = "19" + yy;
+				if (m < 10) m = "0" + m;
+				if (d < 10) d = "0" + d;
+				document.getElementById("time").innerHTML = h + ":" + minute + ":" + s;
+				document.getElementById("date").innerHTML = m + "月" + d + "日 周" + ww;
+				document.getElementById('lunardate').innerHTML = GetLunarDay(yy, mm, dd);
+				//Course name part
+				var day = date.getDay();
+				h = date.getHours();
+				for (var i = 1; i <= N; i++) {
+					a = course.name[day][i - 1];
+					if (a == "") a = "--";
+					document.getElementById("class" + i).innerHTML = a;
+					document.getElementById("class" + i).className = "class-item";
+				}
+				for (var i = 1; i <= N; i++) {
+					if (h < course.time[i - 1]) break;
+					if (h >= course.time[i - 1] && h < course.time[i] || i == N) {
+						document.getElementById("class" + i).className += " active";
+						break;
+					}
+				}
+				if (h >= course.time[0]) {
+					var top = document.getElementsByClassName("active")[0].offsetTop + document.getElementsByClassName("tablebox")[0].offsetTop;
+					document.getElementsByClassName("indicator")[0].style.top = top + "px";
+				}
+			}
+			/* 
+			function recolor(){
+				var img = document.body;
+				var colors = RGBaster.colors(img, {
+					paletteSize: 30,
+					success: function(colors) {
+						$(".indicator-bar").css("background-color",colors.palette[0]);
+						$(".indicator-triangle").css("border-left-color",colors.palette[0]);
+					}
+				});
+			} */
+		</script>
+	</body>

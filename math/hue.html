@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>rgbaster.js</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script type="text/javascript" src='rgbaster.min.js'></script>
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style type="text/css">
+			body {
+				text-align: center;
+				overflow: auto;
+			}
+
+			#image {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				text-align: center;
+				border: 10px solid #eee;
+				box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+				width: auto;
+				max-width: 90%;
+				height: auto;
+				display: inline-block;
+				margin: auto;
+			}
+
+			#palette {
+				padding: 5px;
+				background: #333;
+				position: fixed;
+				top: 10px;
+				left: 10px;
+				z-index: 2;
+			}
+
+			#palette .color {
+				width: 20px;
+				height: 20px;
+				margin: 3px;
+			}
+			
+			.link {
+				position: fixed;
+				z-index: 1;
+				width: 90%;
+				top: 0;
+				left: 0;
+				right: 0;
+				padding-top: 1em;
+				margin: auto;
+				text-align: center;
+			}
+			.btn-outline-secondary {
+				background-color:var(--background-color);
+			}
+		</style>
+
+	</head>
+	<body onload='onload()'>
+		<div id='palette'></div>
+		<div class="input-group mb-3 link">
+			<input type="text" class="form-control" id="link" />
+			<div class="input-group-append">
+				<button class="btn btn-outline-secondary" type="button" onclick="go()">确定</button>
+			</div>
+		</div>
+		<img src="img.jpg" id='image'>
+	</body>
+	<script>
+		function onload() {
+			var img = document.getElementById('image');
+			var colors = RGBaster.colors(img, {
+				paletteSize: 30,
+				success: function(colors) {
+					img.style.borderColor = colors.palette[0];
+
+					var makeDivWithClassAndBGColor = function(klass, color) {
+						var div = document.createElement("div");
+						div.className = klass;
+						div.style.backgroundColor = color;
+						return div;
+					};
+
+					console.log("-----------------------------------------------");
+					console.log("rgbaster.js");
+					console.log("-----------------------------------------------");
+					console.log("Dominant color:", colors.dominant);
+					console.log("Secondary color:", colors.secondary);
+					console.log("Palette length:", colors.palette.length);
+					console.log("-----------------------------------------------");
+
+					var palette = document.getElementById('palette');
+					palette.appendChild(makeDivWithClassAndBGColor('color', colors.dominant));
+
+					colors.palette.forEach(function(color) {
+						palette.appendChild(makeDivWithClassAndBGColor('color', color));
+					});
+				}
+			});
+		}
+		
+		window.onresize = resize;
+		var img=document.getElementById("image");
+		function resize(){
+			var height=document.documentElement.clientHeight*0.9, width=document.documentElement.clientWidth*0.9;
+			/* if(height<width){
+				img.style.width="auto"
+				img.style.height=height+"px";
+				return height;
+			}
+			else{
+				img.style.height="auto"
+				img.style.width=width+"px";
+				return width;
+			} */
+			img.style.width=width+"px"
+			img.style.height=height+"px";
+			return [width,height];
+		}
+		function go(){
+			var link=document.getElementById("link").value;
+			if (link=="") link="img.jpg";
+			document.getElementById("image").src=link;
+			onload();
+		}
+	</script>
+	<script src="../NightTime.js"></script>
+</html>

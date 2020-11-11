@@ -1,0 +1,17 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+ <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+
+ <g>
+  <title>background</title>
+  <rect x="-1" y="-1" width="402" height="402" id="canvas_background" fill-opacity="0" fill="#ffffff"/>
+  <g id="canvasGrid" display="none">
+   <rect id="svg_3" width="100%" height="100%" x="0" y="0" stroke-width="0" fill="url(#gridpattern)"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <path transform="rotate(90 200,200.00000000000003) " stroke="#444444" fill="#3f3f3c" stroke-width="1.5" d="m24,200.000007l75.428588,-150.857123l201.142849,0l75.428548,150.857123l-75.428548,150.857136l-201.142849,0l-75.428588,-150.857136z" id="svg_1"/>
+  <ellipse stroke-opacity="0" stroke="#666666" fill="#6295ca" stroke-width="1.5" cx="331.499999" cy="73.453128" id="svg_2" rx="56.999997" ry="56.999997"/>
+  <text stroke="#444444" transform="matrix(1.1596639156341553,0,0,1.1596639156341553,-20.197485327720642,-11.248821806162596) " fill="#ffffff" stroke-width="0" x="122.619565" y="246.61075" id="svg_4" font-size="178" font-family="Segoe UI, Tahoma, Helvetica, Arial, sans-serif" text-anchor="start" xml:space="preserve" font-style="italic">C</text>
+ </g>
+</svg>

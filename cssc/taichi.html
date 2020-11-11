@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<title>太极图</title>
+		<!-- <link rel="stylesheet" type="text/css" id="css" href="taichi_begin.css"> -->
+		<!-- taichi_begin.css / taichi_over.css -->
+		<style>
+			:root {
+				--color1: black;
+				--color2: white;
+				--time: 6s;
+				--border: solid 1px #ccc;
+				/* rgba(128,128,128,0.25) */
+				--lightbody: #eee;
+				/* rgb(248, 249, 250) */
+				--darkbody: #555;
+			}
+
+			body {
+				background-color: var(--lightbody);
+			}
+
+			.taiji {
+				cursor: pointer;
+				position: fixed;
+				top: 0px;
+				left: 0px;
+				right: 0px;
+				bottom: 0px;
+				margin: auto;
+				width: 340px;
+				height: 340px;
+				border-radius: 50%;
+				background-color: var(--color2);
+				border: var(--border);
+				animation: spin var(--time) linear infinite;
+				/*动画设置*/
+			}
+
+			.tj_1 {
+				position: absolute;
+				top: 0px;
+				width: 50%;
+				height: 100%;
+			}
+
+			.tj_big1 {
+				left: 0px;
+				border-radius: 100% 0 0 100% / 50% 0 0 50%;
+				background: var(--color1);
+			}
+
+			.tj_big2 {
+				right: 0px;
+				border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+				background: var(--color2);
+			}
+
+			.tj_2 {
+				position: absolute;
+				width: 50%;
+				height: 50%;
+				left: 25%;
+				border-radius: 50%;
+			}
+
+			.tj_s1 {
+				bottom: 0px;
+				background: var(--color2);
+			}
+
+			.tj_s2 {
+				top: 0px;
+				background: var(--color1);
+			}
+
+			.tj_ss {
+				position: absolute;
+				width: 25%;
+				height: 25%;
+				left: 37.5%;
+				border-radius: 50%;
+			}
+
+			.tj_w {
+				top: 37.5%;
+				background: var(--color1);
+			}
+
+			.tj_b {
+				top: 37.5%;
+				background: var(--color2);
+			}
+
+			/*动画方法*/
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+
+				100% {
+					transform: rotate(360deg);
+					transform: rotate(360deg);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- <div class="taiji" onclick="javascript:document.getElementById('css').href='taichi_over.css'"> -->
+		<div class="taiji" onclick="redCyan()">
+			<div class="tj_1 tj_big1"></div>
+			<div class="tj_1 tj_big2"></div>
+			<div class="tj_2 tj_s1">
+				<div class="tj_ss tj_w"></div>
+			</div>
+			<div class="tj_2 tj_s2">
+				<div class="tj_ss tj_b"></div>
+			</div>
+		</div>
+	</body>
+	<script>
+		function nightDo() {
+			document.body.style.backgroundColor = "var(--darkbody)";
+		}
+
+		var currentColor = 0,
+			repeatClick = 0;
+
+		function redCyan() {
+			if (currentColor == 0) {
+				var overCSS = document.createElement("style");
+				overCSS.id = "overCSS";
+				overCSS.innerHTML =
+					":root {    \
+					--color1: red;              \
+					--color2: cyan;             \
+					--time: 0.1s;               \
+					--border: dashed 10px green;\
+					--lightbody: #F0F;          \
+					--darkbody: purple;         \
+				}";
+				document.body.appendChild(overCSS);
+				currentColor = 1;
+			} else {
+				repeatClick++;
+				if (repeatClick >= 10) {
+					var overCSS = document.getElementById("overCSS");
+					document.body.removeChild(overCSS);
+					currentColor = 0;
+					repeatClick = 0;
+				}
+			}
+		}
+	</script>
+	<script src="../NightTime.js"></script>
+</html>

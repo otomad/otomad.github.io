@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="Description" content="胡伯的傻逼小病毒" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<title>请更新下您的杀毒软件，谢谢</title>
+		<style>
+			body{
+				text-align:center;
+				background-color:black;
+				color:white;
+			}
+			a{ text-decoration:none; }
+		</style>
+	</head>
+	<body>
+		<div style="width:5px;height:5px;float:right;">
+			<a id="bxcl" href="option.html" title="不要再给我整提这个胡伯的傻逼小病毒了好吧！" style="color:grey;">
+				<p id="jr" align="right"></p>
+			</a>
+		</div>
+		<div>
+			<p id="bbs" style="font-size:72px;">&#9760;&#65039;</p><!-- 此处是绘文字标签 -->
+			<h1 align="center" style="color:red;">
+				<!--&#12288;-->你中毒了，点击确定！</h1>
+			<p align="center"><button onclick="jia();" style="width: 85px; height: 60px;font-size:18px;" title="Good!">确定</button></p>
+			<p><input type="text" id="demo" value="0" style="display:none;" /><input type="text" id="y" style="display:none;" /></p>
+		</div>
+		<div style="position:absolute;bottom:0;">
+			<code><a href="javascript:location.reload();" style="color:#BBBBFF;">&copy;</a> All Right Reserved.</code>
+		</div>
+		<script>
+			var sandrine = Math.floor(Math.random() * 200 + 50);
+
+			function jia() {
+				alert("A serious error occurred!!");
+				var ui = document.getElementById("bbs");
+				ui.style.display = "none";
+				var uib = document.getElementById("bxcl");
+				uib.style.display = "none";
+				setTimeout(function() {
+					var ui = document.getElementById("bbs");
+					ui.style.display = "";
+					var uib = document.getElementById("bxcl");
+					uib.style.display = "";
+					demo = document.getElementById("demo");
+					demo.value = parseInt(demo.value) + 1;
+					var y = document.getElementById("y");
+					y.value = parseInt(demo.value) % 10;
+					if (y.value == 0) {
+						document.getElementById("jr").innerHTML = "\u2715"; //叉号
+					} else {
+						document.getElementById("jr").innerHTML = "";
+					}
+				}, "sandrine.value");
+			};
+			<!-- 控制台输出文字部分 -->
+			if (window.console) {
+				var cons = console;
+				if (cons) {
+					cons.log("使用方略：");
+					cons.log("点按“确定”键十次，忽略弹窗。指的是页面中的按钮，弹窗中的不算。然后右上角会出现一个叉，之后就能退出去进入主界面了。");
+					cons.log("左下角的版权符号（即圈 C）可以刷新，避免误操作错过了点击十次。");
+					cons.log("- 所以请不要再给我整提这个胡伯的傻逼小病毒了好吧！");
+				}
+			}
+		</script>
+	</body>
+</html>

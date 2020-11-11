@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>
+			body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h4,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			#view-color{
+				height: 72px;
+			}
+			.input-group-text {
+				font-family: var(--font-family-monospace);
+			}
+			.input-group-text{
+				border-right: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4 class="mb-4">颜色模型转换</h4>
+			<div class="input-group mb-3" title="预览颜色" data-toggle="tooltip" data-placement="bottom" style="display:none">
+				<div class="form-control" id="view-color">
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col mb-0">
+					<div class="input-group mb-2" title="红色参量 ∈ [0,255]" data-toggle="tooltip" data-placement="bottom">
+						<div class="input-group-prepend">
+							<label class="input-group-text input-group-addon" for="valR">R</span>
+						</div>
+						<input type="number" class="form-control color-val val-rgb" id="valR" value="0">
+					</div>
+				</div>
+				<div class="form-group col mb-0">
+					<div class="input-group mb-2" title="绿色参量 ∈ [0,255]" data-toggle="tooltip" data-placement="bottom">
+						<div class="input-group-prepend">
+							<label class="input-group-text input-group-addon" for="valG">G</span>
+						</div>
+						<input type="number" class="form-control color-val val-rgb" id="valG" value="0">
+					</div>
+				</div>
+				<div class="form-group col mb-0">
+					<div class="input-group mb-2" title="蓝色参量 ∈ [0,255]" data-toggle="tooltip" data-placement="bottom">
+						<div class="input-group-prepend">
+							<label class="input-group-text input-group-addon" for="valB">B</span>
+						</div>
+						<input type="number" class="form-control color-val val-rgb" id="valB" value="0">
+					</div>
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group col mb-0">
+					<div class="input-group mb-2" title="色相轮 ∈ [0,360)" data-toggle="tooltip" data-placement="bottom">
+						<div class="input-group-prepend">
+							<label class="input-group-text input-group-addon" for="valH">H</span>
+						</div>
+						<input type="number" class="form-control color-val val-hsl" id="valH" value="0">
+					</div>
+				</div>
+				<div class="form-group col mb-0">
+					<div class="input-group mb-2" title="饱和度 ∈ [0,1]" data-toggle="tooltip" data-placement="bottom">
+						<div class="input-group-prepend">
+							<label class="input-group-text input-group-addon" for="valS">S</span>
+						</div>
+						<input type="number" class="form-control color-val val-hsl" id="valS" value="0">
+					</div>
+				</div>
+				<div class="form-group col mb-0">
+					<div class="input-group mb-2" title="亮度 ∈ [0,1]<br />不是明度" data-toggle="tooltip" data-placement="bottom" data-html="true">
+						<div class="input-group-prepend">
+							<label class="input-group-text input-group-addon" for="valL">L</span>
+						</div>
+						<input type="number" class="form-control color-val val-hsl" id="valL" value="0">
+					</div>
+				</div>
+
+			</div>
+			<div class="input-group mb-2" title="十六进制代码<br />三位与六位数值都支持" data-toggle="tooltip" data-placement="bottom" data-html="true">
+				<div class="input-group-prepend">
+					<label class="input-group-text input-group-addon" for="valHEX">HEX</span>
+				</div>
+				<input type="text" class="form-control color-val" id="valHEX" value="#000000">
+			</div>
+		</div>
+
+		<script>
+			$(document).ready(function() {
+				$('[data-toggle="tooltip"]').tooltip();
+			});
+			$(".val-rgb").on('input propertychange', function() {
+				$(this).val(Math.floor($(this).val()));
+				if ($(this).val() < 0) $(this).val(0);
+				if ($(this).val() > 255) $(this).val(255);
+				var hsl = RGB2HSL($("#valR").val(), $("#valG").val(), $("#valB").val());
+				$("#valH").val(hsl.H);
+				$("#valS").val(hsl.S);
+				$("#valL").val(hsl.L);
+				toHex();
+				changeColor(this);
+			});
+			$(".val-hsl").on('input propertychange', function() {
+				if ($(this).val() < 0) $(this).val(0);
+				$("#valH").val(Math.floor($("#valH").val()));
+				if ($("#valH").val() >= 360) $("#valH").val(359);
+				if ($("#valS").val() > 1) $("#valS").val(1);
+				if ($("#valL").val() > 1) $("#valL").val(1);
+				var rgb = HSL2RGB($("#valH").val(), $("#valS").val(), $("#valL").val());
+				$("#valR").val(noNeg(Math.floor(rgb.R)));
+				$("#valG").val(noNeg(Math.floor(rgb.G)));
+				$("#valB").val(noNeg(Math.floor(rgb.B)));
+				toHex();
+				changeColor(this);
+			});
+			$("#valHEX").change(function() {
+				var DEFAULT = "#000000",
+					hex = $("#valHEX").val();
+				hex = hex.toLowerCase();
+				if (hex[0] == "#") hex = hex.slice(1);
+				if (hex.length > 6) hex = hex.slice(0, 6);
+				for (var i = 0; i < hex.length; i++) {
+					var k = hex[i];
+					if (!(k >= '0' && k <= '9' || k >= 'a' && k <= 'f')) hex = DEFAULT;
+				}
+				if (hex.length == 1) hex = hex[0] + hex[0] + hex[0];
+				if (hex.length == 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+				if (hex.length != 6) hex = DEFAULT.slice(1);
+				$("#valHEX").val("#" + hex);
+				$("#valR").val(parseInt(hex.slice(0, 2), 16));
+				$("#valG").val(parseInt(hex.slice(2, 4), 16));
+				$("#valB").val(parseInt(hex.slice(4, 6), 16));
+				var hsl = RGB2HSL($("#valR").val(), $("#valG").val(), $("#valB").val());
+				$("#valH").val(hsl.H);
+				$("#valS").val(hsl.S);
+				$("#valL").val(hsl.L);
+				changeColor(this);
+			});
+			document.onkeydown = function(e) {
+				$('.input-group').tooltip('hide')
+				if (window.event.keyCode == 13) //window.event.keyCode = 9;
+					tabInput("valR", "valG", "valB", "valH", "valS", "valL", "valHEX");
+			}
+			$("label").click(function() {
+				$("#" + $(this).attr("for")).select();
+			});
+			var begin=1;
+			$(".form-control").focus(function(){
+				if (begin==1) return;
+				formControlFocus(this);
+			});
+			function formControlFocus(which) {
+				if(getNatureLight()>0.5) //Light
+					$(which).css({
+						"box-shadow": "0 0 0 0.2rem rgba(0,0,0,0.25)",
+						"border-color": "rgba(0,0,0,0.75)"
+					});
+				else //Dark
+					$(which).css({
+						"box-shadow": "0 0 0 0.2rem rgba(255,255,255,0.25)",
+						"border-color": "rgba(255,255,255,0.75)"
+					});
+			}
+			$(".form-control").blur(function(){
+				if (begin==1) return;
+				if(getNatureLight()>0.5) //Light
+					$(this).css({
+						"box-shadow": "",
+						"border-color": "rgba(0,0,0,0.168)"
+					});
+				else //Dark
+					$(this).css({
+						"box-shadow": "",
+						"border-color": "rgba(255,255,255,0.71)"
+					});
+			});
+
+			function toHex() {
+				var hexR = parseInt($("#valR").val()).toString(16),
+					hexG = parseInt($("#valG").val()).toString(16),
+					hexB = parseInt($("#valB").val()).toString(16);
+				if (hexR.length == 1) hexR = "0" + hexR;
+				if (hexG.length == 1) hexG = "0" + hexG;
+				if (hexB.length == 1) hexB = "0" + hexB;
+				$("#valHEX").val("#" + hexR + hexG + hexB);
+			}
+
+			function changeColor(which) {
+				$("#view-color").css("background-color", $("#valHEX").val());
+				$("body").css("background-color", $("#valHEX").val());
+				/* var textColor=($("#valL").val()>0.5?"#212529":"white");
+				$("h4").css("color",textColor); */
+				// if($("#valL").val()>0.5){ //light
+				if (getNatureLight() > 0.5) { //light
+					$(".input-group-text").css({
+						"background-color": "rgba(0,0,0,0.075)",
+						"border-color": "rgba(0,0,0,0.168)",
+						"color": "#495057"
+					});
+					$(".color-val").css({
+						"background-color": "rgba(0,0,0,0.012)",
+						"border-color": "rgba(0,0,0,0.168)",
+						"color": "#495057"
+					});
+					$("h4").css("color", "#212529");
+				} else { //dark
+					$(".input-group-text").css({
+						"background-color": "rgba(255,255,255,0.267)",
+						"border-color": "rgba(255,255,255,0.71)",
+						"color": "white"
+					});
+					$(".color-val").css({
+						"background-color": "rgba(255,255,255,0.012)",
+						"border-color": "rgba(255,255,255,0.71)",
+						"color": "white"
+					});
+					$("h4").css("color", "white");
+				}
+				formControlFocus(which);
+				begin=0;
+			}
+			
+			function getNatureLight(){
+				// return 0.2126 * $("#valR").val() / 255 + 0.7152 * $("#valG").val() / 255 + 0.0722 * $("#valB").val() / 255;
+				return 0.299 * $("#valR").val() / 255 + 0.587 * $("#valG").val() / 255 + 0.114 * $("#valB").val() / 255;
+			}
+			function noNeg(num) {
+				var d=num;
+				if(d<0) d=0;
+				return d;
+			}
+
+			function HSL2RGB(H = 0, S = 0, L = 0, stringMode = false) {
+				const C = (1 - Math.abs(2 * L - 1)) * S
+				const X = C * (1 - Math.abs(((H / 60) % 2) - 1))
+				const m = L - C / 2
+				const vRGB = []
+				if (H >= 0 && H < 60) {
+					vRGB.push(C, X, 0)
+				} else if (H >= 60 && H < 120) {
+					vRGB.push(X, C, 0)
+				} else if (H >= 120 && H < 180) {
+					vRGB.push(0, C, X)
+				} else if (H >= 180 && H < 240) {
+					vRGB.push(0, X, C)
+				} else if (H >= 240 && H < 300) {
+					vRGB.push(X, 0, C)
+				} else if (H >= 300 && H < 360) {
+					vRGB.push(C, 0, X)
+				}
+				const [vR, vG, vB] = vRGB
+				const R = 255 * (vR + m)
+				const G = 255 * (vG + m)
+				const B = 255 * (vB + m)
+
+				if (stringMode) {
+					return `rgb(${R},${G},${B})`
+				}
+
+				return {
+					R,
+					G,
+					B
+				}
+			}
+
+			function RGB2HSL(R = 0, G = 0, B = 0, stringMode = false) {
+				const _R = R / 255;
+				const _G = G / 255;
+				const _B = B / 255;
+				const Cmax = Math.max(_R, _G, _B);
+				const Cmin = Math.min(_R, _G, _B);
+				const V = Cmax - Cmin;
+
+				let H = 0;
+				if (V === 0) {
+					H = 0;
+				} else if (Cmax === _R) {
+					H = 60 * (((_G - _B) / V) % 6);
+				} else if (Cmax === _G) {
+					H = 60 * ((_B - _R) / V + 2);
+				} else if (Cmax === _B) {
+					H = 60 * ((_R - _G) / V + 4);
+				}
+
+				H = Math.floor(backCycle(H, 360));
+				const L = numberFixed((Cmax + Cmin) / 2);
+				const S = V === 0 ? 0 : numberFixed(V / (1 - Math.abs(2 * L - 1)));
+
+				if (stringMode) {
+					return `hsl(${H},${numberFixed(100 * S)}%,${numberFixed(100 * L)}%)`;
+				}
+
+				return {
+					H,
+					S,
+					L
+				};
+			}
+
+			// utils
+			function backCycle(num, cycle) {
+				let index = num % cycle;
+				if (index < 0) {
+					index += cycle;
+				}
+				return index;
+			}
+
+			function numberFixed(num = 0, count = 3) {
+				const power = Math.pow(10, count);
+				return Math.floor(num * power) / power;
+			}
+
+			//模拟TAB操作
+			function tabInput() {
+				var arg = arguments;
+				for (var i = 0; i < arg.length; i++) {
+					if ($("#" + arg[i]).is(":focus")) {
+						if (i == arg.length - 1)
+							$("#" + arg[i]).blur();
+						else {
+							$("#" + arg[i + 1]).focus();
+							$("#" + arg[i + 1]).select();
+						}
+						break;
+					}
+				}
+			}
+		</script>
+	</body>
+	<script src="../NightTime.js"></script>
+</html>

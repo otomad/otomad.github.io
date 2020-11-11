@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+		<script src="math.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,.MathJax,#formula,#ans,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			.btn-times {
+				width: 45px;
+			}
+			p {
+				margin: 8px 0;
+			}
+			#formula, #ans{
+				overflow-x: auto;
+				padding: 5px 0;
+				white-space: nowrap;
+				min-height: 40px;
+				margin-top: 2px;
+			}
+			html, body, #formula, #ans {
+				scroll-behavior: smooth; 
+			}
+			textarea.form-control {
+				min-height: 76px;
+				transition: box-shadow 250ms ease, background-color 250ms ease, color 250ms ease !important;
+				vertical-align: middle;
+				word-wrap: normal;
+				white-space: nowrap;
+				overflow-x: auto;
+				overflow-y: hidden;
+				resize: none;
+			}
+			#line-number{
+				align-items: flex-start;
+				text-align: right;
+				padding-right: 6px;
+				user-select: none;
+				overflow: hidden;
+			}
+			#data-coe:focus {
+			    border-color: #adb5bd;
+			    box-shadow: inset 0 0 0 0.2rem rgba(173,181,189,0.5);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4>秦九韶算法</h4>
+			<p class="formula" id="formula" tabindex="0">`f(x)=`</p>
+			<div class="row">
+				<div class="col-lg-6">
+			<div class="input-group mb-2">
+				<div class="input-group-prepend">
+					<label class="input-group-text input-group-addon" for="txt1">新项系数</span>
+				</div>
+				<input type="number" class="form-control" id="txt1">
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(1)"><i class="fa fa-times fa-fw"></i></button>
+				</div>
+			</div>
+			<div class="btn-group btn-block" role="group">
+				<button type="button" id="new-btn" class="btn btn-success">添加一项</button>
+				<button type="button" id="delete-btn" class="btn btn-danger">删除末项</button>
+			</div>
+			<p>输入的值作为新项的系数，按回车键添加一项。按 Backspace 键删除最后一项。</p>
+			</div>
+			<div class="col-lg-6">
+			<div class="input-group mb-2">
+				<div class="input-group-prepend">
+					<label class="input-group-text input-group-addon" for="txt2">ｘ的取值</span>
+				</div>
+				<input type="number" class="form-control" id="txt2">
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(2)"><i class="fa fa-times fa-fw"></i></button>
+				</div>
+			</div>
+			<button type="button" id="ans-btn" class="btn btn-primary btn-block mb-2">求解</button>
+			<p class="formula mb-2" id="ans" tabindex="0"></p>
+			</div>
+			</div>
+			<button class="btn btn-outline-secondary btn-sm" id="manage" data-toggle="modal" data-target="#manageModal" style="margin-right:.25em">管理项</button>
+			<button class="btn btn-outline-secondary btn-sm" id="clear-all">清空全部</button>
+			<!-- Modal -->
+			<div class="modal fade" id="manageModal" data-backdrop="static" data-keyboard="false" tabindex="-1">
+			  <div class="modal-dialog modal-dialog-scrollable">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="ModalLabel">管理项</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span id="modal-times-button">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+					<div class="input-group mb-2" id="data-group">
+						<div class="input-group-prepend">
+							<label class="input-group-text input-group-addon" id="line-number" for="data-coe">𝑥¹:</span>
+						</div>
+						<textarea class="form-control" id="data-coe"></textarea>
+					</div>
+			      </div>
+			      <div class="modal-footer">
+					<table style="width:100%">
+						<td style="padding-left:8px">
+						<button type="button" class="btn btn-danger" id="modal-clear-button">清空</button>
+						<button type="button" class="btn btn-danger" id="modal-reset-button">复位</button>
+						</td>
+						<td style="text-align:right">
+						<button type="button" class="btn btn-success" data-dismiss="modal" id="modal-ok-button">确定</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal" id="modal-cancel-button">取消</button>
+						</td>
+					</table>
+				  </div>
+			    </div>
+			  </div>
+			</div>
+		</div>
+		<script>
+			$(document).ready(function() {
+				// $('[data-toggle="tooltip"]').tooltip();
+				math.config({number: 'BigNumber'});
+			});
+			function clearText(id) {
+				$("#txt" + id).val("").select();
+			}
+			var coe = new Array();
+			$("#new-btn").click(function() {
+				$("#txt1").focus();
+				if ($("#txt1").val() === "") return;
+				coe.push($("#txt1").val() - 0);
+				$("#txt1").val("");
+				reFormula();
+			});
+			$("#delete-btn").click(function() {
+				if (!coe.length) return;
+				coe.pop();
+				reFormula();
+			});
+			function reFormula() {
+				var formula = "f(x)=";
+				for (var i = 0; i < coe.length; i++) {
+					var j = coe.length - 1 - i, c = coe[i]+'';
+					if(c.search('e')!=-1)
+						c=c.split('e')[0]+"\\times10^{"+c.split('e')[1].replace('+','')+'}';
+					if (i > 0 && c[0]!='-') formula += "+";
+					if (j == 0) formula += c;
+					else if (j == 1) formula += c + "x";
+					else formula += c + "x^{" + j + "}";
+				}
+				$("#formula").html("\`" + formula + "\`");
+				MathJax.Hub.Queue(["Typeset", MathJax.Hub, "formula"]);
+				//管理项文本框
+				// $("#modal-reset-button").click();
+			}
+			//横向滚动
+			$(".formula").click(function(){
+				$(this).focus();
+			});
+			document.addEventListener('DOMMouseScroll', handler, false);
+			document.addEventListener('mousewheel', handler, false);
+			function handler(event) {
+				if ($("#formula").is(':hover,:focus')||$(".MathJax").is(':focus')) {
+					var detail = event.wheelDelta || event.detail;
+					var step = 57 * (detail < 0 ? 1 : -1);
+					$("#formula")[0].scrollLeft += step;
+				}
+				if ($("#ans").is(':hover,:focus')) {
+					var detail = event.wheelDelta || event.detail;
+					var step = 57 * (detail < 0 ? 1 : -1);
+					$("#ans")[0].scrollLeft += step;
+				}
+			}
+			var ensureClear=0, backClearAll;
+			$("#clear-all").click(function(){
+				if(!ensureClear){
+				$(this).html("确定清空");
+				$(this).removeClass("btn-outline-secondary").addClass("btn-danger");
+				ensureClear=1;
+				backClearAll = setTimeout(function(){
+					$("#clear-all").html("清空全部");
+					$("#clear-all").removeClass("btn-danger").addClass("btn-outline-secondary");
+					ensureClear=0;
+				},2000);
+				}
+				else{
+					if(coe.length){
+						coe.length=0;
+						reFormula();
+					}
+					$("#data-coe").val("");
+					clearTimeout(backClearAll);
+					$(this).html("清空全部");
+					$(this).removeClass("btn-danger").addClass("btn-outline-secondary");
+					ensureClear=0;
+				}
+			});
+			$("#clear-all").mouseout(function(){
+				$("#clear-all").blur();
+			});
+			$("#ans-btn").click(ans);
+			function ans(){
+				if(!coe.length){
+					$("#txt1").focus();
+					$("#formula").css("color","red");
+					setTimeout(function(){
+						$("#formula").css("color","");
+					},2000);
+					return false;
+				}
+				var x=$("#txt2").val(),y=coe[0];
+				if(x==""){
+					x=0;
+					$("#txt2").val("0")
+				}
+				for(var i=1;i<coe.length;i++)
+					// y=y*x+coe[i];
+					y=math.evaluate(y+"*"+x+"+"+coe[i]);
+				console.log(y);
+				$("#ans").html(`\`f(${x})=${y}\``);
+				MathJax.Hub.Queue(["Typeset", MathJax.Hub, "ans"]);
+				return y;
+			}
+			document.onkeydown = function(e) {
+				if (window.event.keyCode == 13){
+					if($("#txt1").is(":focus")) $("#new-btn").click();
+					if($("#txt2").is(":focus")){
+						$("#ans-btn").click();
+						$("#txt2").blur();
+					}
+				}
+				if (window.event.keyCode == 8 || window.event.keyCode == 46){
+					if($("#txt1").is(":focus") && $("#txt1").val()==="") $("#delete-btn").click();
+				}
+				if (window.event.keyCode == 9){
+					if($("#txt1").is(":focus"))
+						setTimeout(function(){
+							$("#txt2").focus();
+						},100);
+				}
+			}
+			$("#data-coe").on('input propertychange', reLineNumber);
+			function reLineNumber(){
+				var rows=$("#data-coe").val().split('\n').length;
+				var el = $("#data-group"), curHeight = el.height(),
+					eln=$("#line-number"),curWidth=eln.width();
+				$("#line-number").html(createSeq(rows));
+				var autoHeight = el.css('height', 'auto').height(),
+					autoWidth = eln.css('width', 'auto').width();
+				el.height(curHeight).animate({height: autoHeight}, 100);
+				eln.width(curWidth).animate({width: autoWidth+20}, 100);
+				/* setTimeout(function(minHeight){
+					$("#data-group").css("height","auto");
+					$("#data-coe").css("min-height",minHeight);
+				},250,autoHeight); */
+			}
+			var supList="⁰¹²³⁴⁵⁶⁷⁸⁹";
+			function createSeq(last){
+				var list="", sup;
+				for(var i=last;i>1;i--){
+					sup=i+"";
+					for(var j=0;j<sup.length;j++)
+						sup=sup.slice(0,j)+supList[sup[j]-0]+sup.slice(j+1);
+					list+="𝑥"+sup+":<br>";
+				}
+				return list+="𝑥¹:";
+			}
+			$("#modal-clear-button").click(function(){
+				$("#data-coe").val("");
+				reLineNumber();
+			});
+			$("#modal-reset-button").click(function(){
+				$("#data-coe").val(coe.join("\n"));
+				reLineNumber();
+			});
+			$("#manage").click(function(){
+				setTimeout(function(){
+					$("#modal-reset-button").click();
+				},250);
+			});
+			$("#modal-cancel-button,#modal-times-button").click(function(){
+				setTimeout(function(){
+					$("#data-coe").val(coe.join("\n"));
+				},250);
+			});
+			$("#modal-ok-button").click(function(){
+				var newcoe = $("#data-coe").val().split('\n');
+				for(var i=0;i<newcoe.length;i++){
+					if(newcoe[i]==="") {newcoe.splice(i,1);i--;continue;}
+					newcoe[i]=newcoe[i]-0;
+					if(newcoe[i]+""==="NaN") {newcoe.splice(i,1);i--;continue;}
+				}
+				coe=newcoe;
+				reFormula();
+			});
+		</script>
+		<script src="../NightTime.js"></script>
+	</body>
+</html>

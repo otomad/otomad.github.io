@@ -1,0 +1,560 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="keywords" content="彩虹文字生成器, 彩虹字生成器, 彩虹字转换器, 彩虹字UBB代码生成器, 彩虹字Html代码生成器">
+		<link rel="shortcut icon" href="./favicon.png">
+		<link rel="bookmark" href="./favicon.png">
+		<title>彩虹文字生成器</title>
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<!-- <link href="./css/bootstrap.min.css" rel="stylesheet"> -->
+		<link href="./css/index.css" rel="stylesheet">
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="./js/jqColorPicker.min.js"></script>
+		<!-- <script src="./js/colors.js"></script>
+	<script src="./js/jqColorPicker.js"></script> -->
+		<script src="./js/clipboard.min.js"></script>
+		<style>body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}</style>
+	</head>
+
+	<body>
+		<div class="container-fluid">
+			<div class="row-fluid">
+				<div id="main-body" class="main">
+					<h1 class="page-header clearfix">
+						<span>
+							<font color="#FF2800">彩</font><font color="#FF5000">虹</font><font color="#FF7800">文</font><font color="#FFA000">字</font><font color="#FFC800">生</font><font color="#FFF000">成</font><font color="#D7FF00">器</font>
+						</span>
+						<!-- <button type="button" class="btn btn-outline-secondary btn-sm reset-on-right-float" id="reset" style="padding:.25rem .75rem;display:inline-block;float:right;margin:11 0;">重设</button> -->
+						
+					</h1>
+					<hr />
+					<div class="row">
+						<div class="col-lg-4">
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<label class="input-group-text input-group-addon" id="basic-addon1" for="text-str">生成文字</span><br />
+									<button class="btn btn-outline-secondary btn-sm sm" type="button" id="reset" data-placement="bottom" title="重设" data-toggle="tooltip">
+										<i class="fa fa-rotate-left"></i>
+									</button>
+								</div>
+								<textarea id="text-str" class="form-control" rows="3" style="min-height:78px;height:125px" autofocus
+								 placeholder="请在这里填写需要生成的文字内容（最多140个字）"></textarea>
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<label class="input-group-text input-group-addon" id="basic-addon1">预设颜色</span>
+								</div>
+								<div class="form-control" style="height:inherit">
+									<div class="custom-control custom-radio" onclick="wr_style(1);"><input class="custom-control-input input1" id="win_rainbow_style1"
+										 type="radio" checked="" value="radiobutton" name="win_rainbow_style1"><label class="custom-control-label label1"
+										 for="win_rainbow_style1">
+											<font color="#FF2800">彩</font><font color="#FF5000">虹</font><font color="#FF7800">七</font><font color="#FFA000">色</font>
+										</label></div>
+									<div class="custom-control custom-radio" onclick="wr_style(2);"><input class="custom-control-input input2" id="win_rainbow_style2"
+										 type="radio" value="radiobutton" name="win_rainbow_style2"><label class="custom-control-label label2" for="win_rainbow_style2">
+											<font color="#555555">黑</font><font color="#AAAAAA">白</font>
+										</label></div>
+									<div class="custom-control custom-radio" onclick="wr_style(3);"><input class="custom-control-input input3" id="win_rainbow_style3"
+										 type="radio" value="radiobutton" name="win_rainbow_style3"><label class="custom-control-label label3" for="win_rainbow_style3">
+											<font color="#7F1D24">黑</font><font color="#FF1D24">红</font>
+										</label></div>
+									<div class="custom-control custom-radio" onclick="wr_style(4);"><input class="custom-control-input input4" id="win_rainbow_style4"
+										 type="radio" value="radiobutton" name="win_rainbow_style4"><label class="custom-control-label label4" for="win_rainbow_style4">
+											<font color="#00AE7F">蓝</font><font color="#00AE00">绿</font>
+										</label></div>
+									<div class="custom-control custom-radio" onclick="wr_style(5);"><input class="custom-control-input" id="win_rainbow_style5"
+										 type="radio" value="radiobutton" name="win_rainbow_style5"><label class="custom-control-label" for="win_rainbow_style5">自定义</label></div>
+								</div>
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<label class="input-group-text input-group-addon" id="view-color-tag">预览颜色</label>
+								</div>
+								<div class="form-control view-color" style="padding:0;height:inherit">
+									<span id="color-picker">
+										<input id="text-fore-color" class="form-control color choose-color" value="#0000FF" style="float:left ;width:50%"
+										 disabled="">
+										<input id="text-back-color" class="form-control color choose-color" value="#FF0000" style="float:right;width:50%;text-align:right"
+										 disabled="">
+									</span>
+									<div class="form-control cover-color" id="linear5" style="background-color:rgb(34,34,34)"></div>
+									<div class="form-control cover-color" id="linear4" style="background-image:linear-gradient(to right, #00AEFF, #00AE00)"></div>
+									<div class="form-control cover-color" id="linear3" style="background-image:linear-gradient(to right, #001D24, #FF1D24)"></div>
+									<div class="form-control cover-color" id="linear2" style="background-image:linear-gradient(to right, black, white)"></div>
+									<div class="form-control cover-color" id="linear1" style="background-image:linear-gradient(to right, red, yellow, green, cyan, blue, fuchsia)"></div>
+								</div>
+							</div>
+							<div class="input-group mb-3">
+								<div class="input-group-prepend">
+									<label class="input-group-text input-group-addon" id="sizing-addon3" for="select-type">代码类型</label>
+								</div>
+								<select class="custom-select form-control" id="select-type">
+									<option value="ubb" selected="">UBB（论坛）</option>
+									<option value="html">HTML（网页）</option>
+								</select>
+							</div>
+							<button type="button" class="btn btn-primary btn-block mb-3" id="preview">生成</button>
+						</div>
+						<div class="col-lg-8">
+							<div class="row">
+								<div class="col-xl-6">
+									<div class="card" id="row-view">
+										<div class="card-body">
+											<h5 class="card-title" id="viewCardName">生成后在此处预览</h5>
+											<p class="card-content" id="panel-preview"></p>
+										</div>
+									</div>
+								</div>
+								<div class="col-xl-6">
+									<div class="card mb-2" id="row-html">
+										<div class="card-body" id="panel-html">
+											<table class="card-html-table">
+												<td>
+													<h5 class="card-title">代码</h5>
+												</td>
+												<td style="text-align:right;padding-bottom:12px"><a href="javascript:void(0);" id="copy-code" style="text-decoration:none"
+													 data-clipboard-action="copy" data-clipboard-target="#xmp-html" title="复制到剪贴板" data-toggle="tooltip">复制代码</a></td>
+											</table>
+											<xmp class="card-content" id="xmp-html" style="white-space: normal;"></xmp>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<br /><br />
+					<script>
+						var clipboard = new ClipboardJS("#copy-code");
+						$("#copy-code").click(function() {
+							clipboardReact("已复制");
+						});
+						function clipboardReact(title) {
+							var clipbtn = $("#copy-code");
+							clipbtn.focus();
+							clipbtn.attr('title', title).tooltip('_fixTitle').tooltip('show');
+							setTimeout(function() {
+								clipbtn.attr('title', "复制到剪贴板").tooltip('_fixTitle');
+								clipbtn.mouseout(function() {
+									clipbtn.tooltip('hide');
+								});
+							}, 500);
+						}
+
+						window.onresize = function() {
+							if (haveText) cardResize();
+						}
+						
+						$(document).ready(function(){
+						    $('[data-toggle="tooltip"]').tooltip();
+						});
+
+						$(function() {
+							wr_style(1);
+							$('.color').colorPicker({
+								opacity: false
+							});
+						});
+
+						$("#reset").click(function() {
+							$("#text-str").val("");
+							$("#text-str").focus();
+							$("#text-str").select();
+						});
+
+						var haveText = false,
+							frcolor = $("#text-fore-color").val(),
+							bgcolor = $("#text-back-color").val();
+						$("#preview").click(function() {
+							// $('#row-html').hide();
+							// $('#panel-preview').hide();
+							$('#viewCardName')[0].innerHTML = "生成后在此处预览";
+							$('#row-view').css("height", "68px");
+							$('#row-html').css({
+								"height": "0",
+								"border": "0px solid rgba(0,0,0,.125)"
+							});
+							$('.card').css("margin-bottom", "0");
+							$('.card-content').css({
+								"opacity": "0",
+								"user-select": "none"
+							});
+							haveText = false;
+
+							const str = $("#text-str").val();
+							frcolor = $("#text-fore-color").val();
+							bgcolor = $("#text-back-color").val();
+							const type = $("#select-type").val();
+
+							if (str == "") {
+								$("#text-str").select();
+								errorValue("#text-str");
+								/* $("#text-str").addClass("error-value");
+								setTimeout(function() {
+									$("#text-str").removeClass("error-value");
+								},2000); */
+							}
+
+							if (typeof str == "undefined" || str == null || str == "") {
+								$('#alert-message').html('请填写需要生成的文字内容（最多140个字）');
+								$('#row-alert').show();
+								return false;
+							} else if (!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(frcolor))) {
+								$('#alert-message').html('请填写正确的开始颜色代码');
+								$('#row-alert').show();
+								return false;
+							} else if (!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(bgcolor))) {
+								$('#alert-message').html('请填写正确的结束颜色代码');
+								$('#row-alert').show();
+								return false;
+							} else {
+								$('#row-alert').hide();
+								set_rainbow(str, frcolor.replace("#", ""), bgcolor.replace("#", ""), type);
+								// $('#row-html').show();
+								// $('#panel-preview').show();
+								$('#viewCardName')[0].innerHTML = "预览";
+								cardResize();
+								$('#row-html').css("border", "1px solid rgba(0,0,0,.125)");
+								$('.card').css("margin-bottom", "1rem");
+								$('.card-content').css({
+									"opacity": "1",
+									"user-select": "text"
+								});
+								haveText = true;
+							}
+						});
+
+						function cardResize() {
+							var row2 = ["#row-view", "#row-html"];
+							for (var i = 0; i < 2; i++) {
+								var el = $(row2[i]),
+									curHeight = el.height(),
+									autoHeight = el.css('height', 'auto').height();
+								el.height(curHeight).animate({
+									height: autoHeight
+								}, 250);
+							}
+						}
+
+						function errorValue(element) {
+							$(element).addClass("error-value");
+							setTimeout(function() {
+								$(element).removeClass("error-value");
+							}, 2000);
+						}
+
+						var interval = 0;
+						$(".choose-color").focus(function() {
+							interval = setInterval("wr_style(5)", 150 /* 150 */ );
+						});
+						$(".choose-color").blur(function() {
+							clearInterval(interval);
+							var color2 = ["#text-fore-color", "#text-back-color"];
+
+							function colorNANDo(i) {
+								$(color2[i]).val("#000000");
+								wr_style(5);
+							}
+							for (var i = 0; i < 2; i++) {
+								if ($(color2[i]).val().search("N") != -1) {
+									setTimeout(colorNANDo, 250, i);
+									errorValue(".view-color");
+								}
+							}
+							/* if($(color2[0]).val().search("N")!=-1){
+								setTimeout(function() {
+									$(color2[0]).val("#000000");
+								},250);
+								// colorNAN=true;
+							}
+							if($(color2[1]).val().search("N")!=-1){
+								setTimeout(function() {
+									$(color2[1]).val("#000000");
+								},250);
+								// colorNAN=true;
+							} */
+							/* if(colorNAN) {
+								setTimeout(function() {
+									wr_style(5);
+								},250);
+							} */
+						});
+
+						function set_rainbow(wr_text, wr_rgb1, wr_rgb2, type) { //设置彩虹文字
+							var wr_code, wr_rgb, r, g, b, i, j, istep;
+							var r1, g1, b1, r2, g2, b2;
+							r1 = g1 = b1 = r2 = g2 = b2 = 0;
+							r = 0;
+							g = 0;
+							b = 0;
+							istep = 0;
+							wr_code = '';
+
+							if (win_rainbow_style1.checked) {
+								istep = 40;
+								r = 255;
+								i = 1;
+								j = 0;
+								do {
+									if (wr_text.charCodeAt(j) != 32) {
+										if (g + istep < 256) {
+											if (i == 1) g += istep;
+										} else if (i == 1) {
+											i = 2;
+											g = 255;
+										}
+										if (r - istep > -1) {
+											if (i == 2) r -= istep;
+										} else if (i == 2) {
+											i = 3;
+											r = 0;
+										}
+										if (b + istep < 256) {
+											if (i == 3) b += istep;
+										} else if (i == 3) {
+											i = 4;
+											b = 255;
+										}
+										if (g - istep > -1) {
+											if (i == 4) g -= istep;
+										} else if (i == 4) {
+											i = 5;
+											g = 0;
+										}
+										if (r + istep < 256) {
+											if (i == 5) r += istep;
+										} else if (i == 5) {
+											i = 6;
+											r = 255;
+										}
+										if (b - istep > -1) {
+											if (i == 6) b -= istep;
+										} else if (i == 6) {
+											i = 1;
+											b = 0;
+										}
+										wr_rgb = '';
+										wr_rgb += parseInt(r).toString(16).length == 1 ? 0 + parseInt(r).toString(16) : parseInt(r).toString(16);
+										wr_rgb += parseInt(g).toString(16).length == 1 ? 0 + parseInt(g).toString(16) : parseInt(g).toString(16);
+										wr_rgb += parseInt(b).toString(16).length == 1 ? 0 + parseInt(b).toString(16) : parseInt(b).toString(16);
+										wr_rgb = wr_rgb.toUpperCase();
+										if (type == "ubb") {
+											wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(j) + '[/color]';
+										} else {
+											wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(j) + '</font>';
+										}
+									} else {
+										wr_code += wr_text.charAt(j);
+									}
+									j++;
+								} while (j < wr_text.length);
+							} else if (win_rainbow_style2.checked) {
+								istep = 255 / wr_text.length;
+								for (i = 1; i < wr_text.length + 1; i++) {
+									if (wr_text.charCodeAt(i - 1) != 32) {
+										r += istep;
+										g += istep;
+										b += istep;
+										if (r > 255) r = 255;
+										if (g > 255) g = 255;
+										if (b > 255) b = 255;
+										wr_rgb = '';
+										wr_rgb += parseInt(r).toString(16).length == 1 ? 0 + parseInt(r).toString(16) : parseInt(r).toString(16);
+										wr_rgb += parseInt(g).toString(16).length == 1 ? 0 + parseInt(g).toString(16) : parseInt(g).toString(16);
+										wr_rgb += parseInt(b).toString(16).length == 1 ? 0 + parseInt(b).toString(16) : parseInt(b).toString(16);
+										wr_rgb = wr_rgb.toUpperCase();
+										if (type == "ubb") {
+											wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(i - 1) + '[/color]';
+										} else {
+											wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(i - 1) + '</font>';
+										}
+									} else {
+										wr_code += wr_text.charAt(i - 1);
+									}
+								}
+							} else if (win_rainbow_style3.checked) {
+								istep = 255 / wr_text.length;
+								for (i = 1; i < wr_text.length + 1; i++) {
+									if (wr_text.charCodeAt(i - 1) != 32) {
+										r += istep;
+										g = 29;
+										b = 36;
+										if (r > 255) r = 255;
+										if (g > 255) g = 255;
+										if (b > 255) b = 255;
+										wr_rgb = '';
+										wr_rgb += parseInt(r).toString(16).length == 1 ? 0 + parseInt(r).toString(16) : parseInt(r).toString(16);
+										wr_rgb += parseInt(g).toString(16).length == 1 ? 0 + parseInt(g).toString(16) : parseInt(g).toString(16);
+										wr_rgb += parseInt(b).toString(16).length == 1 ? 0 + parseInt(b).toString(16) : parseInt(b).toString(16);
+										wr_rgb = wr_rgb.toUpperCase();
+										if (type == "ubb") {
+											wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(i - 1) + '[/color]';
+										} else {
+											wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(i - 1) + '</font>';
+										}
+									} else {
+										wr_code += wr_text.charAt(i - 1);
+									}
+								}
+							} else if (win_rainbow_style4.checked) {
+								istep = 255 / wr_text.length;
+								for (i = 1; i < wr_text.length + 1; i++) {
+									if (wr_text.charCodeAt(i - 1) != 32) {
+										r = 0;
+										g = 174;
+										b += istep;
+										if (r > 255) r = 255;
+										if (g > 255) g = 255;
+										if (b > 255) b = 255;
+										wr_rgb = '';
+										wr_rgb += parseInt(r).toString(16).length == 1 ? 0 + parseInt(r).toString(16) : parseInt(r).toString(16);
+										wr_rgb += parseInt(g).toString(16).length == 1 ? 0 + parseInt(g).toString(16) : parseInt(g).toString(16);
+										wr_rgb += parseInt(255 - b).toString(16).length == 1 ? 0 + parseInt(255 - b).toString(16) : parseInt(255 - b)
+											.toString(16);
+										wr_rgb = wr_rgb.toUpperCase();
+										if (type == "ubb") {
+											wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(i - 1) + '[/color]';
+										} else {
+											wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(i - 1) + '</font>';
+										}
+									} else {
+										wr_code += wr_text.charAt(i - 1);
+									}
+								}
+							} else if (win_rainbow_style5.checked) {
+								r1 = parseInt("0x" + String(wr_rgb1).substr(0, 2));
+								g1 = parseInt("0x" + String(wr_rgb1).substr(2, 2));
+								b1 = parseInt("0x" + String(wr_rgb1).substr(4, 2));
+								r2 = parseInt("0x" + String(wr_rgb2).substr(0, 2));
+								g2 = parseInt("0x" + String(wr_rgb2).substr(2, 2));
+								b2 = parseInt("0x" + String(wr_rgb2).substr(4, 2));
+								if (isNaN(r1)) r1 = 0;
+								if (isNaN(g1)) g1 = 0;
+								if (isNaN(b1)) b1 = 0;
+								if (isNaN(r2)) r2 = 0;
+								if (isNaN(g2)) g2 = 0;
+								if (isNaN(b2)) b2 = 0;
+								istep = 255 / wr_text.length;
+								for (i = 1; i < wr_text.length + 1; i++) {
+									if (wr_text.charCodeAt(i - 1) != 32) {
+										wr_rgb = '';
+										wr_rgb += parseInt(r1).toString(16).length == 1 ? 0 + parseInt(r1).toString(16) : parseInt(r1).toString(16);
+										wr_rgb += parseInt(g1).toString(16).length == 1 ? 0 + parseInt(g1).toString(16) : parseInt(g1).toString(16);
+										wr_rgb += parseInt(b1).toString(16).length == 1 ? 0 + parseInt(b1).toString(16) : parseInt(b1).toString(16);
+										wr_rgb = wr_rgb.toUpperCase();
+										if (type == "ubb") {
+											wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(i - 1) + '[/color]';
+										} else {
+											wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(i - 1) + '</font>';
+										}
+										r1 > r2 ? r1 -= istep : r1 += istep;
+										g1 > g2 ? g1 -= istep : g1 += istep;
+										b1 > b2 ? b1 -= istep : b1 += istep;
+										if (r1 > 255) r1 = 255;
+										if (r1 < 0) r1 = 0;
+										if (g1 > 255) g1 = 255;
+										if (g1 < 0) g1 = 0;
+										if (b1 > 255) b1 = 255;
+										if (b1 < 0) b1 = 0;
+									} else {
+										wr_code += wr_text.charAt(i - 1);
+									}
+								}
+							}
+							$("#xmp-html").text(wr_code);
+							if (type == "ubb") {
+								wr_code = wr_code.replace(/\[color=#/g, '<font color="#');
+								wr_code = wr_code.replace(/\[\/color]/g, "<\/font>");
+								wr_code = wr_code.replace(/\]/g, '">');
+								$("#panel-preview").html(wr_code);
+							} else {
+								$("#panel-preview").html(wr_code);
+							}
+						}
+
+						function wr_style(num) {
+							frcolor = $("#text-fore-color").val();
+							bgcolor = $("#text-back-color").val();
+							var view = $(".view-color");
+							if (num < 5) linearHide(num);
+							else {
+								$("#color-picker").css("opacity","1");
+								view.css("background-image", "linear-gradient(to right," + frcolor + "," + bgcolor + ")");
+								for(var i=1;i<=5;i++)
+									$("#linear"+i).css("opacity","0");
+								setTimeout(function() {
+									for(var i=1;i<=5;i++)
+										$("#linear"+i).css("display","none");
+								},250);
+								$("#view-color-tag")[0].innerHTML = "设定颜色";
+								$(".choose-color").css("opacity", "1");
+								// $("body").append("test ");
+							}
+							for (var i = 1; i < 6; i++) {
+								document.getElementById("win_rainbow_style" + i).checked = false;
+							}
+							document.getElementById("win_rainbow_style" + num).checked = true;
+							if (num === 5) {
+								document.getElementById("text-fore-color").disabled = "";
+								document.getElementById("text-back-color").disabled = "";
+							} else {
+								document.getElementById("text-fore-color").disabled = "disabled";
+								document.getElementById("text-back-color").disabled = "disabled";
+							}
+						}
+						
+						function linearHide(id) {
+							if($("#linear1").is(':hidden')){
+								for(var i=1;i<=5;i++)
+									$("#linear"+i).css("display","");
+								setTimeout(function() {
+									$("#linear"+id).css("opacity","1");
+									$("#linear5").css("opacity","1");
+									$("#color-picker").css("opacity","0");
+								},100);
+							}
+							else {
+								$("#linear"+id).css("opacity","1");
+							//setTimeout(function() {
+								for(var i=1;i<=4;i++)
+									if(i!=id)
+										$("#linear"+i).css("opacity","0");
+								$("#color-picker").css("opacity","0");
+							}
+							setTimeout(function() {
+								$(".view-color").css("background-image", $("#linear"+id).css("background-image"));
+							},250);
+							$("#view-color-tag")[0].innerHTML = "预览颜色";
+							$(".choose-color").css("opacity", "0");
+						}
+
+						$(".cp-color-picker").click(function() {
+							wr_style(5);
+						});
+						/* $(".custom-radio").click(function() {
+							var i;
+							for(i=1;i<=5;i++) {
+								if($("#win_rainbow_style"+i).is(":checked"))
+									break;
+							}
+							wr_style(i);
+						}); */
+						/* $("#color-picker").focus(function() {
+							for(i=1;i<=5;i++) {
+								$("#win_rainbow_style"+i).attr("disabled","disabled");
+							}
+						}); */
+						
+					</script>
+					<script src="../../NightTime.js"></script>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			.input-1 {
+				padding: 6px 17px;
+			}
+			.btn-times {
+				width: 45px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4 class="mb-3">辗转相除法和更相减损术</h4>
+			<div class="input-group mb-2">
+				<div class="input-group-prepend">
+					<label class="input-group-text input-group-addon input-1" for="txt1">1</span>
+				</div>
+				<input type="number" class="form-control" id="txt1">
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(1)"><i class="fa fa-times fa-fw"></i></button>
+				</div>
+			</div>
+			<div class="input-group mb-3">
+				<div class="input-group-prepend">
+					<label class="input-group-text input-group-addon input-1" for="txt2">2</span>
+				</div>
+				<input type="number" class="form-control" id="txt2">
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(2)"><i class="fa fa-times fa-fw"></i></button>
+				</div>
+			</div>
+			<div class="btn-group btn-block mb-3" role="group">
+				<button type="button" onclick="ans(0)" class="btn btn-info">辗转相除法</i></button>
+				<button type="button" onclick="ans(1)" class="btn btn-primary">更相减损术</i></button>
+			</div>
+			<div class="input-group mb-2">
+				<div class="input-group-prepend">
+					<label class="input-group-text input-group-addon" for="txt3">最大公约数</span>
+				</div>
+				<input type="text" class="form-control" id="txt3">
+			</div>
+			<div class="input-group mb-2">
+				<div class="input-group-prepend">
+					<label class="input-group-text input-group-addon" for="txt4">最小公倍数</span>
+				</div>
+				<input type="text" class="form-control" id="txt4">
+			</div>
+		</div>
+		<script>
+			$("label").click(function() {
+				$("#" + $(this).attr("for")).select();
+			});
+			function clearText(id) {
+				var input = $("#txt" + id);
+				input.val("");
+				input.select();
+			}
+			function ans(mode){
+				var a=$("#txt1").val(), b=$("#txt2").val(),c,d;
+				a=Math.floor(Math.abs(a));
+				b=Math.floor(Math.abs(b));
+				$("#txt1").val(a);
+				$("#txt2").val(b);
+				if(a==0||b==0){	//不能有零
+					c=0;
+					$("body").css("background-color","red");
+					setTimeout(function(){
+						$("body").css("background-color","");
+					},250);
+				}
+				else {
+					if(mode==0) c=zzxcf(a,b);
+					else c=gxjss(a,b);
+				}
+				$("#txt3").val(c);
+				$("#txt4").val(c!=0?a*b/c:0); //最小公倍数
+			}
+			function zzxcf(a,b) {
+				return a<=b?(b%a==0?a:zzxcf(a,b%a)):(a%b==0?b:zzxcf(b,a%b));
+			}
+			function gxjss(a,b) {
+				while(a!=b) //相等时就结束，返回a或b其中之一就可
+					if(a>b) a=a-b;
+					else b=b-a;
+				return a;
+			}
+			document.onkeydown = function(e) {
+				if (window.event.keyCode == 13){
+					if ($("#txt1").is(":focus")) $("#txt2").focus();
+					else if ($("#txt2").is(":focus")){
+						ans(0);
+						$("input").blur();
+					}
+				}
+			}
+		</script>
+		<script src="../NightTime.js"></script>
+	</body>
+</html>

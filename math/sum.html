@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="math.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,.input-group-append,.col-lg-4,h1,h2,h3,h4,h5,h6{transition: all 300ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			.input-label {
+				padding: 6px 17px;
+				background-color: rgba(0,0,0,0);
+			}
+			.btn-times {
+				width: 45px;
+				border-color: #ced4da;
+			}
+			.r-radius {
+				border-top-right-radius:    .25rem !important;
+				border-bottom-right-radius: .25rem !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="input-group mb-2" id="number0" style="display:none;margin-top:1.5em;opacity:0;">
+			<div class="input-group-prepend">
+				<label class="input-group-text input-group-addon input-label" id="label0" for="num0">0</span>
+			</div>
+			<input type="number" class="form-control r-radius" id="num0">
+			<div class="input-group-append" style="width:0;display:none">
+				<button class="btn btn-outline-secondary btn-times" type="button" id="trash0"><i class="fa fa fa-trash fa-fw"></i></button>
+			</div>
+		</div>
+		<!-- 以上的输入框是当作模板使用的 -->
+		<input type="text" id="clip-text" style="display:none">
+		<!-- 以上的文本框是用于放置剪贴板内容来复制使用的 -->
+		<div class="container-fluid">
+			<h4>
+				<span title="起初的经典名字，实际上本工具不仅仅能做如此。" data-toggle="tooltip">三数求和</span>
+			</h4>
+			<div class="row">
+				<div class="col-lg-4 mb-2" id="handle-area">
+					<div class="btn" style="cursor:auto">
+						<button type="button" onclick="ans(0)" class="btn btn-primary mb-2">求和</button>
+						<button type="button" onclick="ans(1)" class="btn btn-primary mb-2">求积</button>
+						<button type="button" onclick="ans(2)" class="btn btn-primary mb-2">平均数</button>
+						<button type="button" onclick="ans(3)" class="btn btn-primary mb-2">方差</button>
+						<button type="button" onclick="ans(4)" class="btn btn-primary mb-2">标准差</button>
+						<button type="button" onclick="ans(5)" class="btn btn-primary mb-2">极差</button>
+						<button type="button" onclick="ans(6)" class="btn btn-primary mb-2">偏差和</button>
+					</div>
+					<div class="card" id="distance-card" style="height:0;border-width:0;overflow:hidden">
+						<div class="card-body" id="distance-body" style="/*padding:0 20px*/">
+							<h5 class="card-title">计算结果</h5>
+							<p class="card-text" id="result" style="text-align:center"></p>
+							<a href="javascript:void(0);" id="clip-btn" class="card-link" title="复制到剪贴板" data-toggle="tooltip">复制结果</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-8">
+					<div class="mb-3" id="multi-number">
+						<!-- 此处放置输入框组 -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			$(document).ready(function() {
+				$('[data-toggle="tooltip"]').tooltip();
+				math.config({number: 'BigNumber'});
+				//以下是创建输入框元素部分
+				createNew();
+			});
+			var n=0,result="";
+			function nightDo(){
+				$('head').append(`<style>
+				.btn-times {
+					border-color: rgb(173,181,189);
+				}
+				</style>`);
+			}
+			function createNew() {
+				n++;
+				var newNumber = $("#number0").clone(true);
+				newNumber.attr("id","number"+n);
+				var label=newNumber.find("#label0"),
+					input=newNumber.find("#num0"),
+					trash=newNumber.find("#trash0");
+				label.attr({"for":"num"+n,"id":"label"+n});
+				label.html(n);
+				input.attr("id","num"+n);
+				input.attr("onchange",`notNew(${n})`);
+				trash.attr("id","trash"+n);
+				newNumber.show();
+				$("#multi-number").append(newNumber);
+				setTimeout(function(){
+					$("#number"+n).css({"margin-top":"","opacity":""});
+				},100);
+				return n;
+			}
+			$(".btn-times").click(function(){
+				deleteText(this.id);
+			});
+			function notNew(id){
+				if($("#num"+id).val()!=""){
+					$("#num"+id).attr("onchange","");
+					$("#num"+id).removeClass("r-radius");
+					$("#trash"+id).parent().show();
+					$("#trash"+id).parent().animate({
+						width: "45px"
+					}, 250);
+					createNew();
+				}
+			}
+			function deleteText(id) {
+				var idn=id.replace("trash","");
+				// $("#number"+idn).css({"opacity":"0"});
+				$("#number"+idn).css("overflow","hidden");
+				var curHeight = $("#number"+idn).height();
+				$("#number"+idn).height(curHeight).animate({
+					height: 0
+				}, 250);
+				setTimeout(function(){
+					$("#number"+idn).remove();
+					idn=parseInt(idn);
+					for(var i=idn+1;i<=n;i++){
+						var belowNumber=$("#number"+i), j=i-1;
+						belowNumber.attr("id","number"+j);
+						var label=belowNumber.find("#label"+i),
+							input=belowNumber.find("#num"+i),
+							trash=belowNumber.find("#trash"+i);
+						label.attr({"for":"num"+j,"id":"label"+j});
+						label.html(j);
+						input.attr("id","num"+j);
+						if(i==n) input.attr("onchange",`notNew(${j})`);
+						trash.attr("id","trash"+j);
+					}
+					return --n;
+				},500);
+			}
+			function cardResize(element) {
+				setTimeout(function() {
+					var el = $(element),
+						curHeight = el.height(),
+						autoHeight = el.css('height', 'auto').height();
+					if(result=="NaN"){ //(legacy:) autoHeight==40
+						autoHeight=0;
+						$(element).css("border-width","0px");
+						$("#handle-area").removeClass("mb-3").addClass("mb-2");
+					}
+					else{
+						$(element).css("border-width","1px");
+						$("#handle-area").removeClass("mb-2").addClass("mb-3");
+					}
+					el.height(curHeight).animate({
+						height: autoHeight
+					}, 250);
+				}, 250);
+			}
+			
+			document.onkeydown = function(e) {
+				// $('.input-group').tooltip('hide')
+				if (window.event.keyCode == 13) {
+					if ($(":focus").length > 0) {
+						var now = $(":focus").attr("id").replace("num","");
+						var time=(now==n?250:0);
+						now=parseInt(now)+1;
+						setTimeout(function(){
+							$("#num"+now).select();
+						}, time);
+					}
+				}
+			}
+			function ans(mode){
+				if(n==1) return false;
+				var num=new Array(), a, c;
+				for(var i=1;i<n;i++){
+					if($("#num"+i).val()=="") continue;
+					num.push($("#num"+i).val());
+				}
+				switch(mode){
+					case 0:c="Σ="  ;a=sum(num);break;
+					case 1:c="Π="  ;a=product(num);break;
+					case 2:c="x̄="  ;a=average(num);break;
+					case 3:c="s²=" ;a=variance(num);break;
+					case 4:c="s="  ;a=standard(num);break;
+					case 5:c="R="  ;a=range(num);break;
+					case 6:c="|r|=";a=distance(num);break;
+					default:break;
+				}
+				a=a.toString();
+				$("#result").html(a!="NaN"?c+a:"");
+				result=a;
+				cardResize("#distance-card");
+				console.log(a);
+				return a;
+			}
+			function sum(num){
+				var a=0;
+				for(var i=0;i<num.length;i++)
+					//a+=parseFloat(num[i]==""?0:num[i]);
+					a=math.evaluate(a+"+"+num[i]);
+				return a;
+			}
+			function product(num){
+				var a=1;
+				for(var i=0;i<num.length;i++)
+					//a*=(num[i]==""?1:num[i]);
+					a=math.evaluate(a+"*"+num[i]);
+				return a;
+			}
+			function average(num){
+				//return sum(num)/num.length;
+				return math.evaluate(sum(num)+"/"+num.length);
+			}
+			function variance(num){
+				var a=0, aver=average(num);
+				for(var i=0;i<num.length;i++)
+					//a+=Math.pow(num[i]-aver,2);
+					a=math.evaluate(a+"+"+math.pow(math.evaluate(num[i]+"-"+aver),2))
+				//return a/num.length;
+				return math.evaluate(a+"/"+num.length)
+			}
+			function standard(num){
+				return math.sqrt(variance(num));
+			}
+			function distance(num){
+				var a=0, aver=average(num);
+				for(var i=0;i<num.length;i++)
+					//a+=Math.abs(num[i]-aver);
+					a=math.evaluate(a+"+"+math.abs(math.evaluate(num[i]+"-"+aver)));
+				//return a/num.length;
+				return math.evaluate(a+"/"+num.length)
+			}
+			function range(num){
+				var max,min;
+				for(var i=0;i<num.length;i++){
+					if(num[i]=="") continue;
+					max=num[i];min=num[i];
+					break;
+				}
+				for(var i=0;i<num.length;i++){
+					if(num[i]=="") continue;
+					if(num[i]-0>max) max=num[i];
+					if(num[i]-0<min) min=num[i];
+				}
+				//return (max===undefined?0:max-min);
+				return (max===undefined?0:math.evaluate(max+"-"+min));
+			}
+			String.prototype.find = function(ch) {
+				return (this.split(ch)).length - 1;
+			}
+			
+			//复制到剪贴板
+			$("#clip-btn").click(function(){
+				$("#clip-text").show().val(result).select();
+				document.execCommand("copy");
+				$("#clip-text").hide();
+				$("#clip-btn").focus();
+				clipboardReact("已复制");
+			});
+			function clipboardReact(title) {
+				var clipbtn = $("#clip-btn");
+				clipbtn.focus();
+				clipbtn.attr('title', title).tooltip('_fixTitle').tooltip('show');
+				setTimeout(function() {
+					clipbtn.attr('title', "复制到剪贴板").tooltip('_fixTitle');
+					clipbtn.mouseout(function() {
+						clipbtn.tooltip('hide');
+					});
+				}, 500);
+			}
+			window.onresize = function() {
+				if($("#distance-card").height()!=0) cardResize("#distance-card");
+			}
+		</script>
+		<script src="../NightTime.js"></script>
+	</body>
+</html>

@@ -1,0 +1,393 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>拼音格式化</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="description" content="对键盘输入的拼音进行格式化处理">
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script> -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="js/pinyin_dict_withtone.js"></script>
+		<script src="js/pinyinUtil.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+		<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+		 crossorigin="anonymous"> -->
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		
+		<style>
+			body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out;}
+			html, body { 
+			  scroll-behavior:smooth; 
+			}
+			body {
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Noto Sans', 'San Francisco', 微软雅黑, 思源黑体, 苹方, '等距更纱黑体 SC', sans-serif;
+				transition: all 250ms ease-in-out;
+			}
+			input {
+				background-color: inherit;
+			}
+			table {
+				width: 100%;
+			}
+			button {
+				transition: all 250ms ease-in-out !important;
+			}
+				
+			.use-italic, button, select, input, textarea {
+				font-style:inherit;
+			}
+			
+			#userHelp, #userHelpOn {
+				cursor: help;
+				transition: all 0.3s;
+				margin-left: 0.75em;
+			}
+			
+			#userHelpOn, #userHelp:hover {
+				color:var(--blue);
+			}
+			
+			#help {
+				display: block;
+				height: auto;
+				max-height: 0px;
+				min-height: 0px;
+				overflow: hidden;
+				opacity: 0;
+				padding: 0 1.25rem;
+				margin-bottom: 0;
+			}
+			
+			#modeGroup {
+				max-height: 300px;
+				transition: all 250ms ease-out;
+				opacity: 1;
+				margin-bottom: 1rem;
+			}
+			
+			#dialog {
+				width: 90%;
+				position: fixed;
+				top: -8px;
+				left: 0;
+				right: 0;
+				padding-top: 0.5em;
+				margin: auto;
+				text-align: center;
+				vertical-align: middle;
+				z-index: 10;
+				opacity: 0;
+			}
+			.alert-dismissible {
+				box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.4);
+				padding-right: inherit;
+				padding-left: inherit;
+			}
+			.expand-ref-td {
+				text-align: right;
+				padding-right: 5px;
+			}
+			#expandRef {
+				transform: rotate(0deg);
+				transition: all 500ms ease-in-out;
+			}
+			#refList {
+				/* overflow: hidden;
+				max-height: 0px;
+				transition: all 250ms ease-in-out; */
+			}
+			#expand_ref_bar {
+				cursor: zoom-in;
+				color: inherit;
+				transition: all 250ms ease-in-out;
+			}
+			#expand_ref_bar:hover {
+				color: var(--info); /* rgb(2,117,216) */
+			}
+			.list-group-item {
+				padding: 0.5rem 1.25rem;
+				transition: all 250ms ease-in-out;
+			}
+			
+			.pointer-cursor {
+				cursor: pointer;
+			}
+			
+			.dropdown-menu {
+				box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.4);
+				padding: 0;
+			}
+			.dropdown-item {
+				padding: .75rem 1.5rem;
+			}
+			
+			.modal-body p{
+				margin-bottom: 0.25rem;
+			}
+			.user-help-button {
+				cursor: help;
+				margin-left: 0.5em;
+				transition: all 250ms ease-in-out;
+			}
+			.user-help-button:hover, .help-keep-on {
+				color: var(--blue);
+			}
+			.list-group{
+				margin-top:1em;
+				font-size:90%;
+			}
+			.block {
+				display: block;
+			}
+			.link-in-list, .link-in-list:hover {
+				text-decoration:none;
+			}
+			textarea.form-control {
+				height: 38px;
+				min-height: 38px;
+				width: 0 !important;
+				transition: box-shadow 250ms ease, background-color 250ms ease, color 250ms ease !important;
+				vertical-align: middle;
+			}
+			.radius-top {
+				border-top-left-radius:  4px !important;
+				border-top-right-radius: 4px !important;
+			}
+			.radius-bottom {
+				border-bottom-left-radius:  4px !important;
+				border-bottom-right-radius: 4px !important;
+			}
+			.left, .tooltip-inner {
+				text-align: left;
+				max-width: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<nav style="display:none" class="navbar navbar-expand-lg navbar-light bg-light">
+			<a class="navbar-brand" style="cursor:default"><img src="../caption-logo.svg" width="30" height="30" alt="" loading="lazy"></a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="../option.html">主页</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="index.html">抽象话生成器</a>
+					</li>
+					<li class="nav-item active">
+						<a class="nav-link" href="javascript:void(0);">拼音格式化<span class="sr-only">（当前）</span></a>
+					</li>
+				</ul>
+				<span class="navbar-text" style="font-size:75%">
+					Powered by Bootstrap
+				</span>
+			</div>
+		</nav>
+		<div class="container-fluid">
+			<h1 style="margin:20px 0">拼音格式化</h1>
+			<hr />
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="form-group">
+						<label for="imei" style="display:block">
+							选择转换模式
+						</label>
+						<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+							<label class="btn btn-outline-secondary active" onclick="modeChange(0)">
+								<input type="radio" name="mode" id="pinyin" checked> 汉语拼音
+							</label>
+							<label class="btn btn-outline-secondary" onclick="modeChange(1)">
+								<input type="radio" name="mode" id="bopomofo"> 注音符号
+							</label>
+							<label class="btn btn-outline-secondary" onclick="modeChange(2)" style="width:6em">
+								<input type="radio" name="mode" id="romatzyh"> 国语罗马字
+							</label>
+						</div>
+					</div>
+					<div class="form-group" id="modeGroup">
+						<label for="imei" style="display:block">
+							选择转换类型
+						</label>
+						<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+							<label class="btn btn-outline-secondary active" onclick="typeChange(0)">
+								<input type="radio" name="type" id="small" checked> 小写字母
+							</label>
+							<label class="btn btn-outline-secondary" onclick="typeChange(1)">
+								<input type="radio" name="type" id="capital"> 大写字母
+							</label>
+							<label class="btn btn-outline-secondary" onclick="typeChange(2)" style="width:6em">
+								<input type="radio" name="type" id="smallcapital"> 小型大写字母
+							</label>
+						</div>
+
+						<div class="form-check form-check-inline" id="initial" style="margin: 1em 0 0.5em;" onclick="tryChecked(1)">
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="initialAll" value="all">
+								<label class="custom-control-label" for="initialAll">全部首字母大写</label>
+							</div>
+							<div class="custom-control custom-checkbox" style="margin-left:0.5em">
+								<input type="checkbox" class="custom-control-input" id="initialFirst" value="first">
+								<label class="custom-control-label" for="initialFirst">仅第一个首字母大写</label>
+							</div>
+						</div>
+					</div>
+					<div class="input-group mb-3" style="margin-top:0.5em" onchange="tryChecked(1)">
+						<div class="input-group-prepend">
+							<label class="input-group-text" for="sep" onclick="$('#sep').select()">选择分隔符</label>
+						</div>
+						<input type="text" class="form-control" id="sep" value="（空格）">
+						<div class="input-group-append">
+							<button class="btn btn-outline-secondary dropdown-toggle" id="dropdown-button" type="button" data-toggle="dropdown" aria-haspopup="true"
+							 aria-expanded="false" style="width:42px"></button>
+							 <span id="tooltip-for-dropdown" title="从列表中选择常用的预设分隔符" data-toggle="tooltip" style="width:42px;height:38px;position:absolute"></span>
+							<div class="dropdown-menu">
+								<table>
+									<td><a class="dropdown-item" data-toggle="tooltip" title="空格" href="javascript:void(dropSep('（空格）'))">（空格）</a></td>
+									<td><a class="dropdown-item" data-toggle="tooltip" data-html="true" data-template='<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner left"></div></div>' title="不设置分隔符<br>此时会触发隔音符号，<br>用“直单引号(')”表示。" href="javascript:void(dropSep('（留空）'))">（留空）</a></td>
+								</table>
+								<table>
+									<tr>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="直单引号/撇号" href="javascript:void(dropSep('\''))">'</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="弯右单引号" href="javascript:void(dropSep('’'))">’</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="管道符/竖杠" href="javascript:void(dropSep('|'))">|</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="连字线/减号" href="javascript:void(dropSep('-'))">-</a></td>
+									</tr>
+									<div role="separator" class="dropdown-divider" style="margin:0"></div>
+									<tr>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="下划线" href="javascript:void(dropSep('_'))">_</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="分隔号/斜杠" href="javascript:void(dropSep('/'))">/</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="转义符/反斜杠" href="javascript:void(dropSep('\\'))">\</a></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-8">
+					<div class="form-group">
+						<label for="rawText">
+							要转换的拼音<!-- <i class="fa fa-question-circle" id="userHelp" onclick="show_user_help()"></i><i class="fa fa-question-circle"
+							 id="userHelpOn" onclick="show_user_help()" style="display:none"></i> -->
+						</label>
+						<span data-toggle="modal" data-target="#helpModal">
+						  <i class="fa fa-question-circle user-help-button" title="查看使用提示" data-toggle="tooltip" data-offset="0,10px" data-placement="right"></i>
+						</span>
+						<!-- Modal -->
+						<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="exampleModalLabel" style="display:none" aria-hidden="true">
+						  <div class="modal-dialog modal-dialog-scrollable">
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <h5 class="modal-title" id="ModalLabel">使用提示</h5>
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						          <span aria-hidden="true">&times;</span>
+						        </button>
+						      </div>
+						      <div class="modal-body">
+						        <p>例如欲得到：<span id="sampleResult">xiè zuì</span><br /></p>
+						        <p>请输入：<code>xie4'zui4</code><br /></p>
+						        <!--拼音间的直单引号“'”不能省略。<br />-->
+						        <p>拼音末尾的数字表示：1-阴平；2-阳平；3-上声；4-去声；<span id="include5">5-入声；</span>0-轻声。<br /></p>
+								<hr />
+								<!-- <ul class="list-group">
+									<li class="list-group-item"><a class="text-info block" href="https://github.com/otomad/otomad.github.io">在 GitHub 上查阅当前项目</a></li>
+									<li class="list-group-item list-group-item-attr" id="expand_ref_bar" style="color:rgb(108,117,125);" onclick="expandReference()">
+										所使用的开源代码：
+										<span class="expand-ref-td" style="float:right"><i class="fa fa-angle-down" id="expandRef"></i></span>
+									<span id="refList" style="display:none">
+										<li class="list-group-item"><a class="text-info block" href="https://getbootstrap.com/">Bootstrap</a></li>
+										<li class="list-group-item list-group-item-attr"><a class="text-info" href="index.html">抽象话生成器</a> - <a class="text-info" href="http://www.duylw.com/">来自宇露网</a></li>
+										<li class="list-group-item"><a class="text-info block" href="https://github.com/sxei/pinyinjs/"></a></li>
+									</span>
+									</li>
+								</ul> -->
+								<div class="list-group">
+								  <a href="https://github.com/otomad/otomad.github.io" target="_blank" class="list-group-item list-group-item-action radius-top primary-mark">在 GitHub 上查阅当前项目更多信息……</a>
+								  <a href="javascript:void(expandReference());" class="list-group-item list-group-item-action radius-bottom primary-mark" id="refBar" style="padding-right:15px">
+									  所使用的开源代码：<span class="expand-ref-td" style="float:right"><i class="fa fa-angle-down" id="expandRef"></i></span>
+								  </a>
+								  <span style="display:none" id="refList">
+								  <a href="https://getbootstrap.com/" class="list-group-item list-group-item-action">Bootstrap</a>
+								  <span class="list-group-item list-group-item-action"><span class="pointer-cursor" onclick="window.location.href='index.html'">抽象话生成器</span> - <span class="pointer-cursor" onclick="window.open('http://www.duylw.com/')">来自宇露网</span></span>
+								  <a href="https://github.com/sxei/pinyinjs/" target="_blank" class="list-group-item list-group-item-action radius-bottom">GitHub - sxei/pinyinjs：一个实现汉字与拼音互转的小巧web工具库</a>
+								  </span>
+								</div>
+						      </div>
+						      <div class="modal-footer">
+						        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="modal-ok-button">了然</button>
+						      </div>
+						    </div>
+						  </div>
+						</div>
+						<!-- <div class="alert alert-info alert-dismissable" id="help">
+							<h4>使用提示：</h4>
+							例如欲得到：<span id="sampleResult">xiè zuì</span><br />
+							请输入：<code style="color:inherit">xie4'zui4</code><br />
+							拼音间的直单引号“'”不能省略。<br />
+							拼音末尾的数字表示：1-阴平；2-阳平；3-上声；4-去声；<span id="include5">5-入声；</span>0-轻声。<br />
+						</div> -->
+						<div class="input-group mb-3">
+							<textarea type="text" class="form-control" id="rawText" autofocus placeholder="输入你要转换的拼音"></textarea>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="resetText()" title="重设" data-toggle="tooltip">
+									<i class="fa fa-times fa-fw" style="max-width:16px"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+					<button class="btn btn-primary btn-block" onclick="getResult()" id="create">
+						生成
+					</button>
+					<div class="form-group">
+						<label for="resultText">
+							<br />转换结果
+						</label>
+						<div class="input-group mb-3">
+							<textarea type="text" class="form-control" id="resultText"></textarea>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" id="d_clip_button" data-clipboard-target="#resultText"
+								 onclick="copyToClipboard()" title="复制结果" data-toggle="tooltip" data-placement="bottom">
+									<i class="fa fa-copy"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br />
+			<span class="btn-group-toggle" data-toggle="buttons">
+				<label class="btn btn-outline-secondary btn-sm" style="cursor:help" onclick="italic()">
+					<input type="checkbox" id="italicCheck"><span id="italicLabel">开启斜体</span>
+				</label>
+			</span>
+			<span class="btn-group-toggle" data-toggle="buttons">
+				<label class="btn btn-outline-secondary btn-sm" id="lisuBtn" style="margin-left:0.25em;opacity:0;display:none"
+				 onclick="lisu()">
+					<input type="checkbox" id="lisuCheck"><span id="lisuLabel" data-toggle="tooltip" data-html="true" data-offset="0,15px" data-placement="right" title="　当前：大写拉丁字母<br>单击后：老傈僳文　　">老傈僳文</span>
+				</label>
+			</span>
+			<br /><br />
+			<a id="test" style="display:none">字</a>
+		</div>
+		<!-- “已复制”消息框 -->
+		<div id="dialog" style="display:none">
+			<div class="alert alert-dismissible alert-success">
+			  <i class="fa fa-check" style="margin-right:0.5em"></i><b>已复制！</b>
+			</div>
+		</div>
+		
+		<script src="js/pyfmt.js"></script>
+		<script src="js/pyfmt-appearance.js"></script>
+		<script src="../NightTime.js"></script>
+		<script type="text/javascript">
+			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>
+			body,.input-group,label,.input-group,.form-control,.card,.card-body,#distance,h1,h2,h4,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			.fa-times {
+				max-width: 16px;
+			}
+			.clearfix:after {
+				content: '\20';
+				display: block;
+				height: 0;
+				clear: both;
+				visibility: hidden;
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-8">
+					<h4>相差时间</h4>
+					<div class="form-group">
+						<label for="time1">开始时间</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="time1" placeholder="yyyy/M/d h:mm:ss"></input>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="currentTime(1)">当前时间</button>
+							</div>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="clearText(1)"><i class="fa fa-times fa-fw"></i></button>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="time2">结束时间</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="time2" placeholder="yyyy/M/d h:mm:ss"></input>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="currentTime(2)">当前时间</button>
+							</div>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="clearText(2)"><i class="fa fa-times fa-fw"></i></button>
+							</div>
+						</div>
+					</div>
+					<button class="btn btn-primary btn-block mb-1" id="distance">相差时间</button>
+					<div class="card" id="distance-card" style="height:0;border:none;overflow:hidden">
+						<div class="card-body" id="distance-body" style="padding:0 20px">
+							<span id="distance-result"></span>
+						</div>
+					</div>
+					<!-- <hr /> -->
+					<h4>时间推算</h4>
+					<div class="form-group">
+						<label for="time3">初始时间</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="time3" placeholder="yyyy/M/d h:mm:ss"></input>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="currentTime(3)">当前时间</button>
+							</div>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="clearText(3)"><i class="fa fa-times fa-fw"></i></button>
+							</div>
+						</div>
+					</div>
+					<div class="clearfix">
+						<button class="btn btn-outline-secondary" type="button" onclick="clearPolationText()" style="float:right"><i
+							 class="fa fa-times fa-fw"></i></button>
+						<label style="margin:7px 0 14px">推算时间</label>
+					</div>
+					<div id="polation-text">
+						<div class="form-row">
+							<div class="form-group col-sm mb-0">
+								<div class="input-group mb-2">
+									<input type="number" class="form-control" id="polation-week">
+									<div class="input-group-append">
+										<label class="input-group-text input-group-addon" for="polation-week">周</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-sm mb-0">
+								<div class="input-group mb-2">
+									<input type="number" class="form-control" id="polation-day">
+									<div class="input-group-append">
+										<label class="input-group-text input-group-addon" for="polation-day">天</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-sm mb-0">
+								<div class="input-group mb-2">
+									<input type="number" class="form-control" id="polation-hour">
+									<div class="input-group-append">
+										<label class="input-group-text input-group-addon" for="polation-hour">小时</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-sm mb-0">
+								<div class="input-group mb-2">
+									<input type="number" class="form-control" id="polation-minute">
+									<div class="input-group-append">
+										<label class="input-group-text input-group-addon" for="polation-minute">分钟</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-sm mb-0">
+								<div class="input-group mb-3">
+									<input type="number" class="form-control" id="polation-second">
+									<div class="input-group-append">
+										<label class="input-group-text input-group-addon" for="polation-second">秒钟</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<button class="btn btn-primary btn-block mb-3" id="polation">时间推算</button>
+					<div class="form-group mb-2">
+						<div class="input-group">
+							<input type="text" class="form-control" id="time4" placeholder="推算结果"></input>
+						</div>
+					</div>
+					<!-- <hr /> -->
+					<h4>时间计算器</h4>
+					<div class="form-group mb-3">
+						<div class="input-group">
+							<input type="time" class="form-control" id="time7" placeholder="h:mm:ss" value="00:00:00"></input>
+							<div class="input-group-append" style="margin:0 -1px">
+								<label class="input-group-text input-group-addon">+</span>
+							</div>
+							<input type="time" class="form-control" id="time8" placeholder="h:mm:ss" value="00:00:00"></input>
+						</div>
+					</div>
+					<button class="btn btn-primary btn-block mb-3" id="count">时间计算（加法）</button>
+					<input type="text" class="form-control" id="time9" placeholder="计算结果"></input>
+				</div>
+				<!-- <hr /> -->
+				<div class="col-lg-4">
+					<h4>时间戳</h4>
+					<div class="form-group mb-3">
+						<div class="input-group">
+							<input type="text" class="form-control" id="time5" placeholder="yyyy/M/d h:mm:ss"></input>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="currentTime(5)">当前时间</button>
+							</div>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="clearText(5)"><i class="fa fa-times fa-fw"></i></button>
+							</div>
+						</div>
+					</div>
+					<div class="btn-group btn-block mb-3" role="group">
+					  <button type="button" id="to-timestamp" class="btn btn-primary"><i class="fa fa-arrow-down" style="margin-right:0.25em"></i>转时间戳</button>
+					  <button type="button" id="to-date" class="btn btn-secondary"><i class="fa fa-arrow-up" style="margin-right:0.25em"></i>转年月日</button>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<input type="number" class="form-control" id="time6" placeholder="此处输入时间戳"></input>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="currentTimestamp()">当前时间</button>
+							</div>
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary" type="button" onclick="clearText(6)"><i class="fa fa-times fa-fw"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br />
+	</body>
+	<script>
+		function currentTime(index) {
+			$("#time" + index).val(new Date().format("yyyy/M/d h:mm:ss"));
+		}
+		function currentTimestamp() {
+			$("#time6").val(new Date().getTime());
+		}
+
+		$("#distance").click(function() {
+			var a = $("#time1").val(),
+				b = $("#time2").val();
+			a = stringToDate(a);
+			b = stringToDate(b);
+			var c = b - a;
+			var result = $("#distance-result");
+			var s = trunc(c / 1000),
+				m = trunc(s / 60),
+				h = trunc(m / 60),
+				d = trunc(h / 24),
+				w = trunc(d / 7),
+				M = trunc(d / 30),
+				y = trunc(d / 365);
+			s += " 秒";
+			m = (!m ? "" : "<br>" + m + " 分钟");
+			h = (!h ? "" : "<br>" + h + " 小时");
+			d = (!d ? "" : "<br>" + d + " 天");
+			w = (!w ? "" : "<br>" + w + " 周");
+			M = (!M ? "" : "<br>" + M + " 月");
+			y = (!y ? "" : "<br>" + y + " 年");
+			result.html(s != "NaN 秒" ? s + m + h + d + w + M + y : "");
+			if (s == "NaN 秒") {
+				$("#distance").removeClass("mb-3");
+				$("#distance").addClass("mb-1");
+				$("#distance-card").css("border", "none");
+				$("#distance-body").css("padding", "0 20px");
+			} else {
+				$("#distance").removeClass("mb-1");
+				$("#distance").addClass("mb-3");
+				$("#distance-card").css("border", "");
+				$("#distance-body").css("padding", "");
+			}
+			cardResize("#distance-card");
+		});
+		
+		$("#polation").click(function(){
+			var a = stringToDate($("#time3").val());
+			a=timestamp(a);
+			var b=$("#polation-week").val()*604800000+$("#polation-day").val()*86400000+$("#polation-hour").val()*3600000+$("#polation-minute").val()*60000+$("#polation-second").val()*1000;
+			var c=a+b;
+			$("#time4").val(dateTo(c));
+		});
+		
+		$("#to-timestamp").click(function(){
+			var a = stringToDate($("#time5").val());
+			$("#time6").val(timestamp(a));
+		});
+		$("#to-date").click(function(){
+			var a = parseInt($("#time6").val());
+			$("#time5").val(dateTo(a));
+			if($("#time6").val()=="") $("#time5").val("");
+		});
+		
+		$("#count").click(function(){
+			var a = $("#time7").val().split(":"),
+				b = $("#time8").val().split(":");
+			for(var i=0;i<3;i++) {
+				if(a[i]===undefined) a[i]=0;
+				if(b[i]===undefined) b[i]=0;
+				a[i]=parseInt(a[i]);
+				b[i]=parseInt(b[i]);
+			}
+			c = a[0]*3600+a[1]*60+a[2]+b[0]*3600+b[1]*60+b[2];
+			var h = trunc(c / 3600),
+				m = trunc(c / 60)-h*60,
+				s = trunc(c)-h*3600-m*60;
+			h=h%24;
+			if(m<10) m="0"+m;
+			if(s<10) s="0"+s;
+			$("#time9").val(h+":"+m+":"+s);
+		});
+
+		function cardResize(element) {
+			setTimeout(function() {
+				var el = $(element),
+					curHeight = el.height(),
+					autoHeight = el.css('height', 'auto').height();
+				if(autoHeight==1) autoHeight--;
+				el.height(curHeight).animate({
+					height: autoHeight
+				}, 250);
+			}, 250);
+		}
+
+		function dateTo(data){ //时间戳转换为年月日时分秒
+		      var date = new Date(data);
+		      var Y = date.getFullYear() + '/';
+		      var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '/';
+		      var D = (date.getDate() < 10 ? '0'+date.getDate() : date.getDate()) + ' ';
+		      var h = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours()) + ':';
+		      var m = (date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()) + ':';
+		      var s = (date.getSeconds() < 10 ? '0'+date.getSeconds() : date.getSeconds());
+		      var strDate = Y+M+D+h+m+s;
+		      return strDate;
+		}
+		function timestamp(data){ //时间对象转换为时间戳
+			return data.getTime();
+		}
+
+		Date.prototype.format = function(format) {
+			var o = {
+				"M+": this.getMonth() + 1, //month
+				"d+": this.getDate(), //day
+				"h+": this.getHours(), //hour
+				"m+": this.getMinutes(), //minute
+				"s+": this.getSeconds(), //second
+				"q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+				"S": this.getMilliseconds() //millisecond
+			}
+			if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+				(this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			for (var k in o)
+				if (new RegExp("(" + k + ")").test(format))
+					format = format.replace(RegExp.$1,
+						RegExp.$1.length == 1 ? o[k] :
+						("00" + o[k]).substr(("" + o[k]).length));
+			return format;
+		}
+
+		String.prototype.find = function(ch) {
+			return (this.split(ch)).length - 1;
+		}
+
+		function trunc(num) {
+			var ans = num,
+				neg = 0;
+			if (num < 0) {
+				ans = -ans;
+				neg = 1;
+			}
+			ans = Math.floor(ans);
+			if (neg == 1) ans = -ans;
+			return ans;
+		}
+
+		function clearText(id) {
+			var input = $("#time" + id);
+			input.val("");
+			input.select();
+		}
+
+		function clearPolationText() {
+			var t=["polation-week","polation-day","polation-hour","polation-minute","polation-second"];
+			for(var i=0;i<t.length;i++)
+				$("#"+t[i]).val("");
+		}
+
+		function stringToDate(str) {
+			var str1 = str.trim()
+			str1 = str1.replace(/-/g, "/");
+			str1 = str1.replace(/\./g, "/");
+			var dateTimes = str1.find("/");
+			var timeTimes = str1.find(":");
+			if (str1.find(" ") == 0) {
+				if (dateTimes == 0) {
+					str1 = "0/0/0 " + str1;
+					dateTimes = 2
+				} else {
+					str1 += " 0:0:0";
+					timeTimes = 2
+				}
+			}
+			if (dateTimes == 0) str1 = "0/0/" + str1;
+			else if (dateTimes == 1) str1 = "0/" + str1;
+			else if (dateTimes > 2) return undefined;
+			else if (timeTimes == 0) str1 += ":0:0"
+			else if (timeTimes == 1) str1 += ":0"
+			else if (timeTimes > 2) return undefined;
+			var tempStrs = str1.split(" ");
+			var dateStrs = tempStrs[0].split("/");
+			var year = parseInt(dateStrs[0], 10);
+			var month = parseInt(dateStrs[1], 10) - 1;
+			var day = parseInt(dateStrs[2], 10);
+			var timeStrs = tempStrs[1].split(":");
+			var hour = parseInt(timeStrs[0], 10);
+			var minute = parseInt(timeStrs[1], 10);
+			var second = parseInt(timeStrs[2], 10);
+			var date = new Date(year, month, day, hour, minute, second);
+			return date;
+		}
+		// console.log(stringToDate("2020-9-26 1:43:12"));
+		window.onresize = function() {
+			cardResize();
+		}
+		document.onkeydown = function(e) {
+			if (window.event.keyCode == 13){ //window.event.keyCode = 9;
+				if($("#time2").is(":focus")) $("#distance").focus();
+				else if($("#polation-second").is(":focus")) $("#polation").focus();
+				else if($("#time8").is(":focus")) $("#count").focus();
+				else if($("#time5").is(":focus")) $("#to-timestamp").focus();
+				else if($("#time6").is(":focus")) $("#to-date").focus();
+				else tabInput($("input"));
+			}
+		}
+		function tabInput() {
+			for (var i = 0; i < arguments[0].length; i++) {
+				// var arg = $("#" + arguments[i].id);
+				if ($("#" + arguments[0][i].id).is(":focus")) {
+					if (i == arguments[0].length - 1)
+						$("#" + arguments[0][i].id).blur();
+					else {
+						$("#" + arguments[0][i + 1].id).focus();
+						$("#" + arguments[0][i + 1].id).select();
+					}
+					break;
+				}
+			}
+		}
+	</script>
+	<script src="../NightTime.js"></script>
+</html>

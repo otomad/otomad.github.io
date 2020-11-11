@@ -1,0 +1,141 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>数学工具</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="description" content="求解各种数学问题">
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<!-- <script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script> -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>body,.input-group,label,.input-group,.form-control,.nav-link,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h1 {
+				padding: 16px 32px .5rem;
+				font-size: 1.75rem;
+			}
+			html, body{
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				overflow-y: hidden;
+				overflow-x: hidden;
+			}
+			iframe{
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				border: 0;
+				/* position: absolute; */
+				width: 100%;
+				height: 100%;
+				/* overflow-y: hidden; */
+			}
+			.nav-link {
+				padding: .5rem 32px;
+				cursor: pointer;
+			}
+			.nav-link-hr {
+				height: 0;
+				border-bottom: 1px solid var(--secondary);
+				padding: 0;
+				margin: 5px 1rem;
+			}
+			.nav-pills {
+				display: block;
+				padding-bottom: 12px;
+				overflow: auto;
+			}
+        </style>
+	</head>
+
+	<body>
+		<div class="row">
+			<div class="col-lg-3" id="nav-part">
+				<button type="button" id="nav-toggler" class="btn btn-outline-secondary" style="float:right;margin:12px 15px 0 0;width:48px;display:none"><i class="fa fa-navicon"></i></button>
+				<h1><i class="fa fa-angle-left" style="margin-right:.5em;cursor:pointer" onclick="window.location.href='../option.html';"></i>数学工具</h1>
+				<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical" style="display:none">
+					<a class="nav-link" id="v-sum"      data-toggle="pill">三数求和</a>
+					<a class="nav-link" id="v-prime"    data-toggle="pill">求质数</a>
+					<a class="nav-link" id="v-factor"   data-toggle="pill">公约数与公倍数</a>
+					<a class="nav-link" id="v-carry"    data-toggle="pill">进位制转换</a>
+					<a class="nav-link" id="v-horner"   data-toggle="pill">秦九韶算法</a>
+					<a class="nav-link" id="v-vertical" data-toggle="pill">竖式计算</a>
+					<a class="nav-link" id="v-date"     data-toggle="pill">日期推算</a>
+					<a class="nav-link" id="v-color"    data-toggle="pill">颜色模型转换</a>
+					<a class="nav-link" id="v-hue"      data-toggle="pill">图片主色调</a>
+					<a class="nav-link" id="v-matrix"   data-toggle="pill">矩阵计算器</a>
+					<a class="nav-link" id="v-amount"   data-toggle="pill">大写数字</a>
+					<a class="nav-link" id="v-bv2av"    data-toggle="pill" href="bv2av/index.html">AV/BV号转换</a>
+					<div class="nav-link-hr"></div>
+					<a class="nav-link" id="v-more"     data-toggle="pill">更多工具</a>
+				</div>
+			</div>
+			<div class="col-lg-9">
+				<iframe id="iframe" src=""></iframe>
+			</div>
+		</div>
+		<script>
+			/* function nightDo(){
+				$("h1").css("margin","16px 32px");
+			} */
+			$(document).ready(function() {
+				resizeIframe();
+				// document.documentElement.scrollTop = document.body.scrollTop = 0;
+				do {
+					var arg=location.href;
+					var n=arg.indexOf("?");
+					if(n==-1) {arg=""; break;}
+					var title = arg.slice(n+1);
+					arg=title+".html";
+				} while(0);
+				document.getElementById("iframe").src=(n!=-1?arg:"");
+				if(n!=-1) findActive(title);
+			});
+			window.onresize = function(){
+				resizeIframe();
+			}
+			$("#nav-toggler").click(function(){
+				$('#v-pills-tab').slideToggle();
+			});
+			function resizeIframe() {
+				var iframeHeight = $(window).height();
+				if($(window).width()<992){
+					iframeHeight -= 60;
+					$(".col-lg-3").css("padding-right","15px");
+					$(".col-lg-9").css("padding-left","15px");
+					$('#v-pills-tab').slideUp();
+					$("#nav-toggler").show();
+					$("h1").css("padding","16px 15px .5rem");
+					$(".nav-link").css("padding",".5rem 15px");
+				}
+				else{
+					$(".col-lg-3").css("padding-right","0");
+					$(".col-lg-9").css("padding-left","0");
+					$('#v-pills-tab').slideDown();
+					$("#nav-toggler").hide();
+					$("h1").css("padding","16px 32px .5rem");
+					$(".nav-link").css("padding",".5rem 32px");
+				}
+				$("#iframe").height(iframeHeight);
+			}
+			$(".nav-link").click(function(){
+				if($(window).width()<992)
+					$('#v-pills-tab').slideUp();
+				document.title = this.innerHTML + " - 数学工具";
+				var state = this.id.slice(2);
+				var path = state + ".html";
+				document.getElementById("iframe").src=path;
+				window.history.pushState("","","?"+state);
+			});
+			function findActive(name) {
+				$(".active").removeClass("active");
+				$("#v-"+name).addClass("active");
+			}
+		</script>
+		<script src="../NightTime.js"></script>
+	</body>
+</html>
