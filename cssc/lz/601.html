@@ -1,0 +1,184 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>拼音格式化</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!-- <script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"> -->
+		<style>
+			.center {
+				position: fixed;
+				top: 0px;
+				left: 0px;
+				right: 0px;
+				bottom: 0px;
+				margin: auto;
+				width: 144px;
+				height: 192px;
+				transition: width 500ms ease-in-out;
+			}
+
+			.rotate {
+				animation: spin 0.5s linear infinite;
+			}
+			
+			.card{
+				background: white;
+				border-radius: 5px;
+				transition: transform 500ms ease-in-out;
+				transform: scale(0);
+			}
+			
+			.center-text{
+				font-weight: bold;
+				line-height: 192px;
+				text-align: center;
+				font-size: 150%;
+			}
+			.left-up, .right-down{
+				position: absolute;
+				padding: 5px 8px;
+				text-align: center;
+			}
+			.left-up{
+				top: 0;
+			}
+			.right-down{
+				bottom: 0;
+				right: 0;
+				transform: rotate(180deg);
+			}
+
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+
+			body {
+				background-color: rgb(39, 40, 34);
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="center card" onclick="hideCard()">
+			<div class="center-text">黑桃 A</div>
+			<div class="left-up">♠&#65039;<br>A</div>
+			<div class="right-down">♠&#65039;<br>A</div>
+		</div>
+		<img src="1900100601.jpg" class="center rotate" id="full" onclick="showCard()" />
+		<script>
+			function getMousePos(o,x,y,event){                //o-->对象;x,y-->相对鼠标指针的偏移距离;event-->事件对象;
+			    var posX = 0,posY = 0;                        //临时变量
+				var cx=72,cy=86;	//半个图片长宽度
+			    var event = event || window.event;            //标准化事件对象
+			    if(event.pageX || event.pageY){               //获取鼠标指针的当前坐标值
+			        posX = event.pageX;
+			        posY = event.pageY;        
+			    }else if(event.clientX || event.clientY){    
+			        posX = event.clientX + document.documentElement.scrollLeft + document.body.scrollLeft;
+			        posY = event.clientY + document.documentElement.scrollTop + document.body.scrollTop;
+			    };
+			    o.style.position = 'absolute';                //定义当前对象为绝对位置
+			    o.style.left = (posX + x-cx) + 'px';             //用鼠标指针的x轴坐标和传入偏移值设置对象x轴坐标
+			    o.style.top = (posY + y-cy) + 'px';              //用鼠标指针的y轴坐标和传入偏移值设置对象y轴坐标
+				o.style.right = "inherit";
+				o.style.bottom = "inherit";
+			}
+			
+			var pic = document.getElementById('full');
+			var card = document.getElementsByClassName('card')[0];
+			
+			window.onload = function(){
+			    document.onmousemove = function(event){
+			        getMousePos(pic,10,10,event);
+			    }
+			}
+			
+			function showCard(){
+				var rand=Math.floor(Math.random() * (54 - 1)),
+					flower=Math.floor(rand/13)+1,
+					number=Math.floor(rand%13)+1;
+				rand++;
+				console.log(rand+','+flower+','+number);
+				var flowerEmoji="♠♥♣♦",
+					flowerName=["黑桃","红桃","梅花","方片"],
+					corner,center;
+				if(flower<5){
+					var num=number;
+					if(num==1) num='A';
+					else if(num==11) num='J';
+					else if(num==12) num='Q';
+					else if(num==13) num='K';
+					corner=flowerEmoji[flower-1]+"&#65039;<br>"+num;
+					center=flowerName[flower-1]+" "+num;
+				}
+				else{
+					corner="JOKER";
+					if(rand==53) center="小王";
+					else center="大王";
+				}
+				document.getElementsByClassName('left-up')[0].innerHTML=corner;
+				document.getElementsByClassName('right-down')[0].innerHTML=corner;
+				document.getElementsByClassName('center-text')[0].innerHTML=center;
+				if(flower==2||flower==4||rand==54) document.body.style.color="red";
+				else document.body.style.color="black";
+				//
+				pic.style.width=0+'px';
+				card.style.transform = "scale(1)";
+			}
+			
+			function hideCard(){
+				pic.style.width=144+'px';
+				card.style.transform = "scale(0)";
+			}
+			
+			
+			/* window.onload = function() {
+				var div = document.querySelector("div");
+				document.querySelector("#full").onclick = function() {
+					if (div.requestFullscreen) {
+						div.requestFullscreen();
+					} else if (div.webkitRequestFullScreen) {
+						div.webkitRequestFullScreen();
+					} else if (div.mozRequestFullScreen) {
+						div.mozRequestFullScreen();
+					} else if (div.msRequestFullScreen) {
+						div.msRequestFullScreen();
+					}
+				}
+			}
+			var box = document.getElementById('full');
+			box.onmousedown = function() {
+				var disX = event.clientX - this.offsetLeft;
+				var disY = event.clientY - this.offsetTop;
+				// 复制一个跟box一样的div
+				var clone = this.cloneNode();
+				clone.removeAttribute('id');
+				clone.style.opacity = 0.3;
+				document.body.appendChild(clone);
+
+				document.onmousemove = function() {
+					clone.style.left = event.clientX - disX + "px";
+					clone.style.top = event.clientY - disY + "px";
+				}
+				document.onmouseup = function() {
+					document.onmousemove = null;
+					box.style.left = clone.style.left;
+					box.style.top = clone.style.top;
+					document.body.removeChild(clone);
+				}
+			}
+			//onmousemove
+			//onmouseup */
+		</script>
+	</body>
+</html>

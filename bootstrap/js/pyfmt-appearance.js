@@ -43,27 +43,21 @@ function show_user_help() {
 $(".user-help-button").click(function(){
 	$(".user-help-button").addClass("help-keep-on");
 });
-$("#modal-ok-button").click(function(){
+$('#helpModal').on('hide.bs.modal', function () {
+	if(!($("#refList").is(':hidden')))
+		$("#refBar").click();
 	setTimeout(function(){
 		$(".user-help-button").removeClass("help-keep-on");
 	},500);
 });
 
-function dropSep(sep) {
-	document.getElementById("sep").value = sep;
-	/* $(".dropdown-menu").css("opacity", "0");
-	setTimeout(function() {
-		$(".dropdown-menu").css("display", "none");
-	}, 250)
-	setTimeout(function() {
-		$(".dropdown-menu").css("display", "");
-		$(".dropdown-menu").css("opacity", "1");
-	}, 300) */
+$(".dropdown-item").click(function(){
+	$("#sep").val(this.text);
 	tryChecked(1);
-}
+});
 
 //引用参考资料
-function expandReference() {
+$("#refBar").click(function(){
 	/* var refList = document.getElementById("refList");
 	var refButton = document.getElementById("expandRef");
 	var expand_ref_bar = document.getElementById("expand_ref_bar");
@@ -85,19 +79,17 @@ function expandReference() {
 	if($("#refList").is(':hidden')){
 		$("#refBar").removeClass("radius-bottom");
 		$("#expandRef").css("transform","rotate(-180deg)");
-		$(".primary-mark").addClass("list-group-item-primary");
-		$(".primary-mark").css("color","#1d2f42");
+		$(".primary-mark").addClass("list-group-item-primary").css("color","#1d2f42");
 	}
 	else{
 		$("#refBar").addClass("radius-bottom");
 		$("#expandRef").css("transform","rotate(0deg)");
-		$(".primary-mark").removeClass("list-group-item-primary");
-		$(".primary-mark").css("color","inherit");
+		$(".primary-mark").removeClass("list-group-item-primary").css("color","inherit");
 	}
 	$("#refList").slideToggle("fast");
-}
+});
 //类型参数转换
-var type_small = document.getElementById('small');
+/* var type_small = document.getElementById('small');
 var type_capital = document.getElementById('capital');
 var type_smallcapital = document.getElementById('smallcapital');
 var type_all = document.getElementById('initialAll');
@@ -105,8 +97,9 @@ var type_first = document.getElementById('initialFirst');
 var mode_pinyin = document.getElementById('pinyin');
 var mode_bopomofo = document.getElementById('bopomofo');
 var mode_romatzyh = document.getElementById('romatzyh');
+var mode_ghhszm = document.getElementById('ghhszm');
 var mode_group = document.getElementById('modeGroup');
-var lisuBtn = document.getElementById('lisuBtn');
+var lisuBtn = document.getElementById('lisuBtn'); */
 /* $("#initial").find(".checkbox").each(function() {
 	$(this).click(function() {
 		var cur = $(this).attr('id');
@@ -119,52 +112,56 @@ var lisuBtn = document.getElementById('lisuBtn');
 	});
 }); */
 $("#initialAll").click(function() {
-	var initialFirst = document.getElementById("initialFirst");
-	initialFirst.checked = false;
+	$("#initialFirst").prop("checked", false);
 })
 $("#initialFirst").click(function() {
-	var initialAll = document.getElementById("initialAll");
-	initialAll.checked = false;
+	$("#initialAll").prop("checked", false);
 })
 
 function lisuShow(show) {
-	if (show == 1) {
-		lisuBtn.style.display = "";
-		setTimeout(function() {
-			lisuBtn.style.opacity = "1";
-			lisuBtn.style.transition = "all 250ms ease-out";
-			lisuBtn.style.cursor = "wait";
-		}, 100); //lisuShowWaiting(num)
-	} else {
-		lisuBtn.style.opacity = "0";
-		lisuBtn.style.transition = "all 250ms ease-out";
-		setTimeout(function() {
-			lisuBtn.style.display = "none";
-		}, 100);
-	}
+	if (show) $("#lisuBtn").fadeIn("fast");
+	else $("#lisuBtn").fadeOut("fast");
 }
 
-function typeChange(num) {
-	switch (num) {
-		case 1:
-			$("#initialAll").attr("disabled", "disabled");
-			$("#initialFirst").attr("disabled", "disabled");
-			type_all.checked = false;
-			type_first.checked = false;
-			break;
-		default:
-			$("#initialAll").removeAttr("disabled");
-			$("#initialFirst").removeAttr("disabled")
-			break;
-	}
+$('[name="type"]').parent().click(function(){	//typeChange
+	if ($(this).index() == 1)
+		$("#initialAll, #initialFirst").prop({"disabled":true,"checked":false});
+	else
+		$("#initialAll, #initialFirst").removeAttr("disabled");
 	setTimeout("tryChecked(1)", 100);
-}
+});
 
-function modeChange(num) {
-	switch (num) {
+$('[name="mode"]').parent().click(function(){	//modeChange
+	var num = $(this).index(),
+		el = $("#modeGroup").css("overflow", "hidden"),
+		curHeight = el.height(),
+		autoHeight = el.css('height', 'auto').height(),
+		opacity = 1,
+		mb = "1rem";
+	if(num == 1 || num == 3) {
+		autoHeight = 0;
+		opacity = 0;
+		mb = ".5rem";
+	}
+	el.height(curHeight).animate({
+		height: autoHeight,
+	}, 250).css({
+		"opacity": opacity,
+		"margin-bottom": mb
+	});
+	if(autoHeight != 0) setTimeout(function(){
+		$("#modeGroup").css({
+			"overflow": "",
+			"height": "auto"
+		});
+	}, 500);
+	//“官话合声字母 说明”部分
+	el = $("#ghhszm-msg");
+	if(num == 3) el.slideDown(500);
+	else el.slideUp(500);
+	/* switch (num) {
 		case 1:
 			mode_group.style.maxHeight = "0px";
-			mode_group.style.transition = "all 250ms ease-out";
 			mode_group.style.opacity = "0";
 			mode_group.style.marginBottom = "0.5rem";
 			setTimeout(function() {
@@ -175,99 +172,86 @@ function modeChange(num) {
 			mode_group.style.display = "";
 			setTimeout(function() {
 				mode_group.style.maxHeight = "300px";
-				mode_group.style.transition = "all 250ms ease-out";
 				mode_group.style.opacity = "1";
 				mode_group.style.marginBottom = "1rem";
 			}, 1)
 			break;
-	}
+	} */
 	setTimeout("tryChecked(1)", 100);
-}
+});
 
 //复制到剪贴板
-function copyToClipboard() {
+$("#d_clip_button").click(function(){
 	$("#resultText").select();
 	document.execCommand("copy");
 	showDialog();
 	$("#d_clip_button").focus();
 	clipboardReact("已复制");
-}
+});
 function clipboardReact(title) {
 	var clipbtn = $("#d_clip_button");
-	clipbtn.focus();
-	clipbtn.attr('title', title).tooltip('_fixTitle').tooltip('show');
+	clipbtn.focus().attr('title', title).tooltip('_fixTitle').tooltip('show');
 	setTimeout(function() {
-		clipbtn.attr('title', "复制结果").tooltip('_fixTitle');
-		clipbtn.mouseout(function() {
+		clipbtn.attr('title', "复制结果").tooltip('_fixTitle').mouseout(function() {
 			clipbtn.tooltip('hide');
 		});
 	}, 500);
 }
 
 function resetText() {
-	$("#rawText").val("");
-	$("#rawText").select();
+	$("#rawText").val("").select();
 	textarea_resize();
 }
 
 function showDialog() {
-	var dialog = document.getElementById("dialog");
-	dialog.style.display = "";
+	var dialog = $("#dialog").show();
 	setTimeout(function() {
-		dialog.style.top = "8px";
-		dialog.style.opacity = "1";
-		dialog.style.transition = "all 250ms ease-out";
+		dialog.css({
+			"top": "8px",
+			"opacity": 1
+		})
 	}, 1);
 	setTimeout(function() {
-		dialog.style.top = "-8px";
-		dialog.style.opacity = "0";
-		dialog.style.transition = "all 250ms ease-in";
+		dialog.css({
+			"top": "-8px",
+			"opacity": 0
+		})
 		setTimeout(function() {
-			dialog.style.display = "none";
+			dialog.hide();
 		}, 250)
 	}, 1500);
 }
 
 //弹出dropdown的toggle也可以同时显示tooltips
-$("#dropdown-button").hover(function(){
+$("#dropdown-button").hover(dropdownTooltipShow); //暂时不知道为什么不能用on
+$("#dropdown-button").focus(dropdownTooltipShow);
+$("#dropdown-button").mouseout(dropdownTooltipHide);
+$("#dropdown-button").blur(dropdownTooltipHide);
+$("#dropdown-button").click(dropdownTooltipHide);
+$(".fa-chevron-down").hover(dropdownTooltipShow);
+function dropdownTooltipShow() {
 	$('#tooltip-for-dropdown').tooltip('show');
-});
-$("#dropdown-button").focus(function(){
-	$('#tooltip-for-dropdown').tooltip('show');
-});
-$("#dropdown-button").mouseout(function(){
+}
+function dropdownTooltipHide() {
 	$('#tooltip-for-dropdown').tooltip('hide');
-});
-$("#dropdown-button").blur(function(){
-	$('#tooltip-for-dropdown').tooltip('hide');
-});
-$("#dropdown-button").click(function(){
-	$('#tooltip-for-dropdown').tooltip('hide');
-});
+}
 
 //老傈僳文
 var lisuIsOpen = 0;
 
-function lisu() {
-	var result = document.getElementById("resultText").value;
-	var lisuCheck = document.getElementById("lisuCheck");
-	if (lisuCheck.checked == false || lisuIsOpen == 0) {
+$("#lisuBtn").click(function(){
+	var result = $("#resultText").val();
+	if (!($("#lisuCheck").is(":checked")) || lisuIsOpen == 0) {
 		result = lisuData(1);
 		lisuIsOpen = 1;
-		// document.getElementById("lisuLabel").innerHTML = "拉丁字母";
-		$("#lisuLabel")[0].innerHTML = "拉丁字母";
-		// document.getElementById("lisuLabel").title = "当前：\t老傈僳文\n单击后：\t大写拉丁字母";
-		$("#lisuLabel").attr('title',"　当前：老傈僳文　　<br>单击后：大写拉丁字母").tooltip('_fixTitle').tooltip('show');
+		$("#lisuLabel").html("拉丁字母").attr('title',"　当前：老傈僳文　　<br>单击后：大写拉丁字母").tooltip('_fixTitle').tooltip('show');
 	} else {
 		result = lisuData(0);
 		lisuIsOpen = 0;
-		// document.getElementById("lisuLabel").innerHTML = "老傈僳文";
-		$("#lisuLabel")[0].innerHTML = "老傈僳文";
-		// document.getElementById("lisuLabel").title = "当前：\t大写拉丁字母\n单击后：\t老傈僳文";
-		$("#lisuLabel").attr('title',"　当前：大写拉丁字母<br>单击后：老傈僳文　　").tooltip('_fixTitle').tooltip('show');
+		$("#lisuLabel").html("老傈僳文").attr('title',"　当前：大写拉丁字母<br>单击后：老傈僳文　　").tooltip('_fixTitle').tooltip('show');
 	}
-	document.getElementById("resultText").value = result;
-}
+	$("#resultText").val(result);
+});
 
 var upperLatin = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,R,S,T,U,V,W,X,Y,Z";
 var lisuLetter = "ꓮ,ꓐ,ꓚ,ꓓ,ꓰ,ꓝ,ꓖ,ꓧ,ꓲ,ꓙ,ꓗ,ꓡ,ꓟ,ꓠ,ꓳ,ꓑ,ꓣ,ꓢ,ꓔ,ꓴ,ꓦ,ꓪ,ꓫ,ꓬ,ꓜ";
@@ -280,52 +264,38 @@ function lisuData(pos = 1) {
 	return result;
 }
 //生成
-var mode = 0,
-	type = 0,
-	input, output, raw, result, sep;
+var mode = 0, type = 0, input, output, raw, result, sep;
 
 function tryChecked(sample) { //检查模式与类型勾选情况
-	if (mode_pinyin.checked == true) mode = 0;
-	if (mode_bopomofo.checked == true) mode = 1;
-	if (mode_romatzyh.checked == true) mode = 2;
-	if (type_small.checked == true) type = 0;
-	if (type_capital.checked == true) type = 1;
-	if (type_smallcapital.checked == true) type = 2;
-	if (type_all.checked == true) type = type + 3;
-	if (type_first.checked == true) type = type + 4;
+	mode = $('[name="mode"]').parent().siblings(".active").index();
+	type = $('[name="type"]').parent().siblings(".active").index();
+	if ($("#initialAll").is(":checked")) type += 3;
+	if ($("#initialFirst").is(":checked")) type += 4;
 	//更改使用提示的示例文本
 	if (sample == 1) {
-		var lisuCheck = document.getElementById("lisuCheck");
 		if (!(mode == 2 && type == 1 && lisuIsOpen == 1)) {
-			lisuCheck.checked == true;
 			lisuIsOpen = 0;
-			document.getElementById("lisuBtn").className = "btn btn-outline-secondary btn-sm"
-			// document.getElementById("lisuLabel").title = "当前：\t大写拉丁字母\n单击后：\t老傈僳文";
+			$("#lisuBtn").attr("class","btn btn-outline-secondary btn-sm");
 			$("#lisuLabel").attr('title',"　当前：大写拉丁字母<br>单击后：老傈僳文　　").tooltip('_fixTitle');
 			setTimeout(function() {
-				// document.getElementById("lisuLabel").innerHTML = "老傈僳文";
-				$("#lisuLabel")[0].innerHTML = "老傈僳文";
+				$("#lisuLabel").html("老傈僳文");
 			}, 250); //waitForChangeLisuBtnName()
 		}
-		if (mode == 2) document.getElementById('include5').innerHTML = "";
-		else document.getElementById('include5').innerHTML = "5-入声；";
+		$('#include5').html($('[name="mode"]')[mode].dataset.include5.trim().bool()?"5-入声；":"");
 		if (mode == 2 && type == 1) lisuShow(1);
 		else lisuShow(0);
-		document.getElementById('sampleResult').innerHTML = converse("xie4'zui4", $('#sep').val());
+		$('#sampleResult').html(converse("xie4'zui4", $('#sep').val()));
 		getResult();
 	}
 }
 
 $('#rawText').bind('keyup', function(event) {
-	if (event.keyCode == "13") {
-		//回车执行查询
-		getResult();
-	}
+	if (event.keyCode == "13") getResult(); //回车执行查询
 });
 
 function getResult() {
 	tryChecked(0);
-	document.getElementById("resultText").value = converse($('#rawText').val(), $('#sep').val());
+	$("#resultText").val(converse($('#rawText').val(), $('#sep').val()));
 	textarea_resize();
 }
 
@@ -335,21 +305,18 @@ function converse(FPraw, FPsep = " ") {
 	if (sep == "（留空）") sep = "";
 	preRaw();
 	sentence();
-	if (lisuIsOpen == 1) {
-		result = lisuData(1)
-	}
-	result = result.replace(/undefined/g, "");
-	return result;
+	if (lisuIsOpen == 1) result = lisuData(1);
+	return result = result.replace(/undefined/g, "");
 }
 //开启斜体
 function italic() {
 	var italicCheck = document.getElementById("italicCheck");
-	if (italicCheck.checked == false) {
-		document.body.style.fontStyle = "italic";
-		document.getElementById("italicLabel").innerHTML = "恢复常规";
+	if ($("#italicCheck").is(":checked")) {
+		$("body").css("font-style","normal");
+		$("#italicLabel").html("开启斜体");
 	} else {
-		document.body.style.fontStyle = "normal";
-		document.getElementById("italicLabel").innerHTML = "开启斜体";
+		$("body").css("font-style","italic");
+		$("#italicLabel").html("恢复常规");
 	}
 }
 //raw处理
@@ -383,13 +350,13 @@ function backToAsciiPinyin(variant) {
 }
 
 //常用函数/对象
-String.prototype.replaces = function(stra, strb) {
+String.prototype.replaces = function(stra, strb, sep = ",") { //字符串批量替换
 	var s = this.valueOf(),
 		a = stra,
 		b = strb;
-	if (!Array.isArray(stra)) a = stra.split(",");
+	if (!Array.isArray(stra)) a = stra.split(sep);
 	if (strb) {
-		if (!Array.isArray(strb)) b = strb.split(",");
+		if (!Array.isArray(strb)) b = strb.split(sep);
 		for (var i = 0; i < a.length; i++)
 			s = s.replace(new RegExp(a[i], "g"), b[i])
 	} else
@@ -397,7 +364,7 @@ String.prototype.replaces = function(stra, strb) {
 			s = s.replace(new RegExp(a[i], "g"), "")
 	return s;
 }
-String.prototype.finds = function() {
+String.prototype.finds = function() { //字符串查找指定字符的数目
 	var n = 0,
 		arg = arguments;
 	if (arguments.length == 1)
@@ -408,9 +375,12 @@ String.prototype.finds = function() {
 				n++;
 	return n;
 }
-String.prototype.reverse = function() {
+String.prototype.reverse = function() { //字符串颠倒顺序
 	var t = "";
 	for (var i = this.length - 1; i >= 0; i--)
 		t += this[i];
 	return t;
 }
+String.prototype.bool = function() { //字符串转布尔型
+	return (/^true$/i).test(this);
+};

@@ -18,12 +18,14 @@
 		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
 		
 		<style>
-			body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out;}
-			html, body { 
-			  scroll-behavior:smooth; 
+			@font-face {
+				font-family: '官话合声字母仿宋';
+				src: url('fonts/ghhszm.otf');
 			}
-			body {
-				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Noto Sans', 'San Francisco', 微软雅黑, 思源黑体, 苹方, '等距更纱黑体 SC', sans-serif;
+			body,.input-group,label,.input-group,.form-control,#dialog,h1,h2,h3,h4,h5,h6{transition: all 250ms ease;}
+			html, body { 
+				scroll-behavior: smooth;
+				font-family: 官话合声字母仿宋, "官话合声字母仿宋 常规", 'Segoe UI', Tahoma, Geneva, Verdana, 'Noto Sans', 'San Francisco', 微软雅黑, 思源黑体, 苹方, '等距更纱黑体 SC', sans-serif;
 				transition: all 250ms ease-in-out;
 			}
 			input {
@@ -36,8 +38,8 @@
 				transition: all 250ms ease-in-out !important;
 			}
 				
-			.use-italic, button, select, input, textarea {
-				font-style:inherit;
+			.use-italic, button, select, input, textarea, .tooltip {
+				font-style: inherit !important;
 			}
 			
 			#userHelp, #userHelpOn {
@@ -112,7 +114,7 @@
 				transition: all 250ms ease-in-out;
 			}
 			
-			.pointer-cursor {
+			.pointer-cursor, a {
 				cursor: pointer;
 			}
 			
@@ -153,16 +155,25 @@
 				vertical-align: middle;
 			}
 			.radius-top {
-				border-top-left-radius:  4px !important;
-				border-top-right-radius: 4px !important;
+				border-top-left-radius:  .25rem !important;
+				border-top-right-radius: .25rem !important;
 			}
 			.radius-bottom {
-				border-bottom-left-radius:  4px !important;
-				border-bottom-right-radius: 4px !important;
+				border-bottom-left-radius:  .25rem !important;
+				border-bottom-right-radius: .25rem !important;
 			}
 			.left, .tooltip-inner {
 				text-align: left;
 				max-width: none;
+			}
+			h1 {
+				margin: 20px 0;
+			}
+			.alert {
+				padding: 1rem 1.25rem;
+			}
+			.list-group-item-action:focus, .list-group-item-action:hover{
+				outline: none;
 			}
 		</style>
 	</head>
@@ -192,39 +203,43 @@
 			</div>
 		</nav>
 		<div class="container-fluid">
-			<h1 style="margin:20px 0">拼音格式化</h1>
-			<hr />
+			<h1>拼音格式化</h1><hr />
 			<div class="row">
 				<div class="col-lg-4">
 					<div class="form-group">
-						<label for="imei" style="display:block">
-							选择转换模式
-						</label>
-						<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
-							<label class="btn btn-outline-secondary active" onclick="modeChange(0)">
-								<input type="radio" name="mode" id="pinyin" checked> 汉语拼音
+						<label class="block">选择转换模式</label>
+						<div class="btn-group-vertical btn-group-toggle btn-block" data-toggle="buttons">
+							<label class="btn btn-outline-secondary left active">
+								<input type="radio" name="mode" data-include5="true" id="pinyin" checked>汉语拼音
 							</label>
-							<label class="btn btn-outline-secondary" onclick="modeChange(1)">
-								<input type="radio" name="mode" id="bopomofo"> 注音符号
+							<label class="btn btn-outline-secondary left">
+								<input type="radio" name="mode" data-include5="true" id="bopomofo">注音符号
 							</label>
-							<label class="btn btn-outline-secondary" onclick="modeChange(2)" style="width:6em">
-								<input type="radio" name="mode" id="romatzyh"> 国语罗马字
+							<label class="btn btn-outline-secondary left">
+								<input type="radio" name="mode" data-include5="false" id="romatzyh">国语罗马字
+							</label>
+							<label class="btn btn-outline-secondary left">
+								<input type="radio" name="mode" data-include5="false" id="ghhszm">官话合声字母
 							</label>
 						</div>
 					</div>
+					<div class="alert alert-info alert-dismissable" id="ghhszm-msg" style="display:none">
+						<h4><b>官话合声字母</b> 说明：</h4>
+						<p>由于 Unicode 官方目前暂未收录该文字，目前通过私用区字形实现。</p>
+						<p>必须下载所需的字体文件才可以复制到其它地方也能正常显示（且必须手动调出对应字体，默认不显示），否则只能在本页面上显示。</p>
+						<p class="mb-0"><a href="https://zhuanlan.zhihu.com/p/110691578">点击此处去字体作者处下载字体</a>。</p>
+					</div>
 					<div class="form-group" id="modeGroup">
-						<label for="imei" style="display:block">
-							选择转换类型
-						</label>
+						<label class="block">选择转换类型</label>
 						<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
-							<label class="btn btn-outline-secondary active" onclick="typeChange(0)">
-								<input type="radio" name="type" id="small" checked> 小写字母
+							<label class="btn btn-outline-secondary active">
+								<input type="radio" name="type" id="small" checked>小写字母
 							</label>
-							<label class="btn btn-outline-secondary" onclick="typeChange(1)">
-								<input type="radio" name="type" id="capital"> 大写字母
+							<label class="btn btn-outline-secondary">
+								<input type="radio" name="type" id="capital">大写字母
 							</label>
-							<label class="btn btn-outline-secondary" onclick="typeChange(2)" style="width:6em">
-								<input type="radio" name="type" id="smallcapital"> 小型大写字母
+							<label class="btn btn-outline-secondary" style="width:6em">
+								<input type="radio" name="type" id="smallcapital">小型大写字母
 							</label>
 						</div>
 
@@ -245,26 +260,26 @@
 						</div>
 						<input type="text" class="form-control" id="sep" value="（空格）">
 						<div class="input-group-append">
-							<button class="btn btn-outline-secondary dropdown-toggle" id="dropdown-button" type="button" data-toggle="dropdown" aria-haspopup="true"
-							 aria-expanded="false" style="width:42px"></button>
-							 <span id="tooltip-for-dropdown" title="从列表中选择常用的预设分隔符" data-toggle="tooltip" style="width:42px;height:38px;position:absolute"></span>
+							<button class="btn btn-outline-secondary" id="dropdown-button" type="button" data-toggle="dropdown" aria-haspopup="true"
+							 aria-expanded="false" style="border-top-right-radius:.25rem;border-bottom-right-radius:.25rem"><i class="fa fa-chevron-down fa-fw" style="max-width:16px"></i></button>
+							<span id="tooltip-for-dropdown" title="从列表中选择常用的预设分隔符" data-toggle="tooltip" style="width:42px;height:38px;position:absolute;"></span>
 							<div class="dropdown-menu">
 								<table>
-									<td><a class="dropdown-item" data-toggle="tooltip" title="空格" href="javascript:void(dropSep('（空格）'))">（空格）</a></td>
-									<td><a class="dropdown-item" data-toggle="tooltip" data-html="true" data-template='<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner left"></div></div>' title="不设置分隔符<br>此时会触发隔音符号，<br>用“直单引号(')”表示。" href="javascript:void(dropSep('（留空）'))">（留空）</a></td>
+									<td><a class="dropdown-item" data-toggle="tooltip" title="空格">（空格）</a></td>
+									<td><a class="dropdown-item" data-toggle="tooltip" data-html="true" data-template='<div class="tooltip" role="tooltip"><div class="arrow"></div><div class="tooltip-inner left"></div></div>' title="不设置分隔符<br>此时会触发隔音符号，<br>用“直单引号(')”表示。">（留空）</a></td>
 								</table>
 								<table>
 									<tr>
-										<td><a class="dropdown-item" data-toggle="tooltip" title="直单引号/撇号" href="javascript:void(dropSep('\''))">'</a></td>
-										<td><a class="dropdown-item" data-toggle="tooltip" title="弯右单引号" href="javascript:void(dropSep('’'))">’</a></td>
-										<td><a class="dropdown-item" data-toggle="tooltip" title="管道符/竖杠" href="javascript:void(dropSep('|'))">|</a></td>
-										<td><a class="dropdown-item" data-toggle="tooltip" title="连字线/减号" href="javascript:void(dropSep('-'))">-</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="直单引号/撇号">'</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="弯右单引号">’</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="管道符/竖杠">|</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="连字线/减号">-</a></td>
 									</tr>
 									<div role="separator" class="dropdown-divider" style="margin:0"></div>
 									<tr>
-										<td><a class="dropdown-item" data-toggle="tooltip" title="下划线" href="javascript:void(dropSep('_'))">_</a></td>
-										<td><a class="dropdown-item" data-toggle="tooltip" title="分隔号/斜杠" href="javascript:void(dropSep('/'))">/</a></td>
-										<td><a class="dropdown-item" data-toggle="tooltip" title="转义符/反斜杠" href="javascript:void(dropSep('\\'))">\</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="下划线">_</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="分隔号/斜杠">/</a></td>
+										<td><a class="dropdown-item" data-toggle="tooltip" title="转义符/反斜杠">\</a></td>
 									</tr>
 								</table>
 							</div>
@@ -283,18 +298,18 @@
 						<!-- Modal -->
 						<div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="exampleModalLabel" style="display:none" aria-hidden="true">
 						  <div class="modal-dialog modal-dialog-scrollable">
-						    <div class="modal-content">
-						      <div class="modal-header">
-						        <h5 class="modal-title" id="ModalLabel">使用提示</h5>
-						        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						          <span aria-hidden="true">&times;</span>
-						        </button>
-						      </div>
-						      <div class="modal-body">
-						        <p>例如欲得到：<span id="sampleResult">xiè zuì</span><br /></p>
-						        <p>请输入：<code>xie4'zui4</code><br /></p>
-						        <!--拼音间的直单引号“'”不能省略。<br />-->
-						        <p>拼音末尾的数字表示：1-阴平；2-阳平；3-上声；4-去声；<span id="include5">5-入声；</span>0-轻声。<br /></p>
+							<div class="modal-content">
+							  <div class="modal-header">
+								<h5 class="modal-title" id="ModalLabel">使用提示</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								  <span aria-hidden="true">&times;</span>
+								</button>
+							  </div>
+							  <div class="modal-body">
+								<p>例如欲得到：<span id="sampleResult">xiè zuì</span><br /></p>
+								<p>请输入：<code>xie4'zui4</code><br /></p>
+								<!--拼音间的直单引号“'”不能省略。<br />-->
+								<p>拼音末尾的数字表示：1-阴平；2-阳平；3-上声；4-去声；<span id="include5">5-入声；</span>0-轻声。<br /></p>
 								<hr />
 								<!-- <ul class="list-group">
 									<li class="list-group-item"><a class="text-info block" href="https://github.com/otomad/otomad.github.io">在 GitHub 上查阅当前项目</a></li>
@@ -310,20 +325,21 @@
 								</ul> -->
 								<div class="list-group">
 								  <a href="https://github.com/otomad/otomad.github.io" target="_blank" class="list-group-item list-group-item-action radius-top primary-mark">在 GitHub 上查阅当前项目更多信息……</a>
-								  <a href="javascript:void(expandReference());" class="list-group-item list-group-item-action radius-bottom primary-mark" id="refBar" style="padding-right:15px">
+								  <a class="list-group-item list-group-item-action radius-bottom primary-mark" id="refBar" tabindex="0" style="padding-right:15px">
 									  所使用的开源代码：<span class="expand-ref-td" style="float:right"><i class="fa fa-angle-down" id="expandRef"></i></span>
 								  </a>
 								  <span style="display:none" id="refList">
 								  <a href="https://getbootstrap.com/" class="list-group-item list-group-item-action">Bootstrap</a>
-								  <span class="list-group-item list-group-item-action"><span class="pointer-cursor" onclick="window.location.href='index.html'">抽象话生成器</span> - <span class="pointer-cursor" onclick="window.open('http://www.duylw.com/')">来自宇露网</span></span>
-								  <a href="https://github.com/sxei/pinyinjs/" target="_blank" class="list-group-item list-group-item-action radius-bottom">GitHub - sxei/pinyinjs：一个实现汉字与拼音互转的小巧web工具库</a>
+								  <span class="list-group-item list-group-item-action"><span class="pointer-cursor" tabindex="0" onclick="window.location.href='index.html'">抽象话生成器</span> - <span class="pointer-cursor" tabindex="0" onclick="window.open('http://www.duylw.com/')">来自宇露网</span></span>
+								  <a href="https://github.com/sxei/pinyinjs/" target="_blank" class="list-group-item list-group-item-action">sxei/pinyinjs：一个实现汉字与拼音互转的小巧web工具库 - GitHub</a>
+								  <a href="https://zhuanlan.zhihu.com/p/110691578" target="_blank" class="list-group-item list-group-item-action radius-bottom">BinglunGe：官话合声字母字体及输入方案 - 知乎</a>
 								  </span>
 								</div>
-						      </div>
-						      <div class="modal-footer">
-						        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="modal-ok-button">了然</button>
-						      </div>
-						    </div>
+							  </div>
+							  <div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal" id="modal-ok-button">了然</button>
+							  </div>
+							</div>
 						  </div>
 						</div>
 						<!-- <div class="alert alert-info alert-dismissable" id="help">
@@ -353,7 +369,7 @@
 							<textarea type="text" class="form-control" id="resultText"></textarea>
 							<div class="input-group-append">
 								<button class="btn btn-outline-secondary" type="button" id="d_clip_button" data-clipboard-target="#resultText"
-								 onclick="copyToClipboard()" title="复制结果" data-toggle="tooltip" data-placement="bottom">
+								title="复制结果" data-toggle="tooltip" data-placement="bottom">
 									<i class="fa fa-copy"></i>
 								</button>
 							</div>
@@ -368,8 +384,7 @@
 				</label>
 			</span>
 			<span class="btn-group-toggle" data-toggle="buttons">
-				<label class="btn btn-outline-secondary btn-sm" id="lisuBtn" style="margin-left:0.25em;opacity:0;display:none"
-				 onclick="lisu()">
+				<label class="btn btn-outline-secondary btn-sm" id="lisuBtn" style="margin-left:0.25em;display:none;cursor:wait">
 					<input type="checkbox" id="lisuCheck"><span id="lisuLabel" data-toggle="tooltip" data-html="true" data-offset="0,15px" data-placement="right" title="　当前：大写拉丁字母<br>单击后：老傈僳文　　">老傈僳文</span>
 				</label>
 			</span>

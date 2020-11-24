@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script>var ver="1.11"</script> <!-- 直接在此处便捷修改版本号 -->
+		<script>var ver="1.12"</script> <!-- 直接在此处便捷修改版本号 -->
 		<meta charset="utf-8">
 		<meta name="Description" content="移动页面导航动画" />
 		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
@@ -431,6 +431,14 @@
 				bottom: 15px;
 				left: 20px;
 			}
+			
+			.fa {
+				margin-right: .5em;
+			}
+			
+			.fa-angle-right {
+				margin-left: .15em;
+			}
 		</style>
 	</head>
 	<body>
@@ -470,29 +478,30 @@
 				<div class="menu-container" id="menu_top">
 					<ul class="menu">
 						<span class="menu-main" id="menu_main">
-							<li><a href="javascript:void(0);" onclick="yi(1);"><i class="fa fa-gears fa-fw"></i>&#8199;控制台&#8199;<i class="fa fa-angle-right fa-fw"></i></a></li>
-							<li><a href="javascript:void(0);" onclick="alert('本论坛始建于 2005 年。\n现已停止服务。')"><i class="fa fa-desktop fa-fw"></i>&#8199;专业电脑维修</a></li>
-							<li><a href="https://exmail.qq.com/login"><i class="fa fa-envelope fa-fw"></i>&#8199;在线发送邮件</a></li>
-							<li><a href="javascript:void(0);" onclick="alert('本项目已成为一纸空文。')"><i class="fa fa-copy fa-fw"></i>&#8199;程序自然语言编辑器</a></li>
-							<li><a href="lb/index.html"><i class="fa fa-volume-up fa-fw"></i>&#8199;王沼泽语收音机</a></li>
-							<li><a href="javascript:void(0);" onclick="alert('该页面正在翻新中。')"><i class="fa fa-pied-piper fa-fw"></i>&#8199;我眼中的清明</a></li>
-							<li><a href="https://kuriya.shoutwiki.com/"><i class="fa fa-book fa-fw"></i>&#8199;概念百科</a>
+							<li><a href="javascript:void(0);" onclick="yi(1);"><i class="fa fa-gears fa-fw"></i>控制台<i class="fa fa-angle-right fa-fw"></i></a></li>
+							<li><a href="javascript:void(0);" onclick="alert('本论坛始建于 2005 年。\n现已停止服务。')"><i class="fa fa-desktop fa-fw"></i>专业电脑维修</a></li>
+							<li><a href="https://exmail.qq.com/login"><i class="fa fa-envelope fa-fw"></i>在线发送邮件</a></li>
+							<li><a href="javascript:void(0);" onclick="alert('本项目已成为一纸空文。')"><i class="fa fa-copy fa-fw"></i>程序自然语言编辑器</a></li>
+							<li><a href="lb/index.html"><i class="fa fa-volume-up fa-fw"></i>王沼泽语收音机</a></li>
+							<li><a href="javascript:void(0);" onclick="alert('该页面正在翻新中。')"><i class="fa fa-pied-piper fa-fw"></i>我眼中的清明</a></li>
+							<li><a href="https://kuriya.shoutwiki.com/"><i class="fa fa-book fa-fw"></i>概念百科</a>
 								<!--<a href="htdocs/wiki/index.php">概念百科</a>-->
 							</li>
-							<li><a href="hotkid/tel/来电.html"><i class="fa fa-phone fa-fw"></i>&#8199;乔碧萝来电</a></li>
-							<li><a href="nod-to-the-rhythm/index.html"><i class="fa fa-photo fa-fw"></i>&#8199;让你的照片动起来</a></li>
-							<li><a href="217/欢迎来到咱们217_jsp.htm" title="你很荣幸来到我们的主脚御姐系列专题！"><i class="fa fa-building fa-fw"></i>&#8199;欢迎来到咱们 217</a></li>
-							<li><a href="hotkid/你打球像蔡徐坤.htm"><i class="fa fa-dribbble fa-fw"></i>&#8199;你打篮球像蔡徐坤</a></li>
-							<li><a href="nav.html"><i class="fa fa-eercast fa-fw"></i>&#8199;太极图</a></li>
-							<li><a href="cssc/sunsystem.html"><i class="fa fa-sun-o fa-fw"></i>&#8199;直达查看太阳系</a></li>
-							<li><a href="cssc/calc.html"><i class="fa fa-calculator fa-fw"></i>&#8199;简易计算器</a></li>
-							<li><a href="impress/index.html"><i class="fa fa-empire fa-fw"></i>&#8199;独秀群芳 传承百年</a></li>
-							<li><a href="nav.html?bootstrap&index.html" title="生成时请注意温文儒雅。"><i class="fa fa-warning fa-fw"></i>&#8199;抽象话</a></li>
-							<li><a href="nav.html?bootstrap&rain&index.html"><i class="fa fa-wifi fa-fw"></i>&#8199;彩虹文字生成器</a></li>
-							<li><a href="nav.html?bootstrap&pyfmt.html"><i class="fa fa-dedent fa-fw"></i>&#8199;拼音格式化</a></li>
-							<li><a href="math/index.html?sum"><i class="fa fa-sort-numeric-asc fa-fw"></i>&#8199;数学工具</a></li>
-							<li><a href="math/chobi/index.html"><i class="fa fa-photo fa-fw"></i>&#8199;照片滤镜</a></li>
-							<li><a href="javascript:void(0);" onclick="yi(2);"><i class="fa fa-ellipsis-h fa-fw"></i>&#8199;更多趣味&#8199;<i class="fa fa-angle-right fa-fw"></i></a></li>
+							<li><a href="hotkid/tel/来电.html"><i class="fa fa-phone fa-fw"></i>乔碧萝来电</a></li>
+							<li><a href="nod-to-the-rhythm/index.html"><i class="fa fa-photo fa-fw"></i>让你的照片动起来</a></li>
+							<li><a href="217/欢迎来到咱们217_jsp.htm" title="你很荣幸来到我们的主脚御姐系列专题！"><i class="fa fa-building fa-fw"></i>欢迎来到咱们 217</a></li>
+							<li><a href="hotkid/你打球像蔡徐坤.htm"><i class="fa fa-dribbble fa-fw"></i>你打篮球像蔡徐坤</a></li>
+							<li><a href="nav.html"><i class="fa fa-eercast fa-fw"></i>太极图</a></li>
+							<li><a href="cssc/sunsystem.html"><i class="fa fa-sun-o fa-fw"></i>直达查看太阳系</a></li>
+							<li><a href="cssc/calc.html"><i class="fa fa-calculator fa-fw"></i>简易计算器</a></li>
+							<li><a href="impress/index.html"><i class="fa fa-empire fa-fw"></i>独秀群芳 传承百年</a></li>
+							<li><a href="nav.html?bootstrap&index.html" title="生成时请注意温文儒雅。"><i class="fa fa-warning fa-fw"></i>抽象话</a></li>
+							<li><a href="nav.html?bootstrap&rain&index.html"><i class="fa fa-wifi fa-fw"></i>彩虹文字生成器</a></li>
+							<li><a href="nav.html?bootstrap&pyfmt.html"><i class="fa fa-dedent fa-fw"></i>拼音格式化</a></li>
+							<li><a href="math/index.html?sum"><i class="fa fa-sort-numeric-asc fa-fw"></i>数学工具</a></li>
+							<li><a href="math/chobi/index.html"><i class="fa fa-photo fa-fw"></i>照片滤镜</a></li>
+							<li><a href="cssc/lz/601.html"><i class="fa fa-heart fa-rotate-180 fa-fw"></i>随机扑克</a></li>
+							<li><a href="javascript:void(0);" onclick="yi(2);"><i class="fa fa-ellipsis-h fa-fw"></i>更多趣味<i class="fa fa-angle-right fa-fw"></i></a></li>
 							<li><br /></li>
 						</span>
 						<span class="menu-console" id="menu_console" style="display:none">

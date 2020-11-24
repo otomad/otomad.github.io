@@ -1,7 +1,6 @@
 function single() {
 	//规则化
-	input = input.toLowerCase();
-	input = input.trim()
+	input = input.toLowerCase().trim();
 	var l = input.length,
 		v = 0;
 	for (var i = 0; i < l; i++)
@@ -17,20 +16,15 @@ function single() {
 	if (tone < '0' || tone > '9') tone = "";
 	input = input.replace(tone, "");
 	if (tone >= '6' && tone <= '9') tone = "1";
-	var combine = "";
-	if (tone == "1") combine = "\u0304";
-	if (tone == "2") combine = "\u0301";
-	if (tone == "3") combine = "\u030C";
-	if (tone == "4") combine = "\u0300";
-	if (tone == "5") combine = "\u0307";
+	var combineList=["","\u0304","\u0301","\u030C","\u0300","\u0307"],
+		combine = combineList[tone];
 	//标调字母
 	var latinCanBeToned = "a,o,e,ê,i,u,ü,n,m".split(","),
-		latin, serial, i = 0;
-	do {
+		latin, serial = -1;
+	for (var i = 0;serial == -1 && i < latinCanBeToned.length;i++) {
 		latin = latinCanBeToned[i];
 		serial = input.search(latin);
-		i++;
-	} while (serial == -1 && i < latinCanBeToned.length);
+	}
 	if (serial == -1) latin = "";
 	if (input.search("iu") != -1) latin = "u";
 	if (input.search("iü") != -1) latin = "ü";
@@ -46,15 +40,12 @@ String.prototype.toLowerUpperCase = function() {
 	smallcapital = smallcapital.replaces(capitalList, smallcapitalList);
 	return smallcapital;
 }
+var modeList = ["single","bpmf","romatzyh","ghhszm"];
 
 function sentence() {
-	raw = raw.toLowerCase();
-	raw = raw.trim();
-	var apo = raw.search("\'\'");
-	while (apo != -1) {
+	raw = raw.toLowerCase().trim();
+	while (raw.search("\'\'") != -1)
 		raw = raw.replace(/\'\'/g, "\'");
-		apo = raw.search("\'\'");
-	}
 	var l = raw.length,
 		first = 1,
 		legacy = 0,
@@ -71,7 +62,7 @@ function sentence() {
 				'！' || raw[0] == '⋯')
 				type = origType;
 			first = 1;
-			result = result + raw[0];
+			result += raw[0];
 			raw = raw.slice(1);
 			continue;
 		}
@@ -89,19 +80,7 @@ function sentence() {
 			legacy = 1;
 		}
 		input = input.replace(/e\^/g, "eh");
-		switch (mode) {
-			case 0:
-				single();
-				break;
-			case 1:
-				bpmf();
-				break;
-			case 2:
-				romatzyh();
-				break;
-			default:
-				break;
-		}
+		eval(modeList[mode]+"()");
 		if (flag == 1)
 			output = "\'" + output;
 		result += (raw == "" ? output : output + sep);
@@ -117,9 +96,7 @@ function sentence() {
 }
 
 function bpmf() {
-	input = input.toLowerCase();
-	input = input.trim();
-	input = input.replace(/er/g, "ㄦ");
+	input = input.toLowerCase().trim().replace(/er/g, "ㄦ");
 	var l = input.length;
 	if (input[l - 1] < '0' || input[l - 1] > '9') {
 		input = input + '0';
@@ -149,8 +126,7 @@ function bpmf() {
 }
 
 function romatzyh() {
-	input = input.toLowerCase();
-	input = input.trim()
+	input = input.toLowerCase().trim()
 	var l = input.length,
 		v = 0;
 	for (var i = 0; i < l; i++)
@@ -237,4 +213,23 @@ function prepareForOutputType(input) {
 		result_smallcapital = result_smallcapital[0] + result_smallcapital.substr(2);
 	if (type == 5) output = result_capital[0] + result_smallcapital.substr(1);
 	return output;
+}
+
+//more mode add to here
+function ghhszm() {
+	input = input.toUpperCase().trim();
+	var l = input.length,
+		tone = input[l - 1];
+	if (tone < '0' || tone > '9') tone = "0";
+	input = input.replace(tone, "");
+	if (tone == '5') tone == '0';
+	if (tone >= '6' && tone <= '9') tone = "1";
+	input = input.replaces("CH,ZH,SH,IU,UI,UN,IN","c,z,s,IOU,UEI,UEN,iEN");
+	input = input.replaces("ANG,ENG,ONG,ING,IE,AN,AO,AI,ER,EN,OU,EI,i,PU,BU,MU,FU,WU,PI,BI,MI,CU,ZU,SU,DU,TU,cU,zU,sU,RU,NU,LU,CI,ZI,SI,DE,TE,DI,TI,cI,zI,sI,RI,NE,LE,NV,LV,JU,QU,XU,YU,NI,LI,JI,QI,XI,YI,GU,KU,HU,GE,KE,HE,A,E,O,P,B,M,F,W,C,Z,S,D,T,c,z,s,R,N,L,J,Q,X,Y,G,K,H","亢,翁,翁,I翁,爺,安,豪,哀,儿,恩,慪,危,I,撲,卜,木,夫,五,皮,必,米,麤,租,蘇,都,土,初,朱,書,入,奴,盧,辭,姿,絲,徳,特,低,題,遲,之,詩,日,訥,勒,女,呂,居,趨,須,于,尼,離,基,其,希,衣,孤,夸,乎,戈,科,禾,阿,我,我,撲,卜,木,夫,五,辭,姿,絲,徳,特,遲,之,詩,入,訥,勒,居,趨,須,衣,戈,科,禾");
+	output = input.replaces("撲,卜,木,夫,五,皮,必,米,麤,租,蘇,都,土,初,朱,書,入,奴,盧,辭,姿,絲,徳,特,低,題,遲,之,詩,日,訥,勒,女,呂,居,趨,須,于,尼,離,基,其,希,衣,孤,夸,乎,戈,科,禾,爺,亢,安,豪,哀,阿,儿,翁,恩,慪,危,我",",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,");
+	var toneSign = "";
+	if(tone == "1" || tone == "3") toneSign = "";
+	else if(tone == "2" || tone == "4") toneSign = "";
+	if(tone < "3") output = output.slice(0,-1) + toneSign + output.slice(-1);
+	else output += toneSign;
 }
