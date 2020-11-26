@@ -3,11 +3,11 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<meta http-equiv="refresh" content="0;url=bv2av/index.html">
+		<!-- <meta http-equiv="refresh" content="0;url=bv2av/index.html"> -->
 		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
 		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<script src="math.min.js"></script>
+		<script src="bv2av/BV 号跋扈　～ Who done it!.js"></script>
 		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
 		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
 		 crossorigin="anonymous">
@@ -58,6 +58,17 @@
 					</div>
 				</div>
 			</div>
+			<h5>Choose a style:</h5>
+			<a href="bv2av/index.html" class="btn btn-info" style="margin-right:.25em">BV to AV</a>
+			<a href="bv2av/BVwhodoneit.html" class="btn btn-info">BV who done it</a>
+			<hr />
+			<div>
+				BvToAv by <a href="https://www.bv2av.com/" target="_blank">bv2av</a><br />
+				Code by <a href="https://www.zhihu.com/question/381784377/answer/1099438784" target="_blank">mcfx</a><br />
+				Built by <a href="https://github.com/Blokura/bv2av" target="_blank">Blokura</a><br />
+				JavaScript by <a href="https://mrhso.github.io/IshisashiWebsite/BVwhodoneit/" target="_blank">mrhso</a><br />
+				Theme by <a href="https://www.drblack-system.com" target="_blank">DrBlackの锦里</a>
+			</div>
 		</div>
 		<script>
 			
@@ -80,6 +91,11 @@
 			}
 			var password="fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF";
 			
+			function change(way) {
+				var bv = $("#txt1").val(), av = $("#txt2").val();
+				if(way == 1) $("#txt2").val(bv2av(bv));
+				else $("#txt1").val(av2bv(av));
+			}
 		</script>
 	</body>
 	<script src="../NightTime.js"></script>

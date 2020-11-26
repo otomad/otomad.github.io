@@ -52,6 +52,8 @@ var _hmt = _hmt || [];
         
         .title {
             font-size: 66px;
+			line-height:75px; /* original is 94 */
+			margin-bottom: 40px;
         }
         
         .title small {
@@ -73,22 +75,29 @@ var _hmt = _hmt || [];
             position: fixed;
             bottom:0px;
         }
+		.button-primary {
+			width: 15em;
+			margin: 5px;
+		}
+		.break {
+			display: inline-block;
+		}
     </style>
 </head>
 <body style="background-image:url(background.png);background-repeat:no-repeat;">
     <div class="container">
         <div class="content">
-            <div class="title">BV号⇆AV号</div>
+            <div class="title">BV号 ⇆ AV号</div>
         </div>
         <div class="row"></div>
             <div class="for-group">
                 <div class="goo">
-                    <form action="/index.php">
+                    <!-- <form action="/index.php"> -->
                     <input type="text" id="x" name="BV" placeholder="请输入视频AV/BV号(需以英文开头)" value="" class="form-control" style="text-align:center"/>
                     <br>
 					<br>
-                    <button type="button" class = "button center button button-glow button-border button-rounded button-primary" onclick="return exchange() && false">本地JS转换</button>&nbsp;&nbsp;
-					<button type="submit" class = "button center button button-glow button-border button-rounded button-primary" >获取视频信息</button>
+                    <button type="button" class = "button center button button-glow button-border button-rounded button-primary" onclick="return exchange() && false">本地JS转换</button>
+					<button type="submit" onclick="window.location.href='https://www.bilibili.com/video/'+document.getElementById('x').value.trim()" class = "button center button button-glow button-border button-rounded button-primary" >获取视频信息</button>
                     </form>
                 </div>
             </div>
@@ -175,3 +184,14 @@ const exchange = () => {
 	<p>JavaScript by <a href="https://mrhso.github.io/IshisashiWebsite/BVwhodoneit/" target="_blank">mrhso</a></p>
     <p>Theme by <a href="https://www.drblack-system.com" target="_blank">DrBlackの锦里</a></p>
 </div>
+<script>
+	function resizeTitle() {
+		var title = document.getElementsByClassName("title")[0];
+		title.innerHTML = "BV号 ⇆ AV号"
+		var line = title.clientHeight / 75;
+		if(line > 1.5) title.innerHTML = "BV号<br>⇵<br>AV号";
+		console.log(line);
+	}
+	window.onresize = resizeTitle;
+	window.onload = resizeTitle;
+</script>
