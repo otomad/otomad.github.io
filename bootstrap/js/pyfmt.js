@@ -1,4 +1,4 @@
-function single() {
+function single(input, type = 0) {
 	//规则化
 	input = input.toLowerCase().trim();
 	var l = input.length,
@@ -13,7 +13,7 @@ function single() {
 	//声调
 	l = input.length;
 	var tone = input[l - 1];
-	if (tone < '0' || tone > '9') tone = "";
+	if (tone < '0' || tone > '9') tone = "0";
 	input = input.replace(tone, "");
 	if (tone >= '6' && tone <= '9') tone = "1";
 	var combineList=["","\u0304","\u0301","\u030C","\u0300","\u0307"],
@@ -30,7 +30,7 @@ function single() {
 	if (input.search("iü") != -1) latin = "ü";
 	var result_small = (latin != "" ? input.replace(latin, latin + combine) : input);
 	//大写字母和小型大写字母
-	output = prepareForOutputType(result_small);
+	return output = prepareForOutputType(result_small,type);
 }
 
 var capitalList = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Ê,Ü,È";
@@ -42,7 +42,27 @@ String.prototype.toLowerUpperCase = function() {
 }
 var modeList = ["single","bpmf","romatzyh","ghhszm"];
 
-function sentence() {
+function sentence(raw, sep = '\'', mode = 0, type = 0) {
+	raw = raw.toLowerCase().trim().replace(/e\^/g, "eh");
+	var arr = split(raw), result = "", cur, first = type;
+	for (var i = 0;i < arr.length;i++) {
+		if (!(isLegal(arr[i][0]))) {
+			result += (i==0?"":sep) + arr[i];
+			continue;
+		}
+		if (i>0) if(arr[i-1].finds(".?!…。？！⋯".inTwo())) type=first;
+		if (type == 4 || type == 6) type--;
+		cur = eval(modeList[mode]+'(\"'+arr[i]+'\",'+type+')');
+		var aoe = arr[i][0];
+		if ((mode == 0 || mode == 2) && i > 0 && sep == "" && aoe.is("a,o,e,i,u"))
+			cur = '\'' + cur;
+		result += (i==0?"":sep) + cur;
+		if ((first == 4 || first == 6) && type == first - 1) type -= 3;
+	}
+	return result;
+}
+
+function sentence_legacy(raw, sep = '\'', mode = 0, type = 0) { //旧的
 	raw = raw.toLowerCase().trim();
 	while (raw.search("\'\'") != -1)
 		raw = raw.replace(/\'\'/g, "\'");
@@ -95,7 +115,50 @@ function sentence() {
 		result = result.slice(0, -1);
 }
 
-function bpmf() {
+var comsep = "\',‘,’,`,|,-,_,/,\\, ";
+function split(s) { //数字和分隔符都能分割
+	var str = (s + "").trim(), arr = [], cur = "";
+	for (var i = 0;i < str.length;i++) {
+		if (i > 0) if (isLegal(str[i]) && !(isLegal(str[i - 1]+""))) {
+			arr.push(str.slice(0,i));
+			str = str.slice(i);
+			i = 0;
+		}
+		if (i > 0) if (isLegal(str[i - 1]+"") && !(isLegal(str[i]))) {
+			arr.push(str.slice(0,i));
+			str = str.slice(i);
+			i = -1;
+			continue;
+		}
+		if (str[i].is("0123456789".inTwo()) && !((str[i + 1]+"").is(comsep))) {
+			arr.push(str.slice(0,i + 1));
+			str = str.slice(i + 1);
+			i = -1;
+			continue;
+		}
+		if (str[i].is(comsep)) {
+			arr.push(str.slice(0,i));
+			str = str.slice(i + 1);
+			i = -1;
+			continue;
+		}
+	}
+	if (str) arr.push(str);
+	arr.trim();
+	return arr;
+}
+function printCharList(start,end) { //打印字符表一段区间的字符
+	var l = "";
+	for(var c = start.charCodeAt();c <= end.charCodeAt();c++)
+		l += String.fromCharCode(c);
+	return l;
+}
+function isLegal(c) {
+	var legal = (printCharList('0','9') + printCharList('a','z') + printCharList('A','Z')).inTwo() + ',' + comsep;
+	return c.is(legal)?true:false;
+}
+
+function bpmf(input, type = 0) {
 	input = input.toLowerCase().trim().replace(/er/g, "ㄦ");
 	var l = input.length;
 	if (input[l - 1] < '0' || input[l - 1] > '9') {
@@ -122,10 +185,10 @@ function bpmf() {
 		"zhi,chi,shi,wu,yue,yuan,ying,yin,yun,jun,qun,xun,wei,you,weng,wen,ri,zi,ci,si,yi,ue,yu,ju,qu,xu,ye,ang,eng,ing,ong,an,en,in,un,ng,gn,ao,ou,iu,ai,ei,ui,ie,-i,eh,a,o,e,i,u,v,#,%,1,2,3,4,5,6,7,8,9,0,zh,ch,sh,b,p,m,f,d,t,n,l,g,k,h,j,q,x,r,z,c,s,y,w";
 	var bopomofoList =
 		"ㄓ,ㄔ,ㄕ,ㄨ,ㄩㄝ,ㄩㄢ,ㄧㄥ,ㄧㄣ,ㄩㄣ,ㄐㄩㄣ,ㄑㄩㄣ,ㄒㄩㄣ,ㄨㄟ,ㄧㄡ,ㄨㄥ,ㄨㄣ,ㄖ,ㄗ,ㄘ,ㄙ,ㄧ,ㄩㄝ,ㄩ,ㄐㄩ,ㄑㄩ,ㄒㄩ,ㄧㄝ,ㄤ,ㄥ,ㄧㄥ,ㄨㄥ,ㄢ,ㄣ,ㄧㄣ,ㄨㄣ,ㄫ,ㄬ,ㄠ,ㄡ,ㄧㄡ,ㄞ,ㄟ,ㄨㄟ,ㄧㄝ,ㄭ,ㄝ,ㄚ,ㄛ,ㄜ,ㄧ,ㄨ,ㄩ,ㄪ,ㄦ,,ˊ,ˇ,ˋ,˙,,,,,,ㄓ,ㄔ,ㄕ,ㄅ,ㄆ,ㄇ,ㄈ,ㄉ,ㄊ,ㄋ,ㄌ,ㄍ,ㄎ,ㄏ,ㄐ,ㄑ,ㄒ,ㄖ,ㄗ,ㄘ,ㄙ,ㄧ,ㄨ";
-	output = output.replaces(pinyinList, bopomofoList);
+	return output = output.replaces(pinyinList, bopomofoList);
 }
 
-function romatzyh() {
+function romatzyh(input, type = 0) {
 	input = input.toLowerCase().trim()
 	var l = input.length,
 		v = 0;
@@ -188,9 +251,10 @@ function romatzyh() {
 	input = input.replaces("r,HL,-", "L,LL,");
 	var result_small = input.toLowerCase();
 	//大写字母和小型大写字母
-	output = prepareForOutputType(result_small);
+	output = prepareForOutputType(result_small,type);
 	if (soft == 1)
 		output = '.' + output;
+	return output;
 }
 
 var diacriticalLetter =
@@ -198,7 +262,7 @@ var diacriticalLetter =
 var combiningLetter =
 	"ā,á,ǎ,à,ȧ,ō,ó,ǒ,ò,ȯ,ē,é,ě,è,ė,ī,í,ǐ,ì,ï,ū,ú,ǔ,ù,ǖ,ǘ,ǚ,ǜ,ń,ň,ǹ,ṅ,ḿ,ṁ,ế,ề";
 
-function prepareForOutputType(input) {
+function prepareForOutputType(input,type) {
 	var result_small = input;
 	var result_smallcapital = result_small.toLowerUpperCase();
 	result_small = result_small.replace(/i\u0307/g, "i\u0308");
@@ -216,7 +280,7 @@ function prepareForOutputType(input) {
 }
 
 //more mode add to here
-function ghhszm() {
+function ghhszm(input, type = 0) {
 	input = input.toUpperCase().trim();
 	var l = input.length,
 		tone = input[l - 1];
@@ -232,4 +296,5 @@ function ghhszm() {
 	else if(tone == "2" || tone == "4") toneSign = "";
 	if(tone < "3") output = output.slice(0,-1) + toneSign + output.slice(-1);
 	else output += toneSign;
+	return output;
 }

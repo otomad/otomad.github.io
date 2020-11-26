@@ -30,11 +30,17 @@
 				border-radius: 5px;
 				transition: transform 500ms ease-in-out;
 				transform: scale(0);
+				display: -moz-box;
+				display: -webkit-box;
+				-moz-box-align: center;
+				-webkit-box-align: center;
+				-moz-box-pack: center;
+				-webkit-box-pack: center;
 			}
 			
 			.center-text{
 				font-weight: bold;
-				line-height: 192px;
+				/* line-height: 192px; */
 				text-align: center;
 				font-size: 150%;
 			}
@@ -45,6 +51,7 @@
 			}
 			.left-up{
 				top: 0;
+				left: 0;
 			}
 			.right-down{
 				bottom: 0;
@@ -103,12 +110,25 @@
 			    }
 			}
 			
+			var numList = new Array;
+			reNumList();
+			function reNumList() {
+				for(var i=0;i<=54;i++) numList[i]=0;
+			}
+			
 			function showCard(){
-				var rand=Math.floor(Math.random() * (54 - 1)),
-					flower=Math.floor(rand/13)+1,
-					number=Math.floor(rand%13)+1;
+				for(var i=0;i<54;i++){
+					if(numList[i]==0) break;
+					if(i==53) reNumList();
+				}
+				do {
+					var rand=Math.floor(Math.random() * 54),
+						flower=Math.floor(rand/13)+1,
+						number=Math.floor(rand%13)+1;
+				} while(numList[rand]);
+				numList[rand] = 1;
 				rand++;
-				console.log(rand+','+flower+','+number);
+				console.log(rand+','+flower+','+number+'\n'+numList);
 				var flowerEmoji="♠♥♣♦",
 					flowerName=["黑桃","红桃","梅花","方片"],
 					corner,center;
@@ -124,7 +144,8 @@
 				else{
 					corner="JOKER";
 					if(rand==53) center="小王";
-					else center="大王";
+					else if(rand==54) center="大王";
+					else center="扑克牌说明书";
 				}
 				document.getElementsByClassName('left-up')[0].innerHTML=corner;
 				document.getElementsByClassName('right-down')[0].innerHTML=corner;

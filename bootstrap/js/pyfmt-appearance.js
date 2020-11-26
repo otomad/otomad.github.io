@@ -3,7 +3,7 @@ window.onload = function() {
 
 }
 $(document).ready(function(){
-    $('[data-toggle="tooltip"]').tooltip();
+	$('[data-toggle="tooltip"]').tooltip();
 });
 
 $('textarea').each(function () {
@@ -264,7 +264,7 @@ function lisuData(pos = 1) {
 	return result;
 }
 //生成
-var mode = 0, type = 0, input, output, raw, result, sep;
+var mode = 0, type = 0; //, input, output, raw, result, sep;
 
 function tryChecked(sample) { //检查模式与类型勾选情况
 	mode = $('[name="mode"]').parent().siblings(".active").index();
@@ -299,12 +299,11 @@ function getResult() {
 	textarea_resize();
 }
 
-function converse(FPraw, FPsep = " ") {
-	raw = FPraw, sep = FPsep;
+function converse(raw, sep = " ") {
 	if (sep == "（空格）") sep = " ";
 	if (sep == "（留空）") sep = "";
-	preRaw();
-	sentence();
+	raw = preRaw(raw);
+	result = sentence(raw, sep, mode, type);
 	if (lisuIsOpen == 1) result = lisuData(1);
 	return result = result.replace(/undefined/g, "");
 }
@@ -320,13 +319,14 @@ function italic() {
 	}
 }
 //raw处理
-function preRaw() {
+function preRaw(raw) {
 	//var interferedPunctuation["!","~","`","@","#","$","%","&","-","_","=","|","\\","\"",":",";","<",">",",","\+","\?","\."];
 	raw = pinyinUtil.getPinyin(raw, "\'");
 	raw = backToAsciiPinyin(raw);
 	for (var i = 0; i <= 9; i++)
 		raw = raw.replace(new RegExp(i, "g"), i + "\'");
 	if (raw != "") raw = raw + "\'";
+	return raw;
 }
 
 function backToAsciiPinyin(variant) {
@@ -384,3 +384,38 @@ String.prototype.reverse = function() { //字符串颠倒顺序
 String.prototype.bool = function() { //字符串转布尔型
 	return (/^true$/i).test(this);
 };
+String.prototype.is = function() { //字符串是否为括号里面数组中某个字符串
+	var n = 0,
+		arg = arguments;
+	if (arguments.length == 1)
+		arg = arguments[0].split(",");
+	for (var i = 0; i < arg.length; i++)
+		if (this == arg[i])
+			return true;
+	return false;
+}
+String.prototype.inTwo = function(sep = ",") { //字符串两两字符间插一个字符
+	var a = "", l = this.length - 1;
+	for (var i = 0;i < l;i++)
+		a += this[i] + sep;
+	return a += this[l];
+}
+Array.prototype.indexOf = function(val) { //获取元素在数组的下标
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] == val)	{ 
+			return i;
+		};
+	}
+	return -1; 
+};
+Array.prototype.remove = function(val) { //根据数组的下标，删除该下标的元素
+	var index = this.indexOf(val);
+	if (index > -1)
+		this.splice(index, 1);
+};
+Array.prototype.trim = function() { //清除数组里面的空串
+	for (var i = 0;i < this.length;i++)
+		if (this[i] === '')
+			this.splice(i, 1);
+	return this;
+}
