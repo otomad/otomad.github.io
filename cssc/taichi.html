@@ -4,6 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
 		<title>太极图</title>
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 		<!-- <link rel="stylesheet" type="text/css" id="css" href="taichi_begin.css"> -->
 		<!-- taichi_begin.css / taichi_over.css -->
 		<style>
@@ -123,6 +124,9 @@
 	<script>
 		function nightDo() {
 			document.body.style.backgroundColor = "var(--darkbody)";
+		}
+		function lightDo() {
+			document.body.style.backgroundColor = "var(--lightbody)";
 		}
 
 		var currentColor = 0,

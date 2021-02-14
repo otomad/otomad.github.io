@@ -1,0 +1,181 @@
+/* @import url("https://fonts.googleapis.com/css?family=Roboto:400,500|Material+Icons"); */
+.animated {
+  -webkit-animation-duration: .3s;
+          animation-duration: .3s;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  background: #eee;
+  font-family: "Roboto", "Helvetica Neue", "Helvetica", sans-serif;
+  overflow: hidden !important;
+  position: relative;
+}
+body:before {
+  background-image: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjMDAwMDAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iWW91ciBJY29uIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeD0iMHB4IiB5PSIwcHgiPjxkZWZzPjxzdHlsZT4uY2xzLTEsLmNscy0ye2ZpbGw6bm9uZTtzdHJva2U6IzAwMDAwMDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbWl0ZXJsaW1pdDoxMDt9LmNscy0xe3N0cm9rZS13aWR0aDo3cHg7fS5jbHMtMntzdHJva2Utd2lkdGg6NnB4O308L3N0eWxlPjwvZGVmcz48dGl0bGU+0LjQvdGB0YLQsNCz0YDQsNC80Lw8L3RpdGxlPjxjaXJjbGUgY2xhc3M9ImNscy0xIiBjeD0iNTAiIGN5PSI1MCIgcj0iMTguOTQiLz48Y2lyY2xlIGNsYXNzPSJjbHMtMiIgY3g9Ijc0LjUiIGN5PSIyNy4xMyIgcj0iMi45MSIvPjxyZWN0IGNsYXNzPSJjbHMtMSIgeD0iOSIgeT0iOSIgd2lkdGg9IjgyIiBoZWlnaHQ9IjgyIiByeD0iMTkiIHJ5PSIxOSIvPjwvc3ZnPg==");
+  background-size: 60px;
+  content: '';
+  height: 200%;
+  left: -50%;
+  opacity: .020;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: -50%;
+  -webkit-transform: rotate(-30deg);
+          transform: rotate(-30deg);
+  width: 200%;
+}
+
+button {
+  font-family: "Roboto", "Helvetica Neue", "Helvetica", sans-serif;
+}
+
+.hide {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+.wrap {
+  overflow: hidden;
+  height: 100vh;
+  max-height: 100vh;
+}
+@media (min-width: 30em) {
+  .wrap {
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+}
+
+.phone {
+  height: 100%;
+  width: 100%;
+}
+@media (min-width: 30em) {
+  .phone {
+    border: 1px solid #e6e6e6;
+    height: 576px;
+    width: 324px;
+  }
+}
+
+.empty-state {
+  border-color: rgba(0, 0, 0, 0.15);
+  border-style: dashed;
+  border-width: 2px;
+  cursor: pointer;
+  -webkit-transition: border .2s ease-out;
+  transition: border .2s ease-out;
+}
+.empty-state:hover {
+  border-color: #3897f0;
+}
+
+header {
+  background: #FAFAFA;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+  height: 40px;
+  z-index: 999;
+}
+
+.preview {
+  height: 60%;
+  width: 100%;
+}
+@media (min-width: 30em) {
+  .preview {
+    height: 330px;
+  }
+}
+
+.center-no-repeat {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+nav {
+  overflow-y: hidden;
+  height: 150px;
+}
+
+.filter {
+  box-shadow: 0 20px 20px -10px rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+  height: 125px;
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  -webkit-transition: -webkit-transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  transition: -webkit-transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  transition: transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67), -webkit-transform 0.2s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  width: 105px;
+}
+.filter:active {
+  -webkit-transform: scale3d(0.95, 0.95, 0.95);
+          transform: scale3d(0.95, 0.95, 0.95);
+}
+.filter.is-selected {
+  color: #222;
+}
+
+.fade-enter-active, .fade-leave-active {
+  -webkit-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+.noUi-target {
+  background: #f3f3f3;
+  border: 0;
+  box-shadow: none;
+}
+
+.noUi-horizontal {
+  height: 3px;
+}
+
+.noUi-connect {
+  background: #000;
+  box-shadow: none;
+}
+
+.noUi-handle {
+  background: black;
+  border: 0;
+  border-radius: 50%;
+  box-shadow: none;
+  left: -5px !important;
+  height: 15px !important;
+  -webkit-transition: box-shadow .2s ease-out;
+  transition: box-shadow .2s ease-out;
+  width: 15px !important;
+}
+.noUi-handle:active {
+  box-shadow: 0 0 0px 7px rgba(0, 0, 0, 0.1);
+}
+.noUi-handle:before, .noUi-handle:after {
+  content: none;
+}
+
+.noUi-tooltip {
+  background: transparent;
+  border: 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 12px;
+}

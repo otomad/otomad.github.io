@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>魔力大转盘</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<!-- <script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script> -->
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<!-- <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css"> -->
+		<style>
+			@font-face {
+				font-family: 'XGame';
+				font-style: italic;
+				font-weight: 200;
+				src: url('fonts/XGame.woff') format('woff');
+			}
+		</style>
+		<link rel="stylesheet" href="../index.css">
+	</head>
+	<body>
+		<div class="row">
+			<div class="col-lg-3" id="nav-part">
+				<button type="button" id="nav-toggler" class="btn btn-outline-secondary"><i class="fxg"></i></button>
+				<h1><i class="fxg pointer" onclick="window.location.href='../../option.html';"></i><span id="pagename"></span></h1>
+				<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+					<a class="nav-link" id="v-classic"  data-toggle="pill"><i class="fxg"></i>经典</a>
+					<a class="nav-link" id="v-money"    data-toggle="pill"><i class="fxg"></i>转钱</a>
+					<a class="nav-link" id="v-bet"      data-toggle="pill"><i class="fxg"></i>押奖</a>
+					<a class="nav-link" id="v-dice"     data-toggle="pill"><i class="fxg"></i>投注</a>
+					<a class="nav-link" id="v-magic"    data-toggle="pill"><i class="fxg"></i>魔术</a>
+					<a class="nav-link" id="v-game"     data-toggle="pill"><i class="fxg"></i>游戏</a>
+					<a class="nav-link" id="v-lottery"  data-toggle="pill"><i class="fxg"></i>抽奖</a>
+					<a class="nav-link" id="v-custom"   data-toggle="pill"><i class="fxg"></i>自定</a>
+					<div class="nav-link-hr"></div>
+					<a class="nav-link" id="v-help"     data-toggle="pill"><i class="fxg"></i>说明</a>
+					<a class="nav-link" id="v-setting"  data-toggle="pill"><i class="fxg"></i>设置</a>
+					<a class="nav-link" id="nav-full-size"><i class="fxg"></i>全屏</a>
+				</div>
+			</div>
+			<div class="col-lg-9">
+				<iframe id="iframe" src=""></iframe>
+			</div>
+		</div>
+		<script src="../index.js"></script>
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>

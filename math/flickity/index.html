@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html >
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0">
+<title>HTML5移动端图片上传滤镜特效</title>
+
+<link rel="stylesheet" href="css/normalize.min.css">
+<link rel='stylesheet prefetch' href='css/tachyons.css'>
+<link rel='stylesheet prefetch' href='css/cssgram.min.css'>
+<link rel='stylesheet prefetch' href='css/nouislider.min.css'>
+<link rel='stylesheet prefetch' href='css/animate.min.css'>
+<link rel='stylesheet' href='css/material-icons.css'>
+
+<link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+<body>
+<link rel="stylesheet" href="css/flickity.css">
+<script src="js/flickity.pkgd.min.js"></script>
+
+<div class="wrap" id="vue-instagram-clone">
+ <div class="phone relative bg-white" >
+
+     <div @click="triggerFilePicker" v-if="!photoHasBeenUploaded" class="empty-state absolute tc top-1 left-1 right-1 bottom-1 flex items-center justify-center pa3 ba">
+        <input @change="handlePhotoUpload" class="hide" ref="upload" type="file">
+        <h2 class="fw5 f5 black-30">Click to upload an image</h2>
+     </div>
+  <transition name="fade">
+  <main class="flex flex-column h-100" v-if="photoHasBeenUploaded">
+   <header class="flex items-center relative overflow-hidden">
+     <transition mode="out-in" name="fade-in"
+    enter-active-class="animated fadeInUp"
+    leave-active-class="animated fadeOutDown">
+       <div class="flex items-center ph2" v-if="editingFilterStrength">
+        <h5 class="ma0 flex fw5 items-center">
+         {{ this.filters[this.activeFilterIndex].displayName }} 
+        <h5>
+         </div>
+     </transition>
+     <transition mode="out-in" name="fade-out"
+    enter-active-class="animated fadeInUp"
+    leave-active-class="animated fadeOutDown">
+     <div v-if="!editingFilterStrength" class="flex items-center w-100 absolute top-0 left-0 right-0 bottom-0">
+       <div class="w-third flex items-center">
+      <button @click="reset" class="button-reset mr1 black-60 bg-transparent bn pv0 flex items-center">
+       <i class="material-icons">keyboard_arrow_left</i>
+      </button>
+    </div>
+    <div class="w-third justify-center flex items-center">
+      <!-- <img style="height: 25px;" class="img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Instagram_logo.svg/500px-Instagram_logo.svg.png" alt="" /> -->
+	  <img style="height: 25px;" class="img" src="500px-Instagram_logo.svg.png" alt="" />
+    </div>
+    <div class="w-third tr flex items-center justify-end pr2">
+      <h5 class="ma0 flex fw5 items-center"><a class="link blue" href="#">Next</a></h4>
+    </div>
+      </div>
+        </transition>
+   </header>
+   <section class="preview relative">
+    <figure class="ma0 absolute h-100 w-100 top-0 left-0 right-0 bottom-0 center-no-repeat z-4" v-bind:style="{ backgroundImage: 'url(' + uploadedPhoto + ')' }">
+    </figure>
+    <figure class="ma0 absolute h-100 w-100 top-0 left-0 right-0 bottom-0 center-no-repeat z-5" v-bind:class="[activeFilterClassname]" v-bind:style="{ backgroundImage: 'url(' + uploadedPhoto + ')', opacity: filters[activeFilterIndex].opacity }">
+    </figure>
+   
+   </section>
+   <nav class="pt3 flex-auto relative">
+      <transition name="fade" mode="out-in">
+      <filter-list v-if="!editingFilterStrength" style="height: 100%;" :active="activeFilterIndex" :source="uploadedPhoto" :filters="filters"></filter-list>
+      </transition>
+      <transition name="fade" mode="out-in">
+        <div class="pa4" v-if="editingFilterStrength">
+         <strength-slider value="filterStrength"></strength-slider>
+         <div class="mt4 tc">
+          <button @click="toggleFilterStrength" class="button-reset fw5 f6 ttu black bn bg-white">Done</button>
+         </div>
+       </div>
+      </transition>
+   </nav>
+  </main>
+  </transition>
+ </div>
+</div>
+
+<script type="x-template" id="filter-list">
+<div class="">
+  <div is="filter-preview"
+   :filter="filter" :index="index" :source="source" v-for="(filter, index) in filters">
+  </div>
+</div>
+</script>
+
+<script type="x-template" id="filter-preview">
+	<a @click="changeFilter(filter, index)" class="filter fw5 tc mr2">
+ 	{{ filter.displayName }}
+<figure v-bind:class="filter.className" class="mh0 mb0 mt2 db bg-transparent aspect-ratio aspect-ratio--1x1">
+		<div class="aspect-ratio--object cover" v-bind:style="{ backgroundImage: 'url(' + source + ')' }"></div>
+	 </figure>
+ </a>
+</script>
+
+<script type="x/template" id="strength-slider">
+	<div id="slider"></div>
+</script>
+<script src='js/vue.min.js'></script>
+<script src='js/nouislider.min.js'></script>
+<script src='js/wNumb.min.js'></script>
+
+<script src="js/index.js"></script>
+
+</body>
+</html>
+

@@ -1,341 +1,542 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-  <title>Chobi 图片滤镜</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-  <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
-  <link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css">
-  <!-- <link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
-   crossorigin="anonymous"> -->
-  <script type="text/javascript" src="Chobi.js"></script>
-  <style>
-    /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
-    .row.content {height: 1500px}
-    
-    /* Set gray background color and 100% height */
-    .sidenav {
-      background-color: #f1f1f1;
-      height: 100%;
-    }
-    
-    /* Set black background color, white text and some padding */
-    footer {
-      background-color: #555;
-      color: white;
-      padding: 15px;
-    }
-
-    #canvas{
-    	width: 100%;
-    	height: auto;
-		border: 0.5em solid var(--light);
-		border-radius: 10px;
-		background: repeating-linear-gradient(-45deg, white, #f0f0f0 10px);
-    }
-    
-    /* On small screens, set height to 'auto' for sidenav and grid */
-    @media screen and (max-width: 767px) {
-      .sidenav {
-        height: auto;
-        padding: 15px;
-      }
-      .row.content {height: auto;}
-    }
-	
-	h1 {
-		margin:0.75em 0 0.5em;
-	}
-	.navbar{
-		position: fixed;
-		width: 100%;
-		z-index: 10;
-	}
-  </style>
-  <style>
-  	::-webkit-scrollbar {
-  		width: 4px;
-  		height: 4px;
-  		scrollbar-arrow-color:red;
-  	}
-  	::-webkit-scrollbar-thumb {
-  		border-radius: 5px;
-  		-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-  		background: rgba(0,0,0,0.2);
-  		scrollbar-arrow-color:red;
-  	}
-  	::-webkit-scrollbar-track {
-  		-webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-  		border-radius: 0;
-  		background: rgba(0,0,0,0.1);
-  	}
-  </style>
-</head>
-<body>
-	<nav class="navbar navbar-light bg-light ms-depth-4">
-		<div>
-		<button class="btn btn-light" title="上传图片" data-toggle="tooltip" onclick="document.getElementById('image-chooser').click();"><i class="ms-Icon ms-Icon--OpenFile"></i></button>
-		<span data-toggle="modal" data-target="#input-path"><button class="btn btn-light" title="输入图片地址" data-toggle="tooltip"><i class="ms-Icon ms-Icon--PageLink"></i></button></span>
-		</div>
-		<span><strong>Chobi</strong> 图片滤镜</span>
-		<button class="btn btn-light" title="下载图片" data-toggle="tooltip" onclick="downloadImage()" style="margin-left:45px"><i class="ms-Icon ms-Icon--Download"></i></button>
-	</nav>
-	<!-- Modal -->
-	<div class="modal fade" id="input-path" tabindex="-1">
-	  <div class="modal-dialog modal-dialog-scrollable">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="ModalLabel">输入图片地址</h5>
-	        <button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span>&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-			<div class="input-group mb-2">
-				<input type="text" class="form-control" id="path" placeholder="在这里输入图片URL地址">
+	<head>
+		<title>Chobi 图片滤镜</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="Chobi.js"></script>
+		<script src="../rgbaster.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
+		<link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+		<link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css">
+		<link rel="stylesheet" href="index.css">
+	</head>
+	<body>
+		<nav class="navbar navbar-dark bg-dark ms-depth-4">
+			<div>
+				<button class="btn btn-dark" title="上传图片" data-toggle="tooltip" onclick="document.getElementById('image-chooser').click();"><i
+					 class="ms-Icon ms-Icon--OpenFile"></i></button>
+				<span data-toggle="modal" data-target="#input-path"><button class="btn btn-dark" title="输入图片地址" data-toggle="tooltip"><i
+						 class="ms-Icon ms-Icon--PageLink"></i></button></span>
 			</div>
-			<hr>
-			<p style="text-align:center">&copy; 2016 <a href="https://github.com/jayankaghosh/chobi">Chobi</a>-Javascript Library team (j0y)</p>
-	      </div>
-	      <div class="modal-footer">
-			<table style="width:100%">
-				<button type="button" class="btn btn-success" data-dismiss="modal" id="modal-ok-button">确定</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-			</table>
-		  </div>
-	    </div>
-	  </div>
-	</div>
-	<div style="height:80px"></div>
-<div class="container-fluid">
-  <div class="row content">
-
-    <div class="col-lg-8">
-		<div class="alert alert-warning" id="error" style="display:none;">
-		  <strong>错误！</strong>你还没有上传图片。
-		</div>
-      	<canvas id="canvas" width="600" height="600" class="well ms-depth-64 mb-3"></canvas>
-    </div>
-	<div class="col-lg-4">
-		<div class="btn-group-03" id="filters" style="display:none;">
-			<h5>滤镜:</h5>
-			<button class="btn btn-success btn-sm mb-1" onclick="reset()">原图</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(0)">平均灰阶</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(10)">自然灰阶</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(20)">原色灰阶</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(1)">怀旧</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(2)">反色</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(3)">复古</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(4)">交叉冲印</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(9)">噪点</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(5)">亮度</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(6)">饱和度</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(7)">对比度</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(8)">色相</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(11)">蜡笔</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(12)">卡通</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(13)">晕影</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(14)">色差</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(15)">浮雕</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(16)">中亮度</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(17)">过饱和</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(18)">不透明</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(19)">白色到透明</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(21)">印度国旗</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(22)">黑白</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(23)">亮度反转</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(24)">饱和度反转</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(25)">模糊</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(26)">雕刻</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(27)">镜像</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="filter(28)">翻转</button>
-			<button class="btn btn-warning btn-sm mb-1" onclick="myFilter()">自定义滤镜</button>
-			<button class="btn btn-success btn-sm mb-1" onclick="document.getElementById('second').click()">水印</button>
-			<input id="second" type="file" onchange="showWatermark(this)" style="display:none;">
-			<div class="custom-control custom-checkbox" style="padding-top:5px;padding-bottom:5px;">
-				<input type="checkbox" class="custom-control-input" id="overlay" />
-				<label class="custom-control-label" for="overlay">叠加滤镜</label>
-			</div>
-			<div class="form-row mb-3">
-				<div class="form-group col-9 mb-0" style="padding-top:3.7px;padding-bottom:3.7px">
-					<input type="range" class="custom-range" name="points" min="-255" max="255" step="1" id="slider"/>
-				</div>
-				<div class="form-group col-3 mb-0">
-					<div class="input-group input-group-sm">
-						<input type="number" class="form-control" id="slider-num" value="0"/>
+			<span id="title"><strong>Chobi</strong> 图片滤镜</span>
+			<button class="btn btn-dark" title="下载图片" data-toggle="tooltip" onclick="downloadImage()" style="margin-left:45px"><i
+				 class="ms-Icon ms-Icon--Download"></i></button>
+		</nav>
+		<!-- Modal -->
+		<div class="modal fade" id="input-path" tabindex="-1">
+			<div class="modal-dialog modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="ModalLabel">输入图片地址</h5>
+						<button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span>&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="input-group mb-2">
+							<input type="text" class="form-control" id="path" placeholder="在这里输入图片URL地址">
+						</div>
+						<hr />
+						<p style="text-align:center">&copy; 2016 <a href="https://github.com/jayankaghosh/chobi">Chobi</a> - Javascript Library team (j0y)</p>
+						<p style="text-align:center"><a href="https://github.com/briangonzalez/rgbaster.js">rgbaster.js</a> - A dead simple javascript library for extracting the dominant color(s) from an image.</p>
+					</div>
+					<div class="modal-footer">
+						<table style="width:100%">
+							<button type="button" class="btn btn-success" data-dismiss="modal" id="modal-ok-button">确定</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+						</table>
 					</div>
 				</div>
 			</div>
 		</div>
-		<input type="file" id="image-chooser" style="display:none" onchange="way=0;loadImage(this);">
-	</div>
-  </div>
-</div>
+		<div class="modal fade" id="custom-filter-modal" tabindex="-1">
+			<div class="modal-dialog modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="CustomFilterLabel">自定义滤镜</h5>
+						<button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span>&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="input-group mb-2">
+							<div class="form-row">
+								<div class="col-1 flex-center">
+									<div class="custom-control custom-radio mb-2">
+									  <input type="radio" id="rgb-module" name="color-module" class="custom-control-input" checked>
+									  <label class="custom-control-label" for="rgb-module">　</label>
+									</div>
+								</div>
+							    <div class="col-11 form-row">
+									<div class="input-group col-4 mb-2">
+									  <div class="input-group-prepend">
+									    <label class="input-group-text" for="valR">R</label>
+									  </div>
+									  <input type="text" class="form-control" id="valR">
+									</div>
+									<div class="input-group col-4 mb-2">
+									  <div class="input-group-prepend">
+									    <label class="input-group-text" for="valG">G</label>
+									  </div>
+									  <input type="text" class="form-control" id="valG">
+									</div>
+									<div class="input-group col-4 mb-2">
+									  <div class="input-group-prepend">
+									    <label class="input-group-text" for="valB">B</label>
+									  </div>
+									  <input type="text" class="form-control" id="valB">
+									</div>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="col-1 flex-center">
+									<div class="custom-control custom-radio mb-2">
+									  <input type="radio" id="hsl-module" name="color-module" class="custom-control-input">
+									  <label class="custom-control-label" for="hsl-module">　</label>
+									</div>
+								</div>
+							    <div class="col-11 form-row">
+									<div class="input-group col-4 mb-2">
+									  <div class="input-group-prepend">
+									    <label class="input-group-text" for="valH">H</label>
+									  </div>
+									  <input type="text" class="form-control" id="valH" disabled>
+									</div>
+									<div class="input-group col-4 mb-2">
+									  <div class="input-group-prepend">
+									    <label class="input-group-text" for="valS">S</label>
+									  </div>
+									  <input type="text" class="form-control" id="valS" disabled>
+									</div>
+									<div class="input-group col-4 mb-2">
+									  <div class="input-group-prepend">
+									    <label class="input-group-text" for="valL">L</label>
+									  </div>
+									  <input type="text" class="form-control" id="valL" disabled>
+									</div>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="col-1 flex-center">
+									<div class="custom-control custom-radio mb-2" data-placeholder>
+									  <input type="radio" class="custom-control-input">
+									  <label class="custom-control-label">　</label>
+									</div>
+								</div>
+							    <div class="col-11 form-row">
+									<div class="input-group col-4 mb-2">
+									  <div class="input-group-prepend">
+									    <label class="input-group-text" for="valA">A</label>
+									  </div>
+									  <input type="text" class="form-control" id="valA">
+									</div>
+									<div class="input-group col-4 mb-2" data-placeholder>
+									  <input type="text" class="form-control">
+									</div>
+									<div class="input-group col-4 mb-2" data-placeholder>
+									  <input type="text" class="form-control">
+									</div>
+								</div>
+							</div>
+						</div>
+						<hr />
+						<small>
+							<!-- <p>本功能通过 <code>eval</code> 函数实现，性能非常地差，如果图片比较大，那就等着死机吧。</p> -->
+							<p>支持的参数：<code>r(红)</code>、<code>g(绿)</code>、<code>b(蓝)</code>、<code>h(色相)</code>、<code>s(饱和度)</code>、<code>l(亮度)</code>、<code>a(不透明度)</code>。大小写均可。</p>
+							<p>选择一个颜色模型，在输入框中输入上述参数及表达式，可以生成自己需要的滤镜。</p>
+							<p class="text-danger">注意这里是 <b>HSL</b> 模型，不是 <b>HSV</b> 模型！</p>
+							<!-- <p>R、G、B 三个参数的取值范围均为 [0,255]，H 的取值范围为 [0,360)，S、L、A 三个参数的取值范围为 [0,100]。</p> -->
+							<p>所有参数的取值范围均为 [0,255]。如果超出范围，还是会被约束到这个范围。</p>
+							<p>如果有参数留空，则自动保持原参数的设定值。</p>
+							<p>支持使用 JavaScript 的函数，如 <code>Math.sqrt(1/2)</code>、<code>Math.sin(Math.PI/6)</code>、<code>Math.pow(2,3)</code> 等。注意前面必须加上“Math.”。</p>
+							<p>例如欲生成“反色”滤镜，可以先选择 RGB 模型，然后在对应的三个输入框中依次输入 <code>255-r</code>、<code>255-g</code>、<code>255-b</code> 即可。</p>
+							<p>双击文本框左边的标签可以快速清空文本框的内容。</p>
+						</small>
+					</div>
+					<div class="modal-footer">
+						<table style="width:100%">
+							<button type="button" class="btn btn-success" onclick="myFilter()">确定</button>
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div style="height:80px"></div>
+		<div class="container-fluid">
+			<div class="row">
 
-</body>
-<script type="text/javascript">
-	$(document).ready(function() {
-		$('[data-toggle="tooltip"]').tooltip();
-	});
-
-	function showWatermark(imgElem){
-		//watermark parameters	(imageElement, amount, startX, startY, width, height, callback)
-		imgObj.watermark(imgElem,2,0,0,imgObj.imageData.width,imgObj.imageData.height,function(){
-			imgObj.loadImageToCanvas();
+				<div class="col-lg-8" id="canvas-part">
+					<div class="alert alert-warning" id="error" style="display:none;z-index:9">
+						<strong>错误！</strong>你还没有上传图片。
+					</div>
+					<!-- <div class="canvases"> -->
+						<canvas id="canvas" width="600" height="600" class="well ms-depth-64 mb-3"></canvas>
+						<canvas id="original" width="600" height="600" class="well mb-3"></canvas>
+					<!-- </div> -->
+				</div>
+				<div class="col-lg-4">
+					<div class="btn-group-03" id="filters" style="display:none">
+						<!-- <h5>滤镜:</h5> -->
+						<div class="btn-group-04">
+							<button class="notFx active" id="fx-orig" onclick="reset()">原图</button>
+							<button id="fx0" value="blackAndWhite">平均灰阶</button>
+							<button id="fx10" value="blackAndWhite2">自然灰阶</button>
+							<button id="fx20" value="blackAndWhite3">原色灰阶</button>
+							<button id="fx1" value="sepia">怀旧</button>
+							<button id="fx2" value="negative">反色</button>
+							<button id="fx3" value="vintage">复古</button>
+							<button id="fx4" value="crossProcess">交叉冲印</button>
+							<button id="fx9" value="noise">噪点</button>
+							<button id="fx5" value="brightness">亮度</button>
+							<button id="fx6" value="saturation">饱和度</button>
+							<button id="fx7" value="contrast">对比度</button>
+							<button id="fx8" value="hue">色相</button>
+							<button id="fx11" value="crayon">蜡笔</button>
+							<button id="fx12" value="cartoon">卡通</button>
+							<button id="fx13" value="vignette">晕影</button>
+							<button id="fx14" value="aberration">色差</button>
+							<button id="fx15" value="relief">浮雕</button>
+							<button id="fx16" value="midBright">中亮度</button>
+							<button id="fx17" value="maxSaturate">过饱和</button>
+							<button id="fx18" value="opaque">不透明</button>
+							<button id="fx19" value="whiteToAlpha">白色到透明</button>
+							<button id="fx21" value="india">印度国旗</button>
+							<button id="fx22" value="threshold">黑白</button>
+							<button id="fx23" value="invertBright">亮度反转</button>
+							<button id="fx24" value="invertSaturate">饱和度反转</button>
+							<button id="fx25" value="blur">模糊</button>
+							<button id="fx26" value="carving">雕刻</button>
+							<button id="fx27" value="mirror">镜像</button>
+							<button id="fx28" value="reverse">翻转</button>
+							<button id="fx29" value="thermography">热成像</button>
+							<button id="fx30" value="backThermography">热成像还原</button>
+							<button id="fx31" value="Xray">X光片</button>
+							<button id="fx32" value="posterize">色调分离</button>
+							<button id="fx33" value="primaryColor">三原色三间色</button>
+							<button class="notFx btn btn-outline-warning mb-1" id="myfilter" data-toggle="modal" data-target="#custom-filter-modal"><i class="ms-Icon ms-Icon--CustomizeToolbar"></i>自定义滤镜</button><!-- onclick="myFilter()" -->
+							<button class="notFx btn btn-outline-warning mb-1" onclick="document.getElementById('second').click()"><i class="ms-Icon ms-Icon--PasswordField"></i>水印</button>
+						</div>
+						<div class="form-row mb-3 slider-part">
+							<div class="form-group col-9 group-slider">
+								<div class="btn-group-toggle" data-toggle="buttons" style="margin-right: .5rem">
+									<label class="btn btn-outline-primary btn-sm" for="overlay" style="border-radius: 100px;" title="叠加滤镜" data-toggle="tooltip" data-trigger="hover">
+										<input type="checkbox" autocomplete="off" id="overlay" />
+										<i class="ms-Icon ms-Icon--BuildQueueNew" aria-hidden="true"></i>
+									</label>
+								</div>
+								<input type="range" class="custom-range" name="points" min="-255" max="255" step="1" id="slider" />
+							</div>
+							<div class="form-group col-3">
+								<div class="input-group input-group-sm">
+									<input type="number" class="form-control" id="slider-num" value="0" />
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="alert alert-warning" id="start-info">
+						点击左上角按钮上传图片或粘贴图片地址。
+					</div>
+					<input id="second" type="file" onchange="showWatermark(this)" hidden />
+					<input type="file" id="image-chooser" hidden onchange="way=0;loadImage(this);" />
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('[data-toggle="tooltip"]').tooltip();
 		});
-	}
 
-	//custom filter (india flag)
-	function myFilter(){
-	var height = imgObj.imageData.height;
-		//orange
-		for(var i=0;i<imgObj.imageData.width;i++){
-			for(var j=0;j<(height/3);j++){
-				var pixel = imgObj.getColorAt(i,j);
-				pixel.red = (255+pixel.red)/2;
-				pixel.green = (165+pixel.green)/2;
-				pixel.blue /= 2;
-				imgObj.setColorAt(i,j,pixel);			
-			}
-		}
-		//white
-		for(var i=0;i<imgObj.imageData.width;i++){
-			for(var j=Math.floor(height/3);j<Math.floor(2*(height/3));j++){
-				var pixel = imgObj.getColorAt(i,j);
-				pixel.red = (255+pixel.red)/2;
-				pixel.green = (255+pixel.green)/2;
-				pixel.blue = (255+pixel.blue)/2;
-				imgObj.setColorAt(i,j,pixel);			
-			}
-		}
-		//green
-		for(var i=0;i<imgObj.imageData.width;i++){
-			for(var j=Math.floor(2*(height/3));j<Math.floor(height);j++){
-				var pixel = imgObj.getColorAt(i,j);
-				pixel.red = (0+pixel.red)/2;
-				pixel.green = (255+pixel.green)/2;
-				pixel.blue = (0+pixel.blue)/2;
-				imgObj.setColorAt(i,j,pixel);			
-			}
-		}
-		imgObj.loadImageToCanvas();
-	}
+		var realTimeSlide, way = 0,
+			filterId = -1, customHSLModule = false,
+			enableThumb = true;
 
-	var imgObj = null; //global Chobi object
-	function loadImage(elem){
-		//you should probably check if file is image or not before passing it
-		imgObj = new Chobi(elem);
-		imgObj.ready(function(){
-			this.canvas = document.getElementById("canvas");
-			this.loadImageToCanvas();
-
-			//show filters to users
-			document.getElementById("filters").style.display = "block";
-		});
-	}
-
-	function downloadImage(){
-		if(imgObj == null){
-			document.getElementById("error").style.display="block";
-			setTimeout(function(){
-				document.getElementById("error").style.display="none";
-			}, 4000);
-			return;
-		}
-		imgObj.download(new Date().format("yyyyMMddhhmmss"),"png");
-	}
-
-
-	//0 -> Black and white
-	//10 -> Black and white2
-	//1 -> sepia
-	//2 -> negative
-	//3 -> vintage
-	//4 -> crossprocess
-	//5 -> Brightness increase
-	//6 -> Brightness decrease
-	//7 -> Contrast increase
-	//8 -> Contrast decrease
-	//9 -> Noise Effect
-	//11 -> Crayon effect
-	//12 -> Cartoonify
-	//13 -> Vignette
-	//filter chaining is also possible, like imgObj.brightness(-5).sepia().negative();
-	var fx=["blackAndWhite","sepia","negative","vintage","crossProcess",
-		"brightness","saturation","contrast","hue","noise","blackAndWhite2",
-		"crayon","cartoon","vignette","aberration","relief","midBright",
-		"maxSaturate","opaque","whiteToAlpha","blackAndWhite3","india","threshold",
-		"invertBright","invertSaturate","blur","carving","mirror","reverse"];
-	function filter(id){
-		if(imgObj == null){
-			alert("选择张照片先!");
-			return;
-		}
-		filterId=id;
-		var slider=document.getElementById("slider").value,
-			overlay=document.getElementById("overlay").checked;
-		if(!overlay) {
-			imgObj = new Chobi(way==0?$("#image-chooser")[0]:$("#path").val());
-			imgObj.ready(function(){
-				this.canvas = document.getElementById("canvas");
-				eval("imgObj."+fx[id]+"("+slider+")");
+		function showWatermark(imgElem) {
+			//watermark parameters	(imageElement, amount, startX, startY, width, height, callback)
+			imgObj.watermark(imgElem, 2, 0, 0, imgObj.imageData.width, imgObj.imageData.height, function() {
 				imgObj.loadImageToCanvas();
 			});
 		}
-		else{
-			eval("imgObj."+fx[id]+"("+slider+")");
-			imgObj.loadImageToCanvas();
+		
+		for(let i of $(".btn-group-04 button").not(".btn").addClass("btn btn-outline-success mb-1")) {
+			let text = i.innerText;
+			i.innerHTML = `<canvas width="90" height="90"></canvas><span>${text}</span>`;
 		}
-	}
-	function reset(){
-		filterId=-1;
-		loadImage(way==0?$("#image-chooser")[0]:$("#path").val());
-	}
-	var realTimeSlide,way=0,filterId=-1;
-	$("#slider").mousedown(function(){
-		realTimeSlide = setInterval(function() {
-			$("#slider-num").val($("#slider").val());
-		}, 0.01);
-	});
-	$("#slider").mouseup(function(){
-		clearInterval(realTimeSlide);
-		if(filterId>=0) filter(filterId);
-	});
-	$("#slider-num").on('input propertychange', function(){
-		if($(this).val()=="") return;
-		var v = parseInt($(this).val());
-		if(v>255) v=255;
-		if(v<-255) v=-255;
-		$(this).val(v);
-		$("#slider").val(v);
-	});
-	$("#modal-ok-button").click(function(){
-		way=1;
-		loadImage($("#path").val());
-	});
-	
-	Date.prototype.format = function(format) {
-		var o = {
-			"M+": this.getMonth() + 1, //month
-			"d+": this.getDate(), //day
-			"h+": this.getHours(), //hour
-			"m+": this.getMinutes(), //minute
-			"s+": this.getSeconds(), //second
-			"q+": Math.floor((this.getMonth() + 3) / 3), //quarter
-			"S": this.getMilliseconds() //millisecond
-		}
-		if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
-			(this.getFullYear() + "").substr(4 - RegExp.$1.length));
-		for (var k in o)
-			if (new RegExp("(" + k + ")").test(format))
-				format = format.replace(RegExp.$1,
-					RegExp.$1.length == 1 ? o[k] :
-					("00" + o[k]).substr(("" + o[k]).length));
-		return format;
-	}
-</script>
-</html>
 
+		//custom filter (india flag)
+		function myFilter() {
+			$(".form-control").removeClass("is-invalid");
+			function v(id){
+				return $("#val"+id.toUpperCase()).val();
+			}
+			{	//验证数据合法性。下面这个示例的颜色就是Windows经典主题的默认灰色。
+				let r=212,g=208,b=200,a=255,h=27.625,s=30.855,l=205.785;
+				function legal(n){
+					return ((typeof n === "number") && (isFinite(n)))
+				}
+				function t(n){
+					return (!legal(eval(v(n))));
+				}
+				const st="RGBHSLA";
+				for(let i of st){
+					if($("#val"+i).val()==='') $("#val"+i).val(i);
+					$("#val"+i).val($("#val"+i).val().toLowerCase().replace(/math/gi,"Math").replace(/pi/gi,"PI").replace(/Math\.e/gi,"Math.E"))
+				}
+				try {
+					let d=(customHSLModule?"HSLA":"RGBA");
+					var j;
+					for(j of d)
+						if(t(j)) throw j;
+				} catch(e) {
+					console.error(e+"\n"+j+" 表达式错误！");
+					$("#val"+j).addClass("is-invalid");
+					return j;
+				}
+			}
+			{	//由于eval函数太垃圾，试图通过插入函数的方法解决
+				let d=(customHSLModule?"HSLA":"RGBA"),
+					scriptTag='<script id="tempCustomFunction">';
+				for(let i of d)
+					scriptTag += `
+					function temp${i}(list) {
+						var r,g,b,h,s,l,a;
+						[r,g,b,h,s,l,a]=list;
+						return (${v(i)});
+					}
+					`;
+				scriptTag += "</script\>"; //script 关标签最好加一个转义符号，否则可能会被 HTML 检测到，把现在目前的整个 script 标签给关了。
+				$("body").append(scriptTag);
+			}
+			if(!($("#overlay").prop("checked")))
+				reset();
+				filter();
+				imgObj.loadImageToCanvas();
+			function filter() {
+				var height = imgObj.imageData.height,
+					width = imgObj.imageData.width;
+				for (var i = 0; i < width; i++) {
+					for (var j = 0; j < height; j++) {
+						var pixel = imgObj.getColorAt(i, j),
+							pixelhsl=RGB2HSL(pixel.red,pixel.green,pixel.blue);
+							var r=pixel.red,
+								g=pixel.green,
+								b=pixel.blue,
+								a=pixel.alpha,
+								h=imgObj.map(pixelhsl.H,0,360,0,255),
+								s=imgObj.map(pixelhsl.S,0,1,0,255),
+								l=imgObj.map(pixelhsl.L,0,1,0,255),
+								c=[r,g,b,h,s,l,a];
+						var newR,newG,newB,newA;
+						if(!customHSLModule){
+							newR=tempR(c);
+							newG=tempG(c);
+							newB=tempB(c);
+						} else {
+							var newH=imgObj.map(tempH(c),0,255,0,360),
+								newS=imgObj.map(tempS(c),0,255,0,1),
+								newL=imgObj.map(tempL(c),0,255,0,1),
+								newC=HSL2RGB(newH,newS,newL);
+							newR=newC.R;
+							newG=newC.G;
+							newB=newC.B;
+						}
+						newA=tempA(c);
+						pixel.red = newR;
+						pixel.green = newG;
+						pixel.blue = newB;
+						pixel.alpha = newA;
+						imgObj.setColorAt(i, j, pixel);
+					}
+				}
+				$("#tempCustomFunction").remove();
+			}
+			$("#custom-filter-modal").modal('hide');
+			return false;
+		}
+
+		var imgObj = null; //global Chobi object
+		function loadImage(elem) {
+			//you should probably check if file is image or not before passing it
+			imgObj = new Chobi(elem);
+			imgObj.ready(function() {
+				this.canvas = $("#original")[0];
+				this.loadImageToCanvas();
+				this.canvas = $("#canvas")[0];
+				this.loadImageToCanvas();
+				
+				if(enableThumb) {	//缩略图部分
+					let orig=$("#fx-orig canvas")[0]
+					this.thumbImageData(orig,orig.width,orig.height);
+					imgThumb = new Chobi(orig);
+					imgThumb.ready(function(orig){
+						let fx=$(".btn-group-04 canvas");
+						for(let i=1;i<fx.length;i++){
+							let filterName=fx[i].parentNode.value;
+							this.canvas=fx[i];
+							eval("imgThumb." + filterName + "()");
+							this.loadImageToCanvas();
+							this.changeImageData(orig);
+						}
+					});
+					imgThumb.onload(orig);
+					{	//主色调部分
+						var colors = RGBaster.colors(orig, {
+							paletteSize: 1,
+							success: function(colors) {
+								console.log("Dominant color:", colors.dominant);
+								$("#canvas, #original").css({
+									"border-color": colors.dominant,
+									"background-color": colors.dominant
+								});
+							}
+						});
+					}
+					delete imgThumb;
+				}
+			});
+			
+				//show filters to users
+				$(".btn-group-04 button").removeClass("active")
+				$("#fx-orig").addClass("active");
+				$("#start-info").hide();
+				$("#filters").show();
+				gridChange();
+		}
+		
+		function new_eval(str) {
+		    var fn = Function;
+		    return new fn('return ' + str)();
+		}
+
+		function testMode() {
+			if (testpic === undefined) return;
+			way = 2;
+			loadImage(testpic);
+		}
+
+		testpic = "test.jpg";
+		// testMode();
+
+		function downloadImage() {
+			if (imgObj == null) {
+				$("#error").fadeIn();
+				setTimeout(function() {
+					$("#error").fadeOut();
+				}, 4000);
+				return;
+			}
+			imgObj.download(new Date().format("yyyyMMddhhmmss"), "png");
+		}
+		
+		//filter chaining is also possible, like imgObj.brightness(-5).sepia().negative();
+		$(".btn-group-04 button").not(".notFx").click(function() {
+			val = $(this).val();
+			filter(undefined, val);
+		});
+		
+		$(".btn-group-04 button").click(function(){
+			$(".btn-group-04 button").removeClass("active")
+			$(this).addClass("active");
+		});
+
+		function filter(id, value) { //id的方法不用了
+			if (value === undefined) return null;
+			if (imgObj == null) {
+				alert("选择张照片先!");
+				return null;
+			}
+			var slider = document.getElementById("slider").value,
+				overlay = document.getElementById("overlay").checked;
+			if (!overlay) reset();
+				filterId = value;
+				eval("imgObj." + value + "(" + slider + ")");
+				imgObj.loadImageToCanvas();
+		}
+
+		function reset() {
+			filterId = "reset";
+			imgObj.changeImageData($("#original")[0]).loadImageToCanvas();
+		}
+		$("#slider").mousedown(function() {
+			realTimeSlide = setInterval(function() {
+				$("#slider-num").val($("#slider").val());
+			}, 0.01);
+		});
+		$("#slider").mouseup(function() {
+			clearInterval(realTimeSlide);
+			if (filterId != "reset") filter(undefined, filterId);
+		});
+		$("#slider").dblclick(function() {
+			$(this).val(0).mousedown().mouseup();
+			$("#slider-num").val(0);
+		});
+		$("#slider-num").on('input propertychange', function() {
+			if ($(this).val() == "") return;
+			var v = parseInt($(this).val());
+			if (v > 255) v = 255;
+			if (v < -255) v = -255;
+			$(this).val(v);
+			$("#slider").val(v).mouseup();
+		});
+		$("#modal-ok-button").click(function() {
+			way = 1;
+			loadImage($("#path").val());
+		});
+
+		Date.prototype.format = function(format) {
+			var o = {
+				"M+": this.getMonth() + 1, //month
+				"d+": this.getDate(), //day
+				"h+": this.getHours(), //hour
+				"m+": this.getMinutes(), //minute
+				"s+": this.getSeconds(), //second
+				"q+": Math.floor((this.getMonth() + 3) / 3), //quarter
+				"S": this.getMilliseconds() //millisecond
+			}
+			if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+				(this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			for (var k in o)
+				if (new RegExp("(" + k + ")").test(format))
+					format = format.replace(RegExp.$1,
+						RegExp.$1.length == 1 ? o[k] :
+						("00" + o[k]).substr(("" + o[k]).length));
+			return format;
+		}
+		
+		$("[name='color-module']").click(function(){
+			if(this.id=="rgb-module") {
+				$("#valR,#valG,#valB").removeAttr("disabled");
+				$("#valH,#valS,#valL").attr("disabled","disabled");
+				customHSLModule=false;
+			} else {
+				$("#valR,#valG,#valB").attr("disabled","disabled");
+				$("#valH,#valS,#valL").removeAttr("disabled");
+				customHSLModule=true;
+			}
+		});
+		$(".input-group-prepend label").dblclick(function(){
+			$('#'+this.htmlFor).val("");
+		});
+		
+		$.fn.rmcss = function() {
+			return this.removeAttr("style");
+		}
+		window.onload = window.onresize = gridChange;
+		function gridChange() { //grid系统
+			if($("#canvas-part")[0].clientWidth<$("#canvas")[0].clientWidth)
+				$("#canvas,#original").css("transform",`scale(${$("#canvas-part")[0].clientWidth/$("#canvas")[0].clientWidth})`)
+			else
+				$("#canvas,#original").css("transform","scale(1)");
+		}
+		document.onkeydown = function(e) {
+			if (window.event.keyCode == 13) {
+				if($("#path").is(":focus")) $("#modal-ok-button").click();
+			}
+		}
+	</script>
+</html>

@@ -3,67 +3,159 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="Description" content="胡伯的傻逼小病毒" />
-		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=yes">
 		<title>请更新下您的杀毒软件，谢谢</title>
 		<style>
-			body{
-				text-align:center;
-				background-color:black;
-				color:white;
+			a {
+				text-decoration: none;
 			}
-			a{ text-decoration:none; }
+
+			body {
+				text-align: center;
+				background-color: black;
+				color: white;
+			}
+
+			#close-button {
+				position: fixed;
+				right: 5px;
+				top: 5px;
+			}
+
+			#close-button.hidden {
+				opacity: 0;
+				top: -100px;
+			}
+
+			#close-button a {
+				color: grey;
+			}
+
+			h1 {
+				color: red;
+				text-align: center;
+			}
+
+			#bbs {
+				font-size: 72px;
+			}
+
+			#good {
+				width: 85px;
+				height: 60px;
+				font-size: 18px;
+			}
+
+			.rights {
+				position: absolute;
+				bottom: 0;
+			}
+
+			.rights a {
+				color: #BBF;
+			}
 		</style>
 	</head>
 	<body>
-		<div style="width:5px;height:5px;float:right;">
-			<a id="bxcl" href="option.html" title="不要再给我整提这个胡伯的傻逼小病毒了好吧！" style="color:grey;">
-				<p id="jr" align="right"></p>
-			</a>
+		<div id="mightTwink">
+			<div id="close-button" class="hidden">
+				<a href="option.html" title="不要再给我整提这个胡伯的傻逼小病毒了好吧！">
+					<p id="jr" align="right">&#10005;</p>
+				</a>
+			</div>
+			<p id="bbs">&#9760;&#65039;</p><!-- 此处是绘文字标签 -->
 		</div>
 		<div>
-			<p id="bbs" style="font-size:72px;">&#9760;&#65039;</p><!-- 此处是绘文字标签 -->
-			<h1 align="center" style="color:red;">
+			<h1>
 				<!--&#12288;-->你中毒了，点击确定！</h1>
-			<p align="center"><button onclick="jia();" style="width: 85px; height: 60px;font-size:18px;" title="Good!">确定</button></p>
-			<p><input type="text" id="demo" value="0" style="display:none;" /><input type="text" id="y" style="display:none;" /></p>
+			<p><button id="good" title="Good!">确定</button></p>
+			<!-- <p><input type="text" id="demo" value="0" style="display:none;" /><input type="text" id="y" style="display:none;" /></p> -->
 		</div>
-		<div style="position:absolute;bottom:0;">
-			<code><a href="javascript:location.reload();" style="color:#BBBBFF;">&copy;</a> All Right Reserved.</code>
+		<div class="rights">
+			<code><a href="javascript:location.reload();">&copy;</a> All Right Reserved.</code>
 		</div>
 		<script>
-			var sandrine = Math.floor(Math.random() * 200 + 50);
-
-			function jia() {
+			var y = 0;
+			var sandrine = () => Math.floor(Math.random() * 200 + 50);
+			HTMLElement.prototype.hide = function(hide = true) {
+				this.style.display = (hide ? "none" : "");
+			}
+			document.getElementById("good").addEventListener('click', function() {
 				alert("A serious error occurred!!");
-				var ui = document.getElementById("bbs");
-				ui.style.display = "none";
-				var uib = document.getElementById("bxcl");
-				uib.style.display = "none";
+				var mightTwink = document.getElementById("mightTwink");
+				mightTwink.hide();
 				setTimeout(function() {
-					var ui = document.getElementById("bbs");
-					ui.style.display = "";
-					var uib = document.getElementById("bxcl");
-					uib.style.display = "";
-					demo = document.getElementById("demo");
-					demo.value = parseInt(demo.value) + 1;
-					var y = document.getElementById("y");
-					y.value = parseInt(demo.value) % 10;
-					if (y.value == 0) {
-						document.getElementById("jr").innerHTML = "\u2715"; //叉号
-					} else {
-						document.getElementById("jr").innerHTML = "";
-					}
-				}, "sandrine.value");
-			};
-			<!-- 控制台输出文字部分 -->
-			if (window.console) {
-				var cons = console;
-				if (cons) {
-					cons.log("使用方略：");
-					cons.log("点按“确定”键十次，忽略弹窗。指的是页面中的按钮，弹窗中的不算。然后右上角会出现一个叉，之后就能退出去进入主界面了。");
-					cons.log("左下角的版权符号（即圈 C）可以刷新，避免误操作错过了点击十次。");
-					cons.log("- 所以请不要再给我整提这个胡伯的傻逼小病毒了好吧！");
-				}
+					mightTwink.hide(0);
+					y++;
+					var closeButton = document.getElementById("close-button");
+					if (y && !(y % 10)) closeButton.className = "";
+					else closeButton.className = "hidden";
+				}, sandrine());
+			}, false);
+			/* 控制台输出文字部分 */
+			console.log(
+				`使用方略：
+点按“确定”键十次，忽略弹窗。指的是页面中的按钮，弹窗中的不算。然后右上角会出现一个叉，之后就能退出去进入主界面了。
+左下角的版权符号（即圈 C）可以刷新，避免误操作错过了点击十次。
+- 所以请不要再给我整提这个胡伯的傻逼小病毒了好吧！`
+			);
+			/* 判断浏览器内核及版本 */
+			function BrowserType() 
+			 { 
+			   var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串 
+			   var isOpera = userAgent.indexOf("Opera") > -1; //判断是否Opera浏览器 
+			   // var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera; //判断是否IE浏览器 
+			   var isIE=window.ActiveXObject || "ActiveXObject" in window
+			   // var isEdge = userAgent.indexOf("Windows NT 6.1; Trident/7.0;") > -1 && !isIE; //判断是否IE的Edge浏览器 
+			   var isEdge = userAgent.indexOf("Edge") > -1; //判断是否IE的Edge浏览器
+			   var isFF = userAgent.indexOf("Firefox") > -1; //判断是否Firefox浏览器 
+			   var isSafari = userAgent.indexOf("Safari") > -1 && userAgent.indexOf("Chrome") == -1; //判断是否Safari浏览器 
+			   var isChrome = userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Safari") > -1&&!isEdge; //判断Chrome浏览器 
+			  
+			   if (isIE)  
+			   { 
+			      var reIE = new RegExp("MSIE (\\d+\\.\\d+);"); 
+			      reIE.test(userAgent); 
+			      var fIEVersion = parseFloat(RegExp["$1"]); 
+			      if(userAgent.indexOf('MSIE 6.0')!=-1){
+			        return "IE6";
+			      }else if(fIEVersion == 7) 
+			        { return "IE7";} 
+			      else if(fIEVersion == 8) 
+			        { return "IE8";} 
+			      else if(fIEVersion == 9) 
+			        { return "IE9";} 
+			      else if(fIEVersion == 10) 
+			        { return "IE10";} 
+			      else if(userAgent.toLowerCase().match(/rv:([\d.]+)\) like gecko/)){ 
+			            return "IE11";
+			        } 
+			      else
+			        { return "0"}//IE版本过低
+			    }//isIE end 
+			      
+			    if (isFF) { return "Firefox";} 
+			    if (isOpera) { return "Opera";} 
+			    if (isSafari) { return "Safari";} 
+			    if (isChrome) { return "Chrome";} 
+			    if (isEdge) { return "Edge";} 
+			  }//myBrowser() end 
+			function getChromeVersion() {
+			    var arr = navigator.userAgent.split(' '); 
+			    var chromeVersion = '';
+			    for(var i=0;i < arr.length;i++){
+			        if(/chrome/i.test(arr[i]))
+			        chromeVersion = arr[i]
+			    }
+			    if(chromeVersion){
+			        return Number(chromeVersion.split('/')[1].split('.')[0]);
+			    } else {
+			        return false;
+			    }
+			}
+			if(!location.href.includes('#')){
+				if(BrowserType()=="Firefox") jr.click();
+				if(BrowserType()=="Chrome"||BrowserType()=="Edge") if(getChromeVersion()>=88) jr.click();
 			}
 		</script>
 	</body>

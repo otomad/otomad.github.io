@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+
+		<title>抽象话生成器</title>
+
+		<meta name="description" content="一键生成抽象话">
+		<meta name="author" content="chenxuuu">
+		<script src="js/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<script type="text/javascript" src="js/cxh.js"></script>
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="js/grapheme-splitter.js"></script>
+		<style>body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6{transition: all 250ms ease !important;}
+			textarea.form-control {
+				height: 38px;
+				min-height: 38px;
+				transition: box-shadow 250ms ease, background-color 250ms ease, color 250ms ease !important;
+				vertical-align: middle;
+			}
+			html, body {
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Noto Sans', 'San Francisco', 微软雅黑, 思源黑体, 苹方, '等距更纱黑体 SC', sans-serif;
+			  scroll-behavior: smooth;
+			}
+			.sm {
+				border: none;
+				height: 24px;
+				padding: 0 3px;
+				margin-bottom: 4px;
+				float: right;
+			}
+		</style>
+	</head>
+
+	<body>
+
+		<nav style="display:none" class="navbar navbar-expand-lg navbar-light bg-light">
+			<a class="navbar-brand" style="cursor:default;"><img src="../caption-logo.svg" width="30" height="30" alt="" loading="lazy"></a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="../option.html">主页</a>
+					</li>
+					<li class="nav-item active">
+						<a class="nav-link" href="javascript:void(0);">抽象话生成器<span class="sr-only">（当前）</span></a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="pyfmt.html">拼音格式化</a>
+					</li>
+				</ul>
+				<span class="navbar-text" style="font-size:75%">
+					Powered by Bootstrap
+				</span>
+			</div>
+		</nav>
+
+		<div class="container-fluid">
+			<br />
+			<div class="row">
+				<div class="col-sm-8">
+					<h1>抽象话生成器</h1>
+					<p>一键生成抽象话</p>
+				</div>
+				<div class="col-sm-4">
+					<div class="alert alert-warning alert-dismissable" style="/*max-width:400px;display:*/">
+						<div style="padding:0 5px">
+							<h4 style="padding:10px 0">温馨提示：</h4>
+							<p>生成时请注意温文儒雅。<p>
+						</div>
+					</div>
+					<!-- <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="display:none">
+						<div class="toast-header">
+							<strong class="mr-auto">Bootstrap</strong>
+							<small class="text-muted">just now</small>
+							<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="toast-body">
+							See? Just like this.
+						</div>
+					</div> -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="form-group">
+						<label for="rawText" data-toggle="tooltip" data-placement="left" title="目前仅支持转换中文">
+							要转换的语句
+						</label>
+						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(0)" title="重设" data-toggle="tooltip">
+							<i class="fa fa-times fa-fw"></i>
+						</button>
+						<textarea type="text" class="form-control" id="rawText" autofocus placeholder="输入你要转换的语句"></textarea>
+					</div>
+					<button class="btn btn-primary btn-block" onclick="getResult()" id="create">
+						生成抽象话
+					</button>
+					<div class="form-group" style="margin-top:0.75em">
+						<label for="resultText">
+							转换结果
+						</label>
+						<textarea type="text" class="form-control" id="resultText"></textarea>
+					</div>
+					<button class="btn btn-secondary btn-block" id="d_clip_button" data-clipboard-target="#resultText" data-toggle="tooltip"
+					 data-placement="bottom" title="复制到剪贴板">
+						复制结果
+					</button>
+					<br />
+				</div>
+				<div class="col-lg-4">
+					<div class="form-group">
+						<label for="chouxiangText" data-toggle="tooltip" data-placement="left" title="只支持还原本工具转换的结果">
+							<span class="text-danger" style="margin-right:0.5em">新功能</span>还原抽象话到拼音
+						</label>
+						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(1)" title="重设" data-toggle="tooltip">
+							<i class="fa fa-times fa-fw"></i>
+						</button>
+						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="pasteText()" id="paste-button" title="粘贴<br />（本功能目前已废<br />请自行按下 Ctrl+V 粘贴）" data-toggle="tooltip" data-html="true">
+							<i class="fa fa-paste fa-fw"></i>
+						</button>
+						<textarea type="text" class="form-control" id="chouxiangText" placeholder="此处粘贴你要还原的绘文字"></textarea>
+					</div>
+					<button class="btn btn-primary btn-block" onclick="retrenResult()">
+						还原抽象话到拼音
+					</button>
+				</div>
+			</div>
+			<br />
+			<p class="footer form-text text-muted mb-3" style="font-size:90%">源码来自 宇露网</p>
+		</div>
+
+		<script>
+			$(document).ready(function() {
+				$('[data-toggle="tooltip"]').tooltip();
+			});
+			$("#create").attr({"disabled": "disabled"});
+			$("#create").text("加载中，请稍候……");
+
+			function getResult() {
+				if (document.getElementById('rawText').value == "") {
+					document.getElementById("resultText").value = "👇🈹🌶里转🈳7⃣呢¿敲🐔🈹字8⃣❕";
+				} else {
+					document.getElementById("resultText").value = "生成中，请稍候……";
+					document.getElementById("resultText").value = chouxiang(document.getElementById('rawText').value);
+				}
+			}
+
+			function retrenResult() {
+				if (document.getElementById('chouxiangText').value == "") {
+					document.getElementById("resultText").value = "你搁那里转空气呢？敲几个字吧！";
+				} else {
+					document.getElementById("resultText").value = "还原中，请稍候……";
+					document.getElementById("resultText").value = dechouxiang(document.getElementById('chouxiangText').value);
+				}
+			}
+		</script>
+		<script type="text/javascript" src="js/clipboard.min.js"></script>
+		<script type="text/javascript" src="js/cxh.js"></script>
+		<script type="text/javascript" src="js/grapheme-splitter.js"></script>
+		<script>
+			var btn = document.getElementById('d_clip_button');
+			var clipboard = new ClipboardJS(btn);
+			clipboard.on('success', function() {
+				clipboardReact("复制成功~");
+			});
+			clipboard.on('error', function() {
+				clipboardReact("复制失败了呢，你还是手动复制吧……");
+			});
+
+			function clipboardReact(title) {
+				var clipbtn = $("#d_clip_button");
+				clipbtn.focus();
+				clipbtn.attr('title', title).tooltip('_fixTitle').tooltip('show');
+				setTimeout(function() {
+					clipbtn.attr('title', "复制到剪贴板").tooltip('_fixTitle');
+					clipbtn.mouseout(function() {
+						clipbtn.tooltip('hide');
+					});
+				}, 500);
+			}
+			
+			$('textarea').each(function () {
+			  this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
+			}).on('input', textarea_resize);
+			function textarea_resize() {
+				$('textarea').each(function () {
+					this.style.height = '38px';
+					this.style.height = (this.scrollHeight) + 'px';
+				});
+			}
+			
+			function resetText(num) {
+				var txt2=["#rawText","#chouxiangText"];
+				$(txt2[num]).val("");
+				$(txt2[num]).select();
+				textarea_resize();
+			}
+			function pasteText() {
+				/* $("#chouxiangText").val("");
+				$("#chouxiangText").select();
+				$("#chouxiangText").val(Window.clipboardData.getData("Text"));
+				$("#chouxiangText").blur(); */
+				/* navigator.permissions.query({
+				  name: 'clipboard-read'
+				}).then(permissionStatus => {
+				  // Will be 'granted', 'denied' or 'prompt':
+				  console.log(permissionStatus.state);
+				
+				  // Listen for changes to the permission state
+				  permissionStatus.onchange = () => {
+				    console.log(permissionStatus.state);
+				  };
+				});
+				console.log(navigator.clipboard.readText()); */
+				$("#chouxiangText").focus();
+			}
+		</script>
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>

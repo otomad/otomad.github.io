@@ -15,7 +15,7 @@ const av2bv = (av) => {
         num = parseInt(av.replace(/[^0-9]/gu, ''));
     };
     if (isNaN(num) || num <= 0) {
-        throw '¿你在想桃子？';
+        return '¿你在想桃子？';
     };
 
     num = (num ^ xor) + add;
@@ -42,10 +42,10 @@ const bv2av = (bv) => {
     } else if (bv.length === 9) {
         str = `BV1${bv}`;
     } else {
-        throw '¿你在想桃子？';
+        return '¿你在想桃子？';
     };
     if (!str.match(/[Bb][Vv][fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF]{10}/gu)) {
-        throw '¿你在想桃子？';
+        return '¿你在想桃子？';
     };
 
     let result = 0;

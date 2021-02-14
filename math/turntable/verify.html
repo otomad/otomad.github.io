@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+ <head> 
+  <meta charset="utf-8" /> 
+  <meta contenttype="application/x-www-form-urlencoded" /> 
+  <title></title> 
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> 
+ </head> 
+ <body> 
+  <button id="test">生成验证码</button> 
+  <input type="text" id="text" /> 
+  <img id="verify" /> 
+  <script type="text/javascript">
+//参考接口：http://www.webxml.com.cn/WebServices/ValidateCodeWebService.asmx?op=cnValidateImage
+$("#test").click(function(){
+	var str = $("#text").val();		//获得输入
+	$("#verify").attr("src","http://www.webxml.com.cn/WebServices/ValidateCodeWebService.asmx/cnValidateImage?byString="+str)
+});
+</script>  
+ </body>
+</html>

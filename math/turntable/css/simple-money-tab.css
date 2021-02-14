@@ -1,0 +1,39 @@
+.simple-money-tab {
+	position: fixed;
+	margin: 0.75em 0 0.5em;
+	right: 1rem;
+	top: 0;
+	font-size: 125%;
+}
+
+.simple-money-tab i {
+	margin: 0 6px;
+	transform: translateY(-1px);
+}
+
+.simple-money-tab button {
+	display: inline-block;
+	border: none;
+	background: none;
+	padding: 0;
+	color: inherit;
+}
+
+.simple-money-tab button:hover,
+.simple-money-tab button:focus,
+.simple-money-tab a:hover,
+.simple-money-tab a:focus {
+	outline: none;
+	color: var(--primary);
+}
+
+.simple-money-tab button:active,
+.simple-money-tab a:active {
+	transform: scale(.9);
+}
+
+.simple-money-tab button,
+.simple-money-tab a {
+	color: var(--text-color);
+	transition: all 250ms ease-out;
+}

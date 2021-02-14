@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<title>大写金额数字</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
@@ -76,7 +77,7 @@
 				if (num == "") return false;
 				num = num - 0 + "";
 				if (num == "NaN") return false;
-				if(Math.abs(num-0)>1e16) {window.location.href="about:blank"; window.close();} //这精度，为了不让用户觉得比较奇怪，最好直接关掉它吧
+				if(Math.abs(num-0)>1e16) {window.location.href="about:blank"; window.close();} //这精度，为了不让用户觉得比较奇怪，最好直接关掉它吧。或者等编译器支持BigInt了再说。
 				/* for(var i=0;i<num.length;i++){
 					low+=lower[num[i]-0]
 					upp+=upper[num[i]-0]
@@ -86,7 +87,7 @@
 				$("#upper").val(digitUppercase(num));
 			}
 			function digitUppercase(n) {
-				var fraction = ['角', '分', '厘', '毫'/*',丝','忽','微' ,'纤','沙','尘','埃','渺','漠','模糊','逡巡','须臾','瞬息','弹指','刹那','六德' */];
+				var fraction = ['角', '分', '厘', '毫'/*,'丝','忽','微' ,'纤','沙','尘','埃','渺','漠','模糊','逡巡','须臾','瞬息','弹指','刹那','六德' */];
 				var digit = "零壹贰叁肆伍陆柒捌玖";
 				var unit = [
 					['圆', '萬', '億', '兆', '京'/*,'垓','秭','壤','沟','涧','正','载','极','恒河沙','阿僧祇','那由他','不可思议','净','清','空','虚' */],
@@ -121,6 +122,6 @@
 				return s;
 			}
 		</script>
-		<script src="../NightTime.js"></script>
+		<script src="/basis/NightTime.js"></script>
 	</body>
 </html>

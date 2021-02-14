@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>无标题文档</title>
+		<style type="text/css">
+			.circularOut {
+				width: 300px;
+				height: 300px;
+				margin-top: 100px;
+				position: relative;
+				margin-left: auto;
+				margin-right: auto;
+				display: none;
+			}
+
+			.circular {
+				width: 300px;
+				height: 300px;
+				position: relative;
+				margin-left: auto;
+				margin-right: auto;
+			}
+
+			.circular a {
+				text-decoration: none;
+				color: black;
+			}
+
+			.circularOut .btn {
+				position: absolute;
+				height: 40%;
+				width: 40%;
+				top: 30%;
+				left: 30%;
+				background-color: royalblue;
+				color: white;
+				text-align: center;
+				border-radius: 50%;
+			}
+
+			.circularOut .btn span {
+				font-size: 4vh;
+				position: absolute;
+				top: 30%;
+				left: 30%;
+			}
+		</style>
+		<link href="cicular.css" rel="stylesheet" type="text/css">
+	</head>
+
+	<body>
+		<div id="circular01" class="circularOut">
+			<div class="circular">
+				<ul>
+					<li>
+						<a style="background-color:#a2c449;">
+							<p>天地玄黄，宇宙洪荒</p>
+						</a>
+					</li>
+					<li>
+						<a style="background-color:#75a6d1;">
+							<p>日月盈昃，辰宿列张</p>
+						</a>
+					</li>
+					<li>
+						<a style="background-color:#20d2af;">
+							<p>寒来暑往，秋收冬藏</p>
+						</a>
+					</li>
+					<li>
+						<a style="background-color:#ffbd42;">
+							<p>闰余成岁，律吕调阳</p>
+						</a>
+					</li>
+					<li>
+						<a style="background-color:#37cbf1;">
+							<p>云腾致雨，露结为霜</p>
+						</a>
+					</li>
+					<li>
+						<a style="background-color:#f36f6f;">
+							<p>金生丽水，玉出昆冈</p>
+						</a>
+					</li>
+				</ul>
+
+			</div>
+			<div class="btn open" style="background-color:gray;"><span>默认</span></div>
+		</div>
+
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script type="text/javascript" src="circular.min.js"></script>
+		<script>
+			var circ;
+			$(document).ready(function(e){
+				circ = $("#circular01 .circular").circular({
+					allDeg: 360,
+					inner: 0,
+					hidden: true,
+					animation: "bothside",
+				});
+				$(".circularOut").fadeIn("fast");
+				setTimeout(function(){
+					circ.toShow();
+				},250);
+			});
+		</script>
+	</body>
+
+</html>

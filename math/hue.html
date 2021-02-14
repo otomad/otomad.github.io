@@ -12,6 +12,10 @@
 		 crossorigin="anonymous">
 		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
 		<style type="text/css">
+			* {
+				transition: all 250ms ease-out;
+			}
+			
 			body {
 				text-align: center;
 				overflow: auto;
@@ -31,6 +35,7 @@
 				height: auto;
 				display: inline-block;
 				margin: auto;
+				border-radius: .25rem;
 			}
 
 			#palette {
@@ -40,6 +45,14 @@
 				top: 10px;
 				left: 10px;
 				z-index: 2;
+				border-radius: .25rem;
+				display: flex;
+				width: 62px;
+				flex-wrap: wrap;
+			}
+			
+			#palette.hidden {
+				display: none;
 			}
 
 			#palette .color {
@@ -51,7 +64,7 @@
 			.link {
 				position: fixed;
 				z-index: 1;
-				width: 90%;
+				width: calc(100vw - 2 * 85px);
 				top: 0;
 				left: 0;
 				right: 0;
@@ -62,11 +75,14 @@
 			.btn-outline-secondary {
 				background-color:var(--background-color);
 			}
+			#link {
+				background: #fff6;
+			}
 		</style>
 
 	</head>
 	<body onload='onload()'>
-		<div id='palette'></div>
+		<div id='palette' class="hidden"></div>
 		<div class="input-group mb-3 link">
 			<input type="text" class="form-control" id="link" />
 			<div class="input-group-append">
@@ -99,32 +115,27 @@
 					console.log("-----------------------------------------------");
 
 					var palette = document.getElementById('palette');
+					palette.classList.add("hidden");
+					palette.innerHTML = "";
 					palette.appendChild(makeDivWithClassAndBGColor('color', colors.dominant));
 
 					colors.palette.forEach(function(color) {
 						palette.appendChild(makeDivWithClassAndBGColor('color', color));
 					});
+					palette.classList.remove("hidden");
+					resize();
 				}
 			});
 		}
 		
 		window.onresize = resize;
-		var img=document.getElementById("image");
 		function resize(){
-			var height=document.documentElement.clientHeight*0.9, width=document.documentElement.clientWidth*0.9;
-			/* if(height<width){
-				img.style.width="auto"
-				img.style.height=height+"px";
-				return height;
-			}
-			else{
-				img.style.height="auto"
-				img.style.width=width+"px";
-				return width;
-			} */
-			img.style.width=width+"px"
-			img.style.height=height+"px";
-			return [width,height];
+			var height=document.documentElement.clientHeight, width=document.documentElement.clientWidth;
+			var img=document.getElementById("image");
+			var picHeight=img.height, picWidth=img.width;
+			var margin = 50;
+			if(picHeight*width/picWidth<=height) img.style.transform = `scale(${(width-margin)/picWidth})`;
+			else img.style.transform = `scale(${(height-margin)/picHeight})`;
 		}
 		function go(){
 			var link=document.getElementById("link").value;
@@ -132,6 +143,11 @@
 			document.getElementById("image").src=link;
 			onload();
 		}
+		document.onkeydown = function(e) {
+			if (window.event.keyCode == 13) {
+				if($("#link").is(":focus")) document.querySelector("[onclick='go()']").click();
+			}
+		}
 	</script>
-	<script src="../NightTime.js"></script>
+	<script src="/basis/NightTime.js"></script>
 </html>

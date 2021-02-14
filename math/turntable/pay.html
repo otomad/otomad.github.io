@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>WeCheat Pay</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<!-- <script src="https://cdn.staticfile.org/popper.js/2.5.4/umd/popper.min.js"></script> -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"></script>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css"> -->
+		<!-- bootstrap v5.0 的 tooltip 就是一个垃圾，还因 popper.js 的版本差异而影响工作。 -->
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+		<script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			:root {
+				--darkbody: #303030;
+			}
+			
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			
+			@font-face {
+				font-family: 'XGame';
+				font-style: italic;
+				font-weight: 200;
+				src: url('fonts/XGame.woff') format('woff');
+			}
+			
+			i {
+				font-family: 'XGame';
+			}
+			#cur-money {
+				display: block;
+				text-align: center;
+				font-size: 180%;
+			}
+			.error-value {
+				border-color:var(--danger) !important;
+				box-shadow:0 0 0 0.2rem rgba(220,53,69,.25) !important;
+				transition: all 250ms ease-in-out;
+				color: var(--danger) !important;
+			}
+			small {
+				color: var(--bs-gray);
+				line-height: 1em;
+				text-align: justify;
+				text-justify: inter-ideograph;
+			}
+			.form-control {
+				background-repeat: no-repeat;
+				background-position: right calc(.375em + .1875rem) center;
+				background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+			}
+			[disabled] {
+				pointer-events: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4>支付</h4>
+			<div class="form-group mb-2" id="type">
+				<div class="d-grid gap-2">
+					<div class="btn-group btn-group-toggle btn-block" role="group" data-toggle="buttons">
+						<label class="btn btn-outline-secondary active" for="bill" title="币" data-toggle="tooltip">
+							<input type="radio" class="btn-check" id="bill" name="type" checked>
+							<i></i>
+						</label>
+						<label class="btn btn-outline-secondary" for="coin" title="矿币" data-toggle="tooltip">
+							<input type="radio" class="btn-check" id="coin" name="type" disabled>
+							<i></i>
+						</label>
+						<label class="btn btn-outline-secondary" for="kcoin" title="酷币" data-toggle="tooltip">
+							<input type="radio" class="btn-check" id="kcoin" name="type" disabled>
+							<i></i>
+						</label>
+						<label class="btn btn-outline-secondary" for="plat" title="铂金" data-toggle="tooltip">
+							<input type="radio" class="btn-check" id="plat" name="type" disabled>
+							<i></i>
+						</label>
+						<label class="btn btn-outline-secondary" for="diamond" title="钻石" data-toggle="tooltip">
+							<input type="radio" class="btn-check" id="diamond" name="type" disabled>
+							<i></i>
+						</label>
+						<label class="btn btn-outline-secondary" for="flame" title="蔻" data-toggle="tooltip">
+							<input type="radio" class="btn-check" id="flame" name="type" disabled>
+							<i></i>
+						</label>
+						<label class="btn btn-outline-secondary" for="star" title="匡慧币" data-toggle="tooltip">
+							<input type="radio" class="btn-check" id="star" name="type" disabled>
+							<i></i>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group mb-2">
+				<label class="form-label">当前金额</label>
+				<span id="cur-money" class="text-danger" style="font-weight:bold">-- 元</span>
+			</div>
+			<div class="form-group mb-2">
+				<label class="form-label" for="rechange-amount">充值金额</label>
+				<div class="input-group mb-2">
+					<input type="number" class="form-control" id="rechange-amount" placeholder="0" autofocus>
+					<div class="input-group-append">
+						<label class="input-group-text input-group-addon" for="rechange-amount">元</span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group mb-2">
+				<small>
+					这个页面以后将会被替换为正儿八经的充值页面。反正你现在就当玩玩，想充多少钱都可以，又不用掏钱。输个数值就可以了。
+					<br />
+					目前仅支持第一个币种，其余暂不支持。
+				</small>
+			</div>
+			<div class="form-group mb-2" style="display:flex;justify-content:flex-end">
+				<button type="button" class="btn btn-success" id="ensure">确认充值</button>
+			</div>
+		</div>
+		<script src="js/money.min.js"></script>
+		<script>
+			$(document).ready(function() {
+				$('[data-toggle="tooltip"]').tooltip();
+			});
+			$("label:has(> input[disabled])").addClass("disabled");
+			function nightDo(){
+				$("body").css("background","var(--darkbody)");
+			}
+			function lightDo(){
+				$("body").css("background","");
+			}
+			$("#type").click(() => {
+				function correction(){
+					$("#type label").removeClass("active");
+					$("#type [checked]").parent().addClass("active");
+				}
+				for(let i=0;i<=10;i++)
+					setTimeout(correction,10*i);
+			});
+			const twinkTime = 2000;
+			refreshMoney("bill");
+
+			$("#ensure").click(function() {
+				if ($("#rechange-amount").val() == "") {
+					$("#rechange-amount").isInvalid().select();
+					return;
+				}
+				var charge = $("#rechange-amount").val() - 0,
+					type = $("#type [checked]")[0].id;
+				money.recharge(charge, type);
+				refreshMoney(type);
+				$("#rechange-amount").val("").attr("placeholder", charge)
+				$(this).html("<b>充值成功</b>");
+				$("#rechange-amount").addClass("is-valid");
+				setTimeout(function(el) {
+					$(el).html("确认充值");
+					$("#rechange-amount").removeClass("is-valid");
+				}, twinkTime, this);
+			});
+
+			function refreshMoney(type) {
+				$("#cur-money").text(money.amount(type, true));
+			}
+			$.fn.isInvalid = function() {
+				$(this).addClass("is-invalid");
+				setTimeout(function(el) {
+					$(el).removeClass("is-invalid");
+				}, twinkTime, this);
+				return this;
+			}
+			$.fn.isValid = function() {
+				$(this).addClass("is-valid");
+				setTimeout(function(el) {
+					$(el).removeClass("is-valid");
+				}, twinkTime, this);
+				return this;
+			}
+			document.onkeydown = e => {
+				if (window.event.keyCode == 13)
+					if($("#rechange-amount").is(":focus")) $("#ensure").click();
+			}
+		</script>
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>

@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<title>三数求和</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
@@ -34,15 +35,17 @@
 		</style>
 	</head>
 	<body>
-		<div class="input-group mb-2" id="number0" style="display:none;margin-top:1.5em;opacity:0;">
-			<div class="input-group-prepend">
-				<label class="input-group-text input-group-addon input-label" id="label0" for="num0">0</span>
+		<template>
+			<div class="input-group mb-2" id="number0" style="display:none;margin-top:1.5em;opacity:0;">
+				<div class="input-group-prepend">
+					<label class="input-group-text input-group-addon input-label" id="label0" for="num0">0</span>
+				</div>
+				<input type="number" class="form-control r-radius" id="num0">
+				<div class="input-group-append" style="width:0;display:none">
+					<button class="btn btn-outline-secondary btn-times" type="button" id="trash0"><i class="fa fa fa-trash fa-fw"></i></button>
+				</div>
 			</div>
-			<input type="number" class="form-control r-radius" id="num0">
-			<div class="input-group-append" style="width:0;display:none">
-				<button class="btn btn-outline-secondary btn-times" type="button" id="trash0"><i class="fa fa fa-trash fa-fw"></i></button>
-			</div>
-		</div>
+		</template>
 		<!-- 以上的输入框是当作模板使用的 -->
 		<input type="text" id="clip-text" style="display:none">
 		<!-- 以上的文本框是用于放置剪贴板内容来复制使用的 -->
@@ -93,16 +96,14 @@
 			}
 			function createNew() {
 				n++;
-				var newNumber = $("#number0").clone(true);
+				var newNumber = $($("template")[0].content.querySelector("#number0")).clone(true);
 				newNumber.attr("id","number"+n);
 				var label=newNumber.find("#label0"),
 					input=newNumber.find("#num0"),
 					trash=newNumber.find("#trash0");
-				label.attr({"for":"num"+n,"id":"label"+n});
-				label.html(n);
-				input.attr("id","num"+n);
-				input.attr("onchange",`notNew(${n})`);
-				trash.attr("id","trash"+n);
+				label.attr({"for":"num"+n,"id":"label"+n}).html(n);
+				input.attr("id","num"+n).attr("onchange",`notNew(${n})`);
+				trash.attr("id","trash"+n).attr("onclick",`deleteText(${n});`);
 				newNumber.show();
 				$("#multi-number").append(newNumber);
 				setTimeout(function(){
@@ -110,9 +111,9 @@
 				},100);
 				return n;
 			}
-			$(".btn-times").click(function(){
+			/* $(".btn-times").click(function(){
 				deleteText(this.id);
-			});
+			}); */
 			function notNew(id){
 				if($("#num"+id).val()!=""){
 					$("#num"+id).attr("onchange","");
@@ -125,17 +126,17 @@
 				}
 			}
 			function deleteText(id) {
-				var idn=id.replace("trash","");
-				// $("#number"+idn).css({"opacity":"0"});
-				$("#number"+idn).css("overflow","hidden");
-				var curHeight = $("#number"+idn).height();
-				$("#number"+idn).height(curHeight).animate({
+				// var id=id.replace("trash","");
+				// $("#number"+id).css({"opacity":"0"});
+				$("#number"+id).css("overflow","hidden");
+				var curHeight = $("#number"+id).height();
+				$("#number"+id).height(curHeight).animate({
 					height: 0
 				}, 250);
 				setTimeout(function(){
-					$("#number"+idn).remove();
-					idn=parseInt(idn);
-					for(var i=idn+1;i<=n;i++){
+					$("#number"+id).remove();
+					id=parseInt(id);
+					for(var i=id+1;i<=n;i++){
 						var belowNumber=$("#number"+i), j=i-1;
 						belowNumber.attr("id","number"+j);
 						var label=belowNumber.find("#label"+i),
@@ -145,7 +146,7 @@
 						label.html(j);
 						input.attr("id","num"+j);
 						if(i==n) input.attr("onchange",`notNew(${j})`);
-						trash.attr("id","trash"+j);
+						trash.attr("id","trash"+j).attr("onclick",`deleteText(${j});`);
 					}
 					return --n;
 				},500);
@@ -286,6 +287,6 @@
 				if($("#distance-card").height()!=0) cardResize("#distance-card");
 			}
 		</script>
-		<script src="../NightTime.js"></script>
+		<script src="/basis/NightTime.js"></script>
 	</body>
 </html>

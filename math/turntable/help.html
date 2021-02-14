@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>使用说明</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=yes" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+		<link rel="stylesheet" href="css/vue.css" />
+		<link id="css" data-theme="vue" rel="stylesheet" href="css/vue.css" />
+		<style>
+			body {
+				margin: 0 auto;
+				/* font-family: "ubuntu", "Tahoma", "Microsoft YaHei", arial,sans-serif; */
+				font-family: "微软雅黑", "苹方-简", "思源黑体", sans-serif;
+				padding: 3rem;
+			}
+			h1 {
+				margin-top: 1.5em;
+			}
+			[lang='zh-cn'] {
+				font-family: "微软雅黑", "苹方-简", "思源黑体", sans-serif;
+			}
+			[lang='zh-tw'] {
+				font-family: "微软正黑體", "苹方-繁", "思源黑體", sans-serif;
+			}
+			[lang='ja'] {
+				font-family: "Yu Gothic", "Hiragino Kaku Gothic W3", "源ノ角ゴシック", sans-serif;
+			}
+			[lang='en'] {
+				font-family: "Segoe UI", "San Francisco", "Noto Sans", "Droid Sans", Tahoma, Arial, sans-serif;
+			}
+		</style>
+	</head>
+	<body>
+		<div src="md/help.md" id="content"></div>
+		<script>
+			function nightDo() {
+				css.href="css/vue-dark.css";
+			}
+			function lightDo() {
+				css.href="css/vue.css";
+			}
+			$.get($("#content").attr("src"), function(response, status, xhr) {
+				$("#content").html(marked(response));
+			});
+		</script>
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>

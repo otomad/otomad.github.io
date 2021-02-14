@@ -1,14 +1,20 @@
 'use strict';
 
 var Chobi = function(elem) {
-	if (elem instanceof(Image)) {
+	if (elem.tagName == "CANVAS") {
+		var img = new Image();
+		img.width=elem.width;
+		img.height=elem.height;
+		this.image = img;
+		this.imageData = this.getImageData(elem,elem.width,elem.height);
+	} else if (elem instanceof(Image)) {
 		this.image = elem;
 		this.imageData = this.extractImageData();
 		this.debugger('Type matched. instanceof(Image). Saved as [Chobi object]');
 		try {
 			this.onload();
 		} catch (e) {
-			this.debugger('ready callback not found');
+			this.debugger(e+'\nready callback not found');
 		}
 	} else if (typeof(elem) == 'string') {
 		var context = this;
@@ -23,7 +29,7 @@ var Chobi = function(elem) {
 			try {
 				context.onload();
 			} catch (e) {
-				context.debugger('ready callback not found');
+				context.debugger(e+'\nready callback not found');
 			}
 			return;
 		}
@@ -43,7 +49,7 @@ var Chobi = function(elem) {
 					try {
 						context.onload();
 					} catch (e) {
-						context.debugger('ready callback not found');
+						context.debugger(e+'\nready callback not found');
 					}
 					return;
 				}
@@ -51,7 +57,7 @@ var Chobi = function(elem) {
 			};
 			fr.readAsDataURL(file);
 		} catch (e) {
-			context.debugger("Not input[file]. Trying as <canvas>");
+			context.debugger(e+"\nNot input[file]. Trying as <canvas>");
 		}
 		try {
 			var img = new Image();
@@ -65,12 +71,12 @@ var Chobi = function(elem) {
 				try {
 					context.onload();
 				} catch (e) {
-					context.debugger('ready callback not found');
+					context.debugger(e+'\nready callback not found');
 				}
 				return;
 			}
 		} catch (e) {
-			context.debugger('Not <canvas>. Trying as <img>');
+			context.debugger(e+'\nNot <canvas>. Trying as <img>');
 		}
 		try {
 			var img = new Image();
@@ -82,17 +88,16 @@ var Chobi = function(elem) {
 				try {
 					context.onload();
 				} catch (e) {
-					context.debugger('ready callback not found');
+					context.debugger(e+'\nready callback not found');
 				}
 				return;
 			}
 		} catch (e) {
-			context.debugger('Not <img>. No other type is supported');
+			context.debugger(e+'\nNot <img>. No other type is supported');
 		}
-
 	}
 }
-Chobi.prototype.debug = false;
+Chobi.prototype.debug = true;
 Chobi.prototype.debugger = function(msg) {
 	if (this.debug) {
 		console.log(msg);
@@ -111,6 +116,36 @@ Chobi.prototype.extractImageData = function() {
 	ctx.drawImage(img, 0, 0, img.width, img.height);
 	this.imageData = ctx.getImageData(0, 0, img.width, img.height);
 	return this.imageData;
+}
+Chobi.prototype.getImageData = function(canvas,width,height){
+	return canvas.getContext("2d").getImageData(0,0,width,height);
+}
+Chobi.prototype.thumbImageData = function(canvas,width,height) {
+	var img = this.image;
+	var drawArea = canvas;
+	var ctx = drawArea.getContext("2d");
+	drawArea.width = width;
+	drawArea.height = height;
+	var swidth=img.width,
+		sheight=height/width*img.width;
+	if(sheight>img.height) {
+		sheight=img.height;
+		swidth=width/height*img.height;
+	}
+	var sx=(img.width-swidth)/2,
+		sy=(img.height-sheight)/2;
+	ctx.drawImage(img, sx, sy, swidth, sheight,0,0,width,height);
+}
+Chobi.prototype.copyImageData = function(a,b) {
+	var context = a.getContext("2d"),
+		context1 = b.getContext("2d"),
+		imageData = context.getImageData(0,0,a.width,a.height);
+	context1.putImageData(imageData,0,0,0,0,b.width,b.height);
+	return this;
+}
+Chobi.prototype.changeImageData = function(a) {
+	this.imageData = a.getContext("2d").getImageData(0,0,a.width,a.height);
+	return this;
 }
 Chobi.prototype.getColorAt = function(x, y) {
 	var index = (y * 4) * this.imageData.width + (x * 4);
@@ -131,6 +166,7 @@ Chobi.prototype.setColorAt = function(x, y, obj) {
 		this.imageData.data[index + 3] = obj.alpha;
 		return true;
 	} catch (e) {
+		this.debugger(e);
 		return e;
 	}
 }
@@ -238,7 +274,10 @@ Chobi.prototype.noise = function() {
 	}
 	return this;
 }
-Chobi.prototype.contrast = function(amount) {
+Chobi.prototype.contrast_legacy = function(amount) {
+	return this.contrast(amount/100*255)
+}
+Chobi.prototype.contrast = function(amount=100) {
 	var value = (255.0 + amount) / 255.0;
 	value *= value;
 	var imageData = this.imageData;
@@ -268,18 +307,17 @@ Chobi.prototype.contrast = function(amount) {
 	return this;
 }
 Chobi.prototype.crossProcess = function() {
-	var imageData = this.imageData;
-	this.vintage();
-	this.brightness(10);
-	this.contrast(50);
-	return this;
+	return this.vintage().brightness_legacy(10).contrast(50);
 }
 Chobi.prototype.map = function(x, min, max, a, b) {
 	return ((b - a) * (x - min) / (max - min)) + a;
 }
-Chobi.prototype.brightness = function(amount) {
+Chobi.prototype.brightness_legacy = function(amount) {
+	return this.brightness(amount/100*255);
+}
+Chobi.prototype.brightness = function(amount=100) {
 	var imageData = this.imageData;
-	amount = this.map(amount, -255, 255, -255, 255);
+	// amount = this.map(amount, -255, 255, -255, 255);
 	this.debugger(amount);
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -372,18 +410,22 @@ Chobi.prototype.aberration = function() {
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
 			var index = (j * 4) * imageData.width + (i * 4);
-			var red = imageData.data[index];
-			var green = imageData.data[index + 1];
-			var blue = imageData.data[index + 2];
-			var alpha = imageData.data[index + 3];
-			var hsl=RGB2HSL(red,green,blue);
-			var newrgb=HSL2RGB((hsl.H+180)%360,hsl.S,hsl.L)
-			red = newrgb.R;
-			green = newrgb.G;
-			blue = newrgb.B;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			var rgb=[imageData.data[index],imageData.data[index+1],imageData.data[index+2]];
+			// var hsl=RGB2HSL(red,green,blue);
+			// var newrgb=HSL2RGB((hsl.H+180)%360,hsl.S,hsl.L)
+			if(rgb[0]==rgb[1]&&rgb[1]==rgb[2]) continue;
+			var max=Math.max(rgb[0],rgb[1],rgb[2]),
+				min=Math.min(rgb[0],rgb[1],rgb[2]),
+				maxI=rgb.indexOf(max),
+				minI=rgb.indexOf(min),
+				midI=3-maxI-minI,
+				newrgb=[];
+			newrgb[maxI]=min;
+			newrgb[minI]=max;
+			newrgb[midI]=max+min-rgb[midI];
+			imageData.data[index] = newrgb[0];
+			imageData.data[index + 1] = newrgb[1];
+			imageData.data[index + 2] = newrgb[2];
 		}
 	}
 	return this;
@@ -463,7 +505,7 @@ Chobi.prototype.maxSaturate = function() {
 	}
 	return this;
 }
-Chobi.prototype.saturation = function(amount) {
+Chobi.prototype.saturation = function(amount=100) {
 	var imageData = this.imageData;
 	amount = this.map(amount, -255, 255, 0, 2);
 	for (var i = 0; i < imageData.width; i++) {
@@ -476,7 +518,8 @@ Chobi.prototype.saturation = function(amount) {
 			var hsl=RGB2HSL(red,green,blue);
 			var s=hsl.S;
 			if(amount<=1) s*=amount;
-			else s=1-s*(2-amount);
+			// else s=1-s*(2-amount);
+			else s*=(amount-1)*5+1;
 			var newrgb=HSL2RGB(hsl.H,s,hsl.L)
 			red = newrgb.R;
 			green = newrgb.G;
@@ -510,8 +553,10 @@ Chobi.prototype.invertSaturate = function() {
 	return this;
 }
 Chobi.prototype.invertBright = function() {
-	this.negative().aberration();
-	return this;
+	return this.negative().aberration();
+}
+Chobi.prototype.Xray = function() {
+	return this.brightness_legacy(-5).sepia().negative();
 }
 Chobi.prototype.opaque = function() {
 	var imageData = this.imageData;
@@ -524,7 +569,7 @@ Chobi.prototype.opaque = function() {
 	}
 	return this;
 }
-Chobi.prototype.threshold = function(amount) {
+Chobi.prototype.threshold = function(amount=0) {
 	var imageData = this.negative().imageData;
 	amount = this.map(amount, -255, 255, 0, 1);
 	for (var i = 0; i < imageData.width; i++) {
@@ -573,7 +618,7 @@ Chobi.prototype.whiteToAlpha = function() {
 	}
 	return this;
 }
-Chobi.prototype.hue = function(amount) {
+Chobi.prototype.hue = function(amount=100) {
 	var imageData = this.imageData;
 	amount = this.map(amount, -255, 255, -180, 180);
 	for (var i = 0; i < imageData.width; i++) {
@@ -638,6 +683,7 @@ Chobi.prototype.blur = function() {
 	return this;
 }
 Chobi.prototype.carving = function() {
+	this.negative();
     var tempCanvasData = this.imageData; 
     for ( var x = 1; x < tempCanvasData.width-1; x++)   
     {      
@@ -663,9 +709,9 @@ Chobi.prototype.carving = function() {
     }
 	return this;
 }
-Chobi.prototype.mirror = function() {
+Chobi.prototype.mirror = function(amount=0) {
     var tempCanvasData = this.imageData;
-    for ( var x = 0; x < tempCanvasData.width; x++) // column  
+    for ( var x = (amount>=0?0:tempCanvasData.width); (amount>=0?x < tempCanvasData.width/2:x > tempCanvasData.width/2); (amount>=0?x++:x--)) // column  
     {      
         for ( var y = 0; y < tempCanvasData.height; y++) // row  
         {
@@ -674,8 +720,8 @@ Chobi.prototype.mirror = function() {
             var midx = (((tempCanvasData.width -1) - x) + y * tempCanvasData.width) * 4;
             // assign new pixel value      
             tempCanvasData.data[midx + 0] = tempCanvasData.data[idx + 0]; // Red channel      
-            tempCanvasData.data[midx + 1] = tempCanvasData.data[idx + 1]; ; // Green channel      
-            tempCanvasData.data[midx + 2] = tempCanvasData.data[idx + 2]; ; // Blue channel     
+            tempCanvasData.data[midx + 1] = tempCanvasData.data[idx + 1]; // Green channel      
+            tempCanvasData.data[midx + 2] = tempCanvasData.data[idx + 2]; // Blue channel     
             // tempCanvasData.data[midx + 3] = 255; // Alpha channel      
         }  
     }  
@@ -684,7 +730,7 @@ Chobi.prototype.mirror = function() {
 Chobi.prototype.reverse = function() {
     var imageData = this.imageData;
 	var tempCanvasData = {data:imageData.data};
-    for ( var x = 0; x < imageData.width; x++) // column  
+    for ( var x = 0; x < imageData.width/2; x++) // column  
     {      
         for ( var y = 0; y < imageData.height; y++) // row  
         {
@@ -692,12 +738,123 @@ Chobi.prototype.reverse = function() {
             var idx = (x + y * imageData.width) * 4;         
             var midx = (((imageData.width -1) - x) + y * imageData.width) * 4;
             // assign new pixel value      
-            imageData.data[midx + 0] = tempCanvasData.data[idx + 0]; // Red channel      
-            imageData.data[midx + 1] = tempCanvasData.data[idx + 1]; ; // Green channel      
-            imageData.data[midx + 2] = tempCanvasData.data[idx + 2]; ; // Blue channel     
+            [imageData.data[midx + 0], tempCanvasData.data[idx + 0]]=[tempCanvasData.data[idx + 0], imageData.data[midx + 0]];
+            [imageData.data[midx + 1], tempCanvasData.data[idx + 1]]=[tempCanvasData.data[idx + 1], imageData.data[midx + 1]];
+            [imageData.data[midx + 2], tempCanvasData.data[idx + 2]]=[tempCanvasData.data[idx + 2], imageData.data[midx + 2]];
             // tempCanvasData.data[midx + 3] = 255; // Alpha channel      
         }  
     }  
+	return this;
+}
+Chobi.prototype.backThermography = function(amount=0) {
+	var imageData = this.imageData;
+	for (var i = 0; i < imageData.width; i++) {
+		for (var j = 0; j < imageData.height; j++) {
+			var index = (j * 4) * imageData.width + (i * 4);
+			var red = imageData.data[index];
+			var green = imageData.data[index + 1];
+			var blue = imageData.data[index + 2];
+			var alpha = imageData.data[index + 3];
+			var hsl=RGB2HSL(red,green,blue);
+			var newl=this.map(hsl.L,0,1,0,360);
+			var newh=this.map(hsl.H,0,360,0,1);
+			var newrgb=amount>=0?HSL2RGB(newl,hsl.S,newh):HSL2RGB(0,0,newh);
+			red = newrgb.R;
+			green = newrgb.G;
+			blue = newrgb.B;
+			imageData.data[index] = red;
+			imageData.data[index + 1] = green;
+			imageData.data[index + 2] = blue;
+		}
+	}
+	return this;
+}
+Chobi.prototype.thermography = function(amount=0) {
+	var imageData = this.imageData;
+	function l2h(x,t){
+		// return -8.5*Math.asin(Math.abs(Math.sinDeg(36/51*x-60*t)))+510;
+		//垃圾不支持角度运算
+		return 2*765/Math.PI*Math.asin(Math.abs(Math.sin((x-255/3*t)*Math.PI/255-Math.PI/2)))-255;
+	}
+	for (var i = 0; i < imageData.width; i++) {
+		for (var j = 0; j < imageData.height; j++) {
+			var index = (j * 4) * imageData.width + (i * 4);
+			var red = imageData.data[index];
+			var green = imageData.data[index + 1];
+			var blue = imageData.data[index + 2];
+			var alpha = imageData.data[index + 3];
+			var grey = (red+green+blue)/3;
+			// Math.sinDeg=x=>Math.sin(x*Math.PI/180);
+			// Math.asinDeg=x=>Math.asin(x*Math.PI/180);
+			imageData.data[index] = restrict(l2h(grey,0),0,255);
+			imageData.data[index + 1] = restrict(l2h(grey,amount>=0?1:2),0,255);
+			imageData.data[index + 2] = restrict(l2h(grey,amount>=0?2:1),0,255);
+		}
+	}
+	return this;
+}
+Chobi.prototype.posterize = function(amount=4) {
+	if(amount==0) amount=4;
+	var imageData = this.imageData;
+	function posterize(color, amount, range = 255) {
+		return Math.round(Math.round(color/range*amount)/amount*range);
+	}
+	for (var i = 0; i < imageData.width; i++) {
+		for (var j = 0; j < imageData.height; j++) {
+			var index = (j * 4) * imageData.width + (i * 4);
+			var red = imageData.data[index],
+				green = imageData.data[index + 1],
+				blue = imageData.data[index + 2],
+				alpha = imageData.data[index + 3];
+			// var hsl=RGB2HSL(red,green,blue);
+			if(amount>=0) {
+				red = posterize(red, amount);
+				green = posterize(green, amount);
+				blue = posterize(blue, amount);
+			} else {
+				var hsl=RGB2HSL(red,green,blue),
+					hue=this.map(hsl.H,0,360,0,255),
+					saturation=this.map(hsl.S,0,1,0,255),
+					luminance=this.map(hsl.L,0,1,0,255);
+				hue=posterize(hue, amount);
+				saturation=posterize(saturation, amount);
+				luminance=posterize(luminance, amount);
+				hue=this.map(hue,0,255,0,360);
+				saturation=this.map(saturation,0,255,0,1);
+				luminance=this.map(luminance,0,255,0,1);
+				var newrgb=HSL2RGB(hue,saturation,luminance);
+				red=newrgb.R;
+				green=newrgb.G;
+				blue=newrgb.B;
+			}
+			alpha = posterize(alpha, amount);
+			imageData.data[index] = red;
+			imageData.data[index + 1] = green;
+			imageData.data[index + 2] = blue;
+			imageData.data[index + 3] = alpha;
+		}
+	}
+	return this;
+}
+Chobi.prototype.primaryColor = function() {
+	var imageData = this.imageData;
+	for (var i = 0; i < imageData.width; i++) {
+		for (var j = 0; j < imageData.height; j++) {
+			var index = (j * 4) * imageData.width + (i * 4),
+				red = imageData.data[index],
+				green = imageData.data[index + 1],
+				blue = imageData.data[index + 2];
+			if(red==green&&green==blue) continue;
+				// alpha = imageData.data[index + 3],
+			var hue=RGB2HSL(red,green,blue).H;
+			if(hue>=270||hue<90) red=255; else red=0;
+			if(hue>=30&&hue<210) green=255; else green=0;
+			if(hue>=150&&hue<330) blue=255; else blue=0;
+			imageData.data[index] = red;
+			imageData.data[index + 1] = green;
+			imageData.data[index + 2] = blue;
+		}
+	}
 	return this;
 }
 
@@ -776,6 +933,7 @@ Chobi.prototype.loadImageToCanvas = function(drawArea) {
 		ctx.putImageData(imageData, 0, 0);
 		return true;
 	} catch (e) {
+		this.debugger(e);
 		return false;
 	}
 	return this;
@@ -858,6 +1016,9 @@ Chobi.prototype.download = function(filename, filetype) {
 }
 
 function HSL2RGB(H = 0, S = 0, L = 0, stringMode = false) {
+	H=H%360;
+	S=restrict(S,0,1);
+	L=restrict(L,0,1);
 	const C = (1 - Math.abs(2 * L - 1)) * S
 	const X = C * (1 - Math.abs(((H / 60) % 2) - 1))
 	const m = L - C / 2
@@ -937,4 +1098,11 @@ function backCycle(num, cycle) {
 function numberFixed(num = 0, count = 3) {
 	const power = Math.pow(10, count);
 	return Math.floor(num * power) / power;
+}
+
+function restrict(x,min,max){
+	if(min>max) [min,max]=[max,min];
+	if(x<min) return min;
+	if(x>max) return max;
+	return x;
 }

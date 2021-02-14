@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<title>抽奖</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=no" />
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="later-change-css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="css/turntable.css" />
+		<link rel="stylesheet" href="css/cicular.css" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="js/jquery.easing.1.3.js"></script>
+		<script src="js/circular.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+		<script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+		<script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div id="turntable-1">
+				<p>谢谢<br>参与</p>
+				<p>刀</p>
+				<p>502<br>胶水</p>
+				<p data-reward="50">50元<br>话费</p>
+				<p>太空站</p>
+				<p data-reward="5">增加一<br>次抽奖<br>资格</p>
+				<p>喷射器</p>
+				<p>谢谢<br>参与</p>
+				<p>压缩<br>饼干</p>
+				<p data-reward="10">10元<br>话费</p>
+			</div>
+			<div class="round-button-group bottom-side result hidden" style="width:144px">点击按钮开始抽奖！</div>
+		</div>
+		<script src="js/turntable.js"></script>
+		<script type="module" src="template/turntable.module.js"></script>
+		<script src="template/components/WrapperDial.react.js"></script>
+		<script src="js/money.min.js"></script>
+		<script type="module" src="template/money.module.js"></script>
+		<script>
+			var unitPrice = 5;
+			
+			createTurntable("turntable-1",`${unitPrice} 元一次`);
+
+			turntable.canBeStart = function() {
+				if(money.amount("bill") < unitPrice) {
+					this.information("余额不足，请充值！");
+					return false;
+				} else return true;
+			}
+
+			turntable.startToDo = function(active) {
+				if(regularity) this.information("开始转动……");
+				money.cost(unitPrice, "bill");
+			}
+
+			turntable.result = function(active, reward) {
+				var text = reward.text;
+				this.information(text == '谢谢参与' ? '很遗憾，您没有获得奖品。' : '恭喜获得：' + text);
+				if(reward.data.reward !== undefined)
+					money.recharge(reward.data.reward.reserveNum(), "bill");
+			}
+			
+			turntable.information = function(text) {
+				$(".result").html(text).cardResize();
+				return text;
+			}
+		</script>
+		<!-- <script>
+			
+			let getEle = document.getElementsByClassName.bind(document);
+			let pointer = getEle('pointer')[0];
+			let result = getEle('result')[0];
+			let lights = Array.prototype.slice.call(getEle('light'));
+
+			let onRotation = false; // 记录当前是否正在旋转，如果正在旋转，就不能继续点击了
+			let reward = ['谢谢参与', '50积分', '谢谢参与', '100元话费', '50积分',
+				'谢谢参与', '100元话费', '谢谢参与', '50积分', '10元话费'
+			];
+
+			// 根据随机角度获取奖励
+			let getReward = (function() {
+				currentDeg = 0;
+				return function() {
+					// 转三圈到四圈
+					let rotateDeg = Math.random() * 360 + 1080;
+					currentDeg += rotateDeg;
+					let rewardText = reward[Math.floor((currentDeg + 18) % 360 / 36)]
+					return {
+						deg: currentDeg,
+						text: rewardText === '谢谢参与' ? '很遗憾，您没有获得奖品。' : '恭喜获得：' + rewardText
+					}
+				}
+			})();
+
+			var resultStatus;
+			pointer.addEventListener('click', () => {
+				if (onRotation) return;
+				console.log('开始抽奖');
+				onRotation = true;
+				lights.forEach(light => {
+					light.className += ' light-twinkling';
+				});
+				let nextStatus = getReward();
+				console.log(nextStatus);
+				resultStatus = nextStatus.text;
+				result.innerText = "";
+				pointer.style.transform = `rotateZ(${nextStatus.deg}deg)`;
+			})
+			pointer.addEventListener('transitionend', () => {
+				console.log('抽奖结束');
+				setTimeout(() => { // 等闪烁三下结束
+					onRotation = false;
+					lights.forEach(light => {
+						light.className = 'light';
+					});
+					result.innerText = resultStatus;
+				}, 300);
+			})
+		</script> -->
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>

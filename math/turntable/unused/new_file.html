@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<style>
+			@font-face {
+				font-family: 'XGame';
+				font-style: italic;
+				font-weight: 200;
+				src: url('../fonts/XGame.woff') format('woff');
+			}
+			
+			*{
+				font-family: XGame;
+				word-break:break-all;
+				font-size:28px;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<script type="text/javascript">
+			for(var i=0xe700;i<=0xe820;i++){
+				document.write(String.fromCharCode(i));
+				if((i-0xe700+1)%16==0) document.write("<br>");
+			}
+		</script>
+	</body>
+
+</html>

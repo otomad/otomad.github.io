@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta charset="utf-8">
+		<title>日期推算</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
@@ -197,13 +198,13 @@
 			b = stringToDate(b);
 			var c = b - a;
 			var result = $("#distance-result");
-			var s = trunc(c / 1000),
-				m = trunc(s / 60),
-				h = trunc(m / 60),
-				d = trunc(h / 24),
-				w = trunc(d / 7),
-				M = trunc(d / 30),
-				y = trunc(d / 365);
+			var s = Math.trunc(c / 1000),
+				m = Math.trunc(s / 60),
+				h = Math.trunc(m / 60),
+				d = Math.trunc(h / 24),
+				w = Math.trunc(d / 7),
+				M = Math.trunc(d / 30),
+				y = Math.trunc(d / 365);
 			s += " 秒";
 			m = (!m ? "" : "<br>" + m + " 分钟");
 			h = (!h ? "" : "<br>" + h + " 小时");
@@ -254,9 +255,9 @@
 				b[i]=parseInt(b[i]);
 			}
 			c = a[0]*3600+a[1]*60+a[2]+b[0]*3600+b[1]*60+b[2];
-			var h = trunc(c / 3600),
-				m = trunc(c / 60)-h*60,
-				s = trunc(c)-h*3600-m*60;
+			var h = Math.trunc(c / 3600),
+				m = Math.trunc(c / 60)-h*60,
+				s = Math.trunc(c)-h*3600-m*60;
 			h=h%24;
 			if(m<10) m="0"+m;
 			if(s<10) s="0"+s;
@@ -312,18 +313,6 @@
 
 		String.prototype.find = function(ch) {
 			return (this.split(ch)).length - 1;
-		}
-
-		function trunc(num) {
-			var ans = num,
-				neg = 0;
-			if (num < 0) {
-				ans = -ans;
-				neg = 1;
-			}
-			ans = Math.floor(ans);
-			if (neg == 1) ans = -ans;
-			return ans;
 		}
 
 		function clearText(id) {

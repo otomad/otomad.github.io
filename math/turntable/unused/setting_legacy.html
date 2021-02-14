@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>设置</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="../js/bootstrap-switch.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="../css/bootstrap-switch.min.css">
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+			h4 {
+				margin:0.75em 0 0.5em;
+			}
+			small {
+				color: var(--gray);
+				line-height: 1em;
+				text-align: justify;
+				text-justify: inter-ideograph;
+			}
+			table {
+				width: 100%;
+			}
+			label {
+				margin-bottom: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4>设置</h4>
+			<table>
+				<tr>
+					<td><label for="replace">将“游戏”转盘移步至地图“娱乐表”处</lebal></td>
+					<td style="width:68px"><input type="checkbox" class="switch" id="replace" name="replace" data-size="small" data-on-text="　" data-off-text="　"/></td>
+				</tr>
+				<tr>
+					<td colspan="3"><small>
+						打开此选项之后，“惯性”篇的游戏环节将转移到地图的“娱乐表”中去呈现，操作更便捷。不过在本应用界面的“游戏”选项卡中是标准的转盘形式展现，而在“娱乐表”中则是 Windows 8~10 的磁贴样式展现。两者可实现的功能均相同，只是展现样式不一样。开启本项后届时若主动打开“游戏”选项卡，会提示‘该内容已转移到“娱乐表”处，点击前往。或进入设置关闭选项以回到标准形式。’。
+					</small></td>
+				</tr>
+			</table>
+		</div>
+		<script>
+			var isReplace=getCookie("isReplace")=="true";
+			$('input[name="replace"]').bootstrapSwitch("state", isReplace);
+			$('input[name="replace"]').on('switchChange.bootstrapSwitch', function(event, state) {
+				setCookie("isReplace",state);
+			});
+			
+			//cookie
+			function setCookie(name,value,days=36500){  
+				var expires=new Date(); 
+				expires.setTime(expires.getTime()+days*24*60*60*1000);
+				document.cookie=name+"="+escape(value)+";expires="+expires.toGMTString();
+			}
+			function getCookie(name){
+				var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+				if (arr = document.cookie.match(reg))
+					return (arr[2]);
+				else
+					return null;
+			}
+		</script>
+		<script src="../../../NightTime.js"></script>
+	</body>
+</html>

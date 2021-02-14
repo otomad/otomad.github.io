@@ -1,0 +1,1763 @@
+@using FX.OA.MVCControls;
+@using FX.Component.Workflow.Service;
+@using FX.OA.Facade.WorkFlow;
+@using FX.OA.Entity.Domain;
+@using FX.OA.Model.Workflow;
+@using FX.OA.Facade.Business;
+@using FX.OA.JHWebSite.Models;
+
+@model TSwViewModel
+
+@{
+    Layout = "~/Views/Shared/BillLayout.cshtml";
+    WorkFlowFacadeEncap wfEncap = new WorkFlowFacadeEncap();
+    TransferFacade tfFacade = new TransferFacade();
+}
+<style type="text/css">
+    ul,li{list-style-type:none; padding:0;margin:0;}
+        img{border:0;}
+
+    body{ background:none; width:98%;}
+    body,.SubContainer,form{overflow-x:hidden;}
+    table *{padding:0;margin:0;}
+    table
+    {
+        border-collapse: collapse;
+        border: 0;
+    }
+    #tbMain td
+    {
+        border-top: 1px solid red;
+        border-bottom: 1px solid red;
+        text-align: center;
+        line-height: 40px;
+    }
+
+    #tbMain td td{
+        border-top: 1px solid #99BAC9;
+        border-bottom: 1px solid #99BAC9;
+        text-align: center;
+        line-height: 40px;}
+    #tbMain td.centerAlign{ border-left:1px solid #ff0000;}
+    #tbMain td.LeftAlign
+    {
+        text-align: left;
+        padding-left: 5px;
+        border-left: 1px solid red;
+        padding-right: 5px;
+        line-height: 20px;
+        color: Black;
+    }
+    .t-calendar td
+    {
+        border: 1px solid #E0E0E0;
+        line-height: 20px;
+    }
+    .StretchInput
+    {
+        width: 100%;
+    }
+     #toptoolbar
+    {
+        background: url("../images/panel/panel-toolbar.gif") repeat-x scroll 0 0 #CEDFEF;
+        border-color: #EFF7F7 #9CBAE7 #9CBAE7;
+        border-right: 1px solid #9CBAE7;
+        border-style: solid;
+        border-width: 1px;
+        height: 26px;
+        float:left;
+    }
+    /* 头部固定 */
+    #toptoolbar
+    {
+        position: fixed;
+        top: 0px;
+        width: 100%;
+        overflow: visible;
+        z-index: 1000;
+    }
+
+     /* 头部固定 */
+     .s-toolbar
+    {
+
+        left :250px;
+        position: fixed;
+        top: 0px;
+        width: 100%;
+        overflow: visible;
+        z-index: 1000;
+    }
+    .l-text-wrapper
+    {
+        float: left;
+    }
+    .SubContainer{background:url(../../../Content/themes/Aqua/images/panel-toolbar.gif) repeat-x 0px 0px}
+    #btnAdd,#btnModify,#writeOpinion{border:0;  cursor:pointer; width:85px; text-alig:center; line-height:22px; height:22px; background:url(../../../../Content/Images/shouxie.gif); display:inline-block}
+    .shouxie{ border:0;cursor:pointer; width:85px; text-alig:center; line-height:22px; height:22px; background:url(../../../../Content/Images/shouxie.gif); display:inline-block}
+#toptoolbar{ left:0}
+    /*.WebYijian ul{ width:500px;}*/
+    .t-window .l-panel-bwarp{overflow-x:hidden}
+</style>
+ <script src="@Url.Content("~/Scripts/0.0.0/jquery-1.8.2.min.js")" type="text/javascript"></script>@*add by 张蓝天 2013-01-18*@
+<script type="text/javascript" src="@Url.Content("~/Scripts/workFlow/Receive/FileFlow.js")"></script>
+@{
+    var winCuidDefaultOpinion = Html.EPLib().Window().Name("winDefaultOpinion").Title("维护用户批语").Draggable(true).Resizable().Modal(true).Buttons(b => b.Maximize().Close()).Width(560).Height(382).Visible(false);
+    winCuidDefaultOpinion.Content(@<text>
+    <div id="gridDefaultOpinion" style="width:100%;height:100%;">
+    </div>
+    </text>);
+    winCuidDefaultOpinion.Render();
+    winCuidDefaultOpinion.ClientEvents(events => events.OnClose("winCuid_onclose"));
+}
+<script type ="text/javascript">
+    $(function () {
+        //批语选择的绑定事件
+        $("#fmDefaultOpinion").change(function () {
+            fmDefaultOpinion_onChange();
+        });
+        $("#tableSchedule").hide(); //隐藏日程添加区域
+
+//        $.post("/Workflow/PageLoaded", null, function (json) {
+//        });//测试页面加载时间，请求后台代码
+    });
+</script>
+
+<!--日程处理 End-->
+  <!--批语处理 Start-->
+    <script type="text/javascript">
+        var grid = null;
+        var winGrid = null;
+
+        /*删除列表中指定行数据*/
+        function f_delete() {
+            var selected = grid.getSelected();
+            if (selected) {
+                if (!selected.ID) {
+                    return;
+                }
+                $.post('@Url.Content("~/Dispatch/DeleteDefaultOpinion")', { opinionID: selected.ID}).done(function (json) {
+                    if (json) {
+                        var isError = json.IsError;
+                        var message = json.Message;
+                        window.alert(message);
+                    }
+                });
+                grid.deleteRow(selected);
+            }
+            else {
+                alert('请选择行!');
+            }
+        }
+
+        /*各按钮的单击事件*/
+        function defaultOpinionItemClick(item){
+            switch (item.text) {
+                case "增加":
+                    grid.addEditRow();
+                    break
+                case "修改":
+                    var row = grid.getSelectedRow();
+                    if (!row) { LG.tip('请选择行'); return; }
+                    grid.beginEdit(row);
+                    break;
+              case "取消":
+                    var row = manager.getSelectedRow();
+                    if (!row) { alert('请选择行'); return; }
+                    grid.cancelEdit(row);
+                  break;
+                case "删除":
+                    if(confirm("确定要删除吗？")) {
+                        f_delete();
+                    };
+                    break;
+                case "关闭":
+                    winGrid.close();
+                    //重新获取批语列表
+                    $.ajax({
+                        url: '@Url.Action("GetRefreshOpinion")',
+                        type: 'POST',
+                        async:false,
+                        error: function (xhr, status) {
+                            alert(status);
+                        },
+                        success: function (json) {
+                            if (json) {
+                                $("#fmDefaultOpinion").empty();
+                                for (var i = 0; i < json.length; i++) {
+                                    $("#fmDefaultOpinion").append($("<option></option>").val(json[i].Value).html(json[i].Text));
+                                }
+                            }
+                        }
+                    });
+                    break;
+                case "保存":
+                    grid.endEdit();
+                    var data=grid.getData();
+                    var jsonString=JSON2.stringify(data);
+
+                      $.post('@Url.Content("~/Dispatch/SaveDefaultOpinions")', { defaultOpinions: jsonString}).done(function (json) {
+                        if (json) {
+                            var isError = json.IsError;
+                            var message = json.Message;
+                            window.alert(message);
+                            //列表数据重新加载
+                            grid.loadData(json.Data)
+                        }
+                    });
+
+
+                    break;
+            }
+        }
+
+        function cuidDefaultOpinion() {
+            //grid控件工具栏
+            var toolbarOptions = {
+                items: [
+                    { text: '保存', click: defaultOpinionItemClick, img: "@Url.Content("~/Content/icons/silkicons/save.png")" },
+                    { line: true },
+                    { text: '增加', click: defaultOpinionItemClick, img: "@Url.Content("~/Content/icons/silkicons/add.png")" },
+                    { line: true },
+                    { text: '修改', click: defaultOpinionItemClick, img: "@Url.Content("~/Content/icons/silkicons/page_edit.png")" },
+                    { line: true },
+                    { text: '删除', click: defaultOpinionItemClick, img: "@Url.Content("~/Content/icons/silkicons/delete.png")" },
+                    { line: true },
+                    { text: '关闭', click: defaultOpinionItemClick, img: "@Url.Content("~/Content/icons/silkicons/cross.png")" }
+                ]
+            };
+            //设置grid控件样式
+            grid = $("#gridDefaultOpinion").ligerGrid({
+                columns: [
+                    { hide: true, name: 'ID', align: 'left', width: 50, minWidth: 40 },
+                    { hide: true, name: 'AgreeType', align: 'left', width: 300, minWidth: 80 },
+                    { display: '批语', name: 'DefaultOpinion', align: 'left', width: 531, minWidth: 80, editor:{type:'text'} }
+                ],
+                onSelectRow: function (rowdata, rowindex)
+                {
+                    $("#txtrowindex").val(rowindex);
+                },
+                toolbar: toolbarOptions,
+                url:'@Url.Action("LoadDefaultOpinions", "Dispatch")',
+                dataAction: 'server',
+                checkbox: false,
+                usePager: false,
+                enabledEdit: true,
+                isScroll: false,
+                clickToEdit: false,
+                width: '100%',
+                height:'300px'
+            });
+
+            winGrid = $('#winDefaultOpinion').data('tWindow');
+            winGrid.center();
+            var win=winGrid.open();
+            $("div[class='l-grid-body l-grid-body2 l-scroll']").css("height", "500px");
+        }
+
+        function fmDefaultOpinion_onChange(){
+            var selectedValue = $("#fmDefaultOpinion").val();
+            $("#txtOpinion").val(selectedValue);
+        }
+    </script>
+    <!--批语处理 End-->
+<script type="text/javascript">
+    var bnFuncList = Array();
+</script>
+
+@if (@*ViewBag.CurrentStateID != "领导签批" && ViewBag.CurrentStateID != "分管领导签批" &&*@ (ViewBag.InstanceID == null || !wfEncap.IsEndWorkFlow(ViewBag.InstanceID)))
+{
+    <div class="s-toolbar" style="">
+        @{
+    string templateID = ViewBag.TemplateID;
+    string edition = wfEncap.WFService.GetTemplateMaxEdition(templateID);//获取模板的最大模型版本号
+    var branchNames = wfEncap.WFService.GetTemplateStateBranchName(templateID, edition, ViewBag.CurrentStateID);
+
+    foreach (string bn in branchNames)
+    {
+        //Add by 叶宝平 工作流中“分管领导签批”环节的“协办”功能没删除，在此屏蔽“协办”按钮
+        if (ViewBag.CurrentStateID == "分管领导签批" && (bn == "协办" || bn == "主办处室办理"))
+        {
+            continue;
+        }
+
+        //Add by 叶宝平 工作流“领导签批”环节，屏蔽多余的按钮
+        if (ViewBag.CurrentStateID == "领导签批" && (bn == "分管领导签批" || bn == "办公室拟办" || bn == "主办处室办理"))
+        {
+            continue;
+        }
+
+        //Modify by 叶宝平 为“办公室拟办”和“领导阅示”环节后的“传阅”环节隐藏人员下拉列表
+        if (!((ViewBag.CurrentStateID == "办公室拟办" || ViewBag.CurrentStateID == "领导阅示") && bn == "传阅"))
+        {
+            <input type="text" id='@("cbx" + bn)' style="float:left;" onmouseover="GetSelectedUsers('cbx@(bn)');"/>
+            <script type="text/javascript">
+                var func = function () {
+                    var url = '@Url.Action("GetBNUsers")' + "?templateID=@(templateID)&edition=@(edition)&bn=@(bn)";
+                    $.ajax({
+                        url: encodeURI(url),
+                        type: 'POST',
+                        async: false,
+                        error: function (xhr, status) {
+                            alert(status);
+                        },
+                        success: function (json) {
+                            if (json.Success && json.Data && json.Data.length > 0) {
+                                if (json.Data.length == 1)
+                                    $('@("#cbx" + bn)').ligerComboBox({ data: json.Data, valueFieldID: '@("value" + bn)', initValue: json.Data[0].id, initText: json.Data[0].text,split:',' });
+                                else
+                                    $('@("#cbx" + bn)').ligerComboBox({ data: json.Data, valueFieldID: '@("value" + bn)',split:',', isShowCheckBox: @(bn != "办公室拟办" ? "true" : "false"), isMultiSelect: @(bn != "办公室拟办" ? "true" : "false")@(bn == "办公室拟办" ? ",initValue: json.Data[0].id, initText: json.Data[0].text" : "") });
+                                    $('J_checked').innerHTML=$('@("#cbx" + bn)').innerHTML;
+                            }
+                            else
+                            {
+                                $('@("#cbx" + bn)').css("margin-left", "-500px").css("float", "left");
+                            }
+                        }
+                    });
+                }
+                bnFuncList.push(func);
+            </script>
+        }
+
+            <div id="J_checked" style="position:absolute;">
+            </div>
+
+        //Modify by 叶宝平 屏蔽“传阅”环节的人员下拉列表
+        if (bn != "传阅" && !(ViewBag.CurrentStateID == "分管领导签批" && bn == "办公室拟办"))
+        {
+                <div class="l-toolbar-item l-panel-btn l-toolbar-item-hasicon l-panel-btn-over" id='@("btn" + bn)' onclick='@("SendToNext('" + bn + "')")' style=" float:left; margin-right:10px;">
+                    <span>@(Model != null ? (Model.Receivedtype == "2" && ViewBag.CurrentStateID == "领导阅示" ? (bn == "办公室拟办" ? "退回" + bn : bn) : "送" + bn) : "送" + bn)</span>
+                    <div class="l-panel-btn-l">
+                    </div>
+                    <div class="l-panel-btn-r">
+                    </div>
+                    <img src="/Content/icons/silkicons/bullet_go.png">
+                </div>
+        }
+
+        if (ViewBag.CurrentStateID == "分管领导签批" && bn == "办公室拟办")
+        {
+            <div class="l-toolbar-item l-panel-btn l-toolbar-item-hasicon l-panel-btn-over" id='@("btn" + bn)' onclick='@("SendToNext('" + bn + "')")' style=" float:left; margin-right:10px;">
+                    <span>退回</span>
+                    <div class="l-panel-btn-l">
+                    </div>
+                    <div class="l-panel-btn-r">
+                    </div>
+                    <img src="/Content/icons/silkicons/bullet_go.png">
+                </div>
+        }
+    }
+
+    //Add by 叶宝平 为“领导阅视”环节分管领导添加全局传阅功能
+    if ((ViewBag.CurrentStateID == "办公室拟办" || ViewBag.CurrentStateID == "领导阅示") && (string.IsNullOrEmpty(Model.Receivedtype) || Model.Receivedtype == "2"))
+    {
+        <div id="J_checked" style="position:absolute;">
+        </div>
+        <div class="l-toolbar-item l-panel-btn l-toolbar-item-hasicon l-panel-btn-over" id='btn传阅' onclick='showCirculatePersons("传阅")' style=" float:left;">
+            <span>全局传阅</span>
+            <div class="l-panel-btn-l">
+            </div>
+            <div class="l-panel-btn-r">
+            </div>
+            <img src="/Content/icons/silkicons/bullet_go.png" alt="">
+        </div>
+    }
+
+    if (ViewBag.CurrentStateID != "结束归档")
+    {
+    <div  style="float:left; padding:0px 0 0 2px;color:Black; "><input type="checkbox" id="chkSend" name="chkSend" style="vertical-align:middle"/>发送短信</div>
+    }
+        }
+  <div class="l-toolbar-item l-panel-btn l-toolbar-item-hasicon l-panel-btn-over" id ="changeDataList" onclick="javascript:f_changeDataList()" style=" float:left;">
+            <span style="color: Black">变更记录</span>
+            <div class="l-panel-btn-l">
+            </div>
+            <div class="l-panel-btn-r">
+            </div>
+        </div>
+        <script type ="text/javascript">
+            //数据变更记录列表
+            function f_changeDataList() {
+                var id = $('#ID').val();
+                if (id == "") {
+                    $.ligerDialog.warn("没有变更记录");
+                    return;
+                }
+                var instanceid = '@ViewBag.InstanceID';
+                var typeinfo = '';
+                if (instanceid != "") {
+                    typeinfo = "&type=tsw";
+                }
+                var url = '@Url.Action("ChangeDataList", "ChangeData")' + '?id=' + id + typeinfo;
+
+                $.ligerDialog.open({ title: '数据变更记录', height: 600, width: 800, url: url });
+            }
+        </script>
+    </div>
+}
+
+<h1 style=" clear:both;text-align: center; margin: 10px auto;color:red; margin-top:40px;width:800px;">
+     <span style = "color:#ff0000; line-height:30px;font-size:28px;display:block;*+margin-top:40px;text-align:center"> 金华市住房和城乡建设局文件阅办单</span><br/>
+         <small style="font-size:14px;color: Black; float:right;margin-right:30px;"><text>【</text>@ViewBag.CurrentStateID<text>】</text></small>
+
+</h1>
+<div style="padding: 0 10px; margin:0 auto ;clear:both">
+    @using (Html.BeginForm("_NewOne", "Receive"))
+    {
+        @Html.HiddenFor(o => o.ID);
+        @Html.HiddenFor(o => o.Templateid);
+                                          object textboxStyle = new { style = "width:90%;border:0px;", @readonly = "readonly" };
+                                          if (ViewBag.CurrentStateID == "收文登记" || ViewBag.CurrentStateID == "办公室拟办")
+                                          {
+                                              textboxStyle = new { style = "width:90%" };
+                                          }
+
+                                          object officeStyle = new { style = "width:90%;border:0px;", @readonly = "readonly" };//办公室样式
+                                          if (ViewBag.CurrentStateID == "收文登记")
+                                          {
+                                              officeStyle = new { style = "width:90%" };
+                                          }
+        @Html.Hidden("strWriteBoard")
+        @Html.Hidden("currentStateID")
+        @Html.Hidden("opinion")
+        @Html.Hidden("nextUserIDs")
+        <table style="width: 90%;margin:0 auto" id="tbMain" >
+            <tr>
+                <td style="width:120px;">
+                    <label><font color="red">*</font>来文编号</label>
+                </td>
+                <td class="LeftAlign">
+                @{
+                                          if (ViewBag.CurrentStateID == "收文登记")
+                                          {
+                    @Html.LigerTextBoxFor(o => o.Comenumber, new { style = "width:140px" }).Required()
+                                          }
+                                          else
+                                          {
+                        @Html.DisplayFor(o => o.Comenumber)
+                                          }
+                }
+                </td>
+                <td style="width: 120px;" class="centerAlign">
+                    <label>
+                        收文编号</label>
+                </td>
+                <td class="LeftAlign" style="width:120px;">
+                    @{
+                                          if (ViewBag.CurrentStateID == "收文登记")
+                                          {
+                    @Html.LigerTextBoxFor(o => o.Receivednumber, new { style = "width:80px" })
+                                          }
+                                          else
+                                          {
+                        @Html.DisplayFor(o => o.Receivednumber)
+                                          }
+                }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        缓急</label>
+                </td>
+                <td class="LeftAlign">
+                    @(Html.EPLib().DropDownListFor(p => p.Emergency).BindTo(ViewBag.Emergencies).HtmlAttributes(new { @style = "width:80px;" }).Enable(ViewBag.CurrentStateID == "收文登记" || ViewBag.CurrentStateID == "办公室拟办"))
+                </td>
+                 <td class="centerAlign">
+                    <label>@{if (ViewBag.CurrentStateID == "办公室拟办")
+                             {
+                           <font color="red">*</font>
+                             }}收文类型</label>
+                </td>
+                <td class="LeftAlign">
+                    @(Html.EPLib().DropDownListFor(p => p.Receivedtype).ClientEvents(events => events.OnChange("onChange_RecieveType")).BindTo(ViewBag.ReceivedTypes).HtmlAttributes(new { @style = "width:80px;", @class = "required" }).Enable(ViewBag.CurrentStateID == "办公室拟办"))
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>来文日期</label>
+                </td>
+                <td class="LeftAlign">
+                    @if (ViewBag.CurrentStateID == "收文登记" || ViewBag.CurrentStateID == "办公室拟办")
+                    {
+                        @(Html.EPLib().DatePickerFor(o => o.Comedate).Value(Model == null ? DateTime.Now : Model.Comedate).HtmlAttributes(new { @style = "width:100px;" }).Enable(ViewBag.CurrentStateID == "收文登记" || ViewBag.CurrentStateID == "办公室拟办"))
+                    }
+                    else
+                    {
+                        @(Html.EPLib().DatePickerFor(o => o.Comedate).Value(Model.Comedate).HtmlAttributes(new { @style = "width:100px;" }).Enable(ViewBag.CurrentStateID == "收文登记" || ViewBag.CurrentStateID == "办公室拟办"))
+                    }
+
+                </td>
+                <td class="centerAlign">完成日期</td>
+                @if (ViewBag.CurrentStateID == "办公室拟办")
+                {
+                    <td class="LeftAlign">@(Html.EPLib().DatePickerFor(f => f.FinishDate).Value(Model.FinishDate).HtmlAttributes(new { @style = "width:100px;" }))</td>
+                }
+                else
+                {
+                    <td class="LeftAlign">@(Model != null ? Model.FinishDate.Value.Date.ToShortDateString() : "")</td>
+                }
+            </tr>
+            <tr>
+                <td>
+                    <label>来文单位</label>
+                </td>
+                <td class="LeftAlign" colspan="3">
+                @{
+                if (ViewBag.CurrentStateID == "收文登记")
+                {
+                        @Html.LigerTextBoxFor(o => o.Comeunit, new { style = "width:215px" })
+                }
+                else
+                {
+                        @Html.DisplayTextFor(c => c.Comeunit)
+                }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label><font color="red">*</font>来文标题</label>
+                </td>
+                <td colspan="3" class="LeftAlign">
+                    @Html.LigerTextBoxFor(c => c.Swtitle, textboxStyle).Required()
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>
+                        附件</label>
+                </td>
+                <td colspan="3" class="LeftAlign">
+                    <div id="upfiles">
+                    @{
+                List<TAttachinfoModel> attachFiles = ViewBag.AttachFiles;
+                if (attachFiles != null)
+                {
+                        <ul>
+                            @foreach (var file in attachFiles)
+                            {
+                                <li><a href="#" onclick='javascript:OpenAttachView("@file.Baseinfoid","@file.Attachnameid","@file.Extension")'>@file.Attachdisplayname</a>
+                                </li>
+                            }
+                        </ul>
+                }
+               }
+               </div>
+               @{
+                if (string.IsNullOrEmpty(ViewBag.InstanceID) ||
+                    ViewBag.CurrentStateID == "收文登记" ||
+                    ViewBag.CurrentStateID == "办公室拟办" ||
+                    ViewBag.CurrentStateID == "领导签批" ||
+                    ViewBag.CurrentStateID == "分管领导签批" ||
+                    ViewBag.CurrentStateID == "主办处室办理" ||
+                    ViewBag.CurrentStateID == "主办处理人阅办")
+                {
+                        <div>
+                            <a href="#" onclick="javacript:Upload();">上传附件</a></div>
+                }
+                    }
+                </td>
+            </tr>
+            <tr height="90px">
+                <td>
+                    <label>拟办意见</label>
+                </td>
+                <td colspan="3" class="LeftAlign WebYijian">
+                    @ShowOpinion("办公室拟办", wfEncap)
+                    @ShowDelegate("办公室拟办", wfEncap, tfFacade)
+                </td>
+            </tr>
+            <tr  height="90px">
+                <td>
+                    <label>领导签批</label>
+                </td>
+                <td colspan="3" class="LeftAlign WebYijian">
+                    @ShowOpinion("领导签批", wfEncap)
+                    @ShowDelegate("领导签批", wfEncap, tfFacade)
+                    @ShowOpinion("分管领导签批", wfEncap)
+                    @ShowDelegate("分管领导签批", wfEncap, tfFacade)
+                    @ShowOpinion("领导阅示", wfEncap)
+                    @ShowDelegate("领导阅示", wfEncap, tfFacade)
+                </td>
+            </tr>
+            <tr height="90px">
+                <td>
+                    <label>处室意见</label>
+                </td>
+                <td colspan="3" class="LeftAlign">
+                    @ShowOpinion("主办处室办理", wfEncap)
+                    @ShowDelegate("主办处室办理", wfEncap, tfFacade)
+                    @ShowOpinion("协办", wfEncap, false)
+                    @ShowDelegate("协办", wfEncap, tfFacade, false)
+                    @ShowOpinion("处室传阅", wfEncap)
+                    @ShowDelegate("处室传阅", wfEncap, tfFacade)
+                </td>
+            </tr>
+            <tr height="90px">
+                <td>
+                    <label>阅办人意见</label>
+                </td>
+                <td colspan="3" class="LeftAlign">
+                    @ShowOpinion("主办处理人阅办", wfEncap)
+                    @ShowDelegate("主办处理人阅办", wfEncap, tfFacade)
+                    @ShowOpinion("处室内部人员传阅", wfEncap, false)
+                    @ShowDelegate("处室内部人员传阅", wfEncap, tfFacade, false)
+
+                    @ShowOpinion("传阅", wfEncap)
+                    @ShowDelegate("传阅", wfEncap, tfFacade)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label>归档</label>
+                </td>
+                <td colspan="3" class="LeftAlign">
+                    @{
+                if (ViewBag.CurrentStateID == "结束归档" && !wfEncap.IsEndWorkFlow(ViewBag.InstanceID))
+                {
+                        <div>
+                            是否归档：@Html.RadioButtonFor(p => p.ISENDFLOW, "1")是
+                            @Html.RadioButtonFor(p => p.ISENDFLOW, "0")否
+                               
+                            归档期限：
+                            @Html.RadioButtonFor(p => p.Timelimit, "1")10年
+                            @Html.RadioButtonFor(p => p.Timelimit, "2")30年
+                            @Html.RadioButtonFor(p => p.Timelimit, "3")永久
+                            @Html.RadioButtonFor(p => p.Timelimit, "0")无
+                        </div>
+                }
+                else if (!string.IsNullOrEmpty(ViewBag.InstanceID) && (ViewBag.CurrentStateID == "结束归档" || wfEncap.IsEndWorkFlow(ViewBag.InstanceID)))
+                {
+                   <div>
+                            是否归档：@ViewBag.IsEndFlowText
+                            归档期限：@ViewBag.TimeLimitText
+                        </div>
+                }
+                    }
+                </td>
+            </tr>
+            @{
+                if (string.IsNullOrEmpty(ViewBag.InstanceID) || ViewBag.CurrentStateID == "收文登记")
+                {
+                <tr>
+                    <td>
+                        <label>
+                            PDF文件上传</label>
+                    </td>
+                    <td colspan="3" class="LeftAlign">
+                        <div id="uploadEdit">
+                            <a href="#" onclick="javacript:Upload('swzw');">上传PDF</a>
+                        </div>
+                    </td>
+                </tr>
+                }
+            }
+            <tr>
+                <td>
+                    <label>PDF文件浏览</label>
+                </td>
+                <td colspan="3" class="LeftAlign">
+                    <iframe id="frmPDF" frameborder="0" style='width: 100%; height: 1110px;'></iframe>
+                </td>
+            </tr>
+        </table>
+         <div id="target1" style="width: 200px; margin: 3px; display: none;">
+    <h3>
+        正在操作...</h3>
+</div>
+    }
+</div>
+
+<!--传阅人员树弹出层 Add by 叶宝平 2012-11-30-11-10-->
+<div id="divCirculatePersons" style="width: 400px; height: 300px; margin: 3px; display: none; overflow:auto">
+    <table style="width: 100%;">
+        <tr style="width: 95%;">
+            <td>
+                <ul id="treeCirculatePersons">
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+
+@section FootContent {
+    <!--手写批注脚本文件引入 Start-->
+    <script src="../../Scripts/FxScrbble/FxScrbble.js" type="text/javascript" charset="gb2312"></script>
+    <link href="../../Scripts/FxScrbble/FxScrbble.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        var objfxScrbble;
+        $(function () {
+
+            objfxScrbble = $("#txtOpinion").fxScrbble({ singlefor: "1", data: "", plateheight: 200, width: 1024, height: 768, success: function (value) {
+                if (value != "") {
+                    document.getElementById("tempOpinion").style.display = "";
+                    document.getElementById("tempOpinion").src = "data:image/jpeg;base64," + value;
+                }
+                else {
+                    document.getElementById("tempOpinion").style.display = "none";
+                }
+            }
+            });
+
+            var tempcontrol = document.getElementById("rdoIdeaStyle1");
+            if (tempcontrol) {
+                document.getElementById("rdoIdeaStyle1").checked = "checked";
+            }
+            //根据不同的方式设置控件是否可显示
+            tempcontrol = document.getElementById("txtOpinion");
+            if (tempcontrol) {
+                tempcontrol.style.display = "";
+            }
+            tempcontrol = document.getElementById("inputOpinion");
+            if (tempcontrol) {
+                tempcontrol.style.display = "";
+            }
+            tempcontrol = document.getElementById("writeOpinion");
+            if (tempcontrol) {
+                tempcontrol.style.display = "none";
+            }
+
+            //            //领导签批、分管领导签批、领导阅示环节时才会有存在手写方式
+            //            if ('@ViewBag.CurrentStateID' == "领导签批" || '@ViewBag.CurrentStateID' == "分管领导签批" || '@ViewBag.CurrentStateID' == "领导阅示") {
+            //                var tempcontrol = document.getElementById("rdoIdeaStyle1");
+            //                if (tempcontrol) {
+            //                    document.getElementById("rdoIdeaStyle1").checked = "checked";
+            //                }
+            //                //根据不同的方式设置控件是否可显示
+            //                tempcontrol = document.getElementById("txtOpinion");
+            //                if (tempcontrol) {
+            //                    tempcontrol.style.display = "";
+            //                }
+            //                tempcontrol = document.getElementById("inputOpinion");
+            //                if (tempcontrol) {
+            //                    tempcontrol.style.display = "";
+            //                }
+            //                tempcontrol = document.getElementById("writeOpinion");
+            //                if (tempcontrol) {
+            //                    tempcontrol.style.display = "none";
+            //                }
+            //            }
+            //            else {
+            //                //手写方式
+            //                //begin
+            //                var tempcontrol = document.getElementById("rdoIdeaStyle2");
+            //                if (tempcontrol) {
+            //                    document.getElementById("rdoIdeaStyle2").checked = "checked";
+            //                }
+            //                //end
+            //                var tempcontrol = document.getElementById("txtOpinion");
+            //                if (tempcontrol) {
+            //                    tempcontrol.style.display = "none";
+            //                }
+            //                tempcontrol = document.getElementById("inputOpinion");
+            //                if (tempcontrol) {
+            //                    tempcontrol.style.display = "none";
+            //                }
+            //                tempcontrol = document.getElementById("writeOpinion");
+            //                if (tempcontrol) {
+            //                    tempcontrol.style.display = "";
+            //                }
+            //            }
+        });
+
+        //Add by 叶宝平 “主办处室办理”默认日程不需要显示添加
+        $(function () {
+            var currentStateID = '@ViewBag.CurrentStateID';
+            if (currentStateID == "主办处室办理") {
+                $("#tableSchedule").hide();
+            }
+        })
+
+    </script>
+    <!--手写批注脚本文件引入 End-->
+
+    <script src="@Url.Content("~/Scripts/Common.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/LG.js")" type="text/javascript"></script>
+    <!--来文单位处理 Start-->
+    <script type="text/javascript">
+        var funcOrgan = function () {
+            var url = '@Url.Action("GetOrganTreeData", "Dispatch")';
+            $.ajax({
+                url: encodeURI(url),
+                type: 'POST',
+                async: false,
+                error: function (xhr, status) {
+                    alert(status);
+                },
+                success: function (json) {
+                    if (json.Success) {
+                        var temp = $('#Comeunit').val();
+                        $('#Comeunit').ligerComboBox({ data: json.Data, valueFieldID: 'value', initText: temp, isShowCheckBox: true, isMultiSelect: true, width: 350, resize: false,split:',' });
+            $('#Comeunit').removeAttr("readonly");
+                    }
+                }
+            });
+        }
+
+        funcOrgan();
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#toptoolbar").ligerToolBar({
+                items: [@(new HtmlString(ViewBag.TopBar))]
+            });
+
+            var toptoolbar = $('#toptoolbar');
+            var width = 0;
+            toptoolbar.children().each(function (i, n) {
+                var obj = $(n);
+                obj.children().each(function (j, m) {
+                    width += $(m).width();
+                });
+
+            });
+            $('.s-toolbar').css("left", width * 1.8);
+
+            $('#Templateid').val('@ViewBag.TemplateID');
+
+            for(var i=0;i<bnFuncList.length;i++)
+            {
+                var func = bnFuncList[i];
+                func();
+            }
+
+            //新增时自动生成【收文编号】
+            if ('@ViewBag.CurrentStateID' == "收文登记"&&$("#Receivednumber").val()=="")
+            {
+                $("#Receivednumber").val('@ViewBag.ReceiveNumber');
+            }
+
+            //收文类型变更
+            onChange_RecieveType();
+
+            //是否归档变更
+            onChange_IsEndFlow();
+
+            //PDF正文加载
+            var fileName = '@ViewBag.PdfFileName';
+            if(fileName!="")
+            {
+                LoadPDF(fileName);
+            }
+        })
+
+        function SendToNext(nextStateID) {
+            var mbox = $.ligerDialog.open({ target: $("#target1") });
+            var ddlReceivedtype=$("#Receivedtype").data("tDropDownList");
+            var receivedtype=ddlReceivedtype.value();
+            if (nextStateID == "领导签批"&&receivedtype!=1)
+            {
+                alert("请确认【收件类型】是否是办理件！");
+                mbox.hide();
+                return;
+            }
+            else if (nextStateID == "领导阅示"&&receivedtype!=2)
+            {
+                alert("请确认【收件类型】是否是传阅件！");
+                mbox.hide();
+                return;
+            }
+            //2012-10-30 ljx-add 检测是否已添加批语
+            //Modify by 叶宝平 办公室拟办环节可以不选择分管领导和主办处室
+            ExcuteFun(nextStateID,mbox);
+//            if ('@ViewBag.CurrentStateID' == "办公室拟办" && nextStateID == "领导签批")
+//            {
+//                //数据保存处理
+//                $.post('@Url.Action("GetOfferDeliver")'+"?instanceID="+'@ViewBag.InstanceID').done(function (json) {
+//                    if (!json.Success){
+//                        alert("请先维护批语！");
+//                        mbox.hide();
+//                        return;
+//                    }
+//                    else
+//                    {
+//                        //处理成功才能继续[保存数据并发送下一步]
+//                        ExcuteFun(nextStateID,mbox);
+//                    }
+//                });
+//              }
+//              else{
+//                //保存数据并发送下一步
+//                ExcuteFun(nextStateID,mbox);
+//                }
+        }
+
+        function ExcuteFun(nextStateID,mbox)
+        {
+            var currentStateId='@ViewBag.CurrentStateID';
+            if(currentStateId=="收文登记" || currentStateId=="办公室拟办" || currentStateId=="结束归档")
+            {
+                var json = Save();
+                if(!json.Success)
+                {
+                    mbox.hide();
+                    return;
+                }
+            }
+
+            if(currentStateId=="主办处理人阅办" || (currentStateId=="主办处室办理" && nextStateID =="结束归档") || (currentStateId=="分管领导签批" && nextStateID=="结束归档"))
+            {
+                //添加日程
+                    if ($("#checkSchedule").attr("checked")) {
+                        var ScheduleTitle=$.trim($("#ScheduleTitle").val());
+                        if(ScheduleTitle=="")
+                        {
+                            alert("【主题】不能为空！");
+                            mbox.hide();
+                            return ;
+                        }
+                        var StartDate=$.trim($("#StartDate").val());
+                        if(StartDate=="")
+                        {
+                            alert("【开始时间】不能为空！");
+                            mbox.hide();
+                            return ;
+                        }
+                         var EndDate=$.trim($("#EndDate").val());
+                        if(EndDate=="")
+                        {
+                            alert("【结束时间】不能为空！");
+                            mbox.hide();
+                            return ;
+                        }
+                         var ScheduleRemark=$.trim($("#ScheduleRemark").val());
+                        if(ScheduleRemark=="")
+                        {
+                            alert("【内容】不能为空！");
+                            mbox.hide();
+                            return ;
+                        }
+                        var url = '@Url.Action("ScheduleAdd", "Schedule")';
+                        var ID = '@Guid.NewGuid().ToString()';
+                        var Account='@ViewBag.CurrentUser.UserId';
+                        var Name='@ViewBag.CurrentUser.DisplayName';
+                        $.ajax({
+                            url: encodeURI(url),
+                            type: 'POST',
+                            async: false,
+                            data:{
+                               ScheduleTitle:ScheduleTitle,
+                               StartDate:StartDate,
+                               EndDate:EndDate,
+                               ScheduleRemark:ScheduleRemark,
+                               ID :ID,
+                               Account:Account,
+                               Name:Name,
+                               RefBillID: $('#ID').val()
+                               },
+                            error: function (xhr, status) {
+                                alert(status);
+                                mbox.hide();
+                            },
+                            success: function (data) {
+                                var isError = eval("("+data+")").IsError;
+                                if (isError) {
+                                        alert("日程保存失败");
+                                        mbox.hide();
+                                        return;
+                                }
+                                mbox.hide();
+                            }
+                        });
+                    }
+            }
+
+            var url = '@Url.Action("SendToNext")' + "?templateID=@(ViewBag.TemplateID)&receiveID="+ $('#ID').val() + "&nextStateID=" + nextStateID;
+//            if ($("#txtOpinion").length != 0 && $("#txtOpinion").val()) {
+//                url += "&opinion=" + $("#txtOpinion").val();
+//            }
+
+            $("#opinion").val($("#txtOpinion").val());
+
+            var nextInput = $("#value" + nextStateID);
+            if(nextInput.length>0)
+            {
+                var nextUsers = nextInput.val();
+                if (nextUsers) {
+                    nextUsers = nextUsers.replace(';',',');
+                    url += "&nextUserID=" + nextUsers;
+                }
+                else
+                {
+                    alert("请选择下一环节办理人！");
+                    mbox.hide();
+                    return;
+                }
+            }
+            if ('@ViewBag.InstanceID') {
+                url += "&instanceID=@ViewBag.InstanceID";
+            }
+            url+="&currentStateID="+'@ViewBag.CurrentStateID';
+
+            var fkid='@(!string.IsNullOrEmpty(Request["fkid"]) ? Request["fkid"] : "")';
+            url+="&fkid="+fkid;
+
+
+            //是否发送短信
+            url+=AddSendMessageParam();
+
+            //获取手写时的批注图片信息
+            url+=GetWriteBoardUrl();
+
+            $.post(encodeURI(url), $('form').serializeArray()).done(function (json) {
+                alert(json.Msg);
+                mbox.hide();
+                if (json.Success)
+                {
+                    window.close();
+                }
+            });
+        }
+
+        /* 添加短信参数 */
+        function AddSendMessageParam()
+        {
+            var temp="";
+            var chk = $("#chkSend");
+            if(chk&&chk[0])
+            {
+                temp="&isSend="+chk[0].checked;
+            }
+            return temp;
+        }
+        /* 获取意见手写时的Url地址 */
+        function GetWriteBoardUrl()
+        {
+            var url="";
+            //获取手写时的批注图片信息
+            var writeBoard="";
+            var ideaStyle=0;
+            var tempControl=document.getElementById("rdoIdeaStyle2");
+            if('@ViewBag.CurrentStateID' == "领导签批" || '@ViewBag.CurrentStateID' == "分管领导签批" || '@ViewBag.CurrentStateID' == "领导阅示" || '@ViewBag.CurrentStateID'=="传阅")
+            {
+             //手写
+                     if(tempControl&&tempControl.checked)
+                    {
+
+                ideaStyle=1;
+                $("#strWriteBoard").val($('#txtOpinion').getfximage());
+                }
+            }
+
+            url+="&ideaStyle="+ideaStyle;
+            return url;
+        }
+         function itemclick(item) {
+            var mbox = $.ligerDialog.open({ target: $("#target1") });
+            switch (item.id) {
+                case "save":
+                    var json = Save();
+                    if(json)
+                    {
+                        alert(json.Msg);
+                    }
+                    mbox.hide();
+                    return;
+                case "leadersigncompleted":
+                    //工作交办
+                    //var handlerSetRet = showDialog('@Url.Action("OfficeSetHandler")' + '?instanceID=@ViewBag.InstanceID', '', 480,500);
+                    //if(handlerSetRet)
+                    //{
+                        var nextStateID="分管领导签批";
+                        var url = '@Url.Action("_LeaderDeliver")' + "?instanceID=@(ViewBag.InstanceID)&nextStateID="+nextStateID;
+
+                        $("#opinion").val($("#txtOpinion").val());
+
+                        url+="&currentStateID="+'@ViewBag.CurrentStateID';
+
+                        var fkid = '@(!string.IsNullOrEmpty(Request["fkid"]) ? Request["fkid"] : "")';
+                        url += "&fkid=" + fkid;
+
+                        //是否发送短信
+                        url+=AddSendMessageParam();
+
+                        //获取手写时的批注图片信息
+                        url+=GetWriteBoardUrl();
+
+                        $.post(encodeURI(url), $('form').serializeArray()).done(function (json) {
+                            alert(json.Msg);
+                            mbox.hide();
+                            if (json.Success)
+                            {
+                                window.close();
+                            }
+                        });
+                    //}
+                    return;
+                case "fgleadersigncompleted":
+                    //分管领导审核
+                    var nextStateID="主办处室办理";
+                    var url = '@Url.Action("_fgLeaderDeliver")' + "?instanceID=@(ViewBag.InstanceID)&nextStateID="+nextStateID;
+
+//                    if ($("#txtOpinion").length != 0 && $("#txtOpinion").val()) {
+//                        url += "&opinion=" + $("#txtOpinion").val();
+//                    }
+
+                    $("#opinion").val($("#txtOpinion").val());
+
+                    url+="&currentStateID="+'@ViewBag.CurrentStateID';
+                    //是否发送短信
+                    url+=AddSendMessageParam();
+
+                    var fkid = '@(!string.IsNullOrEmpty(Request["fkid"]) ? Request["fkid"] : "")';
+                    url += "&fkid=" + fkid;
+
+                    //获取手写时的批注图片信息
+                    url+=GetWriteBoardUrl();
+
+                    $.post(encodeURI(url), $('form').serializeArray()).done(function (json) {
+                        alert(json.Msg);
+                        mbox.hide();
+                        if (json.Success){
+                            window.close();
+                        }
+                    });
+                    return;
+                case "senddeptcy":
+                    var nextStateID = "处室内部人员传阅";
+                    var url = '@Url.Action("_DeptInnerChuanyue")' + "?instanceID=@(ViewBag.InstanceID)"+"&nextStateID="+nextStateID;
+
+//                    if ($("#txtOpinion").length != 0 && $("#txtOpinion").val()) {
+//                        url += "&opinion=" + $("#txtOpinion").val();
+//                    }
+
+                    var txtopinion=$("#txtOpinion").val();
+
+                    url+="&currentStateID="+'@ViewBag.CurrentStateID';
+                    url+=GetWriteBoardUrl();
+
+                    var fkid = '@(!string.IsNullOrEmpty(Request["fkid"]) ? Request["fkid"] : "")';
+                    url += "&fkid=" + fkid;
+
+                    //是否发送短信
+                    url+=AddSendMessageParam();
+
+                    $.post(encodeURI(url),{opinion:txtopinion}).done(function (json) {
+                        alert(json.Msg);
+                        mbox.hide();
+                    });
+                    return;
+                case "monitor":
+                    if ("@ViewBag.InstanceID"){
+                        showDialog('@Url.Action("FlowMonitor", "Workflow")' + '?instanceID=@ViewBag.InstanceID', '', 800);
+                    }
+                    else    {
+                        alert("流程尚未开始！");
+                    }
+
+                    mbox.hide();
+                    return;
+            }
+         }
+
+         function Save()
+         {
+            //控件值检测
+            if(!CheckControl())
+            {
+                return false;
+            }
+
+            //数据保存
+            $.ajax({
+                url: '@Url.Action("_NewOne")',
+                type: 'POST',
+                async:false,
+                error: function (xhr, status) {
+                    alert(status);
+                },
+                data: $('form').serializeArray(),
+                success: function (json) {
+                    if (json.Success) {
+                        $('#ID').val(json.Data);
+                    }
+                    result = json;
+                }
+            });
+            return result;
+         }
+         //控件值检测
+        function CheckControl()
+        {
+            if('@ViewBag.CurrentStateID'=='收文登记')
+            {
+                /*来文编号*/
+                if($.trim($("#Comenumber").val())=="")
+                {
+                    alert("【来文编号】不能为空！");
+                    return false;
+                }
+                /*收文编号*/
+                if(!CheckReceivedNumber())
+                {
+                    return false;
+                }
+            }
+
+
+            /*收文类型必须选择*/
+            var ddlReceivedtype=$("#Receivedtype").data("tDropDownList");
+            if (!(ddlReceivedtype && ddlReceivedtype.value())&&ddlReceivedtype.enabled) {
+                alert("【收文类型】必须选择！");
+                return false;
+            }
+            /*来文标题*/
+            if($.trim($("#Swtitle").val())=="")
+            {
+                alert("【来文标题】不能为空！");
+                return false;
+            }
+            /*是否归档*/
+            if('@ViewBag.CurrentStateID'=='结束归档')
+            {
+                var ddl=$("#ISENDFLOW").data("tDropDownList");
+                if(ddl)
+                {
+                    var ddlTimelimit=$("#Timelimit").data("tDropDownList");
+                    if(ddl.value()=="1"&&ddlTimelimit.value()=="0")
+                    {
+                        alert("请选择【归档期限】！");
+                        return false;
+                    }
+                    else if(ddl.value()=="0"&&ddlTimelimit.value()!="0")
+                    {
+                        alert("未归档时不能选择【归档期限】！");
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /* 收文编号的检测 */
+        function CheckReceivedNumber()
+        {
+            if('@ViewBag.CurrentStateID'=="收文登记")
+            {
+                var temp=$.trim($("#Receivednumber").val());
+                if(temp=="")
+                {
+                    alert("【收文编号】不能为空！");
+                    return false;
+                }
+                //收文编号的长度必须是8位=4位年份+4位流水号
+                if(temp.length!=8)
+                {
+                    alert("【收文编号】的长度必须是8位！");
+                    return false;
+                }
+                //收文编号前四位必须当前年度
+                if(temp.substring(0, 4)!='@ViewBag.CurrentYear')
+                {
+                    alert("【收文编号】的前四位必须为当前年度！");
+                    return false;
+                }
+
+                //收文编号后四位必须是流水号
+                var strvalue=0;
+                var strLast=temp.substring(4);
+                for(var i=0;i<4;i++)
+                {
+                    var tempvalue=parseInt(strLast.substring(i,i+1));
+                    if(isNaN(tempvalue))
+                    {
+                        alert("【收文编号】的后四位必须为正实数的流水号！");
+                        return false;
+                    }
+                    if(tempvalue>0)
+                    {
+                        strvalue=tempvalue;
+                    }
+                }
+                if(strvalue==0)
+                {
+                    alert("【收文编号】的后四位中的流水号必须大于0！");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /* 【办公室拟办】和【领导签批】环节的添加批语 */
+        function Add_Opinion()
+        {
+        @{
+            if (ViewBag.CurrentStateID == "办公室拟办" || ViewBag.CurrentStateID == "领导签批" || ViewBag.CurrentStateID == "分管领导签批")
+            {
+                 <text>
+                    var handlerSetRet = showDialog('@Url.Action("OfficeSetHandler")' + '?instanceID=@ViewBag.InstanceID&currentStateId=@ViewBag.CurrentStateID', '', 550,500);
+                    if(!handlerSetRet)
+                    {
+                        return;
+                    }
+                    //Modify by 叶宝平 添加“领导签批”环节
+                    if ("@ViewBag.CurrentStateID" == "办公室拟办" || "@ViewBag.CurrentStateID" == "领导签批"|| "@ViewBag.CurrentStateID" == "分管领导签批")
+                    {
+                        var tempuser="";
+                        var ddlUser = $("#cbx领导签批");
+                        if (ddlUser && ddlUser.val()) {
+                            tempuser=ddlUser.val();
+                        }
+                        if($.trim(tempuser)!="")
+                        {
+                             tempuser=tempuser+"局长";
+                        }
+
+                        if(tempuser.length==0)
+                        {
+                            handlerSetRet=handlerSetRet.substring(1,handlerSetRet.length);
+                        }
+
+                        $("#txtOpinion").val("请"+tempuser+handlerSetRet);
+                    }
+                 </text>
+            }
+          }
+        }
+
+        /* 收文类型的变更事件 */
+        function onChange_RecieveType()
+        {
+            var ddlReceivedtype=$("#Receivedtype").data("tDropDownList");
+            var tempcontrol=document.getElementById("btnAdd");
+            //办理件
+            if (ddlReceivedtype && ddlReceivedtype.value()=="1"&&ddlReceivedtype.enabled) {
+                if(tempcontrol)
+                {
+                    tempcontrol.style.display="";
+                }
+            }
+            else
+            {//传阅件
+                if(tempcontrol)
+                {
+                    tempcontrol.style.display="none";
+                }
+            }
+        }
+
+        /*是否归档的变更事件*/
+        function onChange_IsEndFlow()
+        {
+            var ddl=$("#ISENDFLOW").data("tDropDownList");
+            if(ddl)
+            {
+                var ddlTimelimit=$("#Timelimit").data("tDropDownList");
+                //否
+                if(ddl.value()=="0")
+                {
+                    var selectItem = function (dataItem) {
+                        //dataItem argument is a ComboBox data item.
+                        return dataItem.Value == "0";
+                    }
+                    ddlTimelimit.select(selectItem);
+                }
+            }
+        }
+
+        /*浏览上传的附件信息*/
+        function OpenAttachView(baseinfoid, attachnameid, extension) {
+            var strUrl = '@(ViewBag.AttachVirtualPath)WorkFlow/' + baseinfoid + '/' + attachnameid + extension;
+            window.open(strUrl);
+        }
+
+        /*打开上传管理窗口*/
+        function Upload(attachKind) {
+            if(!$('#ID').val())
+            {
+                alert("请先保存！");
+                return;
+            }
+            var kind = attachKind || 'swfj';
+            //引用路径发生变化,需修改 modify by 齐树宾 12.07.04
+            var url = '@Url.Action("UploadManage", "UploadFile")' + '?baseInfoID='+$('#ID').val()+'&attachType=2&attachKind='+kind+'&rn=' + Math.random();
+            mdialog=$.ligerDialog.open({ url: url, title: '材料上传', allowClose:false, height: 380,top:100,width: 550, buttons: [ { text: '上传', onclick: function (item, dialog) { window.frames[1].updateFiles();} }, { text: '关闭', onclick: function (item, dialog) { ShowUploads(attachKind); dialog.close(); } } ] });
+        }
+        function ShowUploads(attachKind)
+        {
+            if(!attachKind||attachKind=="")
+            {   //流转附件上传
+                $("#upfiles").html(window.frames[1].getFiles());
+            }
+            else{
+                //正文上传
+                var fileName = window.frames[1].getFileName();
+                LoadPDF(fileName);
+            }
+
+        }
+        /*PDF正文加载*/
+        function LoadPDF(fileName)
+        {
+            var newSrc = '@(ViewBag.AttachVirtualPath)WorkFlow/' + fileName;
+        if (fileName.length == 37) {
+                newSrc = "";
+            }
+            document.getElementById("frmPDF").src = newSrc;
+        }
+
+        function Reload()
+        {
+            window.location = '@Url.Action("FileFlow", "Receive")'+"?receiveID=" + $('#ID').val()+"&rn="+Math.random();
+        }
+    </script>
+                 }
+@helper ShowOpinion(string stateID, WorkFlowFacadeEncap wfEncap, bool isMainFlow = true)
+    {
+        if (!string.IsNullOrEmpty(ViewBag.InstanceID))
+        {
+            //Start
+            string instanceID = ViewBag.InstanceID;
+            var instance = wfEncap.WFService.getWFInstanceBasic(Guid.Parse(instanceID));
+            var tempInstanceID = Guid.Empty == Guid.Parse(instance.masterInstanceID) ? instanceID : instance.masterInstanceID;
+            //从业务表中获取当前环节的意见信息
+            BusinessFacade bService = new BusinessFacade();
+            var auditingIdeas = bService.GetAuditingIdeaModels(tempInstanceID, stateID);
+            if (auditingIdeas != null && auditingIdeas.Count > 0)
+            {
+        <ul>
+            @{
+                for (int i = 0; i < auditingIdeas.Count; i++)
+                {
+                    var op = auditingIdeas[i];
+                    var opinion = op.Auditidea;
+
+                    //获取当前意见是手写方式的图片信息
+                    var drawingContentSmall = string.Empty;
+                    if (op.Handwriteboardsmall != null)
+                    {
+                        drawingContentSmall = Convert.ToBase64String(op.Handwriteboardsmall);
+                    }
+
+
+                    if (!string.IsNullOrEmpty(opinion) || !string.IsNullOrEmpty(drawingContentSmall))
+                    {
+                        if (!string.IsNullOrEmpty(opinion))
+                        {
+                                <div style="float: left">@(opinion)</div>
+                        }
+                        else if (!string.IsNullOrEmpty(drawingContentSmall))
+                        {
+                                <a href="javascript:void(0)" onclick="javascript:Opinion_Click('@(op.ID)')"><img alt="批注" src="data:image/jpeg;base64,@(drawingContentSmall)" /></a>
+                        }
+
+                    }
+                      <br />
+                <div style="float: right">@op.Auditdepartment @op.Auditpersonname @op.Auditdate.ToString("yyyy-MM-dd")</div>
+                    if (i != auditingIdeas.Count - 1)
+                    {<br />}
+
+
+                }
+                }
+        </ul>
+            }
+            //End
+        }
+        if (ViewBag.CurrentStateID == stateID)
+        {
+            <textarea rows="3" cols="60" id="txtOpinion" style="width: 70%;border:1px solid #347FA4; margin-top:3px;"></textarea>
+            if (ViewBag.CurrentStateID == "办公室拟办")
+            {
+                <input type="button" id="btnAdd" value="添加批语" onclick="javascript:Add_Opinion();" />
+            }
+            if (ViewBag.CurrentStateID == "领导签批" || ViewBag.CurrentStateID == "分管领导签批" || ViewBag.CurrentStateID == "领导阅示" || ViewBag.CurrentStateID == "传阅" || ViewBag.CurrentStateID == "主办处室办理")
+            {
+                <div id="inputOpinion">
+                    <text>批语：</text>
+                    @Html.DropDownList("fmDefaultOpinion", (IEnumerable<SelectListItem>)ViewBag.DefaultOpinions, new { @style = "width:30%;", @onchange = "fmDefaultOpinion_onChange" })
+                    <a href="#" onclick="javascript:cuidDefaultOpinion()" style="margin: 5px; display: inline-block;
+                        color: Black;">维护批语</a>
+                </div>
+                <img id="tempOpinion" name="tempOpinion" alt="批注" width="150px" height="120px" style="display:none"  />
+
+                <input type="button" id="writeOpinion" value="打开手写板" onclick="javascript:$('#txtOpinion').ShowWriter(true)" />
+                <input type="radio"  id="rdoIdeaStyle1" name="rdoIdeaStyle" onclick="javascript:onChange_inputStyle('0');"/><text>键盘</text>
+                <input type="radio" id="rdoIdeaStyle2" name="rdoIdeaStyle" onclick="javascript:onChange_inputStyle('1');" /><text>手写</text>
+                if (ViewBag.CurrentStateID == "领导签批" || ViewBag.CurrentStateID == "分管领导签批")
+                {
+                    <input type="button" id="btnModify" value="更改批语" onclick="javascript:Add_Opinion();" />
+                }
+            }
+            if (ViewBag.CurrentStateID == "主办处理人阅办" || ViewBag.CurrentStateID == "主办处室办理" || ViewBag.CurrentStateID == "分管领导签批")
+            {
+                 <text><br /><input type ="checkbox" onclick="javascript:isAddSchedule();" id ="checkSchedule" />日程添加: </text>
+                <table class="Winstar-panel" width="100%" border="0" id ="tableSchedule" align="center" cellpadding="0">
+                <tr>
+                    <td class="Winstar-panel-body" style ="border-color:transparent">
+                        <table class="Winstar-form-table" width="100%" border="0" cellspacing="0" cellpadding="0" style ="border-color:transparent">
+              <tr>
+                                <td class="Winstar-form-table-title" align="center">
+                                    <font color="red">*</font>主 题:
+                                </td>
+                                <td colspan="3" class="Winstar-form-table-value" align ="left" style ="text-align:left">
+                                    @Html.TextBox("ScheduleTitle", "", new { style = "width:75%;" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="Winstar-form-table-title" width="15%" align="center">
+                                    <font color="red">*</font>开始时间:
+                                </td>
+                                <td class="Winstar-form-table-value" width="35%" align ="left" style ="text-align:left">
+                                    @Html.EPLib().DateTimePicker().Name("StartDate").Value(DateTime.Now).InputHtmlAttributes(new { @id = "StartDate" })
+                               </td>
+                                <td class="Winstar-form-table-title" width="15%" align="center">
+                                    <font color="red">*</font>结束时间:
+                                </td>
+                                <td class="Winstar-form-table-value" width="35%" align ="left" style ="text-align:left">
+                                    @Html.EPLib().DateTimePicker().Name("EndDate").Value(DateTime.Now).InputHtmlAttributes(new { @id = "EndDate" })
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="Winstar-form-table-title" align="center">
+                                    <font color="red">*</font>内 容:
+                                </td>
+                                <td colspan="3" class="Winstar-form-table-value">
+                                    @Html.TextArea("ScheduleRemark", "", new { style = "width:99%; height:100px;" })
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+           <script type ="text/javascript">
+               //日程模块的显示和隐藏
+               function isAddSchedule() {
+                   if ($("#checkSchedule").attr("checked")) {
+                       $("#tableSchedule").show();
+                   }
+                   else {
+                       $("#tableSchedule").hide();
+                   }
+               }
+            </script>
+            }
+        }
+}
+
+@*显示委托信息*@
+@helper ShowDelegate(string stateID, WorkFlowFacadeEncap wfEncap, TransferFacade ptfFacade, bool isMaster = true)
+    {
+        //获取实例ID*******************************************************************************
+        var tempInstanceID = wfEncap.GetInstanceID(stateID, ViewBag.MasterInstanceID, isMaster);
+        //获取环节办理人
+        var transactuser = ptfFacade.GetTransactUserByState(tempInstanceID, stateID);
+        //获取委托信息
+        if (@ViewBag.CurrentUser.UserId != transactuser)
+        {
+            DelegationInfoModel delegationmodel = wfEncap.GetDelegationInfo(tempInstanceID, transactuser, stateID);
+            if (delegationmodel != null)
+            {//不为空时说明存在委托信息
+                <ul>
+                    @{
+                        <li style="clear: both;">
+                            <div style="float: left; width:20%;"></div>
+                            <div style="float: right; color:Red">委托信息：@delegationmodel.DelegationDepartment  @delegationmodel.DelegationUserName  @delegationmodel.DelegationTime.ToString("yyyy-MM-dd")</div>
+                        </li>
+                        }
+                </ul>
+            }
+        }
+}
+
+<script type="text/javascript">
+    //意见录入方式变更事件
+    function onChange_inputStyle(state) {
+        var inputcontrol = document.getElementById('inputOpinion'); //键盘时用
+        var writecontrol = document.getElementById('writeOpinion'); //手写时用
+        var control = document.getElementById('txtOpinion');
+
+        if (state == 1) {//手写
+            control.style.display = "none";
+            control.value = "";
+            if (inputcontrol) {
+                inputcontrol.style.display = "none";
+            }
+            if (writecontrol) {
+                writecontrol.style.display = "";
+            }
+        }
+        else {//键盘
+            control.style.display = "";
+            if (inputcontrol) {
+                inputcontrol.style.display = "";
+            }
+            if (writecontrol) {
+                writecontrol.style.display = "none";
+            }
+        }
+    }
+
+    function Opinion_Click(ideaID) {
+        showDialog('@Url.Action("ImageDisplay", "Dispatch")' + '?id=' + ideaID + "&rn=" + Math.random(), '', 800, 800);
+    }
+</script>
+<script type="text/javascript">
+    function GetSelectedUsers(sender) {
+        $("#" + sender).parent().attr("title", $("#" + sender).val());
+    }
+</script>
+
+<script type="text/javascript">
+    var tree;
+    function showCirculatePersons(nextStateID) {
+
+        var ddlReceivedtype = $("#Receivedtype").data("tDropDownList");
+        var receivedtype = ddlReceivedtype.value();
+        if (receivedtype != 2) {
+            alert("请确认【收件类型】是否是传阅件！");
+            return;
+        }
+
+        var nodes = "";
+        nodes = "[{text:'全局'";
+
+        if (tree) {
+            tree.clear();
+        }
+
+        $.post("/Receive/GetLeaderAndPartLeaderList", { swId: $("#ID").val() }, function (result) {
+            nodes += ",children:[{text:'局长及分管领导',children:[";
+            $.each(result.UserList, function (i, n) {
+                nodes += "{id:'" + n.ID + "',text:'" + n.Displayname + "',ischecked:" + result.CheckedList[i] + "},";
+            });
+            nodes = nodes.substr(0, nodes.length - 1);
+            nodes += "]}";
+
+            $.post("/Receive/GetMiddleLevelCadreList", { swId: $("#ID").val() }, function (result1) {
+                nodes += ",{text:'中层领导',children:[";
+                $.each(result1.UserList, function (i1, n1) {
+                    nodes += "{id:'" + n1.ID + "',text:'" + n1.Displayname + "',ischecked:" + result1.CheckedList[i1] + "},";
+                });
+                nodes = nodes.substr(0, nodes.length - 1);
+                nodes += "]}";
+
+                $.post("/Receive/GetCommonWorkerList", { swId: $("#ID").val() }, function (result2) {
+                    nodes += ",{text:'工作人员',children:[";
+                    $.each(result2.UserList, function (i2, n2) {
+                        nodes += "{id:'" + n2.ID + "',text:'" + n2.Displayname + "',ischecked:" + result2.CheckedList[i2] + "},";
+                    });
+                    nodes = nodes.substr(0, nodes.length - 1);
+                    nodes += "]}";
+
+                    nodes += "]}]";
+                    tree = $("#treeCirculatePersons").ligerTree({ data: eval('(' + nodes + ')') });
+                    //tree.collapseAll();
+                });
+            });
+        });
+
+        $.ligerDialog.open({
+            target: $("#divCirculatePersons"),
+            buttons: [{ text: "确定", onclick: function (item, dialog) {
+                var mbox = $.ligerDialog.open({ target: $("#target1") });
+                dialog.hide();
+
+                var userIds = "";
+                var checkedNodes = tree.getChecked();
+
+                for (var i = 0; i < checkedNodes.length; ++i) {
+                    var userId = checkedNodes[i].data.id;
+                    if (userId != undefined && userId != "undefined") {
+                        userIds += "," + userId;
+                    }
+                }
+
+                if (userIds.length > 0 && userIds.indexOf(",") != -1) {
+                    userIds = userIds.substr(1, userIds.length);
+                } else {
+                    if ("@ViewBag.CurrentStateID" == "领导阅示") {
+                        alert("请选择要传阅的人员！");
+                        mbox.hide();
+                        return;
+                    }
+                }
+
+                if ('@ViewBag.CurrentStateID' == "办公室拟办") {
+                    //提交至后台保存全局传阅人员
+                    $.post("/Receive/SaveAllCirculate", { swId: $("#ID").val(), persons: userIds.replace(';', ',') }, function (json) {
+                        if (json.Success) {
+                            //提交后台获取拟办意见
+                            $.post("/Receive/GetOpinion", { persons: userIds.replace(';', ',') }, function (result) {
+                                $("#txtOpinion").val(result.Data);
+
+                                $.post("/Receive/GetLeader", function (leader) {
+                                    $("#value领导阅示").val(leader.Data);
+                                    ExcuteFun("领导阅示", mbox);
+                                });
+                            });
+                        } else {
+                            alert(json.Message);
+                        }
+                    });
+                } else if ("@ViewBag.CurrentStateID" == "领导阅示") {
+
+                    //发送到下一个环节
+                    var url = "/Receive/SendToNext" + "?templateID=@(ViewBag.TemplateID)&receiveID=" + $('#ID').val() + "&nextStateID=" + nextStateID;
+
+                    //                    if ($("#txtOpinion").length != 0 && $("#txtOpinion").val()) {
+                    //                        url += "&opinion=" + $("#txtOpinion").val();
+                    //                    }
+
+                    $("#opinion").val($("#txtOpinion").val());
+
+                    if (userIds) {
+                        //                        var nextUserIds = userIds.replace(';', ',');
+                        //                        url += "&nextUserID=" + nextUserIds;
+                        $("#nextUserIDs").val(userIds);
+                    }
+
+                    if ('@ViewBag.InstanceID') {
+                        url += "&instanceID=@ViewBag.InstanceID";
+                    }
+
+                    url += "&currentStateID=" + '@ViewBag.CurrentStateID';
+
+                    var fkid = '@(!string.IsNullOrEmpty(Request["fkid"]) ? Request["fkid"] : "")';
+                    url += "&fkid=" + fkid;
+
+                    url += GetWriteBoardUrl();
+
+                    url += AddSendMessageParam();
+
+                    $.post(encodeURI(url), $('form').serializeArray()).done(function (json) {
+                        alert(json.Msg);
+
+                        mbox.hide();
+                        if (json.Success) {
+                            $("#nextUserIDs").val("");
+                            window.close();
+                        }
+                    });
+                }
+            }
+            }, {
+                text: '取消',
+                onclick: function (item, dialog) {
+                    dialog.hide();
+                }
+            }]
+        });
+    }
+</script>
+<script type="text/javascript">
+    function printSw() {
+        var id = $("#ID").val();
+
+        if (id != "") {
+            var instanceId = '@(Model == null ? "" : Model.Instanceid)';
+            $.post("/Receive/PrintSw?swId=" + id + "&instanceId=" + instanceId, null, function (result) {
+                if (result.Data.Success) {
+                    showMaxWin("/Print/Index?url=" + result.Data.URL + "&bh=" + result.Data.BH, '');
+                } else {
+                    $.ligerDialog.error(result.Data.Message, "错误");
+                }
+            });
+        }
+        else {
+            alert("请先保存！");
+        }
+    }
+</script>

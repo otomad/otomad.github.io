@@ -1,0 +1,347 @@
+/* 滚动条 */
+::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+	scrollbar-arrow-color: red;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 5px;
+	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	background: #ffffff33;
+	scrollbar-arrow-color: red;
+}
+
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	border-radius: 0;
+	background: #ffffff1a;
+}
+
+/* 更改到btn-outline-light样式 */
+.btn-outline-secondary {
+	color: #adb5bd;
+	border-color: #adb5bd;
+}
+
+.btn-outline-secondary:hover {
+	color: #222;
+	background-color: #adb5bd;
+	border-color: #adb5bd;
+}
+
+.btn-outline-secondary:focus,
+.btn-outline-secondary.focus {
+	box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.5);
+}
+
+.btn-outline-secondary.disabled,
+.btn-outline-secondary:disabled {
+	color: #adb5bd;
+	background-color: transparent;
+}
+
+.btn-outline-secondary:not(:disabled):not(.disabled):active,
+.btn-outline-secondary:not(:disabled):not(.disabled).active,
+.show>.btn-outline-secondary.dropdown-toggle {
+	color: #222;
+	background-color: #adb5bd;
+	border-color: #adb5bd;
+}
+
+.btn-outline-secondary:not(:disabled):not(.disabled):active:focus,
+.btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
+.show>.btn-outline-secondary.dropdown-toggle:focus {
+	box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.5);
+}
+
+.reset-on-right-float {
+	margin: 19px 0;
+}
+
+.sm {
+	height: 22px;
+}
+
+.form-control,
+.form-control:focus {
+	background-color: rgb(34, 34, 34);
+	border-color: rgb(173, 181, 189);
+	color: white;
+	fill: white;
+}
+
+.input-group-text {
+	border-color: rgb(173, 181, 189);
+}
+
+.form-control:focus {
+	border-color: #adb5bd;
+	-webkit-box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.5);
+	box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.5);
+}
+
+.custom-select {
+	color: white;
+	background-color: rgb(34, 34, 34);
+}
+
+.custom-control-label::before {
+	background-color: #222;
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+	background-color: #454545;
+}
+
+.modal .close,
+.modal .close:hover {
+	color: white !important;
+}
+
+input[type="range"i] {
+	color: -internal-light-dark(#101010, #333) !important;
+}
+
+/*  */
+
+/* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+.row.content {
+	height: 1500px
+}
+
+/* Set gray background color and 100% height */
+.sidenav {
+	background-color: #f1f1f1;
+	height: 100%;
+}
+
+/* Set black background color, white text and some padding */
+footer {
+	background-color: #555;
+	color: white;
+	padding: 15px;
+}
+
+#canvas,
+#original {
+	/* width: 100%; */
+	top: -0.5em;
+	position: absolute;
+	height: 100%;
+	border: 0.5rem solid var(--dark);
+	border-radius: 10px;
+	background: repeating-linear-gradient(-45deg, #0000, #888 10px);
+	background-color: var(--dark);
+	/* padding: 5px; */
+}
+
+#original:active {
+	opacity: 1;
+}
+
+#original {
+	opacity: 0;
+	/* display: none; */
+	/* transition: none; */
+	background: unset;
+}
+
+/* On small screens, set height to 'auto' for sidenav and grid */
+@media screen and (max-width: 767px) {
+	.sidenav {
+		height: auto;
+		padding: 15px;
+	}
+
+	.row.content {
+		height: auto;
+	}
+}
+
+h1 {
+	margin: 0.75em 0 0.5em;
+}
+
+.navbar {
+	position: fixed;
+	width: 100%;
+	z-index: 10;
+}
+
+.modal .input-group-prepend .input-group-text {
+	font-family: var(--font-family-monospace);
+}
+
+.flex-center {
+	display: flex;
+	align-items: center;
+}
+
+label {
+	user-select: none;
+}
+
+[data-placeholder] {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.btn-outline-primary i,
+.btn-group-04 .btn i.ms-Icon,
+.btn-group-04 .btn span {
+	transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1),
+		color 0ms;
+}
+
+#error,
+#start-info {
+	position: fixed;
+	width: calc(100vw - 2 * 15px);
+	text-align: center;
+	top: 90px;
+	left: 15px;
+}
+
+.group-slider {
+	display: flex;
+	align-items: center;
+}
+
+#canvas-part {
+	height: calc(100vh - 80px - 148px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#filters {
+	height: 148px;
+}
+
+.btn-outline-primary:hover {
+	background-color: #2c3e50c0;
+}
+
+.btn-group-04 {
+	display: flex;
+	overflow-y: hidden;
+	overflow-x: auto;
+	height: calc(100% - 30px - 2 * 8px);
+	flex-wrap: nowrap;
+	padding: 0 15px;
+}
+
+.btn-group-04 .btn {
+	width: 90px;
+	height: 90px;
+	margin: 2px;
+	flex-shrink: 0;
+	font-size: 85%;
+	white-space: nowrap;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	transition: all 200ms ease;
+}
+
+.btn-group-04 .btn:not(:hover) {
+	/* background-color: white; */
+}
+
+.btn-group-04 .btn:active {
+	transform: scale(.92);
+}
+
+.btn-group-04 .btn i.ms-Icon {
+	font-size: 28px;
+}
+
+.btn-group-04 .btn:hover span {
+	/* background: #0008; */
+	background-position-y: bottom;
+}
+
+.btn-group-04 canvas,
+.btn-group-04 span {
+	border-radius: .25rem;
+	width: 90px;
+	height: 90px;
+}
+
+.btn-group-04 span {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	background: #0000;
+	padding: .5rem;
+	line-height: 1.95rem;
+	font-weight: bold;
+}
+
+.btn-group-04 button span {
+	color: white;
+	text-shadow: 0 0 2px black;
+	background: linear-gradient(#0000, #0006 25%, #0007 50%) center top / 400% 400%;
+	transition: all 500ms ease;
+	border: 1px solid var(--success);
+}
+
+.btn-group-04 button.btn-outline-success.active span {
+	box-shadow: 0 0 15px 3px var(--success) inset;
+	background-image: linear-gradient(#18bc9c00, #18bc9c66 25%, #18bc9c77 50%);
+	/* color: hsl(204, 100%, 93%); */
+	text-shadow: 0 0 2px #0003;
+	border-color: var(--success);
+}
+
+.slider-part {
+	padding: .5rem 15px;
+}
+
+.col-lg-4 {
+	padding: 0;
+}
+
+@media (min-width: 992px) {
+	#canvas-part {
+		height: calc(100vh - 80px);
+	}
+
+	#title {
+		position: absolute;
+		left: 115px;
+	}
+
+	#filters {
+		height: calc(100vh - 80px);
+	}
+
+	.btn-group-04 {
+		overflow-y: auto;
+		overflow-x: hidden;
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+
+	.container-fluid {
+		padding: 0;
+	}
+
+	.col-lg-4 {
+		padding: 0 15px;
+	}
+}
+
+body {
+	overflow: hidden;
+}
+
+* {
+	transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}

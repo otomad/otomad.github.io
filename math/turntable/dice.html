@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>骰子</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />
+		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="https://cdn.staticfile.org/react/16.4.0/umd/react.development.js"></script>
+		<script src="https://cdn.staticfile.org/react-dom/16.4.0/umd/react-dom.development.js"></script>
+		<script src="https://cdn.staticfile.org/babel-standalone/6.26.0/babel.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
+		 crossorigin="anonymous">
+		<link rel="stylesheet" href="css/dice.min.css">
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h4>投注</h4>
+			<div data-toggle="simple-money-tab"></div>
+			<div class="rect-wrap">
+				<div name="dice"></div>
+				<div name="dice"></div>
+				<div name="dice"></div>
+			</div>
+			<div class="control-part">
+				<div class="row" id="bet-form">
+					<div class="form-group col">
+						<label class="form-label" for="inputBet">下注金额</label>
+						<div class="input-group">
+							<div class="input-group-prepend">
+								<label class="input-group-text input-group-addon" for="inputBet"><i></i></label>
+							</div>
+							<input type="number" class="form-control" id="inputBet" placeholder="0">
+						</div>
+					</div>
+					<div class="form-group col" style="width: 7rem; flex-grow: 0; flex-basis: unset;">
+						<label class="form-label" for="choose-dice">下注骰面</label>
+						<div name="dice" id="choose-dice" tabindex="0"></div>
+					</div>
+				</div>
+				<div class="alert alert-warning mb-3" role="alert" id="bet-result" style="display:none"></div>
+				<div class="form-group mb-3">
+					<div class="d-grid gap-2">
+						<button id="start" class="btn btn-success btn-block">开始</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="template/components/Dice3D.react.js"></script>
+		<script src="js/money.min.js"></script>
+		<script type="module" src="template/money.module.js"></script>
+		<script>
+			/* function nightDo() { //夜间主题
+				document.body.style.backgroundColor = "";
+			}
+			
+			function lightDo() { //日间主题
+				document.body.style.backgroundColor = "var(--lightbody)";
+			} */
+			var backgroundColor = {light: "var(--lightbody)"};
+			
+			/* function createDot(num) {
+				var a = "";
+				for (var i = 0; i < num; i++)
+					a += '<div class="dot"></div>';
+				return a;
+			} */
+			/* for (var i = 0; i < $("[name=dice]").length; i++)
+				$($("[name=dice]")[i]).append(`
+				<div>
+				<div class="dice-shadow">
+					<div class="back slide"></div>
+				</div>
+				<div id="dice${i+1}" class="dice">
+					<div class="top slide">
+						${createDot(5)}
+					</div>
+					<div class="bottom slide">
+						${createDot(2)}
+					</div>
+					<div class="left slide">
+						${createDot(4)}
+					</div>
+					<div class="right slide">
+						${createDot(3)}
+					</div>
+					<div class="front slide">
+						${createDot(1)}
+					</div>
+					<div class="back slide">
+						${createDot(6)}
+					</div>
+				</div>
+				</div>
+			`); */
+			for (let i = 0; i < $("[name=dice]").length; i++) {
+				ReactDOM.render(
+					React.createElement(Dice3D, {id: "dice"+(i+1)}),
+					$("[name=dice]")[i]
+				);
+			}
+			$("#choose-dice .dice").addClass("result1");
+			window.onload = window.onresize = reScale;
+			reScale();
+
+			function reScale() {
+				var width = document.documentElement.clientWidth,
+					minWidth = 480 + 2 * 20;
+				$(".rect-wrap").css("transform", `scale(${width<minWidth?width/minWidth:1})`)
+			}
+			$.fn.toggleColor = function() {
+				return this.toggleClass("btn-success").toggleClass("btn-danger");
+			}
+			$("[for]").click(function() {
+				var id = $(this).attr("for");
+				$('#' + id).focus();
+			});
+			$("#choose-dice").click(function() {
+				var face = getDiceFace(4) + 1;
+				if (face > 6) face = 1;
+				$("#choose-dice .dice").attr("class", "dice result" + face);
+			});
+			Math.randBetween = function(min, max) {
+				return Math.floor(Math.random() * (max - min) + min);
+			}
+
+			//块
+			{
+				let finish = false,
+					_money, diceFace = 1;
+				$("#start").click(function() {
+					if (!finish) {
+						_money = $("#inputBet").val() - 0;
+						diceFace = getDiceFace(4);
+						var e = bill.cost(_money);
+						if (e === null) {
+							$(this).addClass("btn-danger").text("余额不足请充值");
+							setTimeout(function(btn) {
+								$(btn).removeClass("btn-danger").text("开始");
+							}, 2000, this);
+							return;
+						}
+						$(this).attr("disabled", "disabled");
+						$("#bet-form").slideUp();
+						for (var i = 1; i <= 3; i++) {
+							setTimeout(function(i, btn) {
+								var cur = $("#dice" + i),
+									transform = cur.css("transform");
+								cur.css({
+									"animation": "none",
+									"transform": transform
+								});
+								setTimeout(function(cur) {
+									cur.addClass("result" + Math.randBetween(1, 7)).css({
+										"animation": "",
+										"transform": ""
+									});
+								}, 50, cur);
+								if (i == 3) {
+									setTimeout(function(btn) {
+										$(btn).removeAttr("disabled").text("重设").toggleColor();
+										var correct = 0;
+										for (var j = 1; j <= 3; j++)
+											if (getDiceFace(j) == diceFace) correct++;
+										$("#bet-result").slideDown().text(correct ?
+											`恭喜，共有 ${correct} 枚骰子与您下注的 ${diceFace} 点一致，您将获得 ${correct} 倍下注的金额共计 ${money.getAmountName(correct*_money)}！` :
+											`很遗憾，没有一枚骰子与您下注的 ${diceFace} 点一致，您不能获得任何奖励。`);
+										bill.recharge(correct * _money);
+									}, 100, btn);
+								}
+							}, i * 1000, i, this);
+						}
+					} else {
+						$(".dice:not(#choose-dice .dice)").attr("class", "dice");
+						$(this).text("开始").toggleColor();
+						$("#bet-result").slideUp(250);
+						setTimeout(function() {
+							$("#bet-form").slideDown();
+						}, 250);
+					}
+					finish = !finish;
+				});
+			}
+
+			function getDiceFace(n) {
+				for (var i = 1; i <= 6; i++)
+					if ($("#dice" + n).hasClass("result" + i))
+						return i;
+				return NaN;
+			}
+		</script>
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>

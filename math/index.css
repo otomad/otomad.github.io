@@ -1,0 +1,121 @@
+*,body,.input-group,label,.input-group,.form-control,.nav-link,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
+
+* {
+	vertical-align: middle;
+}
+
+h1 {
+	padding: 16px 15px .5rem;
+	font-size: 1.75rem;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow-y: hidden;
+	overflow-x: hidden;
+}
+
+iframe {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	width: 100%;
+	height: calc(100vh - 60px);
+}
+
+.nav-link {
+	padding: .5rem 15px;
+	cursor: pointer;
+}
+
+.nav-link-hr {
+	height: 0;
+	border-bottom: 1px solid var(--secondary);
+	padding: 0;
+	margin: 5px 1rem;
+}
+
+.nav-pills,
+#v-pills-tab {
+	display: block;
+	padding-bottom: 12px;
+	overflow: auto;
+	height: calc(100vh - 72px);
+	transition: all 250ms ease-in-out, height 0ms !important;
+}
+
+.fa-angle-left {
+	margin-right: .5em;
+	cursor: pointer;
+}
+
+#nav-toggler {
+	float: right;
+	margin: 15px 15px 0 0;
+	width: 48px;
+	display: none;
+}
+
+#v-pills-tab {
+	display: none;
+}
+
+i.fxg {
+	font-family: XGame;
+}
+
+h1 .fxg {
+	display: inline-block;
+	font-size: 24px;
+	margin-right: 8px;
+}
+
+h1 span {
+	display: inline-block;
+	margin-bottom: 4px;
+}
+
+button,
+.pointer {
+	cursor: pointer;
+}
+
+.nav-link .fxg {
+	display: inline-block;
+	font-size: 21px;
+	margin: 0 10px 0 2px;
+	transform: translateY(-2px);
+}
+
+.col-lg-3 {
+	padding-right: 15px;
+}
+
+.col-lg-9 {
+	padding-left: 15px;
+}
+
+@media (min-width: 992px) {
+	.col-lg-3 {
+		padding-right: 0;
+	}
+
+	.col-lg-9 {
+		padding-left: 0;
+	}
+
+	h1 {
+		padding: 16px 32px .5rem;
+	}
+
+	.nav-link {
+		padding: .5rem 32px;
+	}
+
+	iframe {
+		height: 100vh;
+	}
+}
