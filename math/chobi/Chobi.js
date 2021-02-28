@@ -135,6 +135,7 @@ Chobi.prototype.thumbImageData = function(canvas,width,height) {
 	var sx=(img.width-swidth)/2,
 		sy=(img.height-sheight)/2;
 	ctx.drawImage(img, sx, sy, swidth, sheight,0,0,width,height);
+	return this;
 }
 Chobi.prototype.copyImageData = function(a,b) {
 	var context = a.getContext("2d"),
@@ -145,6 +146,13 @@ Chobi.prototype.copyImageData = function(a,b) {
 }
 Chobi.prototype.changeImageData = function(a) {
 	this.imageData = a.getContext("2d").getImageData(0,0,a.width,a.height);
+	return this;
+}
+Chobi.prototype.rewriteImageData = function(source) {
+	// var len = Math.max(this.imageData.data.length, source.length);
+	var len = source.length;
+	for (let i = 0 ; i < len ; i++)
+		this.imageData.data[i] = source[i];
 	return this;
 }
 Chobi.prototype.getColorAt = function(x, y) {
@@ -170,7 +178,20 @@ Chobi.prototype.setColorAt = function(x, y, obj) {
 		return e;
 	}
 }
-Chobi.prototype.blackAndWhite = function() {
+Chobi.prototype.filter = function(filter, amount, channel=defaultChannel) {
+	return this[filter](amount, channel);
+}
+var defaultChannel = {
+	R: true,
+	G: true,
+	B: true,
+	H: true,
+	S: true,
+	L: true,
+	A: true
+}
+Chobi.prototype.blackAndWhite = function(amount=255, channel=defaultChannel) {
+	var amountAbs = Math.abs(amount);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -179,14 +200,16 @@ Chobi.prototype.blackAndWhite = function() {
 			var green = imageData.data[index + 1];
 			var blue = imageData.data[index + 2];
 			var avg = (red + green + blue) / 3;
-			imageData.data[index] = avg;
-			imageData.data[index + 1] = avg;
-			imageData.data[index + 2] = avg;
+			if(amount<0) avg=255-avg;
+			if(channel.R) imageData.data[index] = avg*amountAbs/255+red*(255-amountAbs)/255;
+			if(channel.G) imageData.data[index + 1] = avg*amountAbs/255+green*(255-amountAbs)/255;
+			if(channel.B) imageData.data[index + 2] = avg*amountAbs/255+blue*(255-amountAbs)/255;
 		}
 	}
 	return this;
 }
-Chobi.prototype.blackAndWhite2 = function() {
+Chobi.prototype.blackAndWhite2 = function(amount=255, channel=defaultChannel) {
+	var amountAbs = Math.abs(amount);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -195,14 +218,16 @@ Chobi.prototype.blackAndWhite2 = function() {
 			var green = imageData.data[index + 1];
 			var blue = imageData.data[index + 2];
 			var avg = ((red * 0.3) + (green * 0.59) + (blue * 0.11));
-			imageData.data[index] = avg;
-			imageData.data[index + 1] = avg;
-			imageData.data[index + 2] = avg;
+			if(amount<0) avg=255-avg;
+			if(channel.R) imageData.data[index] = avg*amountAbs/255+red*(255-amountAbs)/255;
+			if(channel.G) imageData.data[index + 1] = avg*amountAbs/255+green*(255-amountAbs)/255;
+			if(channel.B) imageData.data[index + 2] = avg*amountAbs/255+blue*(255-amountAbs)/255;
 		}
 	}
 	return this;
 }
-Chobi.prototype.blackAndWhite3 = function() {
+Chobi.prototype.blackAndWhite3 = function(amount=255, channel=defaultChannel) {
+	var amountAbs = Math.abs(amount);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -211,43 +236,51 @@ Chobi.prototype.blackAndWhite3 = function() {
 			var green = imageData.data[index + 1];
 			var blue = imageData.data[index + 2];
 			var avg = RGB2HSL(red,green,blue).L * 255;
-			imageData.data[index] = avg;
-			imageData.data[index + 1] = avg;
-			imageData.data[index + 2] = avg;
+			if(amount<0) avg=255-avg;
+			if(channel.R) imageData.data[index] = avg*amountAbs/255+red*(255-amountAbs)/255;
+			if(channel.G) imageData.data[index + 1] = avg*amountAbs/255+green*(255-amountAbs)/255;
+			if(channel.B) imageData.data[index + 2] = avg*amountAbs/255+blue*(255-amountAbs)/255;
 		}
 	}
 	return this;
 }
-Chobi.prototype.sepia = function() {
+Chobi.prototype.sepia = function(amount=255, channel=defaultChannel) {
+	if(amount<0)
+		this.negative(-amount-255, channel); //this.negative(amount+255); 有奇效
+	amount=Math.abs(amount);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
-			var index = (j * 4) * imageData.width + (i * 4);
-			var red = imageData.data[index];
-			var green = imageData.data[index + 1];
-			var blue = imageData.data[index + 2];
-			imageData.data[index] = (red * 0.393) + (green * 0.769) + (blue * 0.189);
-			imageData.data[index + 1] = (red * 0.349) + (green * 0.686) + (blue * 0.168);
-			imageData.data[index + 2] = (red * 0.272) + (green * 0.534) + (blue * 0.131);
+			var index = (j * 4) * imageData.width + (i * 4),
+				red = imageData.data[index],
+				green = imageData.data[index + 1],
+				blue = imageData.data[index + 2],
+				nred = (red * 0.393) + (green * 0.769) + (blue * 0.189),
+				ngreen = (red * 0.349) + (green * 0.686) + (blue * 0.168),
+				nblue = (red * 0.272) + (green * 0.534) + (blue * 0.131);
+			if(channel.R) imageData.data[index] = nred*amount/255+red*(255-amount)/255;
+			if(channel.G) imageData.data[index + 1] = ngreen*amount/255+green*(255-amount)/255;
+			if(channel.B) imageData.data[index + 2] = nblue*amount/255+blue*(255-amount)/255;
 		}
 	}
 	return this;
 }
-Chobi.prototype.negative = function() {
+Chobi.prototype.negative = function(amount=0, channel=defaultChannel) {
+	amount=Math.abs(amount);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
-			var index = (j * 4) * imageData.width + (i * 4);
-			var red = imageData.data[index];
-			var green = imageData.data[index + 1];
-			var blue = imageData.data[index + 2];
-			var alpha = imageData.data[index + 3];
-			red = 255 - red;
-			green = 255 - green;
-			blue = 255 - blue;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			var index = (j * 4) * imageData.width + (i * 4),
+				red = imageData.data[index],
+				green = imageData.data[index + 1],
+				blue = imageData.data[index + 2],
+				alpha = imageData.data[index + 3],
+				nred = 255 - red,
+				ngreen = 255 - green,
+				nblue = 255 - blue;
+			if(channel.R) imageData.data[index] = red*amount/255+nred*(255-amount)/255;
+			if(channel.G) imageData.data[index + 1] = green*amount/255+ngreen*(255-amount)/255;
+			if(channel.B) imageData.data[index + 2] = blue*amount/255+nblue*(255-amount)/255;
 		}
 	}
 	return this;
@@ -255,7 +288,8 @@ Chobi.prototype.negative = function() {
 Chobi.prototype.random = function(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-Chobi.prototype.noise = function() {
+Chobi.prototype.noise = function(amount = 0, channel=defaultChannel) {
+	amount = Math.abs(amount);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -267,17 +301,17 @@ Chobi.prototype.noise = function() {
 			var red = (imageData.data[index] + randRed) / 2;
 			var green = (imageData.data[index + 1] + randGreen) / 2;
 			var blue = (imageData.data[index + 2] + randBlue) / 2;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = randRed*amount/255+red*(255-amount)/255;
+			if(channel.G) imageData.data[index + 1] = randGreen*amount/255+green*(255-amount)/255;
+			if(channel.B) imageData.data[index + 2] = randBlue*amount/255+blue*(255-amount)/255;
 		}
 	}
 	return this;
 }
-Chobi.prototype.contrast_legacy = function(amount) {
-	return this.contrast(amount/100*255)
+Chobi.prototype.contrast_legacy = function(amount, channel) {
+	return this.contrast(amount/100*255, channel);
 }
-Chobi.prototype.contrast = function(amount=100) {
+Chobi.prototype.contrast = function(amount=100, channel=defaultChannel) {
 	var value = (255.0 + amount) / 255.0;
 	value *= value;
 	var imageData = this.imageData;
@@ -299,23 +333,24 @@ Chobi.prototype.contrast = function(amount=100) {
 			if (green < 0) green = 0;
 			if (blue > 255) blue = 255;
 			if (blue < 0) blue = 0;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
-Chobi.prototype.crossProcess = function() {
-	return this.vintage().brightness_legacy(10).contrast(50);
+Chobi.prototype.crossProcess = function(amount=0, channel=defaultChannel) {
+	var percent = 1 + amount / 255;
+	return this.vintage(amount, channel).brightness_legacy(10 * percent, channel).contrast(50 * percent, channel);
 }
 Chobi.prototype.map = function(x, min, max, a, b) {
 	return ((b - a) * (x - min) / (max - min)) + a;
 }
-Chobi.prototype.brightness_legacy = function(amount) {
-	return this.brightness(amount/100*255);
+Chobi.prototype.brightness_legacy = function(amount, channel) {
+	return this.brightness(amount/100*255, channel);
 }
-Chobi.prototype.brightness = function(amount=100) {
+Chobi.prototype.brightness = function(amount=100, channel=defaultChannel) {
 	var imageData = this.imageData;
 	// amount = this.map(amount, -255, 255, -255, 255);
 	this.debugger(amount);
@@ -334,15 +369,18 @@ Chobi.prototype.brightness = function(amount=100) {
 			if (green < 0) green = 0;
 			if (blue > 255) blue = 255;
 			if (blue < 0) blue = 0;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
 
-Chobi.prototype.vintage = function() {
+Chobi.prototype.vintage = function(amount = 0, channel=defaultChannel) {
+	var neg = (amount < 0);
+	amount = Math.abs(amount);
+	amount = this.map(amount, 0, 255, 150, 255);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -350,36 +388,41 @@ Chobi.prototype.vintage = function() {
 			var red = imageData.data[index];
 			var green = imageData.data[index + 1];
 			var blue = imageData.data[index + 2];
-			red = green;
-			green = red;
-			blue = 150;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(!neg) {
+				red = green;
+				green = red;
+				blue = amount;
+			} else {
+				red = amount;
+				green = blue;
+				blue = green;
+			}
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
-	this.contrast(50);
+	this.contrast(50, channel);
 	return this;
 }
-Chobi.prototype.crayon = function() {
-	this.noise().contrast(500);
-	return this;
+Chobi.prototype.crayon = function(amount=0, channel=defaultChannel) {
+	return this.noise(amount,channel).contrast(500,channel);
 }
-Chobi.prototype.cartoon = function() {
-	this.contrast(400);
-	return this;
+Chobi.prototype.cartoon = function(amount, channel=defaultChannel) {
+	return this.contrast(400,channel);
 }
 
 
-Chobi.prototype.india = function() {
+Chobi.prototype.india = function(amount=255, channel=defaultChannel) {
+	amount = Math.abs(amount);
 	var height = this.imageData.height;
 	//orange
 	for(var i=0;i<this.imageData.width;i++){
 		for(var j=0;j<(height/3);j++){
 			var pixel = this.getColorAt(i,j);
-			pixel.red = (255+pixel.red)/2;
-			pixel.green = (165+pixel.green)/2;
-			pixel.blue /= 2;
+			if(channel.R) pixel.red = (amount+pixel.red)/2;
+			if(channel.G) pixel.green = (amount/255*165+pixel.green)/2;
+			if(channel.B) pixel.blue /= 2;
 			this.setColorAt(i,j,pixel);			
 		}
 	}
@@ -387,9 +430,9 @@ Chobi.prototype.india = function() {
 	for(var i=0;i<this.imageData.width;i++){
 		for(var j=Math.floor(height/3);j<Math.floor(2*(height/3));j++){
 			var pixel = this.getColorAt(i,j);
-			pixel.red = (255+pixel.red)/2;
-			pixel.green = (255+pixel.green)/2;
-			pixel.blue = (255+pixel.blue)/2;
+			if(channel.R) pixel.red = (amount+pixel.red)/2;
+			if(channel.G) pixel.green = (amount+pixel.green)/2;
+			if(channel.B) pixel.blue = (amount+pixel.blue)/2;
 			this.setColorAt(i,j,pixel);			
 		}
 	}
@@ -397,15 +440,16 @@ Chobi.prototype.india = function() {
 	for(var i=0;i<this.imageData.width;i++){
 		for(var j=Math.floor(2*(height/3));j<Math.floor(height);j++){
 			var pixel = this.getColorAt(i,j);
-			pixel.red = (0+pixel.red)/2;
-			pixel.green = (255+pixel.green)/2;
-			pixel.blue = (0+pixel.blue)/2;
+			if(channel.R) pixel.red = (0+pixel.red)/2;
+			if(channel.G) pixel.green = (amount+pixel.green)/2;
+			if(channel.B) pixel.blue = (0+pixel.blue)/2;
 			this.setColorAt(i,j,pixel);			
 		}
 	}
 	return this;
 }
-Chobi.prototype.aberration = function() {
+Chobi.prototype.aberration = function(amount=0, channel=defaultChannel) {
+	amount = Math.abs(amount);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -423,47 +467,79 @@ Chobi.prototype.aberration = function() {
 			newrgb[maxI]=min;
 			newrgb[minI]=max;
 			newrgb[midI]=max+min-rgb[midI];
-			imageData.data[index] = newrgb[0];
-			imageData.data[index + 1] = newrgb[1];
-			imageData.data[index + 2] = newrgb[2];
+			if(channel.R) imageData.data[index] =     rgb[0]*amount/255+newrgb[0]*(255-amount)/255;
+			if(channel.G) imageData.data[index + 1] = rgb[1]*amount/255+newrgb[1]*(255-amount)/255;
+			if(channel.B) imageData.data[index + 2] = rgb[2]*amount/255+newrgb[2]*(255-amount)/255;
 		}
 	}
 	return this;
 }
-Chobi.prototype.relief = function() {
+Chobi.prototype.relief = function(amount=0, channel=defaultChannel) {
+	if(amount<0){
+		this.negative(0, channel);
+		amount=-amount;
+	}
+	amount++;
 	var imageData = this.imageData;
-	var data = imageData.data;
-	var width = imageData.width;//设备像素
+	for (var i = 0; i < imageData.width; i++) {
+		for (var j = 0; j < imageData.height; j++) {
+			var index = (j * 4) * imageData.width + (i * 4),
+				indexLeft = (j * 4) * imageData.width + ((i - 1) * 4),
+				indexRight = (j * 4) * imageData.width + ((i + amount) * 4),
+				indexAbove = ((j - 1) * 4) * imageData.width + (i * 4),
+				indexBelow = ((j + amount) * 4) * imageData.width + (i * 4);
+			if(j>imageData.height-amount-1) {
+				[imageData.data[index],imageData.data[index+1],imageData.data[index+2],imageData.data[index+3]] = [imageData.data[indexAbove],imageData.data[indexAbove+1],imageData.data[indexAbove+2],imageData.data[indexAbove+3]];
+				continue;
+			}
+			if(i>imageData.width-amount-1) {
+				[imageData.data[index],imageData.data[index+1],imageData.data[index+2],imageData.data[index+3]] = [imageData.data[indexLeft],imageData.data[indexLeft+1],imageData.data[indexLeft+2],imageData.data[indexLeft+3]];
+				continue;
+			}
+			const ch = "RGBA";
+			for(let k = 0 ; k < 3 ; k++)
+				if(channel[ch[k]])
+					imageData.data[index + k] = 255 / 2
+												+ 2 * imageData.data[index + k]
+												- imageData.data[indexRight + k]
+												- imageData.data[indexBelow + k];
+		}
+	}
+	return this;
+	/* var width = imageData.width;//设备像素
 	var length = data.length;
-	for(var i =0;i<length;i++){//遍历每个像素
+	
+	for(var i=0;i<length;i++){//遍历每个像素
 	    //不让超过最后一行
-	    if(i<length-width*4){ //不包含最后一行
+	    if(i<length-width*4*amount){ //不包含最后一行
 	        //不包含透明度的值
 	        if((i+1)%4 !==0){
 	            //在每行最后一个像素取左边的邻近像素
-	            if((i+4)%(width*4) == 0){//代表每行最后一个像素
+	            if(width-Math.floor((i+4)/4)%width < amount){//代表每行最后一个像素
+				// if((i+4)%(width*4) == 0){//代表每行最后一个像素
 	                //给最右边像素重新定rgba
 	                data[i] = data[i-4];
 	                data[i+1] = data[i-3];
 	                data[i+2] = data[i-2];
 	                data[i+3] = data[i-1];
-	                i+=4; //直接跳到下一个像素
+	                // i+=4; //直接跳到下一个像素
 	            }else{ //最终符合条件的，不是最后一行，也不在每行最后一个的像素，且除去了像素集合中为透明度的值
 	                data[i] = 255/2 
 	                          + 2*data[i] //现有像素
-	                          - data[i+4] //下一个像素
-	                          - data[i+width*4]; //下一行同一位置像素
+	                          - data[i+4*amount] //下一个像素
+	                          - data[i+width*4*amount]; //下一行同一位置像素
 	            }
 	        }
 	    }else{ //最后一行，取上一行的像素
 	        if((i+1)%4 !== 0){
-	            data[i] = data[i -width+4];
+	            data[i] = data[i-width+4];
 	        }
 	    }
 	}
-	return this;
+	return this; */
 }
-Chobi.prototype.midBright = function() {
+Chobi.prototype.midBright = function(amount=0, channel=defaultChannel) {
+	var light = this.map(amount, -255, 255, 0, 1);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -473,18 +549,19 @@ Chobi.prototype.midBright = function() {
 			var blue = imageData.data[index + 2];
 			var alpha = imageData.data[index + 3];
 			var hsl=RGB2HSL(red,green,blue);
-			var newrgb=HSL2RGB(hsl.H,hsl.S,0.5)
+			var newrgb=HSL2RGB(hsl.H,hsl.S,light)
 			red = newrgb.R;
 			green = newrgb.G;
 			blue = newrgb.B;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
-Chobi.prototype.maxSaturate = function() {
+Chobi.prototype.maxSaturate = function(amount=255, channel=defaultChannel) {
+	var saturate = this.map(amount, -255, 255, 0, 1);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -494,18 +571,18 @@ Chobi.prototype.maxSaturate = function() {
 			var blue = imageData.data[index + 2];
 			var alpha = imageData.data[index + 3];
 			var hsl=RGB2HSL(red,green,blue);
-			var newrgb=HSL2RGB(hsl.H,1,hsl.L)
+			var newrgb=HSL2RGB(hsl.H,saturate,hsl.L)
 			red = newrgb.R;
 			green = newrgb.G;
 			blue = newrgb.B;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
-Chobi.prototype.saturation = function(amount=100) {
+Chobi.prototype.saturation = function(amount=100, channel=defaultChannel) {
 	var imageData = this.imageData;
 	amount = this.map(amount, -255, 255, 0, 2);
 	for (var i = 0; i < imageData.width; i++) {
@@ -524,14 +601,14 @@ Chobi.prototype.saturation = function(amount=100) {
 			red = newrgb.R;
 			green = newrgb.G;
 			blue = newrgb.B;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
-Chobi.prototype.invertSaturate = function() {
+Chobi.prototype.invertSaturate = function(amount, channel=defaultChannel) {
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -545,31 +622,36 @@ Chobi.prototype.invertSaturate = function() {
 			red = newrgb.R;
 			green = newrgb.G;
 			blue = newrgb.B;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
-Chobi.prototype.invertBright = function() {
-	return this.negative().aberration();
+Chobi.prototype.invertBright = function(amount=0, channel=defaultChannel) {
+	return this.negative(amount, channel).aberration(amount, channel);
 }
-Chobi.prototype.Xray = function() {
-	return this.brightness_legacy(-5).sepia().negative();
+Chobi.prototype.Xray = function(amount=0, channel=defaultChannel) {
+	var light = amount * 5/51 - 5;	//预设值为 -5
+	return this.brightness_legacy(light,channel).sepia(undefined,channel).negative(undefined,channel);
 }
-Chobi.prototype.opaque = function() {
+Chobi.prototype.opaque = function(amount=255, channel=defaultChannel) {
+	var neg=(amount<0);
+	amount=Math.abs(amount);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
 			var index = (j * 4) * imageData.width + (i * 4);
-			if(imageData.data[index + 3]==0) continue;
-			imageData.data[index + 3] = 255;
+			var alpha = imageData.data[index + 3];
+			if(alpha==0) continue;
+			if(neg) alpha = 255 - alpha;
+			imageData.data[index + 3] = 255*amount/255+alpha*(255-amount)/255;
 		}
 	}
 	return this;
 }
-Chobi.prototype.threshold = function(amount=0) {
+Chobi.prototype.threshold = function(amount=0, channel=defaultChannel) {
 	var imageData = this.negative().imageData;
 	amount = this.map(amount, -255, 255, 0, 1);
 	for (var i = 0; i < imageData.width; i++) {
@@ -585,14 +667,15 @@ Chobi.prototype.threshold = function(amount=0) {
 			red = abs;
 			green = abs;
 			blue = abs;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
-Chobi.prototype.whiteToAlpha = function() {
+Chobi.prototype.whiteToAlpha = function(amount=0, channel=defaultChannel) {
+	var light = this.map(amount, -255, 255, 0, 1);
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -603,22 +686,22 @@ Chobi.prototype.whiteToAlpha = function() {
 			var alpha = imageData.data[index + 3];
 			if(alpha==0) continue;
 			var hsl=RGB2HSL(red,green,blue);
-			if(hsl.L>0.5){
+			if(hsl.L>light){
 				alpha = hsl.L*(-510)+510;
-				var newrgb=HSL2RGB(hsl.H,hsl.S,0.5)
+				var newrgb=HSL2RGB(hsl.H,hsl.S,light)
 				red = newrgb.R;
 				green = newrgb.G;
 				blue = newrgb.B;
 			}
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
-			imageData.data[index + 3] = alpha;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
+			if(channel.A) imageData.data[index + 3] = alpha;
 		}
 	}
 	return this;
 }
-Chobi.prototype.hue = function(amount=100) {
+Chobi.prototype.hue = function(amount=100, channel=defaultChannel) {
 	var imageData = this.imageData;
 	amount = this.map(amount, -255, 255, -180, 180);
 	for (var i = 0; i < imageData.width; i++) {
@@ -633,14 +716,14 @@ Chobi.prototype.hue = function(amount=100) {
 			red = newrgb.R;
 			green = newrgb.G;
 			blue = newrgb.B;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
-Chobi.prototype.blur = function() {
+Chobi.prototype.blur = function(amount, channel=defaultChannel) {
     var tempCanvasData = this.imageData;
     var sumred = 0.0, sumgreen = 0.0, sumblue = 0.0;  
     for ( var x = 0; x < tempCanvasData.width; x++) {      
@@ -674,16 +757,16 @@ Chobi.prototype.blur = function() {
             sumgreen = 0.0;  
             sumblue = 0.0;  
             // assign new pixel value      
-            tempCanvasData.data[idx + 0] = nr; // Red channel      
-            tempCanvasData.data[idx + 1] = ng; // Green channel      
-            tempCanvasData.data[idx + 2] = nb; // Blue channel      
-            tempCanvasData.data[idx + 3] = 255; // Alpha channel      
+            if(channel.R) tempCanvasData.data[idx + 0] = nr; // Red channel      
+            if(channel.G) tempCanvasData.data[idx + 1] = ng; // Green channel      
+            if(channel.B) tempCanvasData.data[idx + 2] = nb; // Blue channel      
+            if(channel.A) tempCanvasData.data[idx + 3] = 255; // Alpha channel      
         }  
     }
 	return this;
 }
-Chobi.prototype.carving = function() {
-	this.negative();
+Chobi.prototype.carving = function(amount, channel=defaultChannel) {
+	this.negative(undefined, channel);
     var tempCanvasData = this.imageData; 
     for ( var x = 1; x < tempCanvasData.width-1; x++)   
     {      
@@ -701,15 +784,15 @@ Chobi.prototype.carving = function() {
             ng = (ng < 0) ? 0 : ((ng >255) ? 255 : ng);  
             nb = (nb < 0) ? 0 : ((nb >255) ? 255 : nb);  
             // assign new pixel value      
-            tempCanvasData.data[idx + 0] = nr; // Red channel      
-            tempCanvasData.data[idx + 1] = ng; // Green channel      
-            tempCanvasData.data[idx + 2] = nb; // Blue channel      
-            tempCanvasData.data[idx + 3] = 255; // Alpha channel      
+            if(channel.R) tempCanvasData.data[idx + 0] = nr; // Red channel      
+            if(channel.G) tempCanvasData.data[idx + 1] = ng; // Green channel      
+            if(channel.B) tempCanvasData.data[idx + 2] = nb; // Blue channel      
+            if(channel.A) tempCanvasData.data[idx + 3] = 255; // Alpha channel      
         }  
     }
 	return this;
 }
-Chobi.prototype.mirror = function(amount=0) {
+Chobi.prototype.mirror = function(amount=0, channel=defaultChannel) {
     var tempCanvasData = this.imageData;
     for ( var x = (amount>=0?0:tempCanvasData.width); (amount>=0?x < tempCanvasData.width/2:x > tempCanvasData.width/2); (amount>=0?x++:x--)) // column  
     {      
@@ -719,34 +802,46 @@ Chobi.prototype.mirror = function(amount=0) {
             var idx = (x + y * tempCanvasData.width) * 4;         
             var midx = (((tempCanvasData.width -1) - x) + y * tempCanvasData.width) * 4;
             // assign new pixel value      
-            tempCanvasData.data[midx + 0] = tempCanvasData.data[idx + 0]; // Red channel      
-            tempCanvasData.data[midx + 1] = tempCanvasData.data[idx + 1]; // Green channel      
-            tempCanvasData.data[midx + 2] = tempCanvasData.data[idx + 2]; // Blue channel     
-            // tempCanvasData.data[midx + 3] = 255; // Alpha channel      
+            if(channel.R) tempCanvasData.data[midx + 0] = tempCanvasData.data[idx + 0]; // Red channel      
+            if(channel.G) tempCanvasData.data[midx + 1] = tempCanvasData.data[idx + 1]; // Green channel      
+            if(channel.B) tempCanvasData.data[midx + 2] = tempCanvasData.data[idx + 2]; // Blue channel     
+            if(channel.A) tempCanvasData.data[midx + 3] = tempCanvasData.data[idx + 3]; // Alpha channel      
         }  
     }  
 	return this;
 }
-Chobi.prototype.reverse = function() {
+Chobi.prototype.reverse = function(amount=0, channel=defaultChannel) {
     var imageData = this.imageData;
-	var tempCanvasData = {data:imageData.data};
-    for ( var x = 0; x < imageData.width/2; x++) // column  
-    {      
-        for ( var y = 0; y < imageData.height; y++) // row  
-        {
-            // Index of the pixel in the array      
-            var idx = (x + y * imageData.width) * 4;         
-            var midx = (((imageData.width -1) - x) + y * imageData.width) * 4;
-            // assign new pixel value      
-            [imageData.data[midx + 0], tempCanvasData.data[idx + 0]]=[tempCanvasData.data[idx + 0], imageData.data[midx + 0]];
-            [imageData.data[midx + 1], tempCanvasData.data[idx + 1]]=[tempCanvasData.data[idx + 1], imageData.data[midx + 1]];
-            [imageData.data[midx + 2], tempCanvasData.data[idx + 2]]=[tempCanvasData.data[idx + 2], imageData.data[midx + 2]];
-            // tempCanvasData.data[midx + 3] = 255; // Alpha channel      
-        }  
-    }  
+    if(amount>=0) {
+		for ( var x = 0; x < imageData.width/2; x++) // column
+		{      
+		    for ( var y = 0; y < imageData.height; y++) // row  
+		    {
+		        var idx = (x + y * imageData.width) * 4;         
+		        var midx = (((imageData.width -1) - x) + y * imageData.width) * 4;
+		        if(channel.R) [imageData.data[midx + 0], imageData.data[idx + 0]]=[imageData.data[idx + 0], imageData.data[midx + 0]];
+		        if(channel.G) [imageData.data[midx + 1], imageData.data[idx + 1]]=[imageData.data[idx + 1], imageData.data[midx + 1]];
+		        if(channel.B) [imageData.data[midx + 2], imageData.data[idx + 2]]=[imageData.data[idx + 2], imageData.data[midx + 2]];
+		        if(channel.A) [imageData.data[midx + 3], imageData.data[idx + 3]]=[imageData.data[idx + 3], imageData.data[midx + 3]];    
+		    }  
+		}  
+	} else {
+		for ( var x = 0; x < imageData.width; x++) // column
+		{      
+		    for ( var y = 0; y < imageData.height/2; y++) // row  
+		    {
+		        var idx = (x + y * imageData.width) * 4;         
+		        var midx = (((imageData.height -1) - y) * imageData.width + x) * 4;
+		        if(channel.R) [imageData.data[midx + 0], imageData.data[idx + 0]]=[imageData.data[idx + 0], imageData.data[midx + 0]];
+		        if(channel.G) [imageData.data[midx + 1], imageData.data[idx + 1]]=[imageData.data[idx + 1], imageData.data[midx + 1]];
+		        if(channel.B) [imageData.data[midx + 2], imageData.data[idx + 2]]=[imageData.data[idx + 2], imageData.data[midx + 2]];
+		        if(channel.A) [imageData.data[midx + 3], imageData.data[idx + 3]]=[imageData.data[idx + 3], imageData.data[midx + 3]];    
+		    }  
+		}  
+	}
 	return this;
 }
-Chobi.prototype.backThermography = function(amount=0) {
+Chobi.prototype.backThermography = function(amount=0, channel=defaultChannel) {
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -758,18 +853,18 @@ Chobi.prototype.backThermography = function(amount=0) {
 			var hsl=RGB2HSL(red,green,blue);
 			var newl=this.map(hsl.L,0,1,0,360);
 			var newh=this.map(hsl.H,0,360,0,1);
-			var newrgb=amount>=0?HSL2RGB(newl,hsl.S,newh):HSL2RGB(0,0,newh);
+			var newrgb=amount>=0?HSL2RGB(channel.H?newl:hsl.H,hsl.S,channel.L?newh:hsl.L):HSL2RGB(channel.H?0:hsl.H,channel.S?0:hsl.S,channel.L?newh:hsl.L);
 			red = newrgb.R;
 			green = newrgb.G;
 			blue = newrgb.B;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
 }
-Chobi.prototype.thermography = function(amount=0) {
+Chobi.prototype.thermography = function(amount=0, channel=defaultChannel) {
 	var imageData = this.imageData;
 	function l2h(x,t){
 		// return -8.5*Math.asin(Math.abs(Math.sinDeg(36/51*x-60*t)))+510;
@@ -786,14 +881,14 @@ Chobi.prototype.thermography = function(amount=0) {
 			var grey = (red+green+blue)/3;
 			// Math.sinDeg=x=>Math.sin(x*Math.PI/180);
 			// Math.asinDeg=x=>Math.asin(x*Math.PI/180);
-			imageData.data[index] = restrict(l2h(grey,0),0,255);
-			imageData.data[index + 1] = restrict(l2h(grey,amount>=0?1:2),0,255);
-			imageData.data[index + 2] = restrict(l2h(grey,amount>=0?2:1),0,255);
+			if(channel.R) imageData.data[index] = restrict(l2h(grey,0),0,255);
+			if(channel.G) imageData.data[index + 1] = restrict(l2h(grey,amount>=0?1:2),0,255);
+			if(channel.B) imageData.data[index + 2] = restrict(l2h(grey,amount>=0?2:1),0,255);
 		}
 	}
 	return this;
 }
-Chobi.prototype.posterize = function(amount=4) {
+Chobi.prototype.posterize = function(amount=4, channel=defaultChannel) {
 	if(amount==0) amount=4;
 	var imageData = this.imageData;
 	function posterize(color, amount, range = 255) {
@@ -822,21 +917,21 @@ Chobi.prototype.posterize = function(amount=4) {
 				hue=this.map(hue,0,255,0,360);
 				saturation=this.map(saturation,0,255,0,1);
 				luminance=this.map(luminance,0,255,0,1);
-				var newrgb=HSL2RGB(hue,saturation,luminance);
+				var newrgb=HSL2RGB(channel.H?hue:hsl.H,channel.S?saturation:hsl.S,channel.L?luminance:hsl.L);
 				red=newrgb.R;
 				green=newrgb.G;
 				blue=newrgb.B;
 			}
 			alpha = posterize(alpha, amount);
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
-			imageData.data[index + 3] = alpha;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
+			if(channel.A) imageData.data[index + 3] = alpha;
 		}
 	}
 	return this;
 }
-Chobi.prototype.primaryColor = function() {
+Chobi.prototype.primaryColor = function(amount, channel=defaultChannel) {
 	var imageData = this.imageData;
 	for (var i = 0; i < imageData.width; i++) {
 		for (var j = 0; j < imageData.height; j++) {
@@ -850,9 +945,9 @@ Chobi.prototype.primaryColor = function() {
 			if(hue>=270||hue<90) red=255; else red=0;
 			if(hue>=30&&hue<210) green=255; else green=0;
 			if(hue>=150&&hue<330) blue=255; else blue=0;
-			imageData.data[index] = red;
-			imageData.data[index + 1] = green;
-			imageData.data[index + 2] = blue;
+			if(channel.R) imageData.data[index] = red;
+			if(channel.G) imageData.data[index + 1] = green;
+			if(channel.B) imageData.data[index + 2] = blue;
 		}
 	}
 	return this;
@@ -965,10 +1060,11 @@ Chobi.prototype.crop = function(x, y, width, height) {
 	this.imageData = data;
 	return this;
 }
-Chobi.prototype.vignette = function(scaleLevel) {
+Chobi.prototype.vignette = function(scaleLevel, channel=defaultChannel) {
 	if (scaleLevel == "" || scaleLevel == null) {
-		scaleLevel = 0.1;
+		scaleLevel = 1; // 预设是 scaleLevel = 0.1;
 	}
+	scaleLevel /= 10;
 	var imgCntX = this.imageData.width / 2;
 	var imgCntY = this.imageData.height / 2;
 	var maxDis = Math.sqrt((imgCntY * imgCntY) + (imgCntX * imgCntX));
@@ -979,9 +1075,9 @@ Chobi.prototype.vignette = function(scaleLevel) {
 		for (var j = 0; j < this.imageData.height; j++) {
 			var mix = this.getColorAt(i, j);
 			var dis = Math.sqrt(Math.floor(Math.pow(i - imgCntY, 2)) + Math.floor(Math.pow(j - imgCntX, 2)));
-			mix.red = mix.red * (1 - (1 - scaleLevel) * (dis / maxDis));
-			mix.green = mix.green * (1 - (1 - scaleLevel) * (dis / maxDis));
-			mix.blue = mix.blue * (1 - (1 - scaleLevel) * (dis / maxDis));
+			if(channel.R) mix.red = mix.red * (1 - (1 - scaleLevel) * (dis / maxDis));
+			if(channel.G) mix.green = mix.green * (1 - (1 - scaleLevel) * (dis / maxDis));
+			if(channel.B) mix.blue = mix.blue * (1 - (1 - scaleLevel) * (dis / maxDis));
 			this.setColorAt(i, j, mix);
 		}
 	}

@@ -63,15 +63,15 @@ var pref = {
 //sound
 var fingerMusic = new Audio("music/jingle_bell.ogg");
 var wrapperMusic = new Audio("music/ending_theme.ogg");
-$(fingerMusic).bind("ended", function() {
-	this.play();
-});
-$(wrapperMusic).bind("ended", function() {
+$plenty(fingerMusic, wrapperMusic).bind("ended", function() {
 	this.play();
 });
 
 //常用操作。手动变量提升……
-var backgroundColor = {light: "var(--lightbody)", dark: "var(--darkbody)"};
+var NightTime = {
+	darkBackgroundColor: "var(--darkbody)",
+	lightBackgroundColor: "var(--lightbody)"
+}
 window.onresize = reScale; //改变窗口大小执行
 function getDeg(obj) { //获得transform矩阵的角度
 	function getmatrix(a, b, c, d, e, f) {
@@ -150,6 +150,15 @@ $.fn.cardResize = function() {
 		height: autoHeight,
 		width: autoWidth
 	}, 250, "easeInOutCubic");
+}
+
+function $plenty(...arg) {
+	/* if (Object.prototype.toString.call(query) !== "[object Array]")
+		query = [query]; */
+	var jq = $();
+	for (let i of arg)
+		jq.add(arg);
+	return jq;
 }
 
 function lightStopTwink(mode = 1) {
@@ -739,7 +748,7 @@ function createTurntable() {
 					right: 90,
 					bottom: 180,
 					left: 270,
-					side: a => eval("orientation." + a)
+					side: a => orientation[a]
 				}
 				var val = orientation.side($(this).val());
 				$("#place-arrow-icon").css("transform", `rotate(${val}deg)`);

@@ -36,11 +36,9 @@
 	<body>
 		<div src="md/help.md" id="content"></div>
 		<script>
-			function nightDo() {
-				css.href="css/vue-dark.css";
-			}
-			function lightDo() {
-				css.href="css/vue.css";
+			var NightTime = {
+				darkCSS: "css/vue-dark.css",
+				lightCSS: "css/vue.css"
 			}
 			$.get($("#content").attr("src"), function(response, status, xhr) {
 				$("#content").html(marked(response));

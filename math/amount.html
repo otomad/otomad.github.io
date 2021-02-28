@@ -77,7 +77,7 @@
 				if (num == "") return false;
 				num = num - 0 + "";
 				if (num == "NaN") return false;
-				if(Math.abs(num-0)>1e16) {window.location.href="about:blank"; window.close();} //这精度，为了不让用户觉得比较奇怪，最好直接关掉它吧。或者等编译器支持BigInt了再说。
+				if(Math.abs(num-0)>1e16) {top.location.href="about:blank"; top.close();} //这精度，为了不让用户觉得比较奇怪，最好直接关掉它吧。或者等编译器支持BigInt了再说。
 				/* for(var i=0;i<num.length;i++){
 					low+=lower[num[i]-0]
 					upp+=upper[num[i]-0]

@@ -484,7 +484,7 @@ body {
 	transition: all 250ms ease-out;
 }
 .modal *,.modal ::after,.modal ::before {
-    box-sizing: border-box;
+	box-sizing: border-box;
 }
 h5 i {
 	margin-right: 8px;

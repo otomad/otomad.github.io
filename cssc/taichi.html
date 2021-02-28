@@ -122,11 +122,9 @@
 		</div>
 	</body>
 	<script>
-		function nightDo() {
-			document.body.style.backgroundColor = "var(--darkbody)";
-		}
-		function lightDo() {
-			document.body.style.backgroundColor = "var(--lightbody)";
+		var NightTime = {
+			darkBackgroundColor: "var(--darkbody)",
+			lightBackgroundColor: "var(--lightbody)"
 		}
 
 		var currentColor = 0,
@@ -158,5 +156,5 @@
 			}
 		}
 	</script>
-	<script src="../NightTime.js"></script>
+	<script src="/basis/NightTime.js"></script>
 </html>

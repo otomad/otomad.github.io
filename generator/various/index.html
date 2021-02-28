@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>各种各样生成器</title>
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet"
+		href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	<style>
+		h1 {
+			margin: 20px 0;
+		}
+
+		.input-group-lg * {
+			font-weight: bolder;
+			font-size: 36px !important;
+		}
+
+		.card-body p {
+			/* margin-bottom: .5em; */
+			text-indent: 2em;
+		}
+
+		.card-body p:last-child {
+			margin-bottom: 0;
+		}
+
+		.sm {
+			border: none;
+			height: 24px;
+			padding: 0 3px;
+			margin-bottom: 4px;
+			float: right;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h1>各种各样生成器</h1>
+		<div class="row">
+			<div class="col-lg-5 mb-3">
+				<div class="form-group">
+					<label for="选择名人名言">选择名人名言</label>
+					<div class="input-group input-group-lg mb-3">
+						<select class="custom-select" id="选择名人名言"></select>
+					</div>
+				</div>
+				<p>源码：<span id="源码"></span></p>
+				<hr />
+				<template id="这里将会冒出一堆输入框的模板">
+					<div class="form-group">
+						<label for="输入框-0"></label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="输入框-0" />
+							<div class="input-group-append">
+								<button class="btn btn-outline-secondary 叉叉" type="button">
+									<i class="fa fa-times fa-fw"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</template>
+				<div id="这里将会冒出一堆输入框"></div>
+				<button class="btn btn-primary btn-block" id="一键生成">一键生成</button>
+			</div>
+			<div class="col-lg-7">
+				<div class="form-group">
+					<label for="生成结果">生成结果</label>
+					<button class="btn btn-outline-secondary btn-sm sm" type="button" id="复制按钮" title="复制到剪贴板"
+						data-toggle="tooltip" data-trigger="hover">
+						<i class="fa fa-copy fa-fw"></i>
+					</button>
+					<div class="card">
+						<div class="card-body">
+							<p class="card-text" id="生成结果"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script src="js/index.js"></script>
+	<script src="js/BullshitGenerator/index.js"></script>
+	<script src="js/data.js"></script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>

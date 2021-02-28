@@ -5,6 +5,8 @@ history/
 aspnet_client/
 ftproot/
 logs/
+node_modules/
+index/
 desktop.ini
 217/欢迎来到咱们217_original.htm
 217/217bak/

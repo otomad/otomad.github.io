@@ -1,0 +1,18 @@
+::-webkit-scrollbar {
+	width: 4px;
+	height: 4px;
+	scrollbar-arrow-color: red;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 5px;
+	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	background: rgba($textColor, 0.2);
+	scrollbar-arrow-color: red;
+}
+
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	border-radius: 0;
+	background: rgba($textColor, 0.1);
+}

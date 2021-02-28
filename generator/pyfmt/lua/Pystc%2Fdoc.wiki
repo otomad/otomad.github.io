@@ -1,0 +1,76 @@
+{{Lua|Module:Pyfmt}}
+{{ombox
+| type = content
+| style = border: 1px solid #ddd; background: #fbfbfb;
+| image = [[File:Ambox warning yellow.svg|40px|alt=Warning|link=]]
+| text = '''本模板使用 Lua 语言编写，如果您不太熟悉本语言，请慎重使用本模板。'''<br />否则建议请根据下面的步骤，一步一步操作。}}
+'''拼音格式化句子（Pinyin Formatting Sentence）'''。本模板使用 Lua 语言。基于[[模板:Pyfmt|模板:Pyfmt]]，共同使用[[模块:Pyfmt|模块:Pyfmt]]。
+
+主要用于连续调用 {{tl|pyfmt}} 模板，一次性快速输入一整句话的拼音。
+==问题==
+* 本模板具有局限性，并没有 {{tl|pyfmt}} 的高自由度。因此本模板只是使用更方便，但是功能并不强大。
+* 本模板预期希望能更方便的输出人名拼音，然而似乎并不容易做到。内地姓名拉丁化规范如：武则天 ({{pyfmt|wu3|3}} {{pyfmt|ze2|3}}{{pyfmt|tian1}})、欧阳修 ({{pyfmt|ou1|3}}{{pyfmt|yang2}} {{pyfmt|xiu1|3}}) 等。由于不管是分隔还是大写，都不容易用算法自动生成。因此并不能用本模板便捷地输入人名拼音。
+* 本模板是一个字一个字分隔拼音，不能根据词组或意群自动分隔。
+* 如果将“分隔符”参数留空'''（留空不是缺省）'''，则会自动根据需要在 a、o、e 前添加隔音符号。此时的隔音符号默认使用“'”，即直单引号，暂时不可更改为其它。
+==用法==
+{{tlc|pystc|句子的拼音 {{*}}|分隔符|类型}}
+
+其中，星号为必选参数，其余均可选。
+
+本模板全都是编号参数。<br><br>
+
+;句子的拼音
+:可以一次性填写一句话的拼音，拼音输入的规则参考[[模板:Pyfmt#规则]]。此外，拼音与拼音之间要求使用直单引号 “'''{{'}}'''” 隔开。正确的填写方式如：
+:<code>'''wei2'ji1'bai3'ke1'''</code>''{{color|#333333|（维基百科）}}''<br><br>
+;分隔符
+*拼音与拼音之间的分隔符。默认为“ ”，即空格。
+*当手动将“分隔符”参数设为没有任何内容之后，拼音与拼音将会连接显示在一起。不过当且仅当此时，会自动根据需要自动添加隔音符号，符号固定为“'”，即直单引号。其它情况（包括默认）都不会添加隔音符号。
+*常用的分隔符示例如下表（不局限于下表，可以任意使用自己喜欢的符号作为分隔符）。
+{| class="wikitable" style="width:85%"
+|-
+! 分隔符
+! 代码
+! 效果
+! style="width:50%" | 备注
+|-
+| style="text-align:center"| （空格） 
+| {{tlc|pystc|tian1'an1'men2|&nbsp;}} || {{pystc|tian1'an1'men2| }} || 缺省即为该项，因此亦可不填。
+|-
+| style="text-align:center"| （留空） 
+| {{tlc|pystc|tian1'an1'men2|}} || {{pystc|tian1'an1'men2|}} || 拼音会堆积在一起，此时会出现隔音符号。
+|-
+| style="text-align:center"| ' 
+| {{tlc|pystc|tian1'an1'men2|'}} || {{pystc|tian1'an1'men2|'}} || 直单引号。英文键盘下直接输入的字符。
+|-
+| style="text-align:center"| ’ 
+| {{tlc|pystc|tian1'an1'men2|’}} || {{pystc|tian1'an1'men2|’}} || 弯单引号。该字符显示效果一般比直单引号更好。不过有些设备会因为使用中文字体的缘故，致使该符号显示为全角，反而更影响美观。
+|-
+| style="text-align:center"| - 
+| {{tlc|pystc|tian1'an1'men2|&#8202;-}} || {{pystc|tian1'an1'men2|-}} || 常用于港澳地区的姓名拼音，拼音与拼音直接用连字符连接起来。也多用于复姓的表示。
+|}
+<br>
+;类型
+:此处填写最终显示的拼音的类型，缺省为 '''0'''，即小写字母，一般只需填写数字即可。{{tl|pyfmt}} 模板中所支持的如“大写”“小型大写字母”等兼容参数此处依然有效，不过不再赘述，具体可参见[[模板:Pyfmt#类型]]。此处在 {{tl|pyfmt}} 中所支持的 5 种类型之外，又额外增加了两种类型以方便使用。具体可填参数参考下表。
+{| class="wikitable"
+|-
+! 参数 !! 类型 !! 代码 !! 效果
+|-
+| '''0''' || 全部小写字母 || {{tlc|pystc|feng1'he2'ri4'li4|&nbsp;|0}} || {{pystc|feng1'he2'ri4'li4| |0}}
+|-
+| '''1''' || 全部大写字母 || {{tlc|pystc|feng1'he2'ri4'li4|&nbsp;|1}} || {{pystc|feng1'he2'ri4'li4| |1}}
+|-
+| '''2''' || 全部小型大写字母 || {{tlc|pystc|feng1'he2'ri4'li4|&nbsp;|2}} || {{pystc|feng1'he2'ri4'li4| |2}}
+|-
+| '''3''' || 所有拼音首字母大写，其余小写字母 || {{tlc|pystc|feng1'he2'ri4'li4|&nbsp;|3}} || {{pystc|feng1'he2'ri4'li4| |3}}
+|-
+| '''4''' || 所有拼音首字母大写，其余小型大写字母 || {{tlc|pystc|feng1'he2'ri4'li4|&nbsp;|4}} || {{pystc|feng1'he2'ri4'li4| |4}}
+|-
+| '''5''' || 仅第一个拼音首字母大写，其余小写字母 || {{tlc|pystc|feng1'he2'ri4'li4|&nbsp;|5}} || {{pystc|feng1'he2'ri4'li4| |5}}
+|-
+| '''6''' || 仅第一个拼音首字母大写，其余小型大写字母 || {{tlc|pystc|feng1'he2'ri4'li4|&nbsp;|6}} || {{pystc|feng1'he2'ri4'li4| |6}}
+|}
+
+==参见==
+*{{tl|ruby}}{{————}}注音模板
+*{{tl|pyfmt}}{{————}}拼音格式化（单个汉字注音）
+*{{tl|rubypy}}{{————}}将格式化后的拼音置于汉字顶部（单个汉字注音）

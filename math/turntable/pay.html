@@ -132,11 +132,8 @@
 				$('[data-toggle="tooltip"]').tooltip();
 			});
 			$("label:has(> input[disabled])").addClass("disabled");
-			function nightDo(){
-				$("body").css("background","var(--darkbody)");
-			}
-			function lightDo(){
-				$("body").css("background","");
+			var NightTime = {
+				darkBackgroundColor: "var(--darkbody)"
 			}
 			$("#type").click(() => {
 				function correction(){

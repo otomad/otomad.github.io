@@ -63,99 +63,87 @@
 						</button>
 					</div>
 					<div class="modal-body">
-						<div class="input-group mb-2">
-							<div class="form-row">
-								<div class="col-1 flex-center">
-									<div class="custom-control custom-radio mb-2">
-									  <input type="radio" id="rgb-module" name="color-module" class="custom-control-input" checked>
-									  <label class="custom-control-label" for="rgb-module">　</label>
-									</div>
+						<div class="form-group">
+							<label>自定义滤镜名称<span id="custom-filter-name-exists" class="text-danger" style="display:none">名称已被占用</span></label>
+							<input type="text" class="form-control" id="your-filter-name" placeholder="myFilter" />
+						</div>
+						<div class="form-group">
+							<label>滑块<code>(amount)</code>参数默认值<span class="text-light">(amount ∈ (ℤ ∩ [-255,255]))</span></label>
+							<input type="text" class="form-control" id="your-filter-amount-default" placeholder="留空本输入框则表示不设定默认值或该滤镜不适用滑块的参数" />
+						</div>
+						<ul class="nav nav-tabs justify-content-center">
+							<li class="nav-item"><a href="#rgbTab" data-toggle="tab" class="nav-link active">RGB 模型</a></li>
+							<li class="nav-item"><a href="#hslTab" data-toggle="tab" class="nav-link">HSL 模型</a></li>
+							<li class="nav-item"><a href="#helpTab" data-toggle="tab" class="nav-link">使用说明</a></li>
+						</ul>
+						<div id="mytab-content" class="tab-content">
+							<div class="tab-pane fade show active" id="rgbTab">
+								<div class="input-group mb-2">
+								  <div class="input-group-prepend">
+								    <label class="input-group-text" for="valR">R</label>
+								  </div>
+								  <input type="text" class="form-control" id="valR">
 								</div>
-							    <div class="col-11 form-row">
-									<div class="input-group col-4 mb-2">
-									  <div class="input-group-prepend">
-									    <label class="input-group-text" for="valR">R</label>
-									  </div>
-									  <input type="text" class="form-control" id="valR">
-									</div>
-									<div class="input-group col-4 mb-2">
-									  <div class="input-group-prepend">
-									    <label class="input-group-text" for="valG">G</label>
-									  </div>
-									  <input type="text" class="form-control" id="valG">
-									</div>
-									<div class="input-group col-4 mb-2">
-									  <div class="input-group-prepend">
-									    <label class="input-group-text" for="valB">B</label>
-									  </div>
-									  <input type="text" class="form-control" id="valB">
-									</div>
+								<div class="input-group mb-2">
+								  <div class="input-group-prepend">
+								    <label class="input-group-text" for="valG">G</label>
+								  </div>
+								  <input type="text" class="form-control" id="valG">
 								</div>
-							</div>
-							<div class="form-row">
-								<div class="col-1 flex-center">
-									<div class="custom-control custom-radio mb-2">
-									  <input type="radio" id="hsl-module" name="color-module" class="custom-control-input">
-									  <label class="custom-control-label" for="hsl-module">　</label>
-									</div>
+								<div class="input-group mb-2">
+								  <div class="input-group-prepend">
+								    <label class="input-group-text" for="valB">B</label>
+								  </div>
+								  <input type="text" class="form-control" id="valB">
 								</div>
-							    <div class="col-11 form-row">
-									<div class="input-group col-4 mb-2">
-									  <div class="input-group-prepend">
-									    <label class="input-group-text" for="valH">H</label>
-									  </div>
-									  <input type="text" class="form-control" id="valH" disabled>
-									</div>
-									<div class="input-group col-4 mb-2">
-									  <div class="input-group-prepend">
-									    <label class="input-group-text" for="valS">S</label>
-									  </div>
-									  <input type="text" class="form-control" id="valS" disabled>
-									</div>
-									<div class="input-group col-4 mb-2">
-									  <div class="input-group-prepend">
-									    <label class="input-group-text" for="valL">L</label>
-									  </div>
-									  <input type="text" class="form-control" id="valL" disabled>
-									</div>
+								<div class="input-group mb-2">
+								  <div class="input-group-prepend">
+								    <label class="input-group-text" for="valA">A</label>
+								  </div>
+								  <input type="text" class="form-control" id="valA">
 								</div>
 							</div>
-							<div class="form-row">
-								<div class="col-1 flex-center">
-									<div class="custom-control custom-radio mb-2" data-placeholder>
-									  <input type="radio" class="custom-control-input">
-									  <label class="custom-control-label">　</label>
-									</div>
+							<div class="tab-pane fade" id="hslTab">
+								<div class="input-group mb-2">
+								  <div class="input-group-prepend">
+								    <label class="input-group-text" for="valH">H</label>
+								  </div>
+								  <input type="text" class="form-control" id="valH">
 								</div>
-							    <div class="col-11 form-row">
-									<div class="input-group col-4 mb-2">
-									  <div class="input-group-prepend">
-									    <label class="input-group-text" for="valA">A</label>
-									  </div>
-									  <input type="text" class="form-control" id="valA">
-									</div>
-									<div class="input-group col-4 mb-2" data-placeholder>
-									  <input type="text" class="form-control">
-									</div>
-									<div class="input-group col-4 mb-2" data-placeholder>
-									  <input type="text" class="form-control">
-									</div>
+								<div class="input-group mb-2">
+								  <div class="input-group-prepend">
+								    <label class="input-group-text" for="valS">S</label>
+								  </div>
+								  <input type="text" class="form-control" id="valS">
 								</div>
+								<div class="input-group mb-2">
+								  <div class="input-group-prepend">
+								    <label class="input-group-text" for="valL">L</label>
+								  </div>
+								  <input type="text" class="form-control" id="valL">
+								</div>
+								<div class="input-group mb-2">
+								  <div class="input-group-prepend">
+								    <label class="input-group-text" for="valAl">A</label>
+								  </div>
+								  <input type="text" class="form-control" id="valAl">
+								</div>
+							</div>
+							<div class="tab-pane fade" id="helpTab">
+								<small>
+									<!-- <p>本功能通过 <code>eval</code> 函数实现，性能非常地差，如果图片比较大，那就等着死机吧。</p> -->
+									<p>支持的参数：<code>r(红)</code>、<code>g(绿)</code>、<code>b(蓝)</code>、<code>h(色相)</code>、<code>s(饱和度)</code>、<code>l(亮度)</code>、<code>a(不透明度)</code>。大小写均可。此外，可以用 <code>c</code> 代指当前输入框所对应的颜色，用 <code>amount</code> 表示滑块所设定的参数。</p>
+									<p>选择一个颜色模型，在输入框中输入上述参数及表达式，可以生成自己需要的滤镜。</p>
+									<p class="text-danger">注意这里是 <b>HSL</b> 模型，不是 <b>HSV</b> 模型！</p>
+									<!-- <p>R、G、B 三个参数的取值范围均为 [0,255]，H 的取值范围为 [0,360)，S、L、A 三个参数的取值范围为 [0,100]。</p> -->
+									<p>所有参数的取值范围均为 [0,255]。如果超出范围，还是会被约束到这个范围。（<code>amount</code> 滑块的默认取值范围为 [-255,255]。）</p>
+									<p>如果有参数留空，则自动保持原参数的设定值。</p>
+									<p>支持使用 JavaScript 的函数，如 <code>Math.sqrt(1/2)</code>、<code>Math.sin(Math.PI/6)</code>、<code>Math.pow(2,3)</code> 等。注意前面必须加上“Math.”。</p>
+									<p>例如欲生成“反色”滤镜，可以先选择 RGB 模型，然后在对应的三个输入框中依次输入 <code>255-r</code>、<code>255-g</code>、<code>255-b</code> 即可。</p>
+									<p>双击文本框左边的标签可以快速清空文本框的内容。</p>
+								</small>
 							</div>
 						</div>
-						<hr />
-						<small>
-							<!-- <p>本功能通过 <code>eval</code> 函数实现，性能非常地差，如果图片比较大，那就等着死机吧。</p> -->
-							<p>支持的参数：<code>r(红)</code>、<code>g(绿)</code>、<code>b(蓝)</code>、<code>h(色相)</code>、<code>s(饱和度)</code>、<code>l(亮度)</code>、<code>a(不透明度)</code>。大小写均可。</p>
-							<p>选择一个颜色模型，在输入框中输入上述参数及表达式，可以生成自己需要的滤镜。</p>
-							<p class="text-danger">注意这里是 <b>HSL</b> 模型，不是 <b>HSV</b> 模型！</p>
-							<!-- <p>R、G、B 三个参数的取值范围均为 [0,255]，H 的取值范围为 [0,360)，S、L、A 三个参数的取值范围为 [0,100]。</p> -->
-							<p>所有参数的取值范围均为 [0,255]。如果超出范围，还是会被约束到这个范围。</p>
-							<p>如果有参数留空，则自动保持原参数的设定值。</p>
-							<p>支持使用 JavaScript 的函数，如 <code>Math.sqrt(1/2)</code>、<code>Math.sin(Math.PI/6)</code>、<code>Math.pow(2,3)</code> 等。注意前面必须加上“Math.”。</p>
-							<p>例如欲生成“反色”滤镜，可以先选择 RGB 模型，然后在对应的三个输入框中依次输入 <code>255-r</code>、<code>255-g</code>、<code>255-b</code> 即可。</p>
-							<p>双击文本框左边的标签可以快速清空文本框的内容。</p>
-						</small>
 					</div>
 					<div class="modal-footer">
 						<table style="width:100%">
@@ -183,51 +171,91 @@
 					<div class="btn-group-03" id="filters" style="display:none">
 						<!-- <h5>滤镜:</h5> -->
 						<div class="btn-group-04">
-							<button class="notFx active" id="fx-orig" onclick="reset()">原图</button>
-							<button id="fx0" value="blackAndWhite">平均灰阶</button>
-							<button id="fx10" value="blackAndWhite2">自然灰阶</button>
-							<button id="fx20" value="blackAndWhite3">原色灰阶</button>
-							<button id="fx1" value="sepia">怀旧</button>
-							<button id="fx2" value="negative">反色</button>
-							<button id="fx3" value="vintage">复古</button>
-							<button id="fx4" value="crossProcess">交叉冲印</button>
-							<button id="fx9" value="noise">噪点</button>
-							<button id="fx5" value="brightness">亮度</button>
-							<button id="fx6" value="saturation">饱和度</button>
-							<button id="fx7" value="contrast">对比度</button>
-							<button id="fx8" value="hue">色相</button>
-							<button id="fx11" value="crayon">蜡笔</button>
-							<button id="fx12" value="cartoon">卡通</button>
-							<button id="fx13" value="vignette">晕影</button>
-							<button id="fx14" value="aberration">色差</button>
-							<button id="fx15" value="relief">浮雕</button>
-							<button id="fx16" value="midBright">中亮度</button>
-							<button id="fx17" value="maxSaturate">过饱和</button>
-							<button id="fx18" value="opaque">不透明</button>
-							<button id="fx19" value="whiteToAlpha">白色到透明</button>
-							<button id="fx21" value="india">印度国旗</button>
-							<button id="fx22" value="threshold">黑白</button>
-							<button id="fx23" value="invertBright">亮度反转</button>
-							<button id="fx24" value="invertSaturate">饱和度反转</button>
-							<button id="fx25" value="blur">模糊</button>
-							<button id="fx26" value="carving">雕刻</button>
-							<button id="fx27" value="mirror">镜像</button>
-							<button id="fx28" value="reverse">翻转</button>
-							<button id="fx29" value="thermography">热成像</button>
-							<button id="fx30" value="backThermography">热成像还原</button>
-							<button id="fx31" value="Xray">X光片</button>
-							<button id="fx32" value="posterize">色调分离</button>
-							<button id="fx33" value="primaryColor">三原色三间色</button>
-							<button class="notFx btn btn-outline-warning mb-1" id="myfilter" data-toggle="modal" data-target="#custom-filter-modal"><i class="ms-Icon ms-Icon--CustomizeToolbar"></i>自定义滤镜</button><!-- onclick="myFilter()" -->
-							<button class="notFx btn btn-outline-warning mb-1" onclick="document.getElementById('second').click()"><i class="ms-Icon ms-Icon--PasswordField"></i>水印</button>
+							<button class="notFx active" id="fx-orig" onclick="reset(undefined, true)">原图</button>
+							<button id="fx0"  data-amount="255" value="blackAndWhite">平均灰阶</button>
+							<button id="fx10" data-amount="255" value="blackAndWhite2">自然灰阶</button>
+							<button id="fx20" data-amount="255" value="blackAndWhite3">原色灰阶</button>
+							<button id="fx1"  data-amount="255" value="sepia">怀旧</button>
+							<button id="fx2"  data-amount="0" value="negative">反色</button>
+							<button id="fx3"  data-amount="0" value="vintage">复古</button>
+							<button id="fx4"  data-amount="0" value="crossProcess">交叉冲印</button>
+							<button id="fx9"  data-amount="0" value="noise">噪点</button>
+							<button id="fx5"  data-amount="100" value="brightness">亮度</button>
+							<button id="fx6"  data-amount="100" value="saturation">饱和度</button>
+							<button id="fx7"  data-amount="100" value="contrast">对比度</button>
+							<button id="fx8"  data-amount="100" value="hue">色相</button>
+							<button id="fx11" data-amount="0" value="crayon">蜡笔</button>
+							<button id="fx12" data-amount="" value="cartoon">卡通</button>
+							<button id="fx13" data-amount="1" value="vignette">晕影</button>
+							<button id="fx14" data-amount="0" value="aberration">色差</button>
+							<button id="fx15" data-amount="0" value="relief">浮雕</button>
+							<button id="fx16" data-amount="0" value="midBright">中亮度</button>
+							<button id="fx17" data-amount="255" value="maxSaturate">过饱和</button>
+							<button id="fx18" data-amount="255" value="opaque">不透明</button>
+							<button id="fx19" data-amount="0" value="whiteToAlpha">白色到透明</button>
+							<button id="fx21" data-amount="255" value="india">印度国旗</button>
+							<button id="fx22" data-amount="0" value="threshold">黑白</button>
+							<button id="fx23" data-amount="0" value="invertBright">亮度反转</button>
+							<button id="fx24" data-amount="" value="invertSaturate">饱和度反转</button>
+							<button id="fx25" data-amount="" value="blur">模糊</button>
+							<button id="fx26" data-amount="" value="carving">雕刻</button>
+							<button id="fx27" data-amount="0" value="mirror">镜像</button>
+							<button id="fx28" data-amount="0" value="reverse">翻转</button>
+							<button id="fx29" data-amount="0" value="thermography">热成像</button>
+							<button id="fx30" data-amount="0" value="backThermography">热成像还原</button>
+							<button id="fx31" data-amount="0" value="Xray">X光片</button>
+							<button id="fx32" data-amount="4" value="posterize">色调分离</button>
+							<button id="fx33" data-amount="" value="primaryColor">三原色三间色</button>
+							<button class="notFx btn btn-outline-warning mb-1" value="custom" id="myfilter" data-toggle="modal" data-target="#custom-filter-modal"><i class="ms-Icon ms-Icon--Add"></i>自定义滤镜</button><!-- onclick="myFilter()" -->
+							<button class="notFx btn btn-outline-warning mb-1" value="watermark" onclick="document.getElementById('second').click()"><i class="ms-Icon ms-Icon--Font"></i>水印</button>
 						</div>
 						<div class="form-row mb-3 slider-part">
 							<div class="form-group col-9 group-slider">
-								<div class="btn-group-toggle" data-toggle="buttons" style="margin-right: .5rem">
-									<label class="btn btn-outline-primary btn-sm" for="overlay" style="border-radius: 100px;" title="叠加滤镜" data-toggle="tooltip" data-trigger="hover">
-										<input type="checkbox" autocomplete="off" id="overlay" />
-										<i class="ms-Icon ms-Icon--BuildQueueNew" aria-hidden="true"></i>
-									</label>
+								<div class="dropdown" title="滤镜图层" data-toggle="tooltip" data-placement="right" data-trigger="hover">
+									<button class="btn btn-primary btn-sm round-button" type="button" id="layer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="ms-Icon ms-Icon--BuildQueue" aria-hidden="true"></i>
+									</button>
+									<div class="dropdown-menu">
+										<form class="px-4 py-1 brace-element">
+											<div class="custom-control custom-switch">
+												<input type="checkbox" class="custom-control-input" autocomplete="off" id="overlay">
+												<label class="custom-control-label" for="overlay">叠加滤镜</label>
+											</div>
+										</form>
+										<div class="dropdown-divider" id="auto-hidden-divider" style="display:none"></div>
+										<template id="layer-item">
+											<span class="dropdown-item">
+												<div class="layer-name"></div>
+												<div class="layer-attr"></div>
+												<div class="close layer-close">&times;</div>
+											</span>
+										</template>
+										<form id="fx-layer-list"></form>
+									</div>
+								</div>
+								<div class="dropdown" title="通道" data-toggle="tooltip" data-placement="right" data-trigger="hover" style="margin-right: .5rem">
+									<button class="btn btn-primary btn-sm round-button" type="button" id="channel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="ms-Icon ms-Icon--BarChartHorizontal" aria-hidden="true"></i>
+									</button>
+									<div class="dropdown-menu" id="channel-dropdown-menu">
+										<form>
+											<h6 class="dropdown-header">RGB 通道</h6>
+											<span class="dropdown-item" checked id="channel-r">Ｒ（红色）</span>
+											<span class="dropdown-item" checked id="channel-g">Ｇ（绿色）</span>
+											<span class="dropdown-item" checked id="channel-b">Ｂ（蓝色）</span>
+										</form>
+										<div class="dropdown-divider"></div>
+										<form>
+											<h6 class="dropdown-header">HSL 通道（不一定对所有滤镜有效）</h6>
+											<span class="dropdown-item" checked id="channel-h">Ｈ（色相）</span>
+											<span class="dropdown-item" checked id="channel-s">Ｓ（饱和度）</span>
+											<span class="dropdown-item" checked id="channel-l">Ｌ（亮度）</span>
+										</form>
+										<div class="dropdown-divider"></div>
+										<form>
+											<span class="dropdown-item" checked id="channel-a">Ａ（不透明度）</span>
+										</form>
+									</div>
 								</div>
 								<input type="range" class="custom-range" name="points" min="-255" max="255" step="1" id="slider" />
 							</div>
@@ -247,296 +275,6 @@
 			</div>
 		</div>
 	</body>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$('[data-toggle="tooltip"]').tooltip();
-		});
-
-		var realTimeSlide, way = 0,
-			filterId = -1, customHSLModule = false,
-			enableThumb = true;
-
-		function showWatermark(imgElem) {
-			//watermark parameters	(imageElement, amount, startX, startY, width, height, callback)
-			imgObj.watermark(imgElem, 2, 0, 0, imgObj.imageData.width, imgObj.imageData.height, function() {
-				imgObj.loadImageToCanvas();
-			});
-		}
-		
-		for(let i of $(".btn-group-04 button").not(".btn").addClass("btn btn-outline-success mb-1")) {
-			let text = i.innerText;
-			i.innerHTML = `<canvas width="90" height="90"></canvas><span>${text}</span>`;
-		}
-
-		//custom filter (india flag)
-		function myFilter() {
-			$(".form-control").removeClass("is-invalid");
-			function v(id){
-				return $("#val"+id.toUpperCase()).val();
-			}
-			{	//验证数据合法性。下面这个示例的颜色就是Windows经典主题的默认灰色。
-				let r=212,g=208,b=200,a=255,h=27.625,s=30.855,l=205.785;
-				function legal(n){
-					return ((typeof n === "number") && (isFinite(n)))
-				}
-				function t(n){
-					return (!legal(eval(v(n))));
-				}
-				const st="RGBHSLA";
-				for(let i of st){
-					if($("#val"+i).val()==='') $("#val"+i).val(i);
-					$("#val"+i).val($("#val"+i).val().toLowerCase().replace(/math/gi,"Math").replace(/pi/gi,"PI").replace(/Math\.e/gi,"Math.E"))
-				}
-				try {
-					let d=(customHSLModule?"HSLA":"RGBA");
-					var j;
-					for(j of d)
-						if(t(j)) throw j;
-				} catch(e) {
-					console.error(e+"\n"+j+" 表达式错误！");
-					$("#val"+j).addClass("is-invalid");
-					return j;
-				}
-			}
-			{	//由于eval函数太垃圾，试图通过插入函数的方法解决
-				let d=(customHSLModule?"HSLA":"RGBA"),
-					scriptTag='<script id="tempCustomFunction">';
-				for(let i of d)
-					scriptTag += `
-					function temp${i}(list) {
-						var r,g,b,h,s,l,a;
-						[r,g,b,h,s,l,a]=list;
-						return (${v(i)});
-					}
-					`;
-				scriptTag += "</script\>"; //script 关标签最好加一个转义符号，否则可能会被 HTML 检测到，把现在目前的整个 script 标签给关了。
-				$("body").append(scriptTag);
-			}
-			if(!($("#overlay").prop("checked")))
-				reset();
-				filter();
-				imgObj.loadImageToCanvas();
-			function filter() {
-				var height = imgObj.imageData.height,
-					width = imgObj.imageData.width;
-				for (var i = 0; i < width; i++) {
-					for (var j = 0; j < height; j++) {
-						var pixel = imgObj.getColorAt(i, j),
-							pixelhsl=RGB2HSL(pixel.red,pixel.green,pixel.blue);
-							var r=pixel.red,
-								g=pixel.green,
-								b=pixel.blue,
-								a=pixel.alpha,
-								h=imgObj.map(pixelhsl.H,0,360,0,255),
-								s=imgObj.map(pixelhsl.S,0,1,0,255),
-								l=imgObj.map(pixelhsl.L,0,1,0,255),
-								c=[r,g,b,h,s,l,a];
-						var newR,newG,newB,newA;
-						if(!customHSLModule){
-							newR=tempR(c);
-							newG=tempG(c);
-							newB=tempB(c);
-						} else {
-							var newH=imgObj.map(tempH(c),0,255,0,360),
-								newS=imgObj.map(tempS(c),0,255,0,1),
-								newL=imgObj.map(tempL(c),0,255,0,1),
-								newC=HSL2RGB(newH,newS,newL);
-							newR=newC.R;
-							newG=newC.G;
-							newB=newC.B;
-						}
-						newA=tempA(c);
-						pixel.red = newR;
-						pixel.green = newG;
-						pixel.blue = newB;
-						pixel.alpha = newA;
-						imgObj.setColorAt(i, j, pixel);
-					}
-				}
-				$("#tempCustomFunction").remove();
-			}
-			$("#custom-filter-modal").modal('hide');
-			return false;
-		}
-
-		var imgObj = null; //global Chobi object
-		function loadImage(elem) {
-			//you should probably check if file is image or not before passing it
-			imgObj = new Chobi(elem);
-			imgObj.ready(function() {
-				this.canvas = $("#original")[0];
-				this.loadImageToCanvas();
-				this.canvas = $("#canvas")[0];
-				this.loadImageToCanvas();
-				
-				if(enableThumb) {	//缩略图部分
-					let orig=$("#fx-orig canvas")[0]
-					this.thumbImageData(orig,orig.width,orig.height);
-					imgThumb = new Chobi(orig);
-					imgThumb.ready(function(orig){
-						let fx=$(".btn-group-04 canvas");
-						for(let i=1;i<fx.length;i++){
-							let filterName=fx[i].parentNode.value;
-							this.canvas=fx[i];
-							eval("imgThumb." + filterName + "()");
-							this.loadImageToCanvas();
-							this.changeImageData(orig);
-						}
-					});
-					imgThumb.onload(orig);
-					{	//主色调部分
-						var colors = RGBaster.colors(orig, {
-							paletteSize: 1,
-							success: function(colors) {
-								console.log("Dominant color:", colors.dominant);
-								$("#canvas, #original").css({
-									"border-color": colors.dominant,
-									"background-color": colors.dominant
-								});
-							}
-						});
-					}
-					delete imgThumb;
-				}
-			});
-			
-				//show filters to users
-				$(".btn-group-04 button").removeClass("active")
-				$("#fx-orig").addClass("active");
-				$("#start-info").hide();
-				$("#filters").show();
-				gridChange();
-		}
-		
-		function new_eval(str) {
-		    var fn = Function;
-		    return new fn('return ' + str)();
-		}
-
-		function testMode() {
-			if (testpic === undefined) return;
-			way = 2;
-			loadImage(testpic);
-		}
-
-		testpic = "test.jpg";
-		// testMode();
-
-		function downloadImage() {
-			if (imgObj == null) {
-				$("#error").fadeIn();
-				setTimeout(function() {
-					$("#error").fadeOut();
-				}, 4000);
-				return;
-			}
-			imgObj.download(new Date().format("yyyyMMddhhmmss"), "png");
-		}
-		
-		//filter chaining is also possible, like imgObj.brightness(-5).sepia().negative();
-		$(".btn-group-04 button").not(".notFx").click(function() {
-			val = $(this).val();
-			filter(undefined, val);
-		});
-		
-		$(".btn-group-04 button").click(function(){
-			$(".btn-group-04 button").removeClass("active")
-			$(this).addClass("active");
-		});
-
-		function filter(id, value) { //id的方法不用了
-			if (value === undefined) return null;
-			if (imgObj == null) {
-				alert("选择张照片先!");
-				return null;
-			}
-			var slider = document.getElementById("slider").value,
-				overlay = document.getElementById("overlay").checked;
-			if (!overlay) reset();
-				filterId = value;
-				eval("imgObj." + value + "(" + slider + ")");
-				imgObj.loadImageToCanvas();
-		}
-
-		function reset() {
-			filterId = "reset";
-			imgObj.changeImageData($("#original")[0]).loadImageToCanvas();
-		}
-		$("#slider").mousedown(function() {
-			realTimeSlide = setInterval(function() {
-				$("#slider-num").val($("#slider").val());
-			}, 0.01);
-		});
-		$("#slider").mouseup(function() {
-			clearInterval(realTimeSlide);
-			if (filterId != "reset") filter(undefined, filterId);
-		});
-		$("#slider").dblclick(function() {
-			$(this).val(0).mousedown().mouseup();
-			$("#slider-num").val(0);
-		});
-		$("#slider-num").on('input propertychange', function() {
-			if ($(this).val() == "") return;
-			var v = parseInt($(this).val());
-			if (v > 255) v = 255;
-			if (v < -255) v = -255;
-			$(this).val(v);
-			$("#slider").val(v).mouseup();
-		});
-		$("#modal-ok-button").click(function() {
-			way = 1;
-			loadImage($("#path").val());
-		});
-
-		Date.prototype.format = function(format) {
-			var o = {
-				"M+": this.getMonth() + 1, //month
-				"d+": this.getDate(), //day
-				"h+": this.getHours(), //hour
-				"m+": this.getMinutes(), //minute
-				"s+": this.getSeconds(), //second
-				"q+": Math.floor((this.getMonth() + 3) / 3), //quarter
-				"S": this.getMilliseconds() //millisecond
-			}
-			if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
-				(this.getFullYear() + "").substr(4 - RegExp.$1.length));
-			for (var k in o)
-				if (new RegExp("(" + k + ")").test(format))
-					format = format.replace(RegExp.$1,
-						RegExp.$1.length == 1 ? o[k] :
-						("00" + o[k]).substr(("" + o[k]).length));
-			return format;
-		}
-		
-		$("[name='color-module']").click(function(){
-			if(this.id=="rgb-module") {
-				$("#valR,#valG,#valB").removeAttr("disabled");
-				$("#valH,#valS,#valL").attr("disabled","disabled");
-				customHSLModule=false;
-			} else {
-				$("#valR,#valG,#valB").attr("disabled","disabled");
-				$("#valH,#valS,#valL").removeAttr("disabled");
-				customHSLModule=true;
-			}
-		});
-		$(".input-group-prepend label").dblclick(function(){
-			$('#'+this.htmlFor).val("");
-		});
-		
-		$.fn.rmcss = function() {
-			return this.removeAttr("style");
-		}
-		window.onload = window.onresize = gridChange;
-		function gridChange() { //grid系统
-			if($("#canvas-part")[0].clientWidth<$("#canvas")[0].clientWidth)
-				$("#canvas,#original").css("transform",`scale(${$("#canvas-part")[0].clientWidth/$("#canvas")[0].clientWidth})`)
-			else
-				$("#canvas,#original").css("transform","scale(1)");
-		}
-		document.onkeydown = function(e) {
-			if (window.event.keyCode == 13) {
-				if($("#path").is(":focus")) $("#modal-ok-button").click();
-			}
-		}
-	</script>
+	<script src="index.js"></script>
+	<script id="custom-filter-function"></script>
 </html>

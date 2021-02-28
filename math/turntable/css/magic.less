@@ -1,0 +1,190 @@
+@card-width: 75px;
+@card-height: 106px;
+@card-margin-x: 16px;
+@card-margin-y: 2px;
+@single-transition-duration: 400ms;
+
+@lg: (min-width: 992px);
+
+:root {
+	/* 都已经用 less 了还要写 css 的原生变量，没办法，需要和 js 进行共享数据，暂且只能这样了 */
+	--card-width: @card-width;
+	--card-height: @card-height;
+	--card-margin-x: @card-margin-x;
+	--card-margin-y: @card-margin-y;
+	--single-transition-duration: @single-transition-duration;
+}
+
+html,
+body {
+	overflow: hidden;
+}
+
+.card-face,
+.card-back {
+	position: absolute;
+	transform-style: preserve-3d;
+}
+
+.poker-card {
+	width: @card-width;
+	height: @card-height;
+	transform-origin: center center;
+	/* animation: rotate-poker 2s infinite linear; */
+	transform-style: preserve-3d;
+	transform: rotateY(180deg);
+	transition: all @single-transition-duration cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
+	margin: @card-margin-y @card-margin-x @card-margin-y @card-margin-x;
+	position: absolute;
+	&.uncover {
+		transform: rotateY(0deg);
+	}
+}
+
+.card-back {
+	transform: rotateY(180deg) translateZ(1px);
+}
+
+.keyframes (@name, @frames) {
+	@-webkit-keyframes @name { @frames(); }
+	@-moz-keyframes @name { @frames(); }
+	@-ms-keyframes @name { @frames(); }
+	@-o-keyframes @name { @frames(); }
+	@keyframes @name { @frames(); }
+}
+
+.keyframes (rotate-poker, {
+	0% {
+		transform: rotateY(0deg) ;
+	}
+	100% {
+		transform: rotateY(360deg) ;}
+	}
+);
+
+.card-table,
+.card-row {
+	/* position: absolute; */
+	/* display: flex; */
+	/* justify-content: center; */
+	/* align-items: center; */
+	/* width: calc(var(--card-width) * 3 + var(--card-margin-x) * 6); */
+	width: @card-width * 3 + @card-margin-x * 8;
+}
+
+* {
+	flex-shrink: 0;
+}
+
+.card-row {
+	flex-direction: row;
+	height: @card-height + @card-margin-y * 2;
+}
+
+.card-table {
+	/* flex-direction: column; */
+	height: @card-height * 7 + @card-margin-y * 14;
+	/* justify-content: center;
+	align-items: center; */
+	transform-origin: center top;
+	transform: scale(1);
+	transition: all 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.poker-card-column (@column, @len) when (@column <= @len) { //@column <= 3 && @column ∈ N*
+	@nth: mod(@column, 3);
+	.poker-card {
+		&.auto:nth-of-type(3n + @{nth}),
+		&.column-@{column} {
+			left: @card-width * (@column - 1) + @card-margin-x * (2 * @column - 1);
+		}
+	}
+	.poker-card-column (@column + 1, @len);
+}
+
+.poker-card-row (@row, @len) when (@row <= @len) { //@row <= 7 && @row ∈ N*
+	@nth: 3 * @row;
+	@nth-1: @nth - 1;
+	@nth-2: @nth - 2;
+	.poker-card {
+		&.auto:nth-of-type(@{nth-2}),
+		&.auto:nth-of-type(@{nth-1}),
+		&.auto:nth-of-type(@{nth}),
+		&.row-@{row} {
+			top: @card-height * (@row - 1) + @card-margin-y * (2 * @row - 1);
+		}
+	}
+	.poker-card-row (@row + 1, @len);
+}
+
+.poker-card-column(1, 3);
+.poker-card-row(1, 7);
+
+.avoid-click {
+	pointer-events: none;
+}
+
+#your-poker {
+	font-weight: normal;
+}
+
+#answer-card {
+	position: fixed;
+	/* border: 1px solid purple;
+	background: #f008; */
+	pointer-events: none;
+	width: 227px;
+	height: 301px;
+	left: 63px;
+	top: 228px;
+}
+
+.container {
+	width: 100vw;
+	height: 70vh;
+	max-width: unset !important;
+	padding: 0;
+	margin: 0;
+	@media @lg {
+		width: 60vw;
+		height: 100vh;
+	}
+}
+
+.info-text {
+	text-align: center;
+	margin-bottom: 1rem;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	@media @lg {
+		flex-direction: row;
+	}
+}
+
+.viewport {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+}
+
+.control-part {
+	width: 100vw;
+	height: 30vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	@media @lg {
+		width: 40vw;
+		height: 100vh;
+	}
+}
+
+/* .control-part .container-fluid *:not(#step0):not(#step0 *) {
+	display: none;
+} */

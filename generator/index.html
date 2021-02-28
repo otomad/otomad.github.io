@@ -1,241 +1,261 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<title>Option</title>
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" type="text/css" href="lowest.css" />
-		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-		<link id="css" rel="stylesheet" data-theme="bootstrap" crossorigin="anonymous">
-		<!-- <link rel="stylesheet" id="fa"> -->
-		<link rel="icon" href="favicon.ico" type="image/x-icon" />
-		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-		<style>body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
-			
-			html, body {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-				background: rgb(247, 247, 247);
-            }
 
-            div, iframe {
-                margin: 0;
-                padding: 0;
-                border: 0;
-            }
+<head>
+	<meta charset="utf-8" />
+	<title>Option</title>
+	<meta name="viewport"
+		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="lowest.css" />
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" rel="stylesheet" data-theme="bootstrap" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" id="fa"> -->
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	<style>
+		body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6 {transition: all 250ms ease-in-out !important;}
 
-            .main-container {
-                width: 100%;
-                height: 100%;
-                background: rgb(247, 247, 247);	/* #222 */
-            }
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+			height: 100%;
+			background: rgb(247, 247, 247);
+		}
 
-            .toolbar {
-                background: #aaa;
-				opacity: 0;
-				transition: opacity 250ms ease-in-out;
-            }
+		div,
+		iframe {
+			margin: 0;
+			padding: 0;
+			border: 0;
+		}
 
-            .iframe-container {
-                position: absolute;
-                top: 59px;
-                bottom: 0;
-                width: 100%;
-                background: #ebebeb;
-                overflow-y: hidden;
-            }
+		.main-container {
+			width: 100%;
+			height: 100%;
+			background: rgb(247, 247, 247);
+			/* #222 */
+		}
 
-            .iframe-container iframe {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-            }
-			
-			.black-mask {
-				position: fixed;
-				width: 100%;
-				height: 100%;
-				background-color: black;
-				left: 0;
-				opacity: 0;
-				transition: opacity 250ms ease-in-out;
-			}
-			.navbar {
-				padding: 8.8125px 1rem;
-			}
-			.nav-final-link {
-				/* color: rgba(255,255,255,0.6); */
-				color: inherit;
-				opacity: 0.6;
-				display: inline-block;
-				padding-top: 0.5rem;
-				padding-bottom: 0.5rem;
-			}
-			.nav-final-link:hover {
-				text-decoration: none;
-				color: inherit;
-				opacity: 1;
-			}
-			.nav-link {
-				cursor: pointer;
-			}
+		.toolbar {
+			background: #aaa;
+			opacity: 0;
+			transition: opacity 250ms ease-in-out;
+		}
+
+		.iframe-container {
+			position: absolute;
+			top: 59px;
+			bottom: 0;
+			width: 100%;
+			background: #ebebeb;
+			overflow-y: hidden;
+		}
+
+		.iframe-container iframe {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+		}
+
+		.black-mask {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			background-color: black;
+			left: 0;
+			opacity: 0;
+			transition: opacity 250ms ease-in-out;
+		}
+
+		.navbar {
+			padding: 8.8125px 1rem;
+		}
+
+		.nav-final-link {
+			/* color: rgba(255,255,255,0.6); */
+			color: inherit;
+			opacity: 0.6;
+			display: inline-block;
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
+		}
+
+		.nav-final-link:hover {
+			text-decoration: none;
+			color: inherit;
+			opacity: 1;
+		}
+
+		.nav-link {
+			cursor: pointer;
+		}
+
+		#test {
+			display: unset;
+		}
+
+		@media (min-width: 992px) {
 			#test {
-				display: unset;
+				display: none;
 			}
-			@media (min-width: 992px) {
-				#test {
-					display: none;
-				}
-			}
-        </style>
-	</head>
+		}
+	</style>
+</head>
 
-	<body onclick="">
-		<div class="iframe-container">
-			<iframe src="../cssc/taichi.html" id="iframe" frameborder="0">Your browser is kaput!</iframe>
+<body onclick="">
+	<div class="iframe-container">
+		<iframe src="../cssc/taichi.html" id="iframe" frameborder="0">Your browser is kaput!</iframe>
+	</div>
+	<div class="black-mask" style="display:none"></div>
+	<div class="main-container">
+		<!-- <p class="sr-only"><br><br></p> -->
+		<div class="toolbar">
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<a class="navbar-brand" style="cursor:default;position:fixed;top:8.8125px"><img
+						src="../caption-logo.svg" width="30" height="30" alt="" loading="lazy"></a>
+				<!-- <div></div> -->
+				<span id="test"
+					style="font-weight:bold;white-space:nowrap;overflow:hidden;margin:9px 70px 9px 50px;user-select:none;">　</span>
+				<!-- <div></div> -->
+				<div id="holder" style="width:45px"></div>
+				<button class="navbar-toggler collapsed" type="button" data-toggle="collapse"
+					data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation" id="navbarToggler" style="position:fixed;right:16px;top:8.8125px">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="../option.html">主页<span class="sr-only">（当前）</span></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-nav="emoji/index.html">抽象话生成器</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-nav="pyfmt/index.html">拼音格式化</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-nav="rain/index.html">彩虹文字生成器</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-nav="various/index.html">各种各样生成器</a>
+						</li>
+					</ul>
+					<span style="font-size:75%">
+						<a href="https://github.com/otomad/otomad.github.io" class="nav-final-link">
+							<svg class="octicon octicon-mark-github v-align-middle" height="16" viewBox="0 0 16 16"
+								version="1.1" width="16" aria-hidden="true"
+								style="margin-right:0.5em;position:relative;top:-2px;fill:var(--text-color)">
+								<path fill-rule="evenodd"
+									d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+								</path>
+							</svg><!-- <i class="fa fa-github" style="padding-right:0.5em"></i> -->GitHub
+						</a>
+					</span>
+				</div>
+			</nav>
 		</div>
-		<div class="black-mask" style="display:none"></div>
-		<div class="main-container">
-			<!-- <p class="sr-only"><br><br></p> -->
-			<div class="toolbar">
-				<nav class="navbar navbar-expand-lg navbar-light bg-light">
-					<a class="navbar-brand" style="cursor:default;position:fixed;top:8.8125px"><img src="../caption-logo.svg" width="30"
-						 height="30" alt="" loading="lazy"></a>
-					<!-- <div></div> -->
-					<span id="test" style="font-weight:bold;white-space:nowrap;overflow:hidden;margin:9px 70px 9px 50px;user-select:none;">　</span>
-					<!-- <div></div> -->
-					<div id="holder" style="width:45px"></div>
-					<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-					 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="navbarToggler"
-					 style="position:fixed;right:16px;top:8.8125px">
-						<span class="navbar-toggler-icon"></span>
-					</button>
-					<div class="collapse navbar-collapse" id="navbarSupportedContent">
-						<ul class="navbar-nav mr-auto">
-							<li class="nav-item">
-								<a class="nav-link" href="../option.html">主页<span class="sr-only">（当前）</span></a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" data-nav="emoji/index.html">抽象话生成器</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" data-nav="pyfmt/index.html">拼音格式化</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" data-nav="rain/index.html">彩虹文字生成器</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" data-nav="various/index.html">各种各样生成器</a>
-							</li>
-						</ul>
-						<span style="font-size:75%">
-							<a href="https://github.com/otomad/otomad.github.io" class="nav-final-link"><svg class="octicon octicon-mark-github v-align-middle"
-								 height="16" viewBox="0 0 16 16" version="1.1" width="16" aria-hidden="true" style="margin-right:0.5em;position:relative;top:-2px;fill:var(--text-color)">
-									<path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-								</svg><!-- <i class="fa fa-github" style="padding-right:0.5em"></i> -->GitHub</a>
-						</span>
-					</div>
-				</nav>
-			</div>
-		</div>
-		<script>
-			function nightDo() {
+	</div>
+	<script>
+		var NightTime = {
+			nightDo: () => {
 				$("html,body,.main-container").css("background", "rgb(48,48,48)");
 				$(".iframe-container").css("background", "#555");
-			}
-
-			function lightDo() {
+			},
+			lightDo: () => {
 				$("html,body,.main-container").css("background", "");
 				$(".iframe-container").css("background", "");
 			}
-			$(document).ready(function() {
-				$(".toolbar").css("opacity", "1");
-			});
-			var iframe = $("#iframe")[0];
-			var title;
-			$(function() {
-				if (iframe.attachEvent) { // for IE
-					iframe.attachEvent("onload", onloadDo());
-				} else {
-					iframe.onload = function() {
-						onloadDo()
-					};
-				}
-				do {
-					var arg = location.href;
-					var n = arg.indexOf("?");
-					if (n == -1) {
-						arg = "";
-						break;
-					}
-					arg = arg.slice(n + 1).replace(/&/g, "/");
-				} while (0);
-				document.getElementById("iframe").src = (n != -1 ? arg : "../cssc/taichi.html");
-			});
-
-			function onloadDo() {
-				$("#iframe").contents().find("nav").hide();
-				title = $("#iframe").contents().attr("title");
-				document.title = title + " - Option";
-				document.getElementById("test").innerHTML = title;
-				findActive(title);
+		}
+		$(document).ready(function () {
+			$(".toolbar").css("opacity", "1");
+		});
+		var iframe = $("#iframe")[0];
+		var title;
+		$(function () {
+			if (iframe.attachEvent) { // for IE
+				iframe.attachEvent("onload", onloadDo());
+			} else {
+				iframe.onload = function () {
+					onloadDo()
+				};
 			}
+			do {
+				var arg = location.href;
+				var n = arg.indexOf("?");
+				if (n == -1) {
+					arg = "";
+					break;
+				}
+				arg = arg.slice(n + 1).replace(/&/g, "/");
+			} while (0);
+			document.getElementById("iframe").src = (n != -1 ? arg : "../cssc/taichi.html");
+		});
 
-			function nav(path) {
-				document.getElementById("iframe").src = path;
-				// window.location.href = "?" + path.replace(/\//g,"&");
-				var state = "?" + path.replace(/\//g, "&");
-				window.history.pushState("", "", state);
-			}
-			var navbarToggler = document.querySelector(".navbar-toggler");
-			$(".navbar-nav li a").on("click", function() {
-				if (window.innerWidth < 992)
-					navbarToggler.click();
-				else {
-					$(".black-mask").css("display", "");
-					setTimeout(function() {
-						$(".black-mask").css("opacity", "0.5");
-					}, 100);
-					var iframe = $("#iframe")[0];
-					if (iframe.onload || iframe.attachEvent) {
-						$(".black-mask").css("opacity", "0");
-						setTimeout(function() {
-							$(".black-mask").css("display", "none");
-						}, 500);
-					}
-				}
-			});
-			$(".navbar-toggler").click(function() {
-				if ($(".navbar-toggler").hasClass("collapsed")) {
-					$(".black-mask").css("display", "");
-					setTimeout(function() {
-						$(".black-mask").css("opacity", "0.5");
-					}, 100);
-				} else {
-					$(".black-mask").css("opacity", "0");
-					setTimeout(function() {
-						$(".black-mask").css("display", "none");
-					}, 250);
-				}
-			});
-			$(".black-mask").click(function() {
+		function onloadDo() {
+			$("#iframe").contents().find("nav").hide();
+			title = $("#iframe").contents().attr("title");
+			document.title = title + " - Option";
+			document.getElementById("test").innerHTML = title;
+			findActive(title);
+		}
+
+		function nav(path) {
+			document.getElementById("iframe").src = path;
+			// window.location.href = "?" + path.replace(/\//g,"&");
+			var state = "?" + path.replace(/\//g, "&");
+			window.history.pushState("", "", state);
+		}
+		var navbarToggler = document.querySelector(".navbar-toggler");
+		$(".navbar-nav li a").on("click", function () {
+			if (window.innerWidth < 992)
 				navbarToggler.click();
-			})
-
-			function findActive(name) {
-				$(".active").removeClass("active");
-				for (let i of document.getElementsByClassName("nav-link"))
-					if (i.innerText == name)
-						$(i).parent().addClass("active");
+			else {
+				$(".black-mask").css("display", "");
+				setTimeout(function () {
+					$(".black-mask").css("opacity", "0.5");
+				}, 100);
+				var iframe = $("#iframe")[0];
+				if (iframe.onload || iframe.attachEvent) {
+					$(".black-mask").css("opacity", "0");
+					setTimeout(function () {
+						$(".black-mask").css("display", "none");
+					}, 500);
+				}
 			}
-			$("[data-nav]").click(function() {
-				nav(this.dataset.nav);
-			});
-		</script>
-		<script src="/basis/NightTime.js"></script>
-	</body>
+		});
+		$(".navbar-toggler").click(function () {
+			if ($(".navbar-toggler").hasClass("collapsed")) {
+				$(".black-mask").css("display", "");
+				setTimeout(function () {
+					$(".black-mask").css("opacity", "0.5");
+				}, 100);
+			} else {
+				$(".black-mask").css("opacity", "0");
+				setTimeout(function () {
+					$(".black-mask").css("display", "none");
+				}, 250);
+			}
+		});
+		$(".black-mask").click(function () {
+			navbarToggler.click();
+		})
+
+		function findActive(name) {
+			$(".active").removeClass("active");
+			for (let i of document.getElementsByClassName("nav-link"))
+				if (i.innerText == name)
+					$(i).parent().addClass("active");
+		}
+		$("[data-nav]").click(function () {
+			nav(this.dataset.nav);
+		});
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
 </html>

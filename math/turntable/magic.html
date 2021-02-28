@@ -11,7 +11,9 @@
 		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
 		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
 		 crossorigin="anonymous" />
-		<link rel="stylesheet" href="css/magic.css" />
+		<link rel="stylesheet" href="css/magic.min.css" />
+		<!-- <link rel="stylesheet/less" type="text/css" href="css/magic.less" />
+		<script src="https://cdn.bootcss.com/less.js/3.10.3/less.min.js"></script> -->
 	</head>
 	<body>
 		<div class="container avoid-click">
@@ -86,7 +88,7 @@
 					random = Math.randBetween(0, 53);
 				} while (pokerList[random]);
 				pokerList[random] = 1;
-				console.log(pokerList.toString());
+				console.log(pokerList.join(''));
 				if (pokerList.toString() == new Array(54).fill(1).toString())
 					pokerList.fill(0);
 				const suit = ['spades', 'hearts', 'clubs', 'diamonds'],
@@ -150,7 +152,10 @@
 							$(`.column-${i}.row-${j}`).attr("value", k);
 							k++;
 						}
-					$(".poker-card").uncover(0);
+					sortCardDom();
+					setTimeout(() => {
+						$(".poker-card").uncover(0);
+					}, 10);
 					setTimeout(() => {
 						for (let l = 1; l <= 3; l++)
 							$(".column-" + l).moveCard(selectRow);
@@ -226,8 +231,8 @@
 			}
 
 			$("#close").click(() => {
-				window.location.href = "about:blank";
-				window.close();
+				top.location.href = "about:blank";
+				top.close();
 			});
 
 			function getCardColumn(card) {
@@ -263,6 +268,14 @@
 				if (pointArg == "JOKER")
 					result = (resultSuit % 2 == 0 ? "小王" : "大王");
 				return result;
+			}
+
+			function sortCardDom() {
+				var poker = $(".card-table>.poker-card[value]");
+				if (poker.length === 0) return false;
+				for (let i = 0; i < poker.length; i++)
+					$(".card-table").prepend(poker.filter(`[value=${i}]`));
+				return true;
 			}
 
 			var fadeSpeed = 250;

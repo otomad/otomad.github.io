@@ -1,0 +1,18 @@
+{{ruby|{{{1}}}|{{pyfmt|{{{2}}}}}}}<noinclude>
+
+本模板结合使用 {{tl|ruby}} 和 {{tl|pyfmt}} 两个模板，旨在更易于使用。
+
+==用法==
+{{tlc|rubypy|内容|拼音}}
+
+两个参数均必填。
+
+其中，拼音可以直接使用纯英文字母加数字表示声调。
+
+==示例==
+{{tlc|rubypy|创|chuang4}}
+
+效果：
+
+<span style="font-size:200%">{{rubypy|创|chuang4}}</span>
+</noinclude>

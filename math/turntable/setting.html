@@ -56,13 +56,15 @@
 			</div>
 		</div>
 		<script>
-			function nightDo(){
-				$(".switch").attr("data-on-color","primary");
-				$(".bootstrap-switch-info").removeClass("bootstrap-switch-info").addClass("bootstrap-switch-primary");
-			}
-			function lightDo(){
-				$(".switch").attr("data-on-color","info");
-				$(".bootstrap-switch-primary").removeClass("bootstrap-switch-primary").addClass("bootstrap-switch-info");
+			var NightTime = {
+				nightDo: () => {
+					$(".switch").attr("data-on-color","primary");
+					$(".bootstrap-switch-info").removeClass("bootstrap-switch-info").addClass("bootstrap-switch-primary");
+				},
+				lightDo: () => {
+					$(".switch").attr("data-on-color","info");
+					$(".bootstrap-switch-primary").removeClass("bootstrap-switch-primary").addClass("bootstrap-switch-info");
+				}
 			}
 			
 			var isReplace=getCookie("isReplace")=="true";
