@@ -5,8 +5,6 @@
  * 如果您的浏览器看到了这段内容，则说明您尚未开启服务器，请开启服务器后尝试。
  * 或者您可以尝试 JS 版页面。
  */
-	
-	include_once "pyfmt.php";
 ?>
 <!DOCTYPE html>
 <html lang="zh">
@@ -26,9 +24,15 @@
 			h1 {
 				margin: 20px 0 0;
 			}
+			[hidden] {
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
+		<div hidden>
+			<?php include_once "ajax.php"; ?>
+		</div>
 		<div class="container-fluid">
 			<h1>拼音格式化</h1>
 			<small class="text-info">PHP 版</small>
