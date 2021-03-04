@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script>var ver="1.15"</script> <!-- 直接在此处便捷修改版本号 -->
+		<meta charset="utf-8">
+		<meta name="Description" content="移动页面导航动画" />
+		<meta name="viewport" content="initial-scale=1, maximum-scale=3, minimum-scale=1, user-scalable=no">
+		<title>导航选项 ²¹⁷</title>
+		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+		<style>
+			html {
+				scroll-behavior: smooth;
+			}
+
+			code {
+				font-family: "Cascadia Code", Consolas, 微软雅黑, "Microsoft Yahei Mono", "Noto sans mono", monospace, sans-serif;
+			}
+
+			body {
+				background-color: #3c3c3c;
+				/* padding: 50px 0; */
+				display: flex;
+				font-family: 'Noto Sans', sans-serif;
+				text-align: center;
+				overflow: hidden;
+				/* 禁用页面滚动 */
+				justify-content: center;
+				padding-top: calc((100vh - 568px) / 2);
+			}
+
+			button {
+				display: inline-block;
+				outline: none;
+				cursor: pointer;
+				text-align: center;
+				text-decoration: none;
+				font: 14px/100% Arial, Helvetica, sans-serif;
+				padding: 5px 2px 4px;
+				text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				-webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+				-moz-box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+				box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+				color: #d9eef7;
+				border: solid 1px #0076a3;
+				background: #0095cd;
+				background: -webkit-gradient(linear, left top, left bottom, from(#767676), to(#525252));
+				background: -moz-linear-gradient(top, #00adee, #00678e);
+				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00adee', endColorstr='#00678e');
+			}
+
+			button:hover {
+				background: #007ead;
+				background: -webkit-gradient(linear, left top, left bottom, from(#525252), to(#767676));
+				background: -moz-linear-gradient(top, #00678e, #0095cc);
+				filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00678e', endColorstr='#0095cc');
+			}
+
+			.rabbit {
+				border-radius: 8px;
+				width: 150px;
+				display: block;
+				position: relative;
+				border: 2px solid rgb(61, 94, 126);
+				margin: 10px auto;
+				padding: 14px 16px;
+				font-size: 110%;
+				color: rgb(61, 94, 126);
+				transition: color 0.25s;
+				text-align: center;
+				text-decoration: none;
+				overflow: hidden;
+				font-weight: bold;
+			}
+
+			.rabbit:hover {
+				cursor: pointer;
+				color: #fff;
+			}
+
+			.rabbit:after {
+				content: '';
+				display: block;
+				position: absolute;
+				width: 100%;
+				height: 0%;
+				left: 50%;
+				top: 50%;
+				z-index: -1;
+				background: rgb(61, 94, 126);
+				/* original: #D24D57*/
+				transform: translateX(-50%) translateY(-50%) rotate(-25deg);
+				-webkit-transition: all 0.75s ease 0s;
+				-moz-transition: all 0.75s ease 0s;
+				-o-transition: all 0.75s ease 0s;
+				transition: all 0.75s ease 0s;
+			}
+
+			.rabbit:hover:after {
+				height: 260%;
+			}
+
+			.back {
+				font-size: 300%;
+				transition: all 0.25s ease;
+				color: rgb(34, 34, 34);
+			}
+
+			.back:hover {
+				cursor: pointer;
+				color: rgb(78, 78, 78);
+			}
+
+			.container {
+				background-color: #222222;
+				/* margin: 0 auto; */
+				width: 100%;
+				max-width: 320px;
+				min-height: 568px;
+				/* margin: 0 auto; */
+				border-radius: 8px;
+				/* position: relative; */
+				/* top: -40px; */
+				overflow: hidden;
+				-webkit-box-shadow: 0px 9px 13px 0px rgba(0, 0, 0, 0.3);
+				-moz-box-shadow: 0px 9px 13px 0px rgba(0, 0, 0, 0.3);
+				box-shadow: 0px 9px 13px 0px rgba(0, 0, 0, 0.3);
+				-webkit-transform: scale(1);
+			}
+
+			.menu-main {
+				position: absolute;
+				transform: translate(-80px, 0px);
+			}
+
+			.menu-console,
+			.menu-morefun {
+				position: absolute;
+				transform: translate(-30px, 0px);
+				opacity: 0;
+			}
+
+			.menu-trigger,
+			.close-trigger {
+				position: absolute;
+				top: 32px;
+				right: 20px;
+				display: block;
+				width: 42px;
+				height: 42px;
+				cursor: pointer;
+				z-index: 333;
+			}
+
+			.menu-trigger:hover .menu-trigger-bar:before,
+			.close-trigger:hover .menu-trigger-bar:before {
+				width: 100%;
+			}
+
+			.menu-trigger:hover .close-trigger-bar:before,
+			.close-trigger:hover .close-trigger-bar:before {
+				width: 100%;
+			}
+
+			.close-trigger {
+				z-index: 5;
+				top: 42px;
+			}
+
+			.menu-trigger-bar {
+				display: block;
+				width: 100%;
+				height: 4px;
+				background-color: white;
+				margin-bottom: 6px;
+				transform: rotate(-45deg);
+				position: relative;
+			}
+
+			.menu-trigger-bar:before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: block;
+				width: 0%;
+				height: 100%;
+				background-color: rgba(0, 0, 0, 0.2);
+				transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+			}
+
+			.menu-trigger-bar.top {
+				width: 50%;
+			}
+
+			.menu-trigger-bar.middle:before {
+				left: auto;
+				right: 0;
+			}
+
+			.menu-trigger-bar.bottom {
+				width: 50%;
+				margin-left: 50%;
+			}
+
+			.close-trigger-bar {
+				display: block;
+				width: 100%;
+				height: 4px;
+				background-color: #222222;
+				position: relative;
+			}
+
+			.close-trigger-bar:before {
+				content: "";
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: block;
+				width: 0%;
+				height: 100%;
+				background-color: rgba(255, 255, 255, 0.2);
+				transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+			}
+
+			.close-trigger-bar.left {
+				transform: translateX(100px) translateY(-100px) rotate(-45deg);
+			}
+
+			.close-trigger-bar.right {
+				transform: translateX(-100px) translateY(-100px) rotate(45deg);
+				top: -3px;
+			}
+
+			.time-box {
+				padding: 0em;
+				display: block;
+				height: 64px;
+				position: absolute;
+				bottom: 10%;
+				left: 50%;
+				margin-top: -52px;
+				transform: translate(-50%, -50%);
+				text-align: center;
+				z-index: 10;
+				color: #DDDDDD;
+				font-size: 125%;
+				z-index: 10;
+			}
+
+			.logo {
+				display: block;
+				width: 64px;
+				height: 64px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-top: -52px;
+				margin-left: -32px;
+				text-align: center;
+				z-index: 10;
+			}
+
+			.copy {
+				z-index: 10;
+			}
+
+			.logo span {
+				display: block;
+				text-align: center;
+				line-height: 62px;
+				font-size: 72px;
+				color: white;
+			}
+
+			.logo-title {
+				position: absolute;
+				top: 10px;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				color: #222222;
+				font-size: 18px;
+				line-height: 82x;
+			}
+
+			.logo-badge {
+				position: absolute;
+				display: block;
+				width: 24px;
+				height: 24px;
+				top: 6px;
+				right: -6px;
+				border-radius: 100%;
+				background-color: #6295ca;
+				font-size: 8px;
+				line-height: 2;
+				text-align: center;
+			}
+
+			.inner-container,
+			.menu-container {
+				position: absolute;
+				height: 100%;
+				width: 100%;
+				left: 0;
+				top: 0;
+			}
+
+			.inner-container {
+				z-index: 20;
+			}
+
+			.menu-container {
+				display: inherit;
+				align-items: center;
+				overflow: auto;
+				overflow-x: hidden;
+			}
+
+			::-webkit-scrollbar {
+				width: 0px;
+				background: none;
+			}
+
+			.menu {
+				display: block;
+				width: 100%;
+				padding: 0%;
+				position: absolute;
+				left: -30px;
+				top: 70px;
+			}
+
+			.menu li {
+				text-align: left;
+				display: block;
+				padding: 5px 0;
+			}
+
+			.menu a {
+				text-decoration: none;
+				color: #222222;
+				display: inline-block;
+				padding: 10px 0;
+				position: relative;
+				white-space: nowrap;
+			}
+
+			.menu button {
+				text-decoration: none;
+				color: white;
+				display: inline-block;
+				padding: 5px 20px;
+				position: relative;
+				font-size: 15px;
+			}
+
+			.menu a:hover:before {
+				opacity: 1;
+				transform: translateX(0px);
+			}
+
+			.menu a:before {
+				content: "";
+				display: block;
+				position: absolute;
+				left: 0;
+				bottom: 0;
+				width: 18px;
+				height: 4px;
+				opacity: 0;
+				background-color: #222222;
+				transform: translateX(100px);
+				transition: all 0.3s cubic-bezier(0.55, 0, 0.1, 1);
+			}
+
+			.menu-bg {
+				position: absolute;
+				display: block;
+				width: 200%;
+				left: -53%;
+				top: -25%;
+				height: 40%;
+				background-color: white;
+			}
+
+			.menu-bg.middle {
+				top: 29%;
+				left: -53%;
+				transform: rotate(-45deg) scaleY(0);
+			}
+
+			.menu-bg.top {
+				left: -34%;
+				top: 0;
+				transform: rotate(-45deg) translateY(-152%);
+			}
+
+			.menu-bg.bottom {
+				top: 105%;
+				transform: rotate(-45deg) translateY(25%);
+				left: -20%;
+			}
+
+			#links {
+				position: absolute;
+				bottom: 0px;
+				left: 0px;
+				width: 100%;
+				height: 50px;
+				font-size: 13px;
+				font-family: "segoe ui";
+				color: #fff;
+			}
+
+			#links a {
+				text-decoration: none;
+				font-size: 2.3em;
+				color: #fff;
+			}
+
+			#twitter {
+				position: absolute;
+				bottom: 15px;
+				right: 20px;
+			}
+
+			#pens {
+				position: absolute;
+				bottom: 15px;
+				left: 20px;
+			}
+
+			.fa {
+				margin-right: .5em;
+			}
+
+			.fa-angle-right {
+				margin-left: .15em;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://cdn.staticfile.org/jquery/2.1.4/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/TweenMax.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.2/TimelineMax.min.js"></script>
+		<div class="container">
+			<span class="menu-trigger" onclick="pagetop();">
+				<i class="menu-trigger-bar top fa-fw"></i>
+				<i class="menu-trigger-bar middle fa-fw"></i>
+				<i class="menu-trigger-bar bottom fa-fw"></i>
+			</span>
+			<span class="close-trigger">
+				<i class="close-trigger-bar left fa-fw"></i>
+				<i class="close-trigger-bar right fa-fw"></i>
+			</span>
+			<div class="outer-container">
+				<div class="copy" style="padding:1em;text-align:left;">
+					<code style="color:#DDDDDD;font-size: 80%;">&copy; 保留所有权利</code>
+				</div>
+				<span class="logo">
+					<span>
+						⬢
+						<i class="logo-title">选项</i>
+						<i class="logo-badge" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">217</i>
+					</span>
+				</span>
+				<div class="time-box">
+					<span id="show_time" style="font-size:200%;">20:00</span><span id="show_second" style="font-size:120%;">:00</span>
+					<div id="show_date" style="font-weight: lighter;">2020/08/04 一</div>
+				</div>
+			</div>
+			<div class="inner-container">
+				<i class="menu-bg top fa-fw"></i>
+				<i class="menu-bg middle fa-fw"></i>
+				<i class="menu-bg bottom fa-fw"></i>
+				<div class="menu-container" id="menu_top">
+					<ul class="menu">
+						<span class="menu-main" id="menu_main">
+							<li><a href="javascript:void(0);" onclick="yi(1);"><i class="fa fa-gears fa-fw"></i>控制台<i class="fa fa-angle-right fa-fw"></i></a></li>
+							<li><a href="javascript:void(0);" onclick="alert('本论坛始建于 2005 年。\n现已停止服务。')"><i class="fa fa-desktop fa-fw"></i>专业电脑维修</a></li>
+							<li><a href="https://exmail.qq.com/login"><i class="fa fa-envelope fa-fw"></i>在线发送邮件</a></li>
+							<li><a href="javascript:void(0);" onclick="alert('本项目已成为一纸空文。')"><i class="fa fa-copy fa-fw"></i>程序自然语言编辑器</a></li>
+							<li><a href="impress/lb/index.html"><i class="fa fa-volume-up fa-fw"></i>王沼泽语收音机</a></li>
+							<li><a href="javascript:void(0);" onclick="alert('该页面正在翻新中。')"><i class="fa fa-pied-piper fa-fw"></i>我眼中的清明</a></li>
+							<li><a href="https://kuriya.fandom.com/zh"><i class="fa fa-book fa-fw"></i>概念百科</a>
+								<!--<a href="htdocs/wiki/index.php">概念百科</a>-->
+								<!--<a href="https://kuriya.shoutwiki.com/">概念百科</a>-->
+							</li>
+							<li><a href="hotkid/tel/来电.html"><i class="fa fa-phone fa-fw"></i>乔碧萝来电</a></li>
+							<li><a href="hotkid/nod-to-the-rhythm/index.html"><i class="fa fa-photo fa-fw"></i>让你的照片动起来</a></li>
+							<li><a href="217/欢迎来到咱们217_jsp.htm" title="你很荣幸来到我们的主脚御姐系列专题！"><i class="fa fa-building fa-fw"></i>欢迎来到咱们 217</a></li>
+							<li><a href="hotkid/你打球像蔡徐坤.htm"><i class="fa fa-dribbble fa-fw"></i>你打篮球像蔡徐坤</a></li>
+							<li><a href="cssc/taichi.html"><i class="fa fa-eercast fa-fw"></i>太极图</a></li>
+							<li><a href="cssc/sunsystem.html"><i class="fa fa-sun-o fa-fw"></i>直达查看太阳系</a></li>
+							<li><a href="cssc/calc.html"><i class="fa fa-calculator fa-fw"></i>简易计算器</a></li>
+							<li><a href="impress/qunfang/index.html"><i class="fa fa-empire fa-fw"></i>独秀群芳 传承百年</a></li>
+							<li><a href="generator/index.html?emoji&index.html" title="生成时请注意温文儒雅。"><i class="fa fa-warning fa-fw"></i>抽象话</a></li>
+							<li><a href="generator/index.html?rain&index.html"><i class="fa fa-wifi fa-fw"></i>彩虹文字生成器</a></li>
+							<li><a href="generator/index.html?pyfmt&index.html"><i class="fa fa-dedent fa-fw"></i>拼音格式化</a></li>
+							<li><a href="math/index.html?sum"><i class="fa fa-sort-numeric-asc fa-fw"></i>数学工具</a></li>
+							<li><a href="math/chobi/index.html"><i class="fa fa-photo fa-fw"></i>照片滤镜 (Chobi)</a></li>
+							<li><a href="math/flickity/index.html"><i class="fa fa-photo fa-fw"></i>照片滤镜 (Flickty)</a></li>
+							<li><a href="cssc/lz/601.html"><i class="fa fa-heart fa-rotate-180 fa-fw"></i>随机扑克</a></li>
+							<li><a href="math/turntable/index.html?classic"><i class="fa fa-rotate-right fa-fw"></i>魔力大转盘</a></li>
+							<li><a href="javascript:void(0);" onclick="yi(2);"><i class="fa fa-ellipsis-h fa-fw"></i>更多趣味<i class="fa fa-angle-right fa-fw"></i></a></li>
+							<li><br /></li>
+						</span>
+						<span class="menu-console" id="menu_console" style="display:none">
+							<li><span class="back" onclick="yi(0);"><i class="fa fa-angle-left"></i></span></li>
+							<li><a href="javascript:void(0);" onclick="alert('登录失败！系统分析原因，很有可能是你的智商不够高而导致的。')">登录</a></li>
+							<li><a href="javascript:void(0);" onclick="alert('系统无法给长得丑的人开放注册。')">注册</a></li>
+							<li><a href="javascript:void(0);" onclick="alert('你知道吗？搜索可以给您搜索你的真正父亲是谁。\n但是，我才是你的真正父亲！')">搜索</a></li>
+							<li><a href="hotkid/嘻嘻 对不起咯.htm">支持</a></li>
+							<!--http://www.lanlingx.com/i/-->
+							<li><a href="index.html#">帮助</a></li>
+							<li><a href="javascript:void(0);" onclick="alert('版本号：'+ver)">关于</a></li>
+							<li><a href="">管理</a></li>
+							<li><a href="wwwroot/iisstart.htm">微软 IIS 详情</a></li>
+							<li><a href="../dashboard/index.html">Xampp 详情</a></li>
+							<li><a href="cssc/license.htm">许可条款</a></li>
+							<li><a href="cssc/widget/index.html">课程表部件</a></li>
+							<!--<li><button onclick="alert('王者是不需要穷光蛋打赏的。')">打赏</button></li>-->
+							<li><span onclick="alert('王者是不需要穷光蛋打赏的。')" class="rabbit">打赏</span></li>
+							<!--
+								<input type="submit" value="打赏" οnclick="display('lb')">
+								<div id="lb" style="display:none">	
+								<font>div属性：style ="display:none" 默认隐藏div</font>
+								</div>
+								-->
+						</span>
+						<span class="menu-morefun" id="menu_morefun" style="display:none">
+							<li><span class="back" onclick="yi(-1);"><i class="fa fa-angle-left"></i></span></li>
+							<li style="font-size: 80%;color:#3c3c3c;margin: 18px 0 12px;">友情链接</li>
+							<li><a href="https://taozhiyu.gitee.io/fake">假的 Windows 更新界面</a></li>
+							<li><a href="https://lab.magiconch.com/nbnhhsh/">能不能好好说话？</a></li>
+							<li><a href="https://suulnnka.github.io/BullshitGenerator/index.html">狗屁不通文章生成器</a></li>
+							<li><a href="https://codepen.io/kasei-dis/full/JjYjwza">营销号生成器</a></li>
+						</span>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!--<p style="color: #F8F8F8;font-weight: lighter;font-size: small;">
+			<a href="calc/calc.html" style="color: #F8F8F8;text-decoration:none;">计算器</a>
+		</p>-->
+		<script>
+			//$('body').scrollTop($('#scrollToThis').offset().top);
+
+			//PRE-EXECUTION
+			window.onload = function() {
+				getTime();
+			}
+
+			var hour = new Date().getHours(),
+				darkMode = false;
+			if (1 & (0 || hour < 7 || hour >= 19 || window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches))
+				darkMode = true;
+
+			//SHOW TIME
+			setInterval("getTime()", 1000);
+
+			function getTime() {
+				var date = new Date(); //创建对象
+				var h = date.getHours(); //时
+				var minute = date.getMinutes() //分
+				var s = date.getSeconds(); //秒
+				var y = date.getFullYear(); //获取年份
+				var m = date.getMonth() + 1; //获取月份  返回0-11
+				var d = date.getDate(); // 获取日
+				var w = date.getDay(); //获取星期几  返回0-6   (0=星期天) 
+				var ww = '日一二三四五六'.charAt(new Date().getDay()); //星期几
+				if (h < 10) h = "0" + h;
+				if (minute < 10) minute = "0" + minute;
+				if (s < 10) s = "0" + s;
+				if (m < 10) m = "0" + m;
+				if (d < 10) d = "0" + d;
+				document.getElementById("show_time").innerHTML = h + ":" + minute;
+				document.getElementById("show_date").innerHTML = y + "/" + m + "/" + d + " " + ww;
+				document.getElementById("show_second").innerHTML = ":" + s;
+			}
+
+			//OPEN TRIGGER
+			var openTrigger = $('.menu-trigger');
+			var openTriggerTop = openTrigger.find('.menu-trigger-bar.top');
+			var openTriggerMiddle = openTrigger.find('.menu-trigger-bar.middle');
+			var openTriggerBottom = openTrigger.find('.menu-trigger-bar.bottom');
+
+			//CLOSE TRIGGER
+			var closeTrigger = $('.close-trigger');
+			var closeTriggerLeft = closeTrigger.find('.close-trigger-bar.left');
+			var closeTriggerRight = closeTrigger.find('.close-trigger-bar.right');
+
+			//LOGO
+			var logo = $('.logo');
+			var copy = $('.copy');
+			var time_box = $('.time-box');
+
+			//MENU
+			var menuContainer = $('.menu-container');
+			var menu = $('.menu');
+			var menuTop = $('.menu-bg.top');
+			var menuMiddle = $('.menu-bg.middle');
+			var menuBottom = $('.menu-bg.bottom');
+
+			//TL
+			var tlOpen = new TimelineMax({
+				paused: true
+			});
+			var tlClose = new TimelineMax({
+				paused: true
+			});
+
+			//OPEN TIMELINE
+			tlOpen.add("preOpen")
+				.to(logo, 0.4, {
+					scale: 0.8,
+					opacity: 0,
+					ease: Power2.easeOut
+				}, "preOpen")
+				.to(copy, 0.4, {
+					scale: 0.8,
+					opacity: 0,
+					ease: Power2.easeOut
+				}, "preOpen")
+				.to(time_box, 0.4, {
+					scale: 0.8,
+					opacity: 0,
+					ease: Power2.easeOut
+				}, "preOpen")
+				.to(openTriggerTop, 0.4, {
+					x: "+80px",
+					y: "-80px",
+					delay: 0.1,
+					ease: Power4.easeIn,
+					onComplete: function() {
+						closeTrigger.css('z-index', '25');
+					}
+				}, "preOpen")
+				.to(openTriggerMiddle, 0.4, {
+					x: "+=80px",
+					y: "-=80px",
+					ease: Power4.easeIn,
+					onComplete: function() {
+						openTrigger.css('visibility', 'hidden');
+					}
+				}, "preOpen")
+				.to(openTriggerBottom, 0.4, {
+					x: "+=80px",
+					y: "-=80px",
+					delay: 0.2,
+					ease: Power4.easeIn
+				}, "preOpen")
+				.add("open", "-=0.4")
+				.to(menuTop, 0.8, {
+					y: "13%",
+					ease: Power4.easeInOut
+				}, "open")
+				.to(menuMiddle, 0.8, {
+					scaleY: 1,
+					ease: Power4.easeInOut
+				}, "open")
+				.to(menuBottom, 0.8, {
+					y: "-114%",
+					ease: Power4.easeInOut
+				}, "open")
+				.fromTo(menu, 0.6, {
+					y: 30,
+					opacity: 0,
+					visibility: 'hidden'
+				}, {
+					y: 0,
+					opacity: 1,
+					visibility: 'visible',
+					ease: Power4.easeOut
+				}, "-=0.2")
+				.add("preClose", "-=0.8")
+				.to(closeTriggerLeft, 0.8, {
+					x: "-=100px",
+					y: "+=100px",
+					ease: Power4.easeOut
+				}, "preClose")
+				.to(closeTriggerRight, 0.8, {
+					x: "+=100px",
+					y: "+=100px",
+					delay: 0.2,
+					ease: Power4.easeOut
+				}, "preClose");
+
+			//CLOSE TIMELINE
+			tlClose.add("close")
+				.to(menuTop, 0.2, {
+					backgroundColor: "#6295ca",
+					ease: Power4.easeInOut,
+					onComplete: function() {
+						logo.css('z-index', '26');
+						copy.css('z-index', '26');
+						time_box.css('z-index', '26');
+						closeTrigger.css('z-index', '5');
+						openTrigger.css('visibility', 'visible');
+					}
+				}, "close")
+				.to(menuMiddle, 0.2, {
+					backgroundColor: "#6295ca",
+					ease: Power4.easeInOut
+				}, "close")
+				.to(menuBottom, 0.2, {
+					backgroundColor: "#6295ca",
+					ease: Power4.easeInOut
+				}, "close")
+				.to(menu, 0.6, {
+					y: 20,
+					opacity: 0,
+					ease: Power4.easeOut,
+					onComplete: function() {
+						menu.css('visibility', 'hidden');
+					}
+				}, "close")
+				.to(logo, 0.8, {
+					scale: 1,
+					opacity: 1,
+					ease: Power4.easeInOut
+				}, "close", "+=0.2")
+				.to(copy, 0.8, {
+					scale: 1,
+					opacity: 1,
+					ease: Power4.easeInOut
+				}, "close", "+=0.2")
+				.to(time_box, 0.8, {
+					scale: 1,
+					opacity: 1,
+					ease: Power4.easeInOut
+				}, "close", "+=0.2")
+				.to(menuTop, 0.8, {
+					y: "-113%",
+					ease: Power4.easeInOut
+				}, "close", "+=0.2")
+				.to(menuMiddle, 0.8, {
+					scaleY: 0,
+					ease: Power4.easeInOut
+				}, "close", "+=0.2")
+				.to(menuBottom, 0.8, {
+					y: "23%",
+					ease: Power4.easeInOut,
+					onComplete: function() {
+						menuTop.css('background-color', '#ffffff');
+						menuMiddle.css('background-color', '#ffffff');
+						menuBottom.css('background-color', '#ffffff');
+						/* menu_main.css("display":"","opacity":"1","webkitTransform":"translate(-80px,0px) scale(1) translateZ(0px)");
+						menu_morefun.css("display":"none","opacity":"0","webkitTransform":"translate(-30px,0px) scale(1) translateZ(0px)");
+						menu_console.css("display":"none","opacity":"0","webkitTransform":"translate(-30px,0px) scale(1) translateZ(0px)"); */
+						menu_main.style.display = "";
+						menu_morefun.style.display = "none";
+						menu_console.style.display = "none";
+						menu_main.style.opacity = 1;
+						menu_console.style.opacity = 0;
+						menu_morefun.style.opacity = 0;
+						menu_main.style.webkitTransform = "translate(-80px,0px) scale(1) translateZ(0px)";
+						menu_console.style.webkitTransform = "translate(-30px,0px) scale(1) translateZ(0px)";
+						menu_morefun.style.webkitTransform = "translate(-30px,0px) scale(1) translateZ(0px)";
+						document.getElementById('menu_top').scrollTop = 0; //关闭后自动返回列表顶部
+					}
+				}, "close", "+=0.2")
+				.to(closeTriggerLeft, 0.2, {
+					x: "+=100px",
+					y: "-=100px",
+					ease: Power4.easeIn
+				}, "close")
+				.to(closeTriggerRight, 0.2, {
+					x: "-=100px",
+					y: "-=100px",
+					delay: 0.1,
+					ease: Power4.easeIn
+				}, "close")
+				.to(openTriggerTop, 1, {
+					x: "-=80px",
+					y: "+=80px",
+					delay: 0.2,
+					ease: Power4.easeOut
+				}, "close")
+				.to(openTriggerMiddle, 1, {
+					x: "-=80px",
+					y: "+=80px",
+					ease: Power4.easeOut
+				}, "close")
+				.to(openTriggerBottom, 1, {
+					x: "-=80px",
+					y: "+=80px",
+					delay: 0.1,
+					ease: Power4.easeOut
+				}, "close");
+
+			//EVENTS
+			openTrigger.on('click', function() {
+				if (tlOpen.progress() < 1) {
+					tlOpen.play();
+				} else {
+					tlOpen.restart();
+				}
+			});
+
+			closeTrigger.on('click', function() {
+				if (tlClose.progress() < 1) {
+					tlClose.play();
+				} else {
+					tlClose.restart();
+				}
+			});
+
+			//SHOW WITH ANIMATION
+			var bool, boola, sum1, sum2, ease1, ease2;
+			var menu_main = document.getElementById("menu_main");
+			var menu_console = document.getElementById("menu_console");
+			var menu_morefun = document.getElementById("menu_morefun");
+			/* var menu_main = $("#menu_main");
+			var menu_console = $("#menu_console");
+			var menu_morefun = $("#menu_morefun"); */
+			function yi(sum) {
+				bool = sum;
+				if (bool == -1) {
+					setTimeout("pagebottom()", 250);
+					bool = 0;
+				} else {
+					setTimeout("pagetop()", 250);
+				}
+				switch (bool) {
+					case 2:
+						menu_morefun.style.display = "";
+						menu_console.style.display = "none";
+					case 1:
+						if (bool == 1) {
+							menu_console.style.display = "";
+							menu_morefun.style.display = "none";
+						}
+						boola = 0;
+						sum1 = -130;
+						sum2 = -80;
+						ease1 = "in";
+						ease2 = "out";
+						yi_1();
+						setTimeout("yi_2()", 250);
+						setTimeout("yin_1()", 250);
+						break;
+					default:
+						boola = 1;
+						sum1 = -80;
+						sum2 = -30;
+						ease1 = "out";
+						ease2 = "in";
+						menu_main.style.display = "";
+						yi_2();
+						setTimeout("yi_1()", 250);
+						setTimeout("yin_2()", 250);
+						break;
+				}
+			}
+
+			function yi_1() {
+				menu_main.style.transition = "all 250ms ease-" + ease1;
+				menu_main.style.webkitTransform = "translate(" + sum1 + "px,0px) scale(1) translateZ(0px)";
+				menu_main.style.opacity = boola;
+			}
+
+			function yi_2() {
+				menu_console.style.transition = "all 250ms ease-" + ease2;
+				menu_console.style.webkitTransform = "translate(" + sum2 + "px,0px) scale(1) translateZ(0px)";
+				menu_console.style.opacity = bool;
+				menu_morefun.style.transition = "all 250ms ease-" + ease2;
+				menu_morefun.style.webkitTransform = "translate(" + sum2 + "px,0px) scale(1) translateZ(0px)";
+				menu_morefun.style.opacity = bool;
+			}
+
+			function yin_1() {
+				menu_main.style.display = "none";
+			}
+
+			function yin_2() {
+				menu_morefun.style.display = "none";
+				menu_console.style.display = "none";
+			}
+
+			function pagetop() {
+				document.getElementById('menu_top').scrollTop = 0;
+			}
+
+			function pagebottom() {
+				document.getElementById('menu_top').scrollTop = document.getElementById('menu_top').scrollHeight;
+			}
+
+			menu_main.onscroll = function(e) {
+				console.log(menu_main.scrollTop);
+			}
+
+			//show (legacy)
+			function kztxs() {
+				var uikzt = document.getElementById("uikztb");
+				if (uikzt.style.display == "none") {
+					uikzt.style.display = "";
+				} else {
+					uikzt.style.display = "none"
+				}
+			}
+
+			function display(id) {
+				var traget = document.getElementById(id);
+				if (traget.style.display == "none") {
+					traget.style.display = "";
+				} else {
+					traget.style.display = "none";
+				}
+			}
+		</script>
+	</body>
+</html>

@@ -1,62 +1,110 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>更多工具</title>
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
-		 crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
-		<style>
-		</style>
-	</head>
-	<body>
-		<br />
-		<div class="container-fluid">
-			<div class="list-group mb-3">
-			  <a target="_blank" href="https://zh.webqc.org/" class="list-group-item list-group-item-action list-group-item-primary">化学之窗<span class="text-secondary"> - 化学工具</span></a>
-			</div>
-			<div class="list-group mb-3">
-			  <a target="_blank" href="https://zh.numberempire.com/" class="list-group-item list-group-item-action list-group-item-primary">数字帝国<span class="text-secondary"> - 数学工具</span></a>
-			  <a target="_blank" href="https://zh.numberempire.com/derivativecalculator.php" class="list-group-item list-group-item-action">函数求导工具</a>
-			  <a target="_blank" href="https://zh.numberempire.com/integralcalculator.php" class="list-group-item list-group-item-action">不定积分计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/definiteintegralcalculator.php" class="list-group-item list-group-item-action">定积分计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/limitcalculator.php" class="list-group-item list-group-item-action">极限计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/seriescalculator.php" class="list-group-item list-group-item-action">级数计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/equationsolver.php" class="list-group-item list-group-item-action">方程求解器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/simplifyexpression.php" class="list-group-item list-group-item-action">表达式化简器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/factoringcalculator.php" class="list-group-item list-group-item-action">因式分解工具</a>
-			  <a target="_blank" href="https://zh.numberempire.com/expressioncalculator.php" class="list-group-item list-group-item-action">表达式计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/inversefunctioncalculator.php" class="list-group-item list-group-item-action">反函数计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/taylorseriesexpansion.php" class="list-group-item list-group-item-action">泰勒展开计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/matrixcalculator.php" class="list-group-item list-group-item-action">矩阵计算器（其他运算）</a>
-			  <a target="_blank" href="https://zh.numberempire.com/matrixbinarycalculator.php" class="list-group-item list-group-item-action">矩阵运算（加、减、乘）</a>
-			  <a target="_blank" href="https://zh.numberempire.com/graphingcalculator.php" class="list-group-item list-group-item-action">函数图象绘制工具</a>
-			  <a target="_blank" href="https://zh.numberempire.com/2d_shape_calculators.php" class="list-group-item list-group-item-action">二维图形计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/3d_shape_calculators.php" class="list-group-item list-group-item-action">三维图形计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/primenumbers.php" class="list-group-item list-group-item-action">质数生成器和校验器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/numberfactorizer.php" class="list-group-item list-group-item-action">分解质因数工具</a>
-			  <a target="_blank" href="https://zh.numberempire.com/fibonaccinumbers.php" class="list-group-item list-group-item-action">斐波那契数计算工具</a>
-			  <a target="_blank" href="https://zh.numberempire.com/bernoullinumbers.php" class="list-group-item list-group-item-action">伯努利数生成器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/eulernumbers.php" class="list-group-item list-group-item-action">欧拉数计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/complexnumberscalculator.php" class="list-group-item list-group-item-action">复数计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/factorialcalculator.php" class="list-group-item list-group-item-action">阶乘计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/gammafunctioncalculator.php" class="list-group-item list-group-item-action">伽马函数计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/combinatorialcalculator.php" class="list-group-item list-group-item-action">组合数计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/fractionscalculator.php" class="list-group-item list-group-item-action">分数计算器</a>
-			  <a target="_blank" href="https://zh.numberempire.com/statisticscalculator.php" class="list-group-item list-group-item-action">统计工具</a>
-			  <a target="_blank" href="https://zh.numberempire.com/latexequationeditor.php" class="list-group-item list-group-item-action">LaTeX公式编辑器</a>
+
+<head>
+	<meta charset="utf-8">
+	<title>更多工具</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	<style>
+		.list-group {
+			display: table;
+			width: 100%;
+		}
+
+		.list-group-two-column {
+			display: table-row;
+		}
+
+		.list-group-column {
+			display: table-cell;
+			width: 50%;
+		}
+
+		.list-group:nth-of-type(2) > .list-group-item:first-child {
+			display: table-caption;
+		}
+
+		.list-group-column > *:first-child {
+			border-top: hidden;
+		}
+
+		.list-group-column:first-child > * {
+			border-right: hidden;
+		}
+
+		.list-group-column:first-child > *:last-child {
+			border-bottom-left-radius: .25rem;
+		}
+
+		.list-group-column:last-child > *:last-child {
+			border-bottom-right-radius: .25rem;
+		}
+
+		.list-group-item {
+			transition: background 250ms ease-out;
+		}
+	</style>
+</head>
+
+<body>
+	<br />
+	<div class="container-fluid">
+		<div class="list-group mb-3">
+			<a href="https://zh.webqc.org/" class="primary">化学之窗<span class="text-secondary"> - 化学工具</span></a>
+		</div>
+		<div class="list-group mb-3">
+			<a href="https://zh.numberempire.com/" class="primary">数字帝国<span class="text-secondary"> - 数学工具</span></a>
+			<div class="list-group-two-column">
+				<div class="list-group-column">
+					<a href="https://zh.numberempire.com/derivativecalculator.php">函数求导工具</a>
+					<a href="https://zh.numberempire.com/integralcalculator.php">不定积分计算器</a>
+					<a href="https://zh.numberempire.com/definiteintegralcalculator.php">定积分计算器</a>
+					<a href="https://zh.numberempire.com/limitcalculator.php">极限计算器</a>
+					<a href="https://zh.numberempire.com/seriescalculator.php">级数计算器</a>
+					<a href="https://zh.numberempire.com/equationsolver.php">方程求解器</a>
+					<a href="https://zh.numberempire.com/simplifyexpression.php">表达式化简器</a>
+					<a href="https://zh.numberempire.com/factoringcalculator.php">因式分解工具</a>
+					<a href="https://zh.numberempire.com/expressioncalculator.php">表达式计算器</a>
+					<a href="https://zh.numberempire.com/inversefunctioncalculator.php">反函数计算器</a>
+					<a href="https://zh.numberempire.com/taylorseriesexpansion.php">泰勒展开计算器</a>
+					<a href="https://zh.numberempire.com/matrixcalculator.php">矩阵计算器（其他运算）</a>
+					<a href="https://zh.numberempire.com/matrixbinarycalculator.php">矩阵运算（加、减、乘）</a>
+					<a href="https://zh.numberempire.com/graphingcalculator.php">函数图象绘制工具</a>
+				</div>
+				<div class="list-group-column">
+					<a href="https://zh.numberempire.com/2d_shape_calculators.php">二维图形计算器</a>
+					<a href="https://zh.numberempire.com/3d_shape_calculators.php">三维图形计算器</a>
+					<a href="https://zh.numberempire.com/primenumbers.php">质数生成器和校验器</a>
+					<a href="https://zh.numberempire.com/numberfactorizer.php">分解质因数工具</a>
+					<a href="https://zh.numberempire.com/fibonaccinumbers.php">斐波那契数计算工具</a>
+					<a href="https://zh.numberempire.com/bernoullinumbers.php">伯努利数生成器</a>
+					<a href="https://zh.numberempire.com/eulernumbers.php">欧拉数计算器</a>
+					<a href="https://zh.numberempire.com/complexnumberscalculator.php">复数计算器</a>
+					<a href="https://zh.numberempire.com/factorialcalculator.php">阶乘计算器</a>
+					<a href="https://zh.numberempire.com/gammafunctioncalculator.php">伽马函数计算器</a>
+					<a href="https://zh.numberempire.com/combinatorialcalculator.php">组合数计算器</a>
+					<a href="https://zh.numberempire.com/fractionscalculator.php">分数计算器</a>
+					<a href="https://zh.numberempire.com/statisticscalculator.php">统计工具</a>
+					<a href="https://zh.numberempire.com/latexequationeditor.php">LaTeX公式编辑器</a>
+				</div>
 			</div>
 		</div>
-	</body>
-	<script>
-		var NightTime = {
-			nightDo: () => $(".list-group-item-primary").css("color","#004085")
-		}
-	</script>
-	<script src="/basis/NightTime.js"></script>
+	</div>
+</body>
+<script>
+	$(".list-group a").attr("target", "_blank").addClass("list-group-item list-group-item-action");
+	$(".primary").addClass("list-group-item-primary");
+	var NightTime = {
+		nightDo: () => $(".list-group-item-primary").css("color", "#004085"),
+		lightDo: () => $(".list-group-item-primary").css("color", "")
+	}
+</script>
+<script src="/basis/NightTime.js"></script>
+
 </html>

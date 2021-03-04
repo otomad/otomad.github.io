@@ -1,5 +1,5 @@
 "use strict";
-/* 
+/**
  * 请将本 js 放在页面最末尾引用，否则可能不起作用。
  * 由于不带 min 的 js 路径已经被过多页面使用了，因此直接以“.js”结尾的便是压缩版了，而源文件就只好用 min 的反义词 max 来表示了。
  * 自定义参数方法，在页面中定义一个名为 NightTime 的对象，根据需要添加属性：
@@ -42,7 +42,6 @@
 	_this.CurrentModeStyle = () => {
 		_this.css = document.getElementById("css");
 		if (_this.css) _this.theme = _this.css.getAttribute("data-theme").toLowerCase();
-		_this.scrollbar();
 		if (_this.darkModeFact) return _this.DarkModeStyle();
 		else return _this.LightModeStyle();
 	}
@@ -72,8 +71,11 @@
 	}
 	const notAvailableLog = "The ID you specified has been occupied by the other element, please try to use other ID!";
 	_this.appendStyle = (style, id = "") => {
-		var css = JSON.stringify(style, undefined, "\t");
-		css = css.replace(/\:\s*\{/g, " {").replace(/\}\s*\,/g, "}").replace(/\,\n/g, ";\n").replace(/\"/g, "").slice(1, -1);
+		var css;
+		if (type(style) == "Object") {
+			css = JSON.stringify(style, undefined, "\t");
+			css = css.replace(/\:\s*\{/g, " {").replace(/\}\s*\,/g, "}").replace(/\,\n/g, ";\n").replace(/\"/g, "").slice(1, -1);
+		} else css = style;
 		var styleTag = document.getElementById(id);
 		if (!styleTag) {
 			styleTag = document.createElement("style");
@@ -140,6 +142,7 @@
 		return true;
 	}
 	_this.DarkModeStyle = () => {
+		_this.darkModeFact = true;
 		if (_this.theme.includes("bootstrap")) {
 			_this.appendCSSLink("https://bootswatch.com/4/darkly/bootstrap.min.css", "css");
 			for (let i of document.getElementsByClassName("navbar")) {
@@ -151,6 +154,7 @@
 			const bbolsf = "bootstrap-btn-outline-light-style-fix";
 			_this.appendStyleByAjax(`css/${bbolsf}.css`, bbolsf);
 		}
+		_this.scrollbar();
 		_this.removeStyle("light-root");
 		_this.appendStyle({
 			":root": {
@@ -164,6 +168,7 @@
 		return true;
 	}
 	_this.LightModeStyle = () => {
+		_this.darkModeFact = false;
 		if (_this.theme.includes("bootstrap")) {
 			_this.appendCSSLink("https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css", "css");
 			for (let i of document.getElementsByClassName("navbar")) {
@@ -173,6 +178,7 @@
 				i.classList.add("bg-light");
 			}
 		}
+		_this.scrollbar();
 		_this.removeStyle("bootstrap-btn-outline-light-style-fix");
 		_this.removeStyle("dark-root");
 		_this.appendStyle({

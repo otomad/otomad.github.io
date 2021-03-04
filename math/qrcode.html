@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>二维码生成</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<meta name="source" content="https://www.runoob.com/w3cnote/javascript-qrcodejs-library.html" />
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script src="qrcode.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	<style>
+		/* body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h3,h4,h5,h6 {transition: all 250ms ease-in-out !important;} */
+
+		h4 {
+			margin: 0.75em 0 0.5em;
+		}
+
+		#qrcode {
+			width: 100px;
+			height: 100px;
+			margin-top: 15px;
+		}
+	</style>
+	<style id="code-size"></style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4 class="mb-3">二维码生成</h4>
+		<div class="form-group mb-3">
+			<label for="text">输入内容</label>
+			<div class="input-group">
+				<input class="form-control" id="text" type="text" />
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary btn-times" type="button" onclick="$('#text').val('').focus()"><i class="fa fa-times fa-fw"></i></button>
+				</div>
+			</div>
+		</div>
+		<div id="qrcode" class="mx-auto mb-3"></div>
+		<button id="save" class="btn btn-primary btn-block" disabled>保存到相册</button>
+	</div>
+	<script>
+		var size = 200;
+		$("#code-size").html(`#qrcode {
+			width: ${size}px;
+			height: ${size}px;
+		}`);
+		var qrcode = new QRCode($("#qrcode")[0], {
+			width: size,
+			height: size
+		});
+		function makeCode() {
+			var elText = $("#text")[0];
+			if (!elText.value) {
+				$(elText).addClass("is-invalid");
+				$("#save").attr("disabled","disabled");
+				elText.focus();
+				return;
+			}
+			$(elText).removeClass("is-invalid");
+			$("#save").removeAttr("disabled");
+			qrcode.makeCode(elText.value);
+			$("#qrcode img").addClass("rounded d-block img-thumbnail");
+		}
+		$("#text").on('input propertychange change', makeCode);
+		function downLoad(url){
+			var oA = document.createElement("a");
+			oA.download = '';
+			oA.href = url;
+			document.body.appendChild(oA);
+			oA.click();
+			oA.remove();
+		}
+		$("#save").click(()=>downLoad($("#qrcode img")[0].src));
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>
