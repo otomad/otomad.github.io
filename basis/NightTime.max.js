@@ -1,18 +1,25 @@
 "use strict";
-/**
- * 请将本 js 放在页面最末尾引用，否则可能不起作用。
- * 由于不带 min 的 js 路径已经被过多页面使用了，因此直接以“.js”结尾的便是压缩版了，而源文件就只好用 min 的反义词 max 来表示了。
- * 自定义参数方法，在页面中定义一个名为 NightTime 的对象，根据需要添加属性：
- * var NightTime = {
- * 	darkMode: Boolean - 若定义该属性，则页面始终保持颜色主题与设定的参数保持一致,
- * 	nightDo: Function - 自定义深色主题下额外执行的操作,
- * 	darkDo: Function - 同 nightDo，为了统一名称风格,
- * 	lightDo: Function - 自定义浅色主题下额外执行的操作，一般无需配置，只有在主动切换为浅色主题时才需要将 nightDo 执行的操作复原回去,
- * 	darkBackgroundColor: String - 设定深色主题的页面背景色,
- * 	lightBackgroundColor: String - 设定浅色主题的页面背景色,
- * 	darkCSS: String - 设定深色主题的层叠式样式表路径,
- * 	lightCSS: String - 设定浅色主题的层叠式样式表路径
- * }
+/** configuration description
+ * <p>
+ * 	<strong> 请将本 js 放在页面最末尾引用，否则可能不起作用。 </strong><br>
+ * 	由于不带 min 的 js 路径已经被过多页面使用了，因此直接以“.js”结尾的便是压缩版了，而源文件就只好用 min 的反义词 max 来表示了。 <br>
+ * 	自定义参数方法，在页面中定义一个名为 NightTime 的<b>对象</b>，根据需要添加属性。（注意是要在本 js 之前预先以对象形式配置参数，到本 js 运行的时候才会读取这些配置！）<br>
+ * 	书写格式：{@code
+ * 		var NightTime = {
+ * 			// 在这里填写参数，如 “darkMode: true”。以逗号分隔。
+ * 		}
+ * 	}
+ * </p>
+ * @see NightTime
+ * @param darkMode: boolean - 若定义该属性，则页面始终保持颜色主题与设定的参数保持一致,
+ * @param nightDo: function - 自定义深色主题下额外执行的操作,
+ * @param darkDo: function - 同 nightDo，为了统一名称风格,
+ * @param lightDo: function - 自定义浅色主题下额外执行的操作，一般无需配置，只有在主动切换为浅色主题时才需要将 nightDo 执行的操作复原回去,
+ * @param darkBackgroundColor: string - 设定深色主题的页面背景色,
+ * @param lightBackgroundColor: string - 设定浅色主题的页面背景色,
+ * @param darkCSS: string - 设定深色主题的层叠式样式表路径,
+ * @param lightCSS: string - 设定浅色主题的层叠式样式表路径
+ * @return void - 只声明不返回值
  */
 
 {
@@ -38,13 +45,21 @@
 	if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
 		_this.darkModeFact = true; //若浏览器开启了深色主题，也会启动深色主题
 	_this.theme = "";
-	_this.nightDo = _this.lightDo = () => { }
+	_this.nightDo = _this.lightDo = () => {};
+	/** method description
+	 * 切换到当前主题
+	 * @returns void - 切换到正常情况下配置而应该呈现的主题
+	 */
 	_this.CurrentModeStyle = () => {
 		_this.css = document.getElementById("css");
 		if (_this.css) _this.theme = _this.css.getAttribute("data-theme").toLowerCase();
 		if (_this.darkModeFact) return _this.DarkModeStyle();
 		else return _this.LightModeStyle();
 	}
+	/** method description
+	 * 切换到对立主题
+	 * @returns void - 切换到不是当前状态下的主题，即浅色深色模式互相切换
+	 */
 	_this.ToggleModeStyle = () => {
 		_this.darkModeFact = !_this.darkModeFact;
 		return _this.CurrentModeStyle();
@@ -66,10 +81,17 @@
 	}
 	_this.scrollbar = () => {
 		_this.appendStyleByAjax(`css/scrollbar.css`, "scrollbar", {
-			"$textColor": (_this.darkModeFact ? "255, 255, 255" : "0, 0, 0")
+			"var(--text-color-parts)": (_this.darkModeFact ? "255, 255, 255" : "0, 0, 0")
 		});
 	}
 	const notAvailableLog = "The ID you specified has been occupied by the other element, please try to use other ID!";
+	/** method description
+	 * 输入 CSS 文本并添加到 style 标签
+	 * @param style: string | object - 必选，可以是模板字符串或对象，将会添加到 style 标签中
+	 * @param id?: string - 可选，添加到的 style 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期
+	 * @returns true - 添加成功
+	 * @exception false - 添加失败，输入的 id 名称被占用且不为 style 标签
+	 */
 	_this.appendStyle = (style, id = "") => {
 		var css;
 		if (type(style) == "Object") {
@@ -90,6 +112,13 @@
 		styleTag.innerHTML = css;
 		return true;
 	}
+	/** method description
+	 * 输入 CSS 文件链接并添加到 link 标签
+	 * @param href: string - 必选，CSS 文件的链接地址
+	 * @param id?: string - 可选，添加到的 link 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期
+	 * @returns true - 添加成功
+	 * @exception false - 添加失败，输入的 id 名称被占用且不为 link 标签
+	 */
 	_this.appendCSSLink = (href, id = "") => {
 		var linkTag = document.getElementById(id);
 		if (!linkTag) {
@@ -106,6 +135,14 @@
 		linkTag.href = href;
 		return true;
 	}
+	/** method description
+	 * 输入 CSS 文件链接并添加到 style 标签，通过异步实现
+	 * @param href: string - 必选，CSS 文件的链接地址
+	 * @param id?: string - 可选，添加到的 link 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期
+	 * @param variable?: object - 可选，变量名称，规定 CSS 文件的某些变量的替换值
+	 * @returns true - 添加成功
+	 * @exception false - 添加失败，输入的 id 名称被占用且不为 link 标签
+	 */
 	_this.appendStyleByAjax = (href, id = "", variable) => {
 		var css = new XMLHttpRequest();
 		css.onreadystatechange = () => {
@@ -134,6 +171,13 @@
 		css.open("GET", path(href), true);
 		return css.send();
 	}
+	/** method description
+	 * 移除样式或 CSS 链接标签
+	 * removeStyle 和 removeCSSLink 效果是一样的
+	 * @param id: string - 必选，要移除的 CSS 样式的 id 名称
+	 * @returns true - 移除成功
+	 * @exception false - 移除失败，移除的不是 style 或 link 标签
+	 */
 	_this.removeStyle = _this.removeCSSLink = id => {
 		let el = document.getElementById(id);
 		if (!el) return false;
@@ -141,6 +185,10 @@
 		el.remove();
 		return true;
 	}
+	/** method description
+	 * 强制切换到深色主题
+	 * @returns void
+	 */
 	_this.DarkModeStyle = () => {
 		_this.darkModeFact = true;
 		if (_this.theme.includes("bootstrap")) {
@@ -167,6 +215,10 @@
 		if (_this.DarkCSS) _this.appendCSSLink(_this.DarkCSS, "css");
 		return true;
 	}
+	/** method description
+	 * 强制切换到浅色主题
+	 * @returns void
+	 */
 	_this.LightModeStyle = () => {
 		_this.darkModeFact = false;
 		if (_this.theme.includes("bootstrap")) {

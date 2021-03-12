@@ -1,127 +1,185 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>大写金额数字</title>
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
-		 crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
-		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h3,h4,h5,h6{transition: all 250ms ease-in-out !important;}
-			h4 {
-				margin:0.75em 0 0.5em;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container-fluid">
-			<h4>大写金额数字</h4>
-			<div class="form-group mb-2">
-				<label for="num">输入数字</label>
-				<div class="input-group">
-					<input type="text" class="form-control" id="num" placeholder="1234567890"></input>
-					<div class="input-group-append">
-						<button class="btn btn-outline-secondary" type="button" onclick="clearText()"><i class="fa fa-times fa-fw"></i></button>
-					</div>
-				</div>
-			</div>
-			<button class="btn btn-primary btn-block mb-2" onclick="change()">转换</button>
-			<div class="form-group mb-2">
-				<label for="lower">小写数字</label>
-				<div class="input-group">
-					<input type="text" class="form-control" id="lower" placeholder="一二三四五六七八九〇"></input>
-					<div class="input-group-append">
-						<button class="btn btn-outline-secondary" type="button" id="d_clip_button" data-clipboard-target="#resultText"
-						 onclick="copyToClipboard(0)">
-							<i class="fa fa-copy fa-fw"></i>
-						</button>
-					</div>
-				</div>
-			</div>
-			<div class="form-group mb-2">
-				<label for="upper">大写数字</label>
-				<div class="input-group">
-					<input type="text" class="form-control" id="upper" placeholder="壹贰叁肆伍陆柒捌玖零"></input>
-					<div class="input-group-append">
-						<button class="btn btn-outline-secondary" type="button" id="d_clip_button" data-clipboard-target="#resultText"
-						 onclick="copyToClipboard(1)">
-							<i class="fa fa-copy fa-fw"></i>
-						</button>
-					</div>
+
+<head>
+	<meta charset="utf-8">
+	<title>大写金额数字</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	<style>
+		body,.input-group,label,.input-group,button,.card,.card-body,h1,h2,h3,h4,h5,h6 {transition: all 250ms ease-in-out !important;}
+
+		h4 {
+			margin: 0.75em 0 0.5em;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4>大写金额数字</h4>
+		<div class="form-group mb-3 mt-3">
+			<label for="num">输入数字</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="num" placeholder="1234567890"></input>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" onclick="$('#num').val('').select()"><i class="fa fa-times fa-fw"></i></button>
 				</div>
 			</div>
 		</div>
-		<script>
-			$(document).ready(function() {
-				// $('[data-toggle="tooltip"]').tooltip();
-			});
-
-			function clearText(id) {
-				$("#num").val("").select();
-			}
-
-			function copyToClipboard(id) {
-				var text = ["lower", "upper"],
-					item = $("#" + text[id]);
-				item.select();
-				document.execCommand("copy");
-				item.blur();
-			}
-
-			function change() {
-				var num = $("#num").val();
-				if (num == "") return false;
-				num = num - 0 + "";
-				if (num == "NaN") return false;
-				if(Math.abs(num-0)>1e16) {top.location.href="about:blank"; top.close();} //这精度，为了不让用户觉得比较奇怪，最好直接关掉它吧。或者等编译器支持BigInt了再说。
-				/* for(var i=0;i<num.length;i++){
-					low+=lower[num[i]-0]
-					upp+=upper[num[i]-0]
-				} */
-				$("#num").val(num);
-				$("#lower").val(digitLowercase(num));
-				$("#upper").val(digitUppercase(num));
-			}
-			function digitUppercase(n) {
-				var fraction = ['角', '分', '厘', '毫'/*,'丝','忽','微' ,'纤','沙','尘','埃','渺','漠','模糊','逡巡','须臾','瞬息','弹指','刹那','六德' */];
-				var digit = "零壹贰叁肆伍陆柒捌玖";
-				var unit = [
-					['圆', '萬', '億', '兆', '京'/*,'垓','秭','壤','沟','涧','正','载','极','恒河沙','阿僧祇','那由他','不可思议','净','清','空','虚' */],
-					['', '拾', '佰', '仟']
-				];
-				var head = n < 0 ? '欠' : '';
-				n = Math.abs(n);
-				var s = '';
-				for (var i = 0; i < fraction.length; i++) {
-					s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+		<button class="btn btn-primary btn-block mb-3" id="change" disabled>转换</button>
+		<div class="form-group mb-2">
+			<label for="lower">小写数字</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="lower" placeholder="一二三四五六七八九〇"></input>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" id="d_clip_button" data-clipboard-target="#resultText" onclick="copyToClipboard(0)">
+						<i class="fa fa-copy fa-fw"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="form-group mb-2">
+			<label for="upper">大写数字</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="upper" placeholder="壹贰叁肆伍陆柒捌玖零"></input>
+				<div class="input-group-append">
+					<button class="btn btn-outline-secondary" type="button" id="d_clip_button" data-clipboard-target="#resultText" onclick="copyToClipboard(1)">
+						<i class="fa fa-copy fa-fw"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		/* $(document).ready(function() {
+			$('[data-toggle="tooltip"]').tooltip();
+		}); */
+		function copyToClipboard(id) {
+			var text = ["lower", "upper"],
+				item = $("#" + text[id]);
+			item.select();
+			document.execCommand("copy");
+			item.blur();
+		}
+		var num = null;
+		$("#num").on('input propertychange change', function () {
+			var invalid = () => $(this).addClass("is-invalid"),
+				valid = () => $(this).removeClass("is-invalid"),
+				disabled = () => $("#change").attr("disabled", "disabled"),
+				enabled = () => $("#change").removeAttr("disabled"),
+				value = this.value.toLowerCase();
+			if (value === '') { valid(); disabled(); num = null; return; }
+			if (!isFinite(value) || value.includes('x') || value.includes('b') || value.includes('o')) { invalid(); disabled(); num = null; return; }
+			{ valid(); enabled(); num = normally(value); return; }
+		});
+		function normally(num) {
+			num += '';
+			var regexp = num => num.trim().toLowerCase().replace(/\+/g, '').replace(/(?<=e|\-|^)0*|(?<=\.[^e]*)0*(?=e|$)/g, '').replace(/(?<=\-|^)\./, "0.").replace(/\.(?=e|$)/g, '');
+			num = regexp(num);
+			if (num.includes('e')) {
+				let [base, exp] = num.split('e');
+				function move(float, direct) {
+					float += '';
+					var dot = float.indexOf('.')
+					if (dot == -1) dot = float.length;
+					dot = (direct > 0 ? dot + 1 : dot - 1);
+					float = float.replace('.', '');
+					if (dot == float.length);
+					else if (dot > float.length) float += '0';
+					else if (dot == 0) float = '0.' + float;
+					else float = float.slice(0, dot) + '.' + float.slice(dot);
+					return float;
 				}
-				s = s || '整';
-				n = Math.floor(n);
-				for (var i = 0; i < unit[0].length && n > 0; i++) {
-					var p = '';
-					for (var j = 0; j < unit[1].length && n > 0; j++) {
-						p = digit[n % 10] + unit[1][j] + p;
-						n = Math.floor(n / 10);
-					}
-					s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
+				for (let i = 0; i < Math.abs(exp); i++) base = move(base, exp);
+				num = regexp(base);
+			}
+			if (num == '-' || num == '') num = '0';
+			return num;
+		}
+		$("#change").click(() => {
+			/* if (num == "") return false;
+			num = num - 0 + "";
+			if (num == "NaN") return false;
+			if(Math.abs(num-0)>1e16) {top.location.href="about:blank"; top.close();} //这精度，为了不让用户觉得比较奇怪，最好直接关掉它吧。或者等编译器支持BigInt了再说。 */
+			/* for(var i=0;i<num.length;i++){
+				low+=lower[num[i]-0]
+				upp+=upper[num[i]-0]
+			} */
+			$("#num").val(num);
+			var result = digitCase(num);
+			$("#lower").val(result[0]);
+			$("#upper").val(result[1]);
+		});
+		function digitCase(n) {
+			n += '';
+			var fraction = ['角', '分', '厘', '毫', '丝', '忽', '微', '纤', '沙', '尘', '埃', '渺', '漠', '模糊', '逡巡', '须臾', '瞬息', '弹指', '刹那', '六德'];
+			var arabic = "0123456789"
+			var lower = "〇一二三四五六七八九元十百千万亿";
+			var upper = "零壹贰叁肆伍陆柒捌玖圆拾佰仟萬億";
+			var unit = ['元', '万', '亿', '兆', '京', '垓', '秭', '壤', '沟', '涧', '正', '载', '极', '恒河沙', '阿僧祇', '那由他', '不可思议', '净', '清', '空', '虚'];
+			var digit = ['', '十', '百', '千'];
+			var sign = '';
+			if (n[0] == '-') { sign = '欠'; n = n.slice(1); }
+			for (var i = 0; i < arabic.length; i++)
+				n = n.replaceAll(arabic[i], lower[i]);
+			var [int, dec] = n.split('.');
+			if (dec === undefined) dec = '整';
+			else {
+				dec = dec.split('');
+				for (let i = 0; i < dec.length && i < fraction.length; i++)
+					dec[i] += fraction[i];
+				dec=dec.join('');
+			}
+			int = int.split('').reverse();
+			for (let i = 0; i < int.length; i++)
+				if(int[i]!='〇')
+					int[i] += digit[i % 4];
+			for (let i = 0, j = 0; i < int.length && j < unit.length; i += 4, j++)
+				if(int[i]+int[i+1]+int[i+2]+int[i+3]!="〇〇〇〇"||i==0)
+					int[i] += unit[j];
+			int = int.reverse().join('');
+			int=int.replace(/〇+/g, '〇');
+			for(let i=0;i<unit.length;i++)
+				int=int.replace('〇'+unit[i],unit[i]);
+			if(int=="元") int="〇元";
+			int=int.replace(/^一十/g, '十');
+			var lwr=sign+int+dec;
+			var upr=lwr;
+			for (var i = 0; i < upper.length; i++)
+				upr = upr.replaceAll(lower[i], upper[i]);
+			return [lwr, upr];
+
+			/* var s = '';
+			for (var i = 0; i < fraction.length; i++) {
+				s += (digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]).replace(/零./, '');
+			}
+			s = s || '整';
+			n = Math.floor(n);
+			for (var i = 0; i < unit[0].length && n > 0; i++) {
+				var p = '';
+				for (var j = 0; j < unit[1].length && n > 0; j++) {
+					p = digit[n % 10] + unit[1][j] + p;
+					n = Math.floor(n / 10);
 				}
-				return head + s.replace(/(零.)*零圆/, '圆')
-					.replace(/(零.)+/g, '零')
-					.replace(/^整$/, '零圆整');
+				s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s;
 			}
-			function digitLowercase(n){
-				s=digitUppercase(n);
-				var lower = "〇一二三四五六七八九元十百千万亿",
-					upper = "零壹贰叁肆伍陆柒捌玖圆拾佰仟萬億";
-				for(var i=0;i<upper.length;i++)
-					s = s.replace(new RegExp(upper[i], "g"), lower[i])
-				return s;
-			}
-		</script>
-		<script src="/basis/NightTime.js"></script>
-	</body>
+			return head + s.replace(/(零.)*零圆/, '圆')
+				.replace(/(零.)+/g, '零')
+				.replace(/^整$/, '零圆整'); */
+		}
+		document.onkeydown = function (e) {
+			if (window.event.keyCode == 13)
+				if ($("#num").is(":focus") && !($("#change").is(":disabled")))
+					$("#change").click();
+		}
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
 </html>

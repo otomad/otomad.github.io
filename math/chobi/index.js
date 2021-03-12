@@ -7,7 +7,7 @@ var imgObj = null, //global Chobi object
 	imgThumb = null;
 	
 testpic = "test.jpg";
-testMode();
+// testMode();
 
 $(document).ready(function() {
 	$('[data-toggle="tooltip"]').tooltip();

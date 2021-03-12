@@ -1,13 +1,13 @@
 'use strict';
 var society = 1;
 //0表示普通加减计算，1表示舍去进位计算，2表示四舍五入进位计算……
-let resetMoney = Symbol('resetMoney');
+let _resetMoney = Symbol('resetMoney');
 class money {
     constructor(type) {
         this.type = type;
-        this[resetMoney]();
+        this[_resetMoney]();
     }
-    [resetMoney]() {
+    [_resetMoney]() {
         //非法或未定义数值
         if (cookie.get(this.type) === null || !isFinite(Number(cookie.get(this.type))))
             cookie.set(this.type, 4000);
@@ -19,7 +19,7 @@ class money {
             cookie.set(this.type, -1e14);
     }
     amount() {
-        this[resetMoney]();
+        this[_resetMoney]();
         return cookie.get(this.type) - 0;
     }
     amountName() {
@@ -179,7 +179,7 @@ var urlState = {
     data: {},
     clear: function () {
         this.data = {};
-        history.pushState('', '', document.URL.split('?')[0]);
+        history.pushState("", "", location.href.split('?')[0]);
     },
     reset: function () {
         var questionMark = location.href.indexOf('?');

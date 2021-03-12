@@ -17,7 +17,7 @@ interface String {
     replaces(stra: string | string[], strb?: string | string[], sep?: string, caseInsensitive?: boolean): string;
 }
 declare var society: number;
-declare let resetMoney: symbol;
+declare let _resetMoney: symbol;
 declare class money {
     type: string;
     constructor(type: string);

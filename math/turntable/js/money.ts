@@ -23,14 +23,14 @@ interface String {
 var society: number = 1;
 //0表示普通加减计算，1表示舍去进位计算，2表示四舍五入进位计算……
 
-let resetMoney: symbol = Symbol('resetMoney');
+let _resetMoney: symbol = Symbol('resetMoney');
 class money { //钱对象
 	type: string;
 	constructor(type: string) {
 		this.type = type;
-		this[resetMoney]();
+		this[_resetMoney]();
 	}
-	private [resetMoney](): void {
+	private [_resetMoney](): void {
 		//非法或未定义数值
 		if (cookie.get(this.type) === null || !isFinite(Number(cookie.get(this.type))))
 			cookie.set(this.type, 4000);
@@ -40,7 +40,7 @@ class money { //钱对象
 		if (amount < -1e14) cookie.set(this.type, -1e14);
 	}
 	amount(): number {
-		this[resetMoney]();
+		this[_resetMoney]();
 		return cookie.get(this.type) - 0;
 	}
 	amountName(): string {
@@ -197,9 +197,9 @@ var cookie = {
 
 var urlState = {
 	data: {},
-	clear: function (): void {
+	clear: function () {
 		this.data = {};
-		history.pushState('', '', document.URL.split('?')[0]);
+		history.pushState("", "", location.href.split('?')[0]);
 	},
 	reset: function (): boolean {
 		var questionMark: number = location.href.indexOf('?');

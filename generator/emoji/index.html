@@ -20,7 +20,7 @@
 		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
 		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="js/grapheme-splitter.js"></script>
+		<script type="text/javascript" src="js/grapheme-splitter.min.js"></script>
 		<style>body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6{transition: all 250ms ease !important;}
 			textarea.form-control {
 				height: 38px;
@@ -45,7 +45,7 @@
 	<body>
 
 		<nav style="display:none" class="navbar navbar-expand-lg navbar-light bg-light">
-			<a class="navbar-brand" style="cursor:default;"><img src="../caption-logo.svg" width="30" height="30" alt="" loading="lazy"></a>
+			<a class="navbar-brand" style="cursor:default;"><img unused-src="../caption-logo.svg" width="30" height="30" alt="" loading="lazy"></a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
 			 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -130,7 +130,7 @@
 						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(1)" title="重设" data-toggle="tooltip">
 							<i class="fa fa-times fa-fw"></i>
 						</button>
-						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="pasteText()" id="paste-button" title="粘贴<br />（本功能目前已废<br />请自行按下 Ctrl+V 粘贴）" data-toggle="tooltip" data-html="true">
+						<button class="btn btn-outline-secondary btn-sm sm" type="button" id="pasteText" id="paste-button" title="粘贴<br />（浏览器可能会弹出剪贴板读取请求，请点击允许）" data-toggle="tooltip" data-html="true">
 							<i class="fa fa-paste fa-fw"></i>
 						</button>
 						<textarea type="text" class="form-control" id="chouxiangText" placeholder="此处粘贴你要还原的绘文字"></textarea>
@@ -151,12 +151,17 @@
 			$("#create").attr({"disabled": "disabled"});
 			$("#create").text("加载中，请稍候……");
 
+			const vs16 = '\ufe0f';
+			var addEmojiVS = text => Array.from(text).join(vs16) + vs16;
+			var removeEmojiVS = text => text.replaceAll(vs16, '');
+
 			function getResult() {
 				if (document.getElementById('rawText').value == "") {
+					// document.getElementById("resultText").value = "👇🈹🌶里转🈳7⃣呢¿敲🐔🈹字8⃣❕";
 					document.getElementById("resultText").value = "👇🈹🌶里转🈳7⃣呢¿敲🐔🈹字8⃣❕";
 				} else {
 					document.getElementById("resultText").value = "生成中，请稍候……";
-					document.getElementById("resultText").value = chouxiang(document.getElementById('rawText').value);
+					document.getElementById("resultText").value = addEmojiVS(chouxiang(document.getElementById('rawText').value));
 				}
 			}
 
@@ -165,7 +170,7 @@
 					document.getElementById("resultText").value = "你搁那里转空气呢？敲几个字吧！";
 				} else {
 					document.getElementById("resultText").value = "还原中，请稍候……";
-					document.getElementById("resultText").value = dechouxiang(document.getElementById('chouxiangText').value);
+					document.getElementById("resultText").value = dechouxiang(removeEmojiVS(document.getElementById('chouxiangText').value));
 				}
 			}
 		</script>
@@ -210,7 +215,7 @@
 				$(txt2[num]).select();
 				textarea_resize();
 			}
-			function pasteText() {
+			// function pasteText() {
 				/* $("#chouxiangText").val("");
 				$("#chouxiangText").select();
 				$("#chouxiangText").val(Window.clipboardData.getData("Text"));
@@ -227,8 +232,23 @@
 				  };
 				});
 				console.log(navigator.clipboard.readText()); */
+				/* async (e) => {
+					$("#chouxiangText").focus();
+					const text = navigator.clipboard.readText();
+					console.log(text);
+					$("#chouxiangText").val(text);
+				} */
+			// }
+			document.getElementById("pasteText").addEventListener('click', async (e) => {
 				$("#chouxiangText").focus();
-			}
+				try {
+					const text = await navigator.clipboard.readText();
+					console.log('Pasted content: ', text);
+					$("#chouxiangText").val(text);
+				} catch (err) {
+					console.error('Failed to read clipboard contents: ', err);
+				}
+			});
 		</script>
 		<script src="/basis/NightTime.js"></script>
 	</body>

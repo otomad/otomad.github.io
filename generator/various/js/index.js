@@ -1,7 +1,8 @@
 var 名人名言列表 = [
 	["营销号生成器", "https://codepen.io/kasei-dis/full/JjYjwza"],
 	["狗屁不通文章生成器", ["https://github.com/menzi11/BullshitGenerator", "https://suulnnka.github.io/BullshitGenerator/index.html"]],
-	["明哥体生成器", "http://cht8687.github.io/mingify/example/"]
+	["明哥体生成器", "http://cht8687.github.io/mingify/example/"],
+	["笑话生成器", ["https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/First_steps/Silly_story_generator", "https://github.com/roy-tian/learning-area/tree/master/javascript/introduction-to-js-1/assessment-finished"]]
 ];
 
 /*
@@ -31,22 +32,38 @@ class 名人名言 {
 		let 输入框 = this.输入框,
 			i = 1;
 		for (let 标题 in 输入框) {
-			var 输入框组 = $("#这里将会冒出一堆输入框的模板")[0].content.children[0].cloneNode(true);
-			输入框组.querySelector("label").innerHTML = 标题;
-			输入框组.querySelector("label").htmlFor = "输入框-" + i;
-			输入框组.querySelector("input").id = "输入框-" + i;
-			输入框组.querySelector("input").placeholder = 输入框[标题];
-			输入框组.querySelector("input").name = 标题;
+			var 输入框组 = $("#这里将会冒出一堆输入框的模板")[0].content.children[0].cloneNode(true),
+				这不是选择题 = !Array.isArray(输入框[标题]);
+			const
+				标签 = 输入框组.querySelector("label"),
+				文本框 = 输入框组.querySelector("input"),
+				下拉菜单 = 输入框组.querySelector("select");
+			标签.innerHTML = 标题;
+			标签.htmlFor = "输入框-" + i;
+			if (这不是选择题) {
+				文本框.id = "输入框-" + i;
+				文本框.placeholder = 输入框[标题];
+				文本框.name = 标题;
+				下拉菜单.remove();
+			} else {
+				下拉菜单.id = "下拉菜单-" + i;
+				for (const 选项 of 输入框[标题])
+					$(下拉菜单).append(`<option value="${选项}">${选项}</option>`);
+				下拉菜单.value = 输入框[标题][0];
+				下拉菜单.name = 标题;
+				文本框.remove();
+			}
 			$("#这里将会冒出一堆输入框").append(输入框组);
 			$(".叉叉").click(function () {
-				this.parentNode.previousElementSibling.value = "";
+				var 输入框 = this.parentNode.previousElementSibling;
+				输入框.value = 输入框.tagName!="SELECT" ? "" : 输入框.firstChild.value;
 			});
 			i++;
 		}
 	}
 	用户输入() {
 		this.输入 = $.extend({}, this.输入框);
-		for (let 其中一项 of $("#这里将会冒出一堆输入框 input"))
+		for (let 其中一项 of $("#这里将会冒出一堆输入框 input, #这里将会冒出一堆输入框 select"))
 			if (其中一项.value !== "")
 				this.输入[其中一项.name] = 其中一项.value;
 		return this.输入;
@@ -80,6 +97,7 @@ $("#一键生成").click(() => {
 	urlState.set("saying", saying);
 	for (let key in window[saying].输入)
 		urlState.set(key, window[saying].输入[key]);
+	if(parent!=window) parent.history.pushState("", "", "?various&" + location.href.split('?')[1]);
 });
 
 $("#选择名人名言").change(function () {
@@ -103,6 +121,10 @@ function 初始化() {
 
 String.prototype.掐头去尾 = function () {
 	return this.slice(1, -1).replace(/\t/g, "");
+}
+
+Array.prototype.随机给个 = function() {
+	return this[Math.floor(Math.random() * this.length)];
 }
 
 Array.prototype.getColumn = function (column = 0) {
@@ -151,8 +173,9 @@ function 复制(文本) {
 
 	urlState.clear = function () {
 		this.data = {};
-		history.pushState("", "", "?");
-		history.pushState("", "", document.URL.slice(0, -1));
+		// history.pushState("", "", "?");
+		// history.pushState("", "", location.href.slice(0, -1));
+		history.pushState("", "", location.href.split('?')[0]);
 	}
 
 	urlState.reset = function () {
