@@ -84,7 +84,7 @@
 			"var(--text-color-parts)": (_this.darkModeFact ? "255, 255, 255" : "0, 0, 0")
 		});
 	}
-	const notAvailableLog = "The ID you specified has been occupied by the other element, please try to use other ID!";
+	const notAvailableLog = new Error("The ID you specified has been occupied by the other element, please try to use other ID!");
 	/** method description
 	 * 输入 CSS 文本并添加到 style 标签
 	 * @param style: string | object - 必选，可以是模板字符串或对象，将会添加到 style 标签中

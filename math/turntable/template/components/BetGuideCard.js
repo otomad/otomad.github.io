@@ -1,10 +1,12 @@
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 import classNames from "../../js/classnames.es6module.js";
 import { betCircular } from "./BetCircular.js";
 import CardTable, { cardTable } from "./PokerCard.js";
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 var { singleTransitionDuration: std } = rootCSS.val;
+
+window.betAmount = 0, window.circularCount = "";
 
 export var guideCard = null;
 export default class GuideCard extends React.Component {
@@ -121,8 +123,7 @@ export default class GuideCard extends React.Component {
 		);
 	}
 	static show() {
-		let guide = React.root("bet-guide-card");
-		ReactDOM.render(React.createElement(GuideCard, null), guide);
+		ReactDOM.render(React.createElement(GuideCard, null), React.root("bet-guide-card"));
 	}
 }
 

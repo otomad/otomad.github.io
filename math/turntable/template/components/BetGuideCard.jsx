@@ -4,6 +4,9 @@ import CardTable, { cardTable } from "./PokerCard.js";
 
 var { singleTransitionDuration: std } = rootCSS.val;
 
+window.betAmount = 0,
+window.circularCount = "";
+
 export var guideCard = null;
 export default class GuideCard extends React.Component {
 	constructor() {
@@ -114,10 +117,9 @@ export default class GuideCard extends React.Component {
 		)
 	}
 	static show() {
-		let guide = React.root("bet-guide-card");
 		ReactDOM.render(
 			<GuideCard />,
-			guide
+			React.root("bet-guide-card")
 		);
 	}
 }

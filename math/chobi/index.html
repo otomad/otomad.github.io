@@ -1,280 +1,286 @@
 <!DOCTYPE html>
 <html lang="zh">
-	<head>
-		<title>Chobi 图片滤镜</title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<script src="Chobi.js"></script>
-		<script src="../rgbaster.min.js"></script>
-		<link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
-		<link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
-		<link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css">
-		<link rel="stylesheet" href="index.css">
-	</head>
-	<body>
-		<nav class="navbar navbar-dark bg-dark ms-depth-4">
-			<div>
-				<button class="btn btn-dark" title="上传图片" data-toggle="tooltip" onclick="document.getElementById('image-chooser').click();"><i
-					 class="ms-Icon ms-Icon--OpenFile"></i></button>
-				<span data-toggle="modal" data-target="#input-path"><button class="btn btn-dark" title="输入图片地址" data-toggle="tooltip"><i
-						 class="ms-Icon ms-Icon--PageLink"></i></button></span>
-			</div>
-			<span id="title"><strong>Chobi</strong> 图片滤镜</span>
-			<button class="btn btn-dark" title="下载图片" data-toggle="tooltip" onclick="downloadImage()" style="margin-left:45px"><i
-				 class="ms-Icon ms-Icon--Download"></i></button>
-		</nav>
-		<!-- Modal -->
-		<div class="modal fade" id="input-path" tabindex="-1">
-			<div class="modal-dialog modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="ModalLabel">输入图片地址</h5>
-						<button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span>&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<div class="input-group mb-2">
-							<input type="text" class="form-control" id="path" placeholder="在这里输入图片URL地址">
-						</div>
-						<hr />
-						<p style="text-align:center">&copy; 2016 <a href="https://github.com/jayankaghosh/chobi">Chobi</a> - Javascript Library team (j0y)</p>
-						<p style="text-align:center"><a href="https://github.com/briangonzalez/rgbaster.js">rgbaster.js</a> - A dead simple javascript library for extracting the dominant color(s) from an image.</p>
-					</div>
-					<div class="modal-footer">
-						<table style="width:100%">
-							<button type="button" class="btn btn-success" data-dismiss="modal" id="modal-ok-button">确定</button>
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="modal fade" id="custom-filter-modal" tabindex="-1">
-			<div class="modal-dialog modal-dialog-scrollable">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="CustomFilterLabel">自定义滤镜</h5>
-						<button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span>&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label>自定义滤镜名称<span id="custom-filter-name-exists" class="text-danger" style="display:none">名称已被占用</span></label>
-							<input type="text" class="form-control" id="your-filter-name" placeholder="myFilter" />
-						</div>
-						<div class="form-group">
-							<label>滑块<code>(amount)</code>参数默认值<span class="text-light">(amount ∈ (ℤ ∩ [-255,255]))</span></label>
-							<input type="text" class="form-control" id="your-filter-amount-default" placeholder="留空本输入框则表示不设定默认值或该滤镜不适用滑块的参数" />
-						</div>
-						<ul class="nav nav-tabs justify-content-center">
-							<li class="nav-item"><a href="#rgbTab" data-toggle="tab" class="nav-link active">RGB 模型</a></li>
-							<li class="nav-item"><a href="#hslTab" data-toggle="tab" class="nav-link">HSL 模型</a></li>
-							<li class="nav-item"><a href="#helpTab" data-toggle="tab" class="nav-link">使用说明</a></li>
-						</ul>
-						<div id="mytab-content" class="tab-content">
-							<div class="tab-pane fade show active" id="rgbTab">
-								<div class="input-group mb-2">
-								  <div class="input-group-prepend">
-								    <label class="input-group-text" for="valR">R</label>
-								  </div>
-								  <input type="text" class="form-control" id="valR">
-								</div>
-								<div class="input-group mb-2">
-								  <div class="input-group-prepend">
-								    <label class="input-group-text" for="valG">G</label>
-								  </div>
-								  <input type="text" class="form-control" id="valG">
-								</div>
-								<div class="input-group mb-2">
-								  <div class="input-group-prepend">
-								    <label class="input-group-text" for="valB">B</label>
-								  </div>
-								  <input type="text" class="form-control" id="valB">
-								</div>
-								<div class="input-group mb-2">
-								  <div class="input-group-prepend">
-								    <label class="input-group-text" for="valA">A</label>
-								  </div>
-								  <input type="text" class="form-control" id="valA">
-								</div>
-							</div>
-							<div class="tab-pane fade" id="hslTab">
-								<div class="input-group mb-2">
-								  <div class="input-group-prepend">
-								    <label class="input-group-text" for="valH">H</label>
-								  </div>
-								  <input type="text" class="form-control" id="valH">
-								</div>
-								<div class="input-group mb-2">
-								  <div class="input-group-prepend">
-								    <label class="input-group-text" for="valS">S</label>
-								  </div>
-								  <input type="text" class="form-control" id="valS">
-								</div>
-								<div class="input-group mb-2">
-								  <div class="input-group-prepend">
-								    <label class="input-group-text" for="valL">L</label>
-								  </div>
-								  <input type="text" class="form-control" id="valL">
-								</div>
-								<div class="input-group mb-2">
-								  <div class="input-group-prepend">
-								    <label class="input-group-text" for="valAl">A</label>
-								  </div>
-								  <input type="text" class="form-control" id="valAl">
-								</div>
-							</div>
-							<div class="tab-pane fade" id="helpTab">
-								<small>
-									<!-- <p>本功能通过 <code>eval</code> 函数实现，性能非常地差，如果图片比较大，那就等着死机吧。</p> -->
-									<p>支持的参数：<code>r(红)</code>、<code>g(绿)</code>、<code>b(蓝)</code>、<code>h(色相)</code>、<code>s(饱和度)</code>、<code>l(亮度)</code>、<code>a(不透明度)</code>。大小写均可。此外，可以用 <code>c</code> 代指当前输入框所对应的颜色，用 <code>amount</code> 表示滑块所设定的参数。</p>
-									<p>选择一个颜色模型，在输入框中输入上述参数及表达式，可以生成自己需要的滤镜。</p>
-									<p class="text-danger">注意这里是 <b>HSL</b> 模型，不是 <b>HSV</b> 模型！</p>
-									<!-- <p>R、G、B 三个参数的取值范围均为 [0,255]，H 的取值范围为 [0,360)，S、L、A 三个参数的取值范围为 [0,100]。</p> -->
-									<p>所有参数的取值范围均为 [0,255]。如果超出范围，还是会被约束到这个范围。（<code>amount</code> 滑块的默认取值范围为 [-255,255]。）</p>
-									<p>如果有参数留空，则自动保持原参数的设定值。</p>
-									<p>支持使用 JavaScript 的函数，如 <code>Math.sqrt(1/2)</code>、<code>Math.sin(Math.PI/6)</code>、<code>Math.pow(2,3)</code> 等。注意前面必须加上“Math.”。</p>
-									<p>例如欲生成“反色”滤镜，可以先选择 RGB 模型，然后在对应的三个输入框中依次输入 <code>255-r</code>、<code>255-g</code>、<code>255-b</code> 即可。</p>
-									<p>双击文本框左边的标签可以快速清空文本框的内容。</p>
-								</small>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<table style="width:100%">
-							<button type="button" class="btn btn-success" onclick="myFilter()">确定</button>
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div style="height:80px"></div>
-		<div class="container-fluid">
-			<div class="row">
 
-				<div class="col-lg-8" id="canvas-part">
-					<div class="alert alert-warning" id="error" style="display:none;z-index:9">
-						<strong>错误！</strong>你还没有上传图片。
-					</div>
-					<!-- <div class="canvases"> -->
-						<canvas id="canvas" width="600" height="600" class="well ms-depth-64 mb-3"></canvas>
-						<canvas id="original" width="600" height="600" class="well mb-3"></canvas>
-					<!-- </div> -->
+<head>
+	<title>Chobi 图片滤镜</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.staticfile.org/tether/1.4.7/js/tether.min.js"></script>
+	<script src="Chobi.js"></script>
+	<script src="../rgbaster.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery-contextmenu/2.7.1/jquery.ui.position.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/4/flatly/bootstrap.min.css">
+	<link rel="stylesheet" href="https://bootswatch.com/4/darkly/bootstrap.min.css">
+	<link rel="stylesheet" href="https://static2.sharepointonline.com/files/fabric/office-ui-fabric-core/11.0.0/css/fabric.min.css">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/tether/1.4.7/css/tether.min.css">
+	<link rel="stylesheet" href="index.css">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
+</head>
+
+<body>
+	<nav class="navbar navbar-dark bg-dark ms-depth-4">
+		<div>
+			<button class="btn btn-dark" title="上传图片" data-toggle="tooltip" onclick="document.getElementById('image-chooser').click();"><i class="ms-Icon ms-Icon--OpenFile"></i></button>
+			<span data-toggle="modal" data-target="#input-path"><button class="btn btn-dark" title="输入图片地址" data-toggle="tooltip"><i class="ms-Icon ms-Icon--PageLink"></i></button></span>
+		</div>
+		<span id="title"><strong>Chobi</strong> 图片滤镜</span>
+		<button class="btn btn-dark" title="下载图片" data-toggle="tooltip" onclick="downloadImage()" style="margin-left:45px"><i class="ms-Icon ms-Icon--Download"></i></button>
+	</nav>
+	<!-- Modal -->
+	<div class="modal fade" id="input-path" tabindex="-1">
+		<div class="modal-dialog modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="ModalLabel">输入图片地址</h5>
+					<button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span>&times;</span>
+					</button>
 				</div>
-				<div class="col-lg-4">
-					<div class="btn-group-03" id="filters" style="display:none">
-						<!-- <h5>滤镜:</h5> -->
-						<div class="btn-group-04">
-							<button class="notFx active" id="fx-orig" onclick="reset(undefined, true)">原图</button>
-							<button id="fx0"  data-amount="255" value="blackAndWhite">平均灰阶</button>
-							<button id="fx10" data-amount="255" value="blackAndWhite2">自然灰阶</button>
-							<button id="fx20" data-amount="255" value="blackAndWhite3">原色灰阶</button>
-							<button id="fx1"  data-amount="255" value="sepia">怀旧</button>
-							<button id="fx2"  data-amount="0" value="negative">反色</button>
-							<button id="fx3"  data-amount="0" value="vintage">复古</button>
-							<button id="fx4"  data-amount="0" value="crossProcess">交叉冲印</button>
-							<button id="fx9"  data-amount="0" value="noise">噪点</button>
-							<button id="fx5"  data-amount="100" value="brightness">亮度</button>
-							<button id="fx6"  data-amount="100" value="saturation">饱和度</button>
-							<button id="fx7"  data-amount="100" value="contrast">对比度</button>
-							<button id="fx8"  data-amount="100" value="hue">色相</button>
-							<button id="fx11" data-amount="0" value="crayon">蜡笔</button>
-							<button id="fx12" data-amount="" value="cartoon">卡通</button>
-							<button id="fx13" data-amount="1" value="vignette">晕影</button>
-							<button id="fx14" data-amount="0" value="aberration">色差</button>
-							<button id="fx15" data-amount="0" value="relief">浮雕</button>
-							<button id="fx16" data-amount="0" value="midBright">中亮度</button>
-							<button id="fx17" data-amount="255" value="maxSaturate">过饱和</button>
-							<button id="fx18" data-amount="255" value="opaque">不透明</button>
-							<button id="fx19" data-amount="0" value="whiteToAlpha">白色到透明</button>
-							<button id="fx21" data-amount="255" value="india">印度国旗</button>
-							<button id="fx22" data-amount="0" value="threshold">黑白</button>
-							<button id="fx23" data-amount="0" value="invertBright">亮度反转</button>
-							<button id="fx24" data-amount="" value="invertSaturate">饱和度反转</button>
-							<button id="fx25" data-amount="" value="blur">模糊</button>
-							<button id="fx26" data-amount="" value="carving">雕刻</button>
-							<button id="fx27" data-amount="0" value="mirror">镜像</button>
-							<button id="fx28" data-amount="0" value="reverse">翻转</button>
-							<button id="fx29" data-amount="0" value="thermography">热成像</button>
-							<button id="fx30" data-amount="0" value="backThermography">热成像还原</button>
-							<button id="fx31" data-amount="0" value="Xray">X光片</button>
-							<button id="fx32" data-amount="4" value="posterize">色调分离</button>
-							<button id="fx33" data-amount="" value="primaryColor">三原色三间色</button>
-							<button class="notFx btn btn-outline-warning mb-1" value="custom" id="myfilter" data-toggle="modal" data-target="#custom-filter-modal"><i class="ms-Icon ms-Icon--Add"></i>自定义滤镜</button><!-- onclick="myFilter()" -->
-							<button class="notFx btn btn-outline-warning mb-1" value="watermark" onclick="document.getElementById('second').click()"><i class="ms-Icon ms-Icon--Font"></i>水印</button>
-						</div>
-						<div class="form-row mb-3 slider-part">
-							<div class="form-group col-9 group-slider">
-								<div class="dropdown" title="滤镜图层" data-toggle="tooltip" data-placement="right" data-trigger="hover">
-									<button class="btn btn-primary btn-sm round-button" type="button" id="layer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="ms-Icon ms-Icon--BuildQueue" aria-hidden="true"></i>
-									</button>
-									<div class="dropdown-menu">
-										<form class="px-4 py-1 brace-element">
-											<div class="custom-control custom-switch">
-												<input type="checkbox" class="custom-control-input" autocomplete="off" id="overlay">
-												<label class="custom-control-label" for="overlay">叠加滤镜</label>
-											</div>
-										</form>
-										<div class="dropdown-divider" id="auto-hidden-divider" style="display:none"></div>
-										<template id="layer-item">
-											<span class="dropdown-item">
-												<div class="layer-name"></div>
-												<div class="layer-attr"></div>
-												<div class="close layer-close">&times;</div>
-											</span>
-										</template>
-										<form id="fx-layer-list"></form>
-									</div>
-								</div>
-								<div class="dropdown" title="通道" data-toggle="tooltip" data-placement="right" data-trigger="hover" style="margin-right: .5rem">
-									<button class="btn btn-primary btn-sm round-button" type="button" id="channel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="ms-Icon ms-Icon--BarChartHorizontal" aria-hidden="true"></i>
-									</button>
-									<div class="dropdown-menu" id="channel-dropdown-menu">
-										<form>
-											<h6 class="dropdown-header">RGB 通道</h6>
-											<span class="dropdown-item" checked id="channel-r">Ｒ（红色）</span>
-											<span class="dropdown-item" checked id="channel-g">Ｇ（绿色）</span>
-											<span class="dropdown-item" checked id="channel-b">Ｂ（蓝色）</span>
-										</form>
-										<div class="dropdown-divider"></div>
-										<form>
-											<h6 class="dropdown-header">HSL 通道（不一定对所有滤镜有效）</h6>
-											<span class="dropdown-item" checked id="channel-h">Ｈ（色相）</span>
-											<span class="dropdown-item" checked id="channel-s">Ｓ（饱和度）</span>
-											<span class="dropdown-item" checked id="channel-l">Ｌ（亮度）</span>
-										</form>
-										<div class="dropdown-divider"></div>
-										<form>
-											<span class="dropdown-item" checked id="channel-a">Ａ（不透明度）</span>
-										</form>
-									</div>
-								</div>
-								<input type="range" class="custom-range" name="points" min="-255" max="255" step="1" id="slider" />
-							</div>
-							<div class="form-group col-3">
-								<div class="input-group input-group-sm">
-									<input type="number" class="form-control" id="slider-num" value="0" />
-								</div>
-							</div>
-						</div>
+				<div class="modal-body">
+					<div class="input-group mb-2">
+						<input type="text" class="form-control" id="path" placeholder="在这里输入图片URL地址">
 					</div>
-					<div class="alert alert-warning" id="start-info">
-						点击左上角按钮上传图片或粘贴图片地址。
-					</div>
-					<input id="second" type="file" onchange="showWatermark(this)" hidden />
-					<input type="file" id="image-chooser" hidden onchange="way=0;loadImage(this);" />
+					<hr />
+					<p style="text-align:center">&copy; 2016 <a href="https://github.com/jayankaghosh/chobi">Chobi</a> - Javascript Library team (j0y)</p>
+					<p style="text-align:center"><a href="https://github.com/briangonzalez/rgbaster.js">rgbaster.js</a> - A dead simple javascript library for extracting the dominant color(s) from an image.</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" data-dismiss="modal" id="modal-ok-button">确定</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
 				</div>
 			</div>
 		</div>
-	</body>
-	<script src="index.js"></script>
-	<script id="custom-filter-function"></script>
+	</div>
+	<div class="modal fade" id="custom-filter-modal" tabindex="-1">
+		<div class="modal-dialog modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="CustomFilterLabel">自定义滤镜</h5>
+					<button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span>&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label for="your-filter-name">自定义滤镜名称<span id="custom-filter-name-exists"></span></label>
+						<input type="text" class="form-control" id="your-filter-name" placeholder="myFilter" />
+					</div>
+					<div class="form-group">
+						<label for="your-filter-amount-default">滑块<code>(amount)</code>参数默认值<span class="text-light">(amount ∈ (ℤ ∩ [-255,255]))</span></label>
+						<input type="text" class="form-control" id="your-filter-amount-default" placeholder="留空本输入框则表示不设定默认值或该滤镜不适用滑块的参数" />
+					</div>
+					<ul class="nav nav-tabs justify-content-center">
+						<li class="nav-item"><a href="#rgbTab" data-toggle="tab" class="nav-link active">RGB 模型</a></li>
+						<li class="nav-item"><a href="#hslTab" data-toggle="tab" class="nav-link">HSL 模型</a></li>
+						<li class="nav-item"><a href="#helpTab" data-toggle="tab" class="nav-link">使用说明</a></li>
+					</ul>
+					<div id="mytab-content" class="tab-content">
+						<div class="tab-pane fade show active" id="rgbTab">
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="valR">R</label>
+								</div>
+								<input type="text" class="form-control" id="valR">
+							</div>
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="valG">G</label>
+								</div>
+								<input type="text" class="form-control" id="valG">
+							</div>
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="valB">B</label>
+								</div>
+								<input type="text" class="form-control" id="valB">
+							</div>
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="valA">A</label>
+								</div>
+								<input type="text" class="form-control" id="valA">
+							</div>
+						</div>
+						<div class="tab-pane fade" id="hslTab">
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="valH">H</label>
+								</div>
+								<input type="text" class="form-control" id="valH">
+							</div>
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="valS">S</label>
+								</div>
+								<input type="text" class="form-control" id="valS">
+							</div>
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="valL">L</label>
+								</div>
+								<input type="text" class="form-control" id="valL">
+							</div>
+							<div class="input-group mb-2">
+								<div class="input-group-prepend">
+									<label class="input-group-text" for="valAl">A</label>
+								</div>
+								<input type="text" class="form-control" id="valAl">
+							</div>
+						</div>
+						<div class="tab-pane fade" id="helpTab">
+							<small>
+								<!-- <p>本功能通过 <code>eval</code> 函数实现，性能非常地差，如果图片比较大，那就等着死机吧。</p> -->
+								<p>支持的参数：<code>r(红)</code>、<code>g(绿)</code>、<code>b(蓝)</code>、<code>h(色相)</code>、<code>s(饱和度)</code>、<code>l(亮度)</code>、<code>a(不透明度)</code>。大小写均可。此外，可以用 <code>c</code> 代指当前输入框所对应的颜色，用 <code>amount</code> 表示滑块所设定的参数。</p>
+								<p>选择一个颜色模型，在输入框中输入上述参数及表达式，可以生成自己需要的滤镜。</p>
+								<p class="text-danger">注意这里是 <b>HSL</b> 模型，不是 <b>HSV</b> 模型！</p>
+								<!-- <p>R、G、B 三个参数的取值范围均为 [0,255]，H 的取值范围为 [0,360)，S、L、A 三个参数的取值范围为 [0,100]。</p> -->
+								<p>所有参数的取值范围均为 [0,255]。如果超出范围，还是会被约束到这个范围。（<code>amount</code> 滑块的默认取值范围为 [-255,255]。）</p>
+								<p>如果有参数留空，则自动保持原参数的设定值。</p>
+								<p>支持使用 JavaScript 的函数，如 <code>Math.sqrt(1/2)</code>、<code>Math.sin(Math.PI/6)</code>、<code>Math.pow(2,3)</code> 等。注意前面必须加上“Math.”。</p>
+								<p>例如欲生成“反色”滤镜，可以先选择 RGB 模型，然后在对应的三个输入框中依次输入 <code>255-r</code>、<code>255-g</code>、<code>255-b</code> 即可。</p>
+								<p>双击文本框左边的标签可以快速清空文本框的内容。</p>
+							</small>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer separation">
+					<div>
+						<button type="button" class="btn btn-danger" onclick="clearCustomFilterInput()">清空</button>
+					</div>
+					<div>
+						<button type="button" class="btn btn-success" id="new-filter">确定</button>
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div style="height:80px"></div>
+	<div class="container-fluid">
+		<div class="row">
+
+			<div class="col-lg-8" id="canvas-part">
+				<div class="alert alert-warning" id="error" style="display:none;z-index:9">
+					<strong>错误！</strong>你还没有上传图片。
+				</div>
+				<!-- <div class="canvases"> -->
+				<canvas id="canvas" width="600" height="600" class="well ms-depth-64 mb-3"></canvas>
+				<canvas id="original" width="600" height="600" class="well mb-3"></canvas>
+				<!-- </div> -->
+			</div>
+			<div class="col-lg-4">
+				<div class="btn-group-03" id="filters" style="display:none">
+					<!-- <h5>滤镜:</h5> -->
+					<div class="btn-group-04">
+						<button class="notFx active" id="fx-orig" onclick="reset(undefined, true)">原图</button>
+						<button id="fx0" data-amount="255" value="blackAndWhite">平均灰阶</button>
+						<button id="fx10" data-amount="255" value="blackAndWhite2">自然灰阶</button>
+						<button id="fx20" data-amount="255" value="blackAndWhite3">原色灰阶</button>
+						<button id="fx1" data-amount="255" value="sepia">怀旧</button>
+						<button id="fx2" data-amount="0" value="negative">反色</button>
+						<button id="fx3" data-amount="0" value="vintage">复古</button>
+						<button id="fx4" data-amount="0" value="crossProcess">交叉冲印</button>
+						<button id="fx9" data-amount="0" value="noise">噪点</button>
+						<button id="fx5" data-amount="100" value="brightness">亮度</button>
+						<button id="fx6" data-amount="100" value="saturation">饱和度</button>
+						<button id="fx7" data-amount="100" value="contrast">对比度</button>
+						<button id="fx8" data-amount="100" value="hue">色相</button>
+						<button id="fx11" data-amount="0" value="crayon">蜡笔</button>
+						<button id="fx12" data-amount="" value="cartoon">卡通</button>
+						<button id="fx13" data-amount="1" value="vignette">晕影</button>
+						<button id="fx14" data-amount="0" value="aberration">色差</button>
+						<button id="fx15" data-amount="0" value="relief">浮雕</button>
+						<button id="fx16" data-amount="0" value="midBright">中亮度</button>
+						<button id="fx17" data-amount="255" value="maxSaturate">过饱和</button>
+						<button id="fx18" data-amount="255" value="opaque">不透明</button>
+						<button id="fx19" data-amount="0" value="whiteToAlpha">白色到透明</button>
+						<button id="fx21" data-amount="255" value="india">印度国旗</button>
+						<button id="fx22" data-amount="0" value="threshold">黑白</button>
+						<button id="fx23" data-amount="0" value="invertBright">亮度反转</button>
+						<button id="fx24" data-amount="" value="invertSaturate">饱和度反转</button>
+						<button id="fx25" data-amount="" value="blur">模糊</button>
+						<button id="fx26" data-amount="" value="carving">雕刻</button>
+						<button id="fx27" data-amount="0" value="mirror">镜像</button>
+						<button id="fx28" data-amount="0" value="reverse">翻转</button>
+						<button id="fx29" data-amount="0" value="thermography">热成像</button>
+						<button id="fx30" data-amount="0" value="backThermography">热成像还原</button>
+						<button id="fx31" data-amount="0" value="Xray">X光片</button>
+						<button id="fx32" data-amount="4" value="posterize">色调分离</button>
+						<button id="fx33" data-amount="" value="primaryColor">三原色三间色</button>
+						<button class="notFx btn btn-outline-warning mb-1" value="custom" id="myfilter" data-toggle="modal" data-target="#custom-filter-modal"><i class="ms-Icon ms-Icon--Add"></i>自定义滤镜</button><!-- onclick="myFilter()" -->
+						<button class="notFx btn btn-outline-warning mb-1" value="watermark" onclick="document.getElementById('second').click()"><i class="ms-Icon ms-Icon--Font"></i>水印</button>
+					</div>
+					<div class="form-row mb-3 slider-part">
+						<div class="form-group col-9 group-slider">
+							<div class="dropdown" title="滤镜图层" data-toggle="tooltip" data-placement="right" data-trigger="hover">
+								<button class="btn btn-primary btn-sm round-button" type="button" id="layer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i class="ms-Icon ms-Icon--BuildQueue" aria-hidden="true"></i>
+								</button>
+								<div class="dropdown-menu">
+									<form class="px-4 py-1 brace-element">
+										<div class="custom-control custom-switch">
+											<input type="checkbox" class="custom-control-input" autocomplete="off" id="overlay">
+											<label class="custom-control-label" for="overlay">叠加滤镜</label>
+										</div>
+									</form>
+									<div class="dropdown-divider" id="auto-hidden-divider" style="display:none"></div>
+									<template id="layer-item">
+										<span class="dropdown-item">
+											<div class="layer-name"></div>
+											<div class="layer-attr"></div>
+											<div class="close layer-close">&times;</div>
+										</span>
+									</template>
+									<form id="fx-layer-list"></form>
+								</div>
+							</div>
+							<div class="dropdown" title="通道" data-toggle="tooltip" data-placement="right" data-trigger="hover" style="margin-right: .5rem">
+								<button class="btn btn-primary btn-sm round-button" type="button" id="channel" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i class="ms-Icon ms-Icon--BarChartHorizontal" aria-hidden="true"></i>
+								</button>
+								<div class="dropdown-menu" id="channel-dropdown-menu">
+									<form>
+										<h6 class="dropdown-header">RGB 通道</h6>
+										<span class="dropdown-item" checked id="channel-r">Ｒ（红色）</span>
+										<span class="dropdown-item" checked id="channel-g">Ｇ（绿色）</span>
+										<span class="dropdown-item" checked id="channel-b">Ｂ（蓝色）</span>
+									</form>
+									<div class="dropdown-divider"></div>
+									<form>
+										<h6 class="dropdown-header">HSL 通道（不一定对所有滤镜有效）</h6>
+										<span class="dropdown-item" checked id="channel-h">Ｈ（色相）</span>
+										<span class="dropdown-item" checked id="channel-s">Ｓ（饱和度）</span>
+										<span class="dropdown-item" checked id="channel-l">Ｌ（亮度）</span>
+									</form>
+									<div class="dropdown-divider"></div>
+									<form>
+										<span class="dropdown-item" checked id="channel-a">Ａ（不透明度）</span>
+									</form>
+								</div>
+							</div>
+							<input type="range" class="custom-range" name="points" min="-255" max="255" step="1" id="slider" />
+						</div>
+						<div class="form-group col-3">
+							<div class="input-group input-group-sm">
+								<input type="number" class="form-control" id="slider-num" value="0" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="alert alert-warning" id="start-info">
+					点击左上角按钮上传图片或粘贴图片地址。
+				</div>
+				<input id="second" type="file" onchange="showWatermark(this)" hidden />
+				<input type="file" id="image-chooser" hidden onchange="way=0;loadImage(this);" />
+			</div>
+		</div>
+	</div>
+</body>
+<script src="index.js"></script>
+<script id="custom-filter-function"></script>
+
 </html>

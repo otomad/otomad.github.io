@@ -56,7 +56,7 @@ class 名人名言 {
 			$("#这里将会冒出一堆输入框").append(输入框组);
 			$(".叉叉").click(function () {
 				var 输入框 = this.parentNode.previousElementSibling;
-				输入框.value = 输入框.tagName!="SELECT" ? "" : 输入框.firstChild.value;
+				输入框.value = 输入框.tagName != "SELECT" ? "" : 输入框.firstChild.value;
 			});
 			i++;
 		}
@@ -93,11 +93,12 @@ $("#选择名人名言 option:nth-of-type(1)").attr("selected", "selected");
 $("#一键生成").click(() => {
 	var saying = $("#选择名人名言").val();
 	window[saying].生成结果();
-	urlState.clear();
+	/* urlState.clear();
 	urlState.set("saying", saying);
 	for (let key in window[saying].输入)
-		urlState.set(key, window[saying].输入[key]);
-	if(parent!=window) parent.history.pushState("", "", "?various&" + location.href.split('?')[1]);
+		urlState.set(key, window[saying].输入[key]); */
+	urlState.burn({ saying, ...window[saying].输入 });
+	if (parent != window) parent.history.pushState("", "", "?various&" + location.href.split('?')[1]);
 });
 
 $("#选择名人名言").change(function () {
@@ -123,7 +124,7 @@ String.prototype.掐头去尾 = function () {
 	return this.slice(1, -1).replace(/\t/g, "");
 }
 
-Array.prototype.随机给个 = function() {
+Array.prototype.随机给个 = function () {
 	return this[Math.floor(Math.random() * this.length)];
 }
 
@@ -168,48 +169,75 @@ function 复制(文本) {
 	input.remove();
 }
 
-{
-	var urlState = { data: {} };
-
-	urlState.clear = function () {
+var urlState = {
+	data: {},
+	clear: function () {
 		this.data = {};
-		// history.pushState("", "", "?");
-		// history.pushState("", "", location.href.slice(0, -1));
 		history.pushState("", "", location.href.split('?')[0]);
-	}
-
-	urlState.reset = function () {
-		var questionMark = location.href.indexOf("?");
+		return true;
+	},
+	reset: function () {
+		var questionMark = location.href.indexOf('?');
 		this.data = {};
-		if (questionMark === -1) return false;
-		var state = location.href.slice(questionMark + 1).split("&");
+		if (questionMark === -1)
+			return false;
+		var state = location.href.slice(questionMark + 1).split('&');
 		state.forEach(set => {
-			var divide = set.split("=");
+			var divide = set.split('=');
 			this.data[decodeURIComponent(divide[0])] = decodeURIComponent(divide[1]);
 		});
 		return true;
-	}
-
-	urlState.get = function (name) {
-		if (!this.reset()) return null;
+	},
+	get: function (name) {
+		if (!this.reset())
+			return null;
 		var result = this.data[name];
 		return (result === undefined ? null : result);
-	};
-
-	urlState.set = function (name, value) {
+	},
+	set: function (name, value) {
 		this.reset();
-		if (value !== undefined) this.data[name] = value;
-		else delete this.data[name];
+		if (typeof arguments[0] === "object") return this.burn({ ...this.data, ...arguments[0] });
+		for (let i = 0; i < arguments.length; i += 2) {
+			const name = arguments[i],
+				value = arguments[i + 1];
+			this.data[name] = value;
+			if (value === undefined || value === null)
+				delete this.data[name];
+		}
 		return this.burn();
-	}
-
-	urlState.burn = function (obj) {
-		if (obj !== undefined) this.data = obj;
+	},
+	burn: function (obj) {
+		if (obj !== undefined)
+			this.data = obj;
+		if (JSON.stringify(this.data) === '{}') return this.clear();
 		var encodeState = {};
-		for (let key in this.data)
+		for (let key in this.data) {
+			if (typeof this.data[key] == 'function') continue;
 			encodeState[encodeURIComponent(key)] = encodeURIComponent(this.data[key]);
+		}
 		var encodeURL = JSON.stringify(encodeState).replace(/\:/g, '=').replace(/\,/g, '&').replace(/\"/g, '').slice(1, -1);
 		history.pushState("", "", "?" + encodeURL);
 		return true;
+	},
+	obj: function () {
+		if (!this.reset())
+			return null;
+		return this.data;
 	}
+};
+
+document.onkeydown = function (e) {
+	if (window.event.keyCode == 13) {
+		const curEl = $(":focus"),
+			input = $("input,select");
+		let i = input.index(curEl);
+		if (i == -1) return;
+		if (i + 1 == input.length) $("#一键生成").focus().click();
+		else input[i + 1].focus();
+	}
+}
+
+function reload() {
+	urlState.clear();
+	location.reload();
 }

@@ -11,7 +11,7 @@
 				专业电脑维修 | @本论坛始建于 2005 年。\\n现已停止服务。
 				在线发送邮件 | https://exmail.qq.com/login
 				程序自然语言编辑器 | @本项目已成为一纸空文。
-				概念百科 | https://kuriya.fandom.com/zh [https://kuriya.shoutwiki.com/ , htdocs/wiki/index.php]
+				概念百科 | http://kuriya.unaux.com/ [https://kuriya.shoutwiki.com/ , htdocs/wiki/index.php , https://kuriya.fandom.com/zh]
 				欢迎来到咱们 217 | 217/欢迎来到咱们217_jsp.htm | 你很荣幸来到我们的主脚御姐系列专题！
 			$Impress | television
 				王沼泽语收音机 | impress/lb/index.html
@@ -1235,6 +1235,10 @@
 		.keyword {
 			color: var(--primary-color);
 		}
+
+		#login-page.control-list a {
+			width: auto;
+		}
 	</style>
 	<style id="live-style"></style>
 	<script>
@@ -1442,7 +1446,8 @@
 			$("#date").html(`${y}/${m}/${d} ${ww}`);
 			$("#second").html(`:${s}`);
 		}
-		document.meta = name => document.querySelector(`meta[name="${name}"]`).content;
+		// document.meta = name => document.querySelector(`meta[name="${name}"]`).content;
+		document.meta = name => document.getElementsByName(name)[0].content;
 		var version = document.meta("version");
 		function isEmpty(str) {
 			return (str.replace(/(^\s*)|(\s*$)/g, "").length == 0);

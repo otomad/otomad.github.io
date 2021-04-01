@@ -4,6 +4,8 @@ import { guideCard } from "./BetGuideCard.js";
 const cardSize = 200; //px
 var { cardWidth, cardHeight, cardTableWidth, cardTableHeight, singleTransitionDuration: std } = rootCSS.val;
 
+window.score = { data: 0 };
+
 const suitList = ['hearts', 'diamonds', 'spades', 'clubs'],
 	pointList = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'JOKER'];
 var pokerList = new Array(54).fill(0);
@@ -126,10 +128,9 @@ export default class CardTable extends React.Component {
 	}
 	static id() { return "poker-card-table"; } //怕浏览器只支持静态方法不支持静态属性
 	static show() {
-		let PokerCardTable = React.root(CardTable.id());
 		ReactDOM.render(
 			<CardTable />,
-			PokerCardTable
+			React.root(CardTable.id())
 		);
 	}
 }

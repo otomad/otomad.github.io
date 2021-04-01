@@ -1,80 +1,100 @@
 var realTimeSlide, way = 0,
 	filterId = -1, customModule = "rgb",
-	enableThumb = true, filterArray = [],
-	myFilterList = [];
-	
+	enableThumb = true, filterArray = [];
+
 var imgObj = null, //global Chobi object
 	imgThumb = null;
-	
+
+const btns = ".btn-group-04 button";
+
 testpic = "test.jpg";
 // testMode();
+// showButtons();
 
-$(document).ready(function() {
+$(document).ready(function () {
 	$('[data-toggle="tooltip"]').tooltip();
 });
 
 function showWatermark(imgElem) {
 	//watermark parameters	(imageElement, amount, startX, startY, width, height, callback)
-	imgObj.watermark(imgElem, 2, 0, 0, imgObj.imageData.width, imgObj.imageData.height, function() {
+	imgObj.watermark(imgElem, 2, 0, 0, imgObj.imageData.width, imgObj.imageData.height, function () {
 		imgObj.loadImageToCanvas();
 	});
 }
 
-$(".btn-group-04 button").not(".btn").addClass("btn btn-outline-success mb-1")
-for(let i of $(".btn-group-04 button")) {
-	let text = i.innerHTML;
-	i.innerHTML = `<canvas width="90" height="90"></canvas><span>${text}</span>`;
-}
-for(let i=0;i<10;i++)
+$(btns).attr("data-custom", false).each(function () {
+	let text = this.innerHTML;
+	this.innerHTML = `<canvas width="90" height="90"></canvas><span>${text}</span>`;
+}).not(".btn").addClass("btn btn-outline-success mb-1");
+for (let i = 0; i < 10; i++)
 	$(".btn-group-04").append('<div class="item-temp"></div>');
 
-$(".nav-item a").click(function(){
-	customModule = this.getAttribute("href").replace("#","").replace(/Tab/i,"");
-	var okBtn = $("[onclick='myFilter()']");
-	if(customModule=="help") okBtn.attr("disabled","disabled");
+$(".nav-item a").click(function () {
+	customModule = this.getAttribute("href").replace("#", "").replace(/Tab/i, "");
+	var okBtn = $("#new-filter");
+	if (customModule == "help") okBtn.attr("disabled", "disabled");
 	else okBtn.removeAttr("disabled");
 });
 //custom filter (india flag)
+function cfne(exist) {
+	const cfne = $("#custom-filter-name-exists");
+	if (exist === false) cfne.html('').attr("class", "");
+	else if (exist === true) cfne.html("将会更新已有自定义滤镜").attr("class", "text-warning");
+	else cfne.html("该名称已被内置滤镜占用").attr("class", "text-danger");
+}
+$("#your-filter-name").on('input propertychange change', function () {
+	const name = this.value,
+		exist = Chobi.myFilterList.has(name),
+		okBtn = $("#new-filter");
+	$("#your-filter-name").attr("class", "form-control" + (!exist ? '' : " is-" + (exist === true ? "warning" : "invalid")));
+	cfne(exist);
+	if (exist === "built") okBtn.addClass("disabled");
+	else okBtn.removeClass("disabled");
+});
+$("#new-filter").click(myFilter);
+function v(id, val) {
+	if (val !== undefined) return $("#val" + id).val(val);
+	return $("#val" + id).val();
+}
 function myFilter() {
 	$(".form-control").removeClass("is-invalid");
-	$("#custom-filter-name-exists").hide();
-	function v(id){
-		return $("#val"+id).val();
-	}
-	if(customModule=="help") return true;
+	let amountDefault = $("#your-filter-amount-default").val();
+	if (customModule == "help") return true;
 	{	//验证数据合法性。下面这个示例的颜色就是Windows经典主题的默认灰色。
-		let r=212,g=208,b=200,a=255,h=27.625,s=30.855,l=205.785,amount=255;
-		function legal(n){
+		let r = 212, g = 208, b = 200, a = 255, h = 27.625, s = 30.855, l = 205.785, amount = 255;
+		function legal(n) {
 			return ((typeof n === "number") && (isFinite(n)))
 		}
-		function t(n){
+		function t(n) {
 			return (!legal(eval(v(n))));
 		}
-		const st="R,G,B,A,H,S,L,Al".split(',');
-		for(let i of st){
-			if($("#val"+i).val()==='') $("#val"+i).val(i[0]);
-			$("#val"+i).val($("#val"+i).val().toLowerCase().replace(/(?<![a-zA-Z0-9])c(?![a-zA-Z0-9])/gi,i[0].toLowerCase()).replace(/math/gi,"Math").replace(/pi/gi,"PI").replace(/Math\.e/gi,"Math.E"))
+		const st = "R,G,B,A,H,S,L,Al".split(',');
+		for (let i of st) {
+			if (v(i) === '') v(i, i[0]);
+			v(i, v(i).toLowerCase().replace(/(?<![a-zA-Z0-9])c(?![a-zA-Z0-9])/gi, i[0].toLowerCase()).replace(/math/gi, "Math").replace(/pi/gi, "PI").replace(/Math\.e/gi, "Math.E"));
 		}
-		let d=(customModule=="hsl"?"H,S,L,Al".split(','):"RGBA");
+		let d = (customModule == "hsl" ? "H,S,L,Al".split(',') : "RGBA");
 		try {
 			var j;
-			for(j of d)
-				if(t(j)) throw j;
-		} catch(e) {
-			console.error(e+"\n"+j+" 表达式错误！");
-			$("#val"+j).addClass("is-invalid");
+			for (j of d)
+				if (t(j)) throw j;
+		} catch (e) {
+			console.error(e + "\n" + j + " 表达式错误！");
+			$("#val" + j).addClass("is-invalid");
 			return j;
 		}
 		var filterName = $("#your-filter-name").val();
-		if(filterName==="") filterName = $("#your-filter-name").attr("placeholder");
-		if(Boolean(Chobi.prototype[filterName]) || myFilterList.includes(filterName)) {
+		if (filterName === "") filterName = $("#your-filter-name").attr("placeholder");
+		/* if (Boolean(Chobi.prototype[filterName]) || myFilterList.includes(filterName)) {
 			$("#your-filter-name").addClass("is-invalid");
-			$("#custom-filter-name-exists").fadeIn();
+			// $("#custom-filter-name-exists").fadeIn();
 			return true;
-		} else myFilterList.push(filterName);
-		
+		} else myFilterList.push(filterName); */
+		const exist = Chobi.myFilterList.has(filterName);
+		Chobi.myFilterList.add.apply(Chobi.myFilterList, [filterName, customModule, (amountDefault === '' ? null : amountDefault - 0), ...(customModule == "rgb" ? [v('R'), v('G'), v('B'), v('A')] : [v('H'), v('S'), v('L'), v('Al')])])
+
 		////
-		
+
 		//由于eval函数太垃圾，试图通过插入函数的方法解决
 		/* let d=(customModule=="hsl"?"HSLA":"RGBA"),
 			scriptTag='<script id="tempCustomFunction">';
@@ -90,10 +110,9 @@ function myFilter() {
 		//script 关标签最好加一个转义符号，否则可能会被 HTML 检测到，把现在目前的整个 script 标签给关了。
 		$("body").append(scriptTag); */
 		let tempVar = {};
-		for(let k of d)
+		for (let k of d)
 			tempVar[k[0].toLowerCase()] = v(k);
-		let newFilter = `
-		Chobi.prototype["${filterName}"] = function(amount = 0, channel = defaultChannel) {
+		Chobi.prototype[filterName] = new Function("amount = 0", "channel = defaultChannel", `
 			var imageData = this.imageData;
 			for (var i = 0; i < imageData.width; i++) {
 				for (var j = 0; j < imageData.height; j++) {
@@ -106,11 +125,11 @@ function myFilter() {
 						h = this.map(hsl.H,0,360,0,255),
 						s = this.map(hsl.S,0,1,0,255),
 						l = this.map(hsl.L,0,1,0,255);
-					${customModule=="rgb"?`
+					${customModule == "rgb" ? `
 					var nr = ${tempVar.r},
 						ng = ${tempVar.g},
 						nb = ${tempVar.b};
-					`:`
+					`: `
 					var nh = (channel.H ? imgObj.map(${tempVar.h},0,255,0,360) : imgObj.map(h,0,255,0,360)),
 						ns = (channel.S ? imgObj.map(${tempVar.s},0,255,0,1) : imgObj.map(s,0,255,0,1)),
 						nl = (channel.L ? imgObj.map(${tempVar.l},0,255,0,1) : imgObj.map(l,0,255,0,1)),
@@ -127,23 +146,23 @@ function myFilter() {
 				}
 			}
 			return this;
-		}
-		`
-		// $("#custom-filter-function")[0].innerHTML += newFilter;
-		eval(newFilter);
-		
-		let amountDefault = $("#your-filter-amount-default").val();
-		var newFilterButton = `
-		<button data-amount="${amountDefault}" value="${filterName}" class="${$(".btn-group-04 button")[1].className}">
-			<canvas width="90" height="90" id="new-filter-thumb"></canvas>
-			<span>${filterName}</span>
-		</button>
-		`
-		$("[value='custom']").before(newFilterButton);
-		
+		`);
+
 		let orig = $("#fx-orig canvas")[0],
+			newFilterThumb;
+		if (!exist) {
+			var newFilterButton = `
+				<button data-amount="${amountDefault}" value="${filterName}" class="${$(btns)[1].className}" data-custom="true">
+					<canvas width="90" height="90" id="new-filter-thumb"></canvas>
+					<span>${filterName}</span>
+				</button>
+			`;
+			$("[value='custom']").before(newFilterButton);
 			newFilterThumb = $("#new-filter-thumb");
-		if(enableThumb) {
+		} else {
+			newFilterThumb = $(`[value='${filterName}']`).children("canvas");
+		}
+		if (enableThumb) {
 			imgThumb.canvas = newFilterThumb[0];
 			imgThumb[filterName]();
 			imgThumb.loadImageToCanvas();
@@ -197,7 +216,7 @@ function myFilter() {
 		}
 		$("#tempCustomFunction").remove();
 	} */
-	$("#custom-filter-modal").modal('hide');
+	$("#custom-filter-modal").modal('hide').find("input").val('').change();
 	return false;
 }
 
@@ -206,23 +225,23 @@ function loadImage(elem) {
 	$("#slider,#slider-num").addClass("translucent");
 	//you should probably check if file is image or not before passing it
 	imgObj = new Chobi(elem);
-	imgObj.ready(function() {
+	imgObj.ready(function () {
 		this.canvas = $("#original")[0];
 		this.loadImageToCanvas();
 		this.canvas = $("#canvas")[0];
 		this.loadImageToCanvas();
-		
-		if(enableThumb) {	//缩略图部分
-			let orig=$("#fx-orig canvas")[0];
-			this.thumbImageData(orig,orig.width,orig.height);
+
+		if (enableThumb) {	//缩略图部分
+			let orig = $("#fx-orig canvas")[0];
+			this.thumbImageData(orig, orig.width, orig.height);
 			for (let i = 0; i < 2; i++)
-				this.copyImageData(orig,$(".btn-group-04 .btn-outline-warning canvas")[i]);
+				this.copyImageData(orig, $(".btn-group-04 .btn-outline-warning canvas")[i]);
 			imgThumb = new Chobi(orig);
-			imgThumb.ready(function(orig){
-				let fx=$(".btn-group-04 button:not(.notFx) canvas");
-				for(let i=0;i<fx.length;i++){
-					let filterName=fx[i].parentNode.value;
-					this.canvas=fx[i];
+			imgThumb.ready(function (orig) {
+				let fx = $(".btn-group-04 button:not(.notFx) canvas");
+				for (let i = 0; i < fx.length; i++) {
+					let filterName = fx[i].parentNode.value;
+					this.canvas = fx[i];
 					this[filterName]();
 					this.loadImageToCanvas();
 					this.changeImageData(orig);
@@ -232,13 +251,13 @@ function loadImage(elem) {
 			{	//主色调部分
 				var colors = RGBaster.colors(orig, {
 					paletteSize: 1,
-					success: function(colors) {
+					success: function (colors) {
 						console.log("Dominant color:", colors.dominant);
 						$("#canvas, #original").css({
 							"border-color": colors.dominant,
 							"background-color": colors.dominant
 						});
-						
+
 						//补充进行的操作
 						$("#filters").show();
 						// delete imgThumb;
@@ -247,9 +266,9 @@ function loadImage(elem) {
 			}
 		}
 	});
-	
+
 	//show filters to users
-	$(".btn-group-04 button").removeClass("active")
+	$(btns).removeClass("active")
 	$("#fx-orig").addClass("active");
 	$("#start-info").hide();
 	if (!enableThumb) $("#filters").show();
@@ -257,23 +276,23 @@ function loadImage(elem) {
 }
 
 function new_eval(str) {
-    var fn = Function;
-    return new fn('return ' + str)();
+	var fn = Function;
+	return new fn('return ' + str)();
 }
 
 function getChannelValue() {
 	const c = "rgbhsla";
 	var v = {};
-	for(let i of c)
-		v[i.toUpperCase()] = ($("#channel-"+i).attr("checked")!==undefined);
+	for (let i of c)
+		v[i.toUpperCase()] = ($("#channel-" + i).attr("checked") !== undefined);
 	return v;
 }
 
 function getChannelName(channel) {
 	const c = "rgbhsla".toUpperCase();
 	var name = "";
-	for(let i of c)
-		if(channel[i]) name += i;
+	for (let i of c)
+		if (channel[i]) name += i;
 	return name;
 }
 
@@ -286,7 +305,7 @@ function testMode() {
 function downloadImage() {
 	if (imgObj == null) {
 		$("#error").fadeIn();
-		setTimeout(function() {
+		setTimeout(function () {
 			$("#error").fadeOut();
 		}, 4000);
 		return;
@@ -295,35 +314,35 @@ function downloadImage() {
 }
 
 function newDate() {
-	return (new Date().format("yyyyMMddhhmmssS"));
+	return (new Date().format("yyyyMMddhhmmssSSS"));
 }
 
 //filter chaining is also possible, like imgObj.brightness(-5).sepia().negative();
-$(document).on("click", ".btn-group-04 button:not(.notFx)", function(){
+$(document).on("click", ".btn-group-04 button:not(.notFx)", function () {
 	var val = this.value,
 		amount = this.dataset.amount;
-	if(amount!==""&&isFinite(amount))
+	if (amount !== "" && isFinite(amount))
 		$("#slider,#slider-num").removeClass("translucent").val(amount);
 	else
 		$("#slider,#slider-num").addClass("translucent");
 	filter(undefined, val);
 });
 
-$(document).on("click", ".btn-group-04 button", function(){
-	$(".btn-group-04 button").removeClass("active")
+$(document).on("click", btns, function () {
+	$(btns).removeClass("active")
 	$(this).addClass("active");
 });
 
-$(document).on("click", ".layer-close", function(){
+$(document).on("click", ".layer-close", function () {
 	//每次更新列表都需要重新声明该按钮的事件
 	var index = (filterArray.length - 1) - $(this).parent().index();
 	filterArray.splice(index, 1);
 	$(this).parent().remove();
-	if(filterArray.length===0) $("#fx-orig").click();
+	if (filterArray.length === 0) $("#fx-orig").click();
 	else {
 		reactiveButton();
 		$("#slider,#slider-num").val(filterArray[filterArray.length - 1].amount);
-		if($(`button[value="${filterArray[filterArray.length - 1].filter}"`).data("amount")!=="")
+		if ($(`button[value="${filterArray[filterArray.length - 1].filter}"`).data("amount") !== "")
 			$("#slider,#slider-num").removeClass("translucent");
 		else
 			$("#slider,#slider-num").addClass("translucent");
@@ -332,14 +351,14 @@ $(document).on("click", ".layer-close", function(){
 	$("#layer").dropdown('update');
 });
 
-$("#fx-layer-list").bind('DOMSubtreeModified', function(e) {
-	if(this.innerHTML==="") $("#auto-hidden-divider").hide();
+$("#fx-layer-list").bind('DOMSubtreeModified', function (e) {
+	if (this.innerHTML === "") $("#auto-hidden-divider").hide();
 	else $("#auto-hidden-divider").show();
 });
 
 function reactiveButton() {
-	$(".btn-group-04 button").removeClass("active");
-	$(filterArray.length?`.btn-group-04 button[value='${filterArray[filterArray.length-1].filter}']`:"#fx-orig").addClass("active");
+	$(btns).removeClass("active");
+	$(filterArray.length ? `.btn-group-04 button[value='${filterArray[filterArray.length - 1].filter}']` : "#fx-orig").addClass("active");
 }
 
 function filter(id, value) { //id的方法不用了
@@ -350,7 +369,7 @@ function filter(id, value) { //id的方法不用了
 	}
 	var slider = document.getElementById("slider").value - 0,
 		overlay = document.getElementById("overlay").checked;
-		channel = getChannelValue();
+	channel = getChannelValue();
 	if (!overlay) reset();
 	{
 		filterArray.push({
@@ -361,7 +380,7 @@ function filter(id, value) { //id的方法不用了
 		var layerItem = $("#layer-item")[0].content.children[0].cloneNode(true),
 			filterName = $(`button[value="${value}"]`).text();
 		$(layerItem).children(".layer-name").text(filterName);
-		$(layerItem).children(".layer-attr").text(slider+' | '+getChannelName(channel));
+		$(layerItem).children(".layer-attr").text(slider + ' | ' + getChannelName(channel));
 		$("#fx-layer-list").prepend(layerItem);
 	}
 	filterId = value;
@@ -379,27 +398,27 @@ function reset(clear = true, AC = false) {
 	}
 	imgObj.changeImageData($("#original")[0]).loadImageToCanvas();
 }
-$("#slider").mousedown(function() {
-	realTimeSlide = setInterval(function() {
+$("#slider").mousedown(function () {
+	realTimeSlide = setInterval(function () {
 		$("#slider-num").val($("#slider").val());
 	}, 0.01);
 });
-$("#slider").mouseup(function() {
+$("#slider").mouseup(function () {
 	clearInterval(realTimeSlide);
 	if (filterId != "reset" && filterId != "custom") {
-		filterArray[filterArray.length-1].amount = this.value - 0;
-		filterArray[filterArray.length-1].channel = getChannelValue();
+		filterArray[filterArray.length - 1].amount = this.value - 0;
+		filterArray[filterArray.length - 1].channel = getChannelValue();
 		var latestLayer = $("#fx-layer-list").children()[0];
-		$(latestLayer).children(".layer-attr").text(this.value +' | '+getChannelName(getChannelValue()));
+		$(latestLayer).children(".layer-attr").text(this.value + ' | ' + getChannelName(getChannelValue()));
 	}
-	rearrangeFilter(filterArray.length-1);
+	rearrangeFilter(filterArray.length - 1);
 });
-$("#slider").dblclick(function() {
-	var defaultValue = $(".btn-group-04 button.active").data("amount")-0;
+$("#slider").dblclick(function () {
+	var defaultValue = $(".btn-group-04 button.active").data("amount") - 0;
 	$(this).val(defaultValue).mousedown().mouseup();
 	$("#slider-num").val(defaultValue);
 });
-$("#slider-num").on('input propertychange', function() {
+$("#slider-num").on('input propertychange change', function () {
 	if ($(this).val() == "") return;
 	var v = parseInt($(this).val());
 	if (v > 255) v = 255;
@@ -407,12 +426,12 @@ $("#slider-num").on('input propertychange', function() {
 	$(this).val(v);
 	$("#slider").val(v).mouseup();
 });
-$("#modal-ok-button").click(function() {
+$("#modal-ok-button").click(function () {
 	way = 1;
 	loadImage($("#path").val());
 });
 
-Date.prototype.format = function(format) {
+Date.prototype.format = function (format) {
 	var o = {
 		"M+": this.getMonth() + 1, //month
 		"d+": this.getDate(), //day
@@ -420,7 +439,7 @@ Date.prototype.format = function(format) {
 		"m+": this.getMinutes(), //minute
 		"s+": this.getSeconds(), //second
 		"q+": Math.floor((this.getMonth() + 3) / 3), //quarter
-		"S": this.getMilliseconds() //millisecond
+		"S+": this.getMilliseconds() //millisecond
 	}
 	if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
 		(this.getFullYear() + "").substr(4 - RegExp.$1.length));
@@ -428,7 +447,7 @@ Date.prototype.format = function(format) {
 		if (new RegExp("(" + k + ")").test(format))
 			format = format.replace(RegExp.$1,
 				RegExp.$1.length == 1 ? o[k] :
-				("00" + o[k]).substr(("" + o[k]).length));
+					("00" + o[k]).substr(("" + o[k]).length));
 	return format;
 }
 
@@ -443,27 +462,27 @@ Date.prototype.format = function(format) {
 		customHSLModule=true;
 	}
 }); */
-$(".input-group-prepend label").dblclick(function(){
-	$('#'+this.htmlFor).val("");
+$("[for]").dblclick(function () { //$(".input-group-prepend label")
+	$('#' + this.htmlFor).val("");
 });
 
-$.fn.rmcss = function() {
+$.fn.rmcss = function () {
 	return this.removeAttr("style");
 }
 window.onload = window.onresize = gridChange;
 function gridChange() { //grid系统
-	if($("#canvas-part")[0].clientWidth<$("#canvas")[0].clientWidth)
-		$("#canvas,#original").css("transform",`scale(${$("#canvas-part")[0].clientWidth/$("#canvas")[0].clientWidth})`)
+	if ($("#canvas-part")[0].clientWidth < $("#canvas")[0].clientWidth)
+		$("#canvas,#original").css("transform", `scale(${$("#canvas-part")[0].clientWidth / $("#canvas")[0].clientWidth})`)
 	else
-		$("#canvas,#original").css("transform","scale(1)");
+		$("#canvas,#original").css("transform", "scale(1)");
 }
-document.onkeydown = function(e) {
+document.onkeydown = function (e) {
 	if (window.event.keyCode == 13) {
-		if($("#path").is(":focus")) $("#modal-ok-button").click();
+		if ($("#path").is(":focus")) $("#modal-ok-button").click();
 	}
 }
-$("#channel-dropdown-menu .dropdown-item").click(function(){
-	if($(this).attr("checked")===undefined) $(this).attr("checked","checked");
+$("#channel-dropdown-menu .dropdown-item").click(function () {
+	if ($(this).attr("checked") === undefined) $(this).attr("checked", "checked");
 	else $(this).removeAttr("checked");
 	$("#slider").mouseup();
 });
@@ -475,28 +494,80 @@ function rearrangeFilter(start) {
 		imgObj.rewriteImageData(filterArray[start - 1].data);
 		i = start;
 	}
-	for (i ; i < filterArray.length ; i++) {
+	for (i; i < filterArray.length; i++) {
 		imgObj[filterArray[i].filter](filterArray[i].amount, filterArray[i].channel);
 		filterArray[i].data = imgObj.imageData.data.slice();
 	}
 	imgObj.loadImageToCanvas();
 }
-String.prototype.i = function(index, character = "") {
+String.prototype.i = function (index, character = "") {
 	return this.slice(0, index) + character + this.slice(index + 1);
 }
-$("#your-filter-amount-default").on('input propertychange change', function() {
+$("#your-filter-amount-default").on('input propertychange change', function () {
 	var value = this.value;
-	for(let i=0;i<value.length;i++)
-		if(!(value[i]>='0'&&value[i]<='9'||value[i]==='-'&&i===0))
+	for (let i = 0; i < value.length; i++)
+		if (!(value[i] >= '0' && value[i] <= '9' || value[i] === '-' && i === 0))
 			value = value.i(i);
-	if(value>255) value = 255;
-	if(value<-255) value = -255;
+	if (value > 255) value = 255;
+	if (value < -255) value = -255;
 	this.value = value;
 });
 $("#custom-filter-modal").on('hidden.bs.modal', function (e) {
 	reactiveButton();
 });
 $("#custom-filter-modal").on('show.bs.modal', function (e) {
-	$("#your-filter-name").attr("placeholder", "myFilter "+newDate());
+	$("#your-filter-name").attr("placeholder", "myFilter " + newDate());
 });
 // $("#custom-filter-modal").modal("show");
+
+function showButtons() {
+	$("#filters").show();
+}
+
+function clearCustomFilterInput() {
+	$("#custom-filter-modal").find("input").val('').change();
+}
+
+$(btns).each(function () {
+	this.oncontextmenu = e => e.preventDefault();
+});
+$.contextMenu({
+	selector: btns + "[data-custom=true]",
+	items: {
+		edit: {
+			name: "编辑",
+			callback: (_key, opt) => {
+				const el = opt.$trigger,
+					name = el.val(),
+					data = Chobi.myFilterList.data[name],
+					model = data.model.toLowerCase();
+				clearCustomFilterInput();
+				$("#custom-filter-modal").modal("show");
+				$(`[href="#${model}Tab"]`).click();
+				$("#your-filter-name").val(name).change();
+				$("#your-filter-amount-default").val(data.amountDefault);
+				var st;
+				if (model == "rgb") st = "R,G,B,A".split(',');
+				else if (model == "hsl") st = "H,S,L,Al".split(',');
+				for (const i of st)
+					v(i, data[i[0]]);
+			}
+		},
+		delete: {
+			name: "删除",
+			callback: (_key, opt) => {
+				const el = opt.$trigger,
+					name = el.val();
+				console.log("delete " + delete Chobi.prototype[name]);
+				Chobi.myFilterList.remove(name);
+				el.remove();
+			}
+		},
+	}
+});
+
+document.onkeydown = function (e) {
+	if (window.event.keyCode == 13)
+		if ($("#custom-filter-modal").hasClass("show"))
+			$("#new-filter").click();
+}

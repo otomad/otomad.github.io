@@ -5,6 +5,9 @@ import { guideCard } from "./BetGuideCard.js";
 
 var { circSize, circMargin, guideCardHeight } = rootCSS.val;
 
+window.direct = 0, //-1 表示左旋，1 表示右旋
+window.finalScore = 0;
+
 export var betCircular = null;
 export default class BetCircular extends React.Component {
 	constructor() {
@@ -21,7 +24,7 @@ export default class BetCircular extends React.Component {
 				animation: "clockwise"
 			});
 			setTimeout(circ => circ.toShow(), 250, circ);
-			setTimeout($(".circ a").css("background", ""), 2000);
+			$(".circ a").css("background", "");
 			this.setState({
 				init: true
 			});
@@ -188,7 +191,4 @@ function RightRotateSVG(props) {
 	);
 }
 
-{
-	let circ = React.root("bet-circ");
-	ReactDOM.render(React.createElement(BetCircular, null), circ);
-}
+ReactDOM.render(React.createElement(BetCircular, null), React.root("bet-circ"));

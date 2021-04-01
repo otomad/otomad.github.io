@@ -24,37 +24,13 @@ class SimpleMoneyTab extends React.Component {
 			linkTag.id = "simple-money-tab";
 			document.head.appendChild(linkTag);
 		}
-		return React.createElement(
-			"div",
-			null,
-			React.createElement(
-				"a",
-				{ href: "help.html" },
-				React.createElement(
-					"i",
-					{ style: { marginRight: 0 } },
-					"\uE709"
-				)
-			),
-			React.createElement(
-				"i",
-				null,
-				"\uE7CB"
-			),
-			React.createElement(
-				"span",
-				{ id: "amount-num" },
-				"\u5143"
-			),
-			React.createElement(
-				"button",
-				{ id: "rechange-btn" },
-				React.createElement(
-					"i",
-					null,
-					"\uE718"
-				)
-			)
+		return (
+			<div>
+				<a href="help.html"><i style={{marginRight: 0}}></i></a>
+				<i></i>
+				<span id="amount-num">元</span>
+				<button id="rechange-btn"><i></i></button>
+			</div>
 		);
 	}
 }

@@ -6,9 +6,7 @@ class WrapperDial extends React.Component {
 			React.createElement(
 				"div",
 				{ className: "wrapper" },
-				this.props.list.map((item, index, arr) => {
-					return React.createElement(Light, { key: "light-" + index, index: index, num: arr.length });
-				}),
+				this.props.list.map((item, index, arr) => React.createElement(Light, { key: "light-" + index, index: index, num: arr.length })),
 				React.createElement(
 					"div",
 					{ className: "panel circularOut start-animation" },
@@ -18,13 +16,11 @@ class WrapperDial extends React.Component {
 						React.createElement(
 							"ul",
 							null,
-							this.props.list.map((item, index) => {
-								return React.createElement(
-									Sector,
-									{ key: "sector-" + index },
-									item
-								);
-							})
+							this.props.list.map((item, index) => React.createElement(
+								Sector,
+								{ key: "sector-" + index },
+								item
+							))
 						)
 					),
 					React.createElement(

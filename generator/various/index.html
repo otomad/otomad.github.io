@@ -17,6 +17,7 @@
 	<style>
 		h1 {
 			margin: 20px 0;
+			display: inline-block;
 		}
 
 		.input-group-lg * {
@@ -40,12 +41,16 @@
 			margin-bottom: 4px;
 			float: right;
 		}
+
+		[onclick] {
+			cursor: pointer !important;
+		}
 	</style>
 </head>
 
 <body>
 	<div class="container-fluid">
-		<h1>各种各样生成器</h1>
+		<h1 onclick="reload()">各种各样生成器</h1>
 		<div class="row">
 			<div class="col-lg-5 mb-3">
 				<div class="form-group">

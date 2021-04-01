@@ -3,19 +3,11 @@ class WrapperDial extends React.Component {
 		return (
 			<div className="turntable">
 				<div className="wrapper">
-					{
-						this.props.list.map((item, index, arr) => {
-							return <Light key={"light-" + index} index={index} num={arr.length} />;
-						})
-					}
+					{ this.props.list.map((item, index, arr) => <Light key={"light-" + index} index={index} num={arr.length} />) }
 					<div className="panel circularOut start-animation">
 						<div className="circular">
 							<ul>
-								{
-									this.props.list.map((item, index) => {
-										return <Sector key={"sector-" + index}>{item}</Sector>;
-									})
-								}
+								{ this.props.list.map((item, index) => <Sector key={"sector-" + index}>{item}</Sector>) }
 							</ul>
 						</div>
 						<button className="pointer" data-toggle="tooltip" data-placement="bottom" data-html="true" title={this.props.info+"<br>随机转动"}>
@@ -33,9 +25,7 @@ class Light extends React.Component {
 		return this.props.index * 360 / this.props.num;
 	}
 	render() {
-		return (
-			<div className="light" style={{transform: `rotate(${this.getDeg()}deg)`}}></div>
-		);
+		return <div className="light" style={{transform: `rotate(${this.getDeg()}deg)`}}></div>;
 	}
 }
 

@@ -7,13 +7,13 @@
 
 ::-webkit-scrollbar-thumb {
 	border-radius: 5px;
-	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 	background: #ffffff33;
 	scrollbar-arrow-color: red;
 }
 
 ::-webkit-scrollbar-track {
-	-webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
 	border-radius: 0;
 	background: #ffffff1a;
 }
@@ -43,7 +43,7 @@
 
 .btn-outline-secondary:not(:disabled):not(.disabled):active,
 .btn-outline-secondary:not(:disabled):not(.disabled).active,
-.show>.btn-outline-secondary.dropdown-toggle {
+.show > .btn-outline-secondary.dropdown-toggle {
 	color: #222;
 	background-color: #adb5bd;
 	border-color: #adb5bd;
@@ -51,7 +51,7 @@
 
 .btn-outline-secondary:not(:disabled):not(.disabled):active:focus,
 .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
-.show>.btn-outline-secondary.dropdown-toggle:focus {
+.show > .btn-outline-secondary.dropdown-toggle:focus {
 	box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.5);
 }
 
@@ -108,7 +108,7 @@ input[type="range"i] {
 
 /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
 .row.content {
-	height: 1500px
+	height: 1500px;
 }
 
 /* Set gray background color and 100% height */
@@ -191,8 +191,7 @@ label {
 .btn-outline-primary i,
 .btn-group-04 .btn i.ms-Icon,
 .btn-group-04 .btn span {
-	transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1),
-		color 0ms;
+	transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1), color 0ms;
 }
 
 #error,
@@ -254,7 +253,7 @@ label {
 }
 
 .btn-group-04 .btn:active {
-	transform: scale(.92);
+	transform: scale(0.92);
 }
 
 .btn-group-04 .btn i.ms-Icon {
@@ -270,7 +269,7 @@ label {
 
 .btn-group-04 canvas,
 .btn-group-04 span {
-	border-radius: .25rem;
+	border-radius: 0.25rem;
 	width: 90px;
 	height: 90px;
 }
@@ -288,7 +287,7 @@ label {
 	word-wrap: break-word;
 	word-break: break-word;
 	white-space: break-spaces;
-	padding-bottom: .5rem;
+	padding-bottom: 0.5rem;
 }
 
 .btn-group-04 button span {
@@ -321,7 +320,7 @@ label {
 }
 
 .slider-part {
-	padding: .5rem 15px;
+	padding: 0.5rem 15px;
 }
 
 .col-lg-4 {
@@ -348,7 +347,6 @@ label {
 		flex-wrap: wrap;
 		justify-content: space-between;
 		/* justify-content: flex-start; */
-		
 	}
 
 	.container-fluid {
@@ -373,7 +371,7 @@ body {
 }
 
 .dropdown-item::after {
-	content: '';
+	content: "";
 	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%23fefefe' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") !important;
 	width: 1.25em;
 	height: 1.5em;
@@ -407,7 +405,7 @@ body {
 }
 
 .layer-attr {
-	margin: 0 .65rem;
+	margin: 0 0.65rem;
 	color: var(--gray);
 	margin-right: 1.45rem;
 }
@@ -422,7 +420,7 @@ body {
 }
 
 #custom-filter-modal label span {
-	margin-left: .5rem;
+	margin-left: 0.5rem;
 }
 
 #fx-layer-list .dropdown-item::after {
@@ -440,4 +438,47 @@ body {
 
 .translucent {
 	opacity: 0.5;
+}
+
+.context-menu-list,
+.context-menu-list .context-menu-item:not(.context-menu-hover) {
+	background-color: #222 !important;
+}
+
+.context-menu-list,
+.context-menu-list * {
+	transition: all 0ms;
+}
+
+.context-menu-list .context-menu-item {
+	transition: background-color 250ms ease-out;
+	color: white;
+}
+
+.form-control.is-warning {
+	border-color: var(--warning);
+	padding-right: calc(1.5em + 0.75rem);
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23f39c12' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23f39c12' stroke='none'/%3e%3c/svg%3e");
+	background-repeat: no-repeat;
+	background-position: right calc(0.375em + 0.1875rem) center;
+	background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-warning:focus {
+	border-color: var(--warning);
+	box-shadow: 0 0 0 0.2rem #f39c1240;
+}
+
+[disabled],
+:disabled,
+.disabled {
+	pointer-events: none;
+}
+
+.modal-footer.separation {
+	justify-content: space-between;
+}
+
+.modal-footer.separation>div>button {
+	margin: 0 2px;
 }

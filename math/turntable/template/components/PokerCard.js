@@ -4,6 +4,8 @@ import { guideCard } from "./BetGuideCard.js";
 const cardSize = 200; //px
 var { cardWidth, cardHeight, cardTableWidth, cardTableHeight, singleTransitionDuration: std } = rootCSS.val;
 
+window.score = { data: 0 };
+
 const suitList = ['hearts', 'diamonds', 'spades', 'clubs'],
       pointList = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K', 'JOKER'];
 var pokerList = new Array(54).fill(0);
@@ -93,19 +95,19 @@ export default class CardTable extends React.Component {
 	}
 	render() {
 		const cardDeck = React.createElement(
-			'div',
-			{ id: 'card-deck', className: classNames({
+			"div",
+			{ id: "card-deck", className: classNames({
 					"poker-card": true,
 					"card-deck": this.state.seat !== -1,
 					setup: this.state.seat === -1 || this.state.seat === 5
 				}) },
-			React.createElement(CardBack, { id: 'card-deck-back' })
+			React.createElement(CardBack, { id: "card-deck-back" })
 		);
 		return React.createElement(
-			'div',
+			"div",
 			null,
 			React.createElement(
-				'style',
+				"style",
 				null,
 				`
 						:root {
@@ -113,13 +115,13 @@ export default class CardTable extends React.Component {
 						}
 					`
 			),
-			React.createElement('div', { className: classNames({
+			React.createElement("div", { className: classNames({
 					"mask-layer": true,
 					hidden: this.state.seat === -1 || this.state.seat === 5
 				}) }),
 			React.createElement(
-				'div',
-				{ className: 'card-table', style: {
+				"div",
+				{ className: "card-table", style: {
 						transform: `scale(${this.state.scale})`
 					} },
 				cardDeck,
@@ -133,8 +135,7 @@ export default class CardTable extends React.Component {
 		return "poker-card-table";
 	} //怕浏览器只支持静态方法不支持静态属性
 	static show() {
-		let PokerCardTable = React.root(CardTable.id());
-		ReactDOM.render(React.createElement(CardTable, null), PokerCardTable);
+		ReactDOM.render(React.createElement(CardTable, null), React.root(CardTable.id()));
 	}
 }
 
@@ -165,19 +166,19 @@ class PokerCard extends React.Component {
 
 	render() {
 		return React.createElement(
-			'div',
+			"div",
 			{ className: classNames({
 					"poker-card": true,
 					uncover: this.state.uncover && this.props.seat < 4,
 					"card-deck": this.props.seat === 0 || this.props.seat === 4,
 					setup: this.props.seat === -1 || this.props.seat === 5,
 					"avoid-click": this.props.seat >= 3
-				}), onClick: this.flip, 'data-suit': this.props.suit, 'data-point': this.props.point },
+				}), onClick: this.flip, "data-suit": this.props.suit, "data-point": this.props.point },
 			React.createElement(CardBack, { id: this.props.id + "-back" }),
 			React.createElement(
-				'div',
-				{ className: 'card-face' },
-				React.createElement('canvas', { id: this.props.id, width: this.props.width, height: this.props.height })
+				"div",
+				{ className: "card-face" },
+				React.createElement("canvas", { id: this.props.id, width: this.props.width, height: this.props.height })
 			)
 		);
 	}
@@ -207,9 +208,9 @@ class CardBack extends React.Component {
 
 	render() {
 		return React.createElement(
-			'div',
-			{ className: 'card-back' },
-			React.createElement('canvas', { id: this.props.id, width: this.props.width, height: this.props.height })
+			"div",
+			{ className: "card-back" },
+			React.createElement("canvas", { id: this.props.id, width: this.props.width, height: this.props.height })
 		);
 	}
 }

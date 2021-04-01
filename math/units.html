@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>单位换算</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	<style>
+		body,
+		.input-group,
+		label,
+		.input-group,
+		.card,
+		.card-body,
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6,
+		tr {
+			transition: all 250ms ease-in-out !important;
+		}
+
+		h4 {
+			margin: 0.75em 0 1em;
+		}
+
+		.form-inline {
+			flex-wrap: nowrap;
+		}
+
+		tbody#all-units {
+			display: grid;
+			grid-template-columns: 1fr;
+		}
+
+		#all-units tr {
+			display: flex;
+			flex-grow: 1;
+		}
+
+		#all-units td {
+			overflow: hidden;
+		}
+
+		:root {
+			--grid-width: 65%;
+		}
+
+		#all-units td:nth-child(1) {
+			width: var(--grid-width);
+		}
+
+		#all-units td:nth-child(2) {
+			width: calc(100% - var(--grid-width));
+		}
+
+		@media (min-width: 768px) {
+			tbody#all-units {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		@media (min-width: 992px) {
+			tbody#all-units {
+				grid-template-columns: 1fr 1fr 1fr;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4>单位换算</h4>
+		<div class="form-group mb-3">
+			<!-- <label for="physical">选择物理量</label> -->
+			<div class="input-group input-group-lg mb-3">
+				<select class="custom-select" id="physical"></select>
+			</div>
+		</div>
+		<div class="form-row mb-3">
+			<div class="col-8">
+				<input type="number" class="form-control" id="amount1">
+			</div>
+			<div class="col-4">
+				<select class="custom-select" id="unit1"></select>
+			</div>
+		</div>
+		<button type="button" class="btn btn-info btn-block mb-3" id="exchange"><i class="fa fa-arrows-v"></i></button>
+		<div class="form-row mb-3">
+			<div class="col-8">
+				<input type="number" class="form-control" id="amount2">
+			</div>
+			<div class="col-4">
+				<select class="custom-select" id="unit2"></select>
+			</div>
+		</div>
+		<button type="button" class="btn btn-danger mb-3 font-weight-bold float-right" id="ac">AC</button>
+		<p style="color:var(--gray)">国际单位：<span id="principal-unit"></span></p>
+		<div class="alert alert-warning" role="alert" id="warning" style="display:none"></div>
+		<table class="table table-hover">
+			<tbody id="all-units"></tbody>
+		</table>
+	</div>
+	<script>
+		$("#ac").click(() => $("#amount1,#amount2").val(''));
+		var aux = (symbol = '', coefficient = 1, constant = 0, second = false) => ({ symbol, coefficient, constant, Default: second ? 2 : 0 }), // Auxiliary Unit
+			pri = (symbol = '') => ({ symbol, coefficient: 1, constant: 0, Default: 1 }); // Principal Unit
+		var units = {
+			长度: {
+				公制: {
+					秒差距: aux("pc", 30856864263739790),
+					光年: aux("l.y.", 9460730472580800),
+					天文单位: aux("A.U.", 149597870700),
+					月球距离: aux("l.d.", 38400983),
+					"千米（公里）": aux("km", 1e3),
+					"米（公尺）": pri("m"),
+					"分米（公寸）": aux("dm", 1e-1),
+					"厘米（公分）": aux("cm", 1e-2, 0, true),
+					"毫米（公厘）": aux("mm", 1e-3),
+					丝米: aux("dmm", 1e-4),
+					乎米: aux("cmm", 1e-5),
+					微米: aux("μm", 1e-6),
+					纳米: aux("nm", 1e-9),
+					埃: aux("Å", 1e-10),
+					皮米: aux("pm", 1e-12),
+					飞米: aux("fm", 1e-15),
+				},
+				英制: {
+					"㖊（英寻）": aux("fm", 108288),
+					"浬（海里）": aux("n mile", 1852),
+					"哩（英里）": aux("mi", 1609.344),
+					弗隆: aux("fur", 201.168),
+					码: aux("yd", 0.9144),
+					"呎（英尺）": aux("ft", 0.3048),
+					"吋（英寸）": aux("in", 0.0254),
+					密耳: aux("mil", 2.54e-5),
+				},
+				市制: {
+					里: aux("li", 500),
+					丈: aux("zhang", 10 / 3),
+					尺: aux("chi", 1 / 3),
+					寸: aux("cun", 1 / 3e1),
+					分: aux("fen", 1 / 3e2),
+					厘: aux("lii", 1 / 3e3),
+					毫: aux("hao", 1 / 3e4),
+				}
+			},
+			面积: {
+				公制: {
+					平方千米: aux("km²³", 1e6),
+					公顷: aux("hm²(ha)", 1e4),
+					公亩: aux("are(a)", 1e2),
+					平方米: pri("m²"),
+					平方分米: aux("dm²", 1e-2),
+					平方厘米: aux("cm²", 1e-4),
+					平方毫米: aux("mm²", 1e-6),
+				},
+				英制: {
+					英亩: aux("acre", 4046.8564224),
+					平方英里: aux("mi²", 2589988.110336),
+					平方码: aux("yd²", 0.83612736),
+					平方英尺: aux("ft²", 0.09290304),
+					平方英寸: aux("in²", 0.00064516),
+					平方竿: aux("rd²", 25.2928526),
+				},
+				市制: {
+					顷: aux("qing", 2e5 / 3),
+					亩: aux("mu", 2e3 / 3),
+					分: aux("fen", 2e2 / 3),
+					平方尺: aux("chi²", 1 / 9),
+					平方寸: aux("cun²", 1 / 9e2),
+				}
+			},
+			体积: {},
+			质量: {},
+			温度: {},
+			压强: {},
+			功率: {},
+			功能热: {},
+			密度: {},
+			力: {},
+			时间: {},
+			速度: {},
+			存储: {},
+			角度: {}
+		}
+		Object.index = function (obj, index, getKey = true) {
+			if (typeof index != "number" || !isFinite(index)) return;
+			let i = 0;
+			for (const key in obj)
+				if (Object.hasOwnProperty.call(obj, key)) {
+					if (i == index) return getKey ? key : obj[key];
+					i++;
+				}
+		}
+		Object.search = function (obj, key) {
+			for (const i in obj) {
+				if (Object.hasOwnProperty.call(obj, i)) {
+					const el = obj[i];
+					if (i === key) return el;
+					if (Object.prototype.toString.call(el) === '[object Object]') {
+						ans = Object.search(el, key);
+						if (ans !== undefined) return ans;
+					}
+				}
+			}
+		}
+		var lastInput;
+		function setLastInput(i) {
+			if (i !== 1 && i !== 2) return false;
+			lastInput = i;
+			$("#amount1,#amount2").removeClass("is-valid");
+			$("#amount" + i).addClass("is-valid");
+		}
+		const emsp = ' '; // '\u2003';
+		for (const physical in units)
+			$("#physical").append(`<option value="${physical}">${physical}</option>`);
+		function refreshUnitsList() {
+			$("#unit1").html('');
+			const physical = $("#physical").val();
+			let Default, Second, firstProgram;
+			for (const program in units[physical]) {
+				const unitsList = units[physical][program],
+					optgroup = document.createElement("optgroup");
+				optgroup.label = program;
+				firstProgram = firstProgram || unitsList;
+				$("#unit1").append(optgroup);
+				for (const unit in unitsList) {
+					const para = unitsList[unit].Default,
+						symbol = unitsList[unit].symbol;
+					$(optgroup).append(`<option value="${unit}">${unit}${emsp}${symbol}</option>`);
+					if (!Default && para == 1) Default = unit;
+					if (!Second && para == 2) Second = unit;
+				}
+			}
+			Default = Default || Object.index(firstProgram, 0);
+			Second = Second || Object.index(firstProgram, 1);
+			$("#unit2").html($("#unit1").val(Default).html()).val(Second);
+			$("#amount1").val(1).change();
+			setLastInput(1);
+			$("#principal-unit").text(Default !== undefined ? $(`[value="${Default}"]`)[0].innerText.replaceAll(emsp, ' ') : '');
+		}
+		$("#exchange").click(() => {
+			[unit1.value, unit2.value] = [unit2.value, unit1.value];
+			$("#amount" + lastInput).change();
+			// lastInput=!(lastInput-1)+1;
+		});
+		$("#amount1,#amount2").click(function () {
+			setLastInput(this.id.slice(-1) - 0);
+		});
+		$("#amount1,#amount2").on('input propertychange change', function () {
+			var value = this.value,
+				input = (this.id == "amount2") - 0;
+			if (value === '') return;
+			function get(value, unit1, unit2) {
+				var unit = [
+					Object.search(units, unit1),
+					Object.search(units, unit2)
+				];
+				if (unit[0] === undefined || unit[1] === undefined || value === '') return false;
+				return (value - unit[0].constant) * unit[0].coefficient / unit[1].coefficient + unit[1].constant;
+			}
+			var ans = get(value, $("#unit" + (input + 1)).val(), $("#unit" + (!input + 1)).val());
+			if (ans === false) return;
+			$("#amount" + (!input + 1)).val(ans);
+			setLastInput(input + 1);
+			$("#all-units").html('');
+			for (const option of $("#unit1 option")) {
+				var name = option.innerText,
+					val = option.value,
+					result = get(value, $("#unit" + (input + 1)).val(), val);
+				$("#all-units").append(`<tr><td>${result}</td><td>${name.replaceAll(emsp, ' ')}</td></tr>`)
+			}
+		});
+		$("#unit1,#unit2").change(() => $("#amount" + lastInput).change());
+		refreshUnitsList();
+		$("#physical").change(refreshUnitsList);
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>

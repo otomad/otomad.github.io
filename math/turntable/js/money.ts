@@ -7,7 +7,7 @@ interface Number {
 	getValidValue(full?: boolean): number;
 }
 interface Math {
-	trunc(n: number): number;
+	// trunc(n: number): number;
 	social(n: number): number;
 }
 interface CSSRule {
@@ -19,107 +19,111 @@ interface String {
 	i(index: number, character?: string | number): string;
 	replaces(stra: string | string[], strb?: string | string[], sep?: string, caseInsensitive?: boolean): string;
 }
+interface Document {
+	Import(src: string, type?: string): void
+}
 
 var society: number = 1;
 //0表示普通加减计算，1表示舍去进位计算，2表示四舍五入进位计算……
-
-let _resetMoney: symbol = Symbol('resetMoney');
-class money { //钱对象
-	type: string;
-	constructor(type: string) {
-		this.type = type;
-		this[_resetMoney]();
-	}
-	private [_resetMoney](): void {
-		//非法或未定义数值
-		if (cookie.get(this.type) === null || !isFinite(Number(cookie.get(this.type))))
-			cookie.set(this.type, 4000);
-		//超出10个无穷的上限
-		var amount: number = Number(cookie.get(this.type));
-		if (amount > 1e14) cookie.set(this.type, 1e14);
-		if (amount < -1e14) cookie.set(this.type, -1e14);
-	}
-	amount(): number {
-		this[_resetMoney]();
-		return cookie.get(this.type) - 0;
-	}
-	amountName(): string {
-		return money.getAmountName(this.amount());
-	}
-	recharge(m: number): number {
-		m = m - 0;
-		var n: number,
-			o: number = this.amount();
-		switch (society) {
-			case 1:
-			case 2:
-				/* 特殊部分 */
-				if (o.getValidValue(true) == 1e13 && m.getValidValue(true) == -9e12) {
-					n = 9e12;
-					break;
-				}
-				if (o.getPrefix(false) >= 13 && Math.abs(m.getValidValue(true)) == 9e12)
-					m = m > 0 ? 1e13 : -1e13;
-				/* 特殊部分完 */
-				var oPref = o.getPrefix(false),
-					mPref = m.getPrefix(false);
-				if (oPref > mPref) n = o;
-				else if (oPref < mPref) n = m;
-				else n = o + m;
-				n = n.getValidValue(true);
-				break;
-			default:
-				n = o + m;
-				break;
-		}
-		cookie.set(this.type, n);
-		this.refreshMoney();
-		return this.amount();
-	}
-	cost(m: number): number | false {
-		if (m > this.amount()) {
-			console.warn('余额不足！');
-			return false;
-		}
-		return this.recharge(-m);
-	}
-	refreshMoney(query: string | object = '#amount-num'): string | false {
-		var el: HTMLElement | null;
-		if (typeof query === 'string')
-			el = document.querySelector(query);
-		else if (typeof query === 'object' && query instanceof HTMLElement)
-			el = query;
-		else if (typeof query === 'object' && query instanceof jQuery)
-			el = query[0];
-		else return false;
-		if (el === null) return false;
-		return (el.innerText = this.amountName());
-	}
-	static getAmountName(amount: number): string {
-		return `${amount.getValidValue(false)} ${amount.getPrefix(true)}元`;
-	}
-	static amount(type: string, name: boolean = false): number | string {
-		return window[type]['amount' + (name ? 'Name' : '')]();
-	}
-	static recharge(money: number, type: string): number {
-		return window[type].recharge(money);
-	}
-	static cost(money: number, type: string): number {
-		return window[type].cost(money);
-	}
-	static refreshMoney(type: string = 'bill', el = '#amount-num'): string | false {
-		return window[type].refreshMoney(el);
-	}
-	static create(type: string): object | false {
-		/* if (window[type] !== undefined) {
-			console.error("The money type which you created is exist or has already in other use, please try other type name!");
-			return false;
-		} */
-		return (window[type] = new money(type));
-	}
-}
+var money: any;
 
 (function () {
+	let _resetMoney: symbol = Symbol('resetMoney');
+	money = class money { //钱对象
+		type: string;
+		constructor(type: string) {
+			this.type = type;
+			this[_resetMoney]();
+		}
+		private [_resetMoney](): void {
+			//非法或未定义数值
+			if (cookie.get(this.type) === null || !isFinite(Number(cookie.get(this.type))))
+				cookie.set(this.type, 4000);
+			//超出10个无穷的上限
+			var amount: number = Number(cookie.get(this.type));
+			if (amount > 1e14) cookie.set(this.type, 1e14);
+			if (amount < -1e14) cookie.set(this.type, -1e14);
+		}
+		amount(): number {
+			this[_resetMoney]();
+			return cookie.get(this.type) - 0;
+		}
+		amountName(): string {
+			return money.getAmountName(this.amount());
+		}
+		recharge(m: number): number {
+			m = m - 0;
+			var n: number,
+				o: number = this.amount();
+			switch (society) {
+				case 1:
+				case 2:
+					/* 特殊部分 */
+					if (o.getValidValue(true) == 1e13 && m.getValidValue(true) == -9e12) {
+						n = 9e12;
+						break;
+					}
+					if (o.getPrefix(false) >= 13 && Math.abs(m.getValidValue(true)) == 9e12)
+						m = m > 0 ? 1e13 : -1e13;
+					/* 特殊部分完 */
+					var oPref = o.getPrefix(false),
+						mPref = m.getPrefix(false);
+					if (oPref > mPref) n = o;
+					else if (oPref < mPref) n = m;
+					else n = o + m;
+					n = n.getValidValue(true);
+					break;
+				default:
+					n = o + m;
+					break;
+			}
+			cookie.set(this.type, n);
+			this.refreshMoney();
+			return this.amount();
+		}
+		cost(m: number): number | false {
+			if (m > this.amount()) {
+				console.warn('余额不足！');
+				return false;
+			}
+			return this.recharge(-m);
+		}
+		refreshMoney(query: string | object = '#amount-num'): string | false {
+			var el: HTMLElement | null;
+			if (typeof query === 'string')
+				el = document.querySelector(query);
+			else if (typeof query === 'object' && query instanceof HTMLElement)
+				el = query;
+			else if (typeof query === 'object' && query instanceof jQuery)
+				el = query[0];
+			else return false;
+			if (el === null) return false;
+			return (el.innerText = this.amountName());
+		}
+		static getAmountName(amount: number): string {
+			return `${amount.getValidValue(false)} ${amount.getPrefix(true)}元`;
+		}
+		static amount(type: string, name: boolean = false): number | string {
+			return window[type]['amount' + (name ? 'Name' : '')]();
+		}
+		static recharge(money: number, type: string): number {
+			return window[type].recharge(money);
+		}
+		static cost(money: number, type: string): number {
+			return window[type].cost(money);
+		}
+		static refreshMoney(type: string = 'bill', el = '#amount-num'): string | false {
+			return window[type].refreshMoney(el);
+		}
+		static create(type: string): object | false {
+			/* if (window[type] !== undefined) {
+				console.error("The money type which you created is exist or has already in other use, please try other type name!");
+				return false;
+			} */
+			return (window[type] = new money(type));
+		}
+	}
+
 	function ee(x: number, a: number = 1): number {
 		if (x === undefined) return Math.E;
 		return a * Math.pow(10, x);
@@ -178,6 +182,12 @@ class money { //钱对象
 			s = s.replace(new RegExp(a[i], (caseInsensitive ? "gi" : "g")), (b ? b[i] : ''));
 		return s;
 	}
+	document.Import = function(src: string, type: string = "text/javascript"): void {
+		var script = document.createElement('script');
+		script.src = src;
+		script.type = type;
+		document.body.appendChild(script);
+	}
 })();
 
 var cookie = {
@@ -197,9 +207,10 @@ var cookie = {
 
 var urlState = {
 	data: {},
-	clear: function () {
+	clear: function (): true {
 		this.data = {};
 		history.pushState("", "", location.href.split('?')[0]);
+		return true;
 	},
 	reset: function (): boolean {
 		var questionMark: number = location.href.indexOf('?');
@@ -217,18 +228,28 @@ var urlState = {
 		var result: string | undefined = this.data[name];
 		return (result === undefined ? null : result);
 	},
-	set: function (name: string, value?: string | number): true {
+	set: function (name: string, value?: string | number): boolean {
 		this.reset();
-		if (value !== undefined) this.data[name] = value;
-		else delete this.data[name];
+		if (typeof arguments[0] === "object") return this.burn({ ...this.data, ...arguments[0] });
+		for (let i = 0; i < arguments.length; i += 2) {
+			const name = arguments[i],
+				value = arguments[i + 1];
+			this.data[name] = value;
+			if (value === undefined || value === null)
+				delete this.data[name];
+		}
 		return this.burn();
 	},
-	burn: function (obj?: object): true {
-		if (obj !== undefined) this.data = obj;
+	burn: function (obj?: object): boolean {
+		if (obj !== undefined)
+			this.data = obj;
+		if (JSON.stringify(this.data) === '{}') return this.clear();
 		var encodeState = {};
-		for (let key in this.data)
+		for (let key in this.data) {
+			if (typeof this.data[key] == 'function') continue;
 			encodeState[encodeURIComponent(key)] = encodeURIComponent(this.data[key]);
-		var encodeURL: string = JSON.stringify(encodeState).replace(/\:/g, '=').replace(/\,/g, '&').replace(/\"/g, '').slice(1, -1);
+		}
+		var encodeURL = JSON.stringify(encodeState).replace(/\:/g, '=').replace(/\,/g, '&').replace(/\"/g, '').slice(1, -1);
 		history.pushState("", "", "?" + encodeURL);
 		return true;
 	},
@@ -254,7 +275,8 @@ var rootCSS = {
 								CamelCase: string = name.hyphenToCamelCase(),
 								camelCase: string = CamelCase[0].toLowerCase() + CamelCase.slice(1);
 							this.text[camelCase] = this.text[CamelCase] = this.text[name] = value;
-							value = Number((<string>value).replaces("px,rem,em,vw,vh,vmin,vmax,%,in,cm,mm,pt,pc,ex,ch,ms,s", '', undefined, true));
+							// value = Number((<string>value).replaces("px,rem,em,vw,vh,vmin,vmax,%,in,cm,mm,pt,pc,ex,ch,ms,s", '', undefined, true));
+							value = parseFloat(<string>value);
 							this.val[camelCase] = this.val[CamelCase] = this.val[name] = value;
 						}
 					}
@@ -265,13 +287,6 @@ var rootCSS = {
 	}
 }
 rootCSS.reset();
-
-function Import(src: string, type: string = ''): void {
-	var script = document.createElement('script');
-	script.src = src;
-	script.type = type;
-	document.body.appendChild(script);
-}
 
 ////
 
