@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html>
- <head> 
-  <meta charset="utf-8" /> 
-  <meta contenttype="application/x-www-form-urlencoded" /> 
-  <title></title> 
-  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> 
- </head> 
- <body> 
-  <button id="test">生成验证码</button> 
-  <input type="text" id="text" /> 
-  <img id="verify" /> 
-  <script type="text/javascript">
-//参考接口：http://www.webxml.com.cn/WebServices/ValidateCodeWebService.asmx?op=cnValidateImage
-$("#test").click(function(){
-	var str = $("#text").val();		//获得输入
-	$("#verify").attr("src","http://www.webxml.com.cn/WebServices/ValidateCodeWebService.asmx/cnValidateImage?byString="+str)
-});
-</script>  
- </body>
+
+<head>
+	<meta charset="utf-8" />
+	<meta content type="application/x-www-form-urlencoded" />
+	<title>生成验证码</title>
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<p style="color: grey;"><small>参考接口：<a href="http://www.webxml.com.cn/WebServices/ValidateCodeWebService.asmx?op=cnValidateImage">http://www.webxml.com.cn/WebServices/ValidateCodeWebService.asmx?op=cnValidateImage</a></small></p>
+	<p id="requireHttp" hidden><a>由于网站限制，只能使用 HTTP 协议才能获取验证码，点击此处跳转。</a></p>
+	<div style="margin-bottom: 1rem;">
+		<button id="test">生成验证码</button>
+		<input type="text" id="text" />
+	</div>
+	<img id="verify" />
+	<script type="text/javascript">
+		if(location.href.search(/^https/i) != -1) {
+			requireHttp.children[0].href = location.href.replace(/^https/i, "http");
+			requireHttp.hidden = false;
+		}
+		test.onclick = function () {
+			var str = text.value;	//获得输入
+			verify.src = "http://www.webxml.com.cn/WebServices/ValidateCodeWebService.asmx/cnValidateImage?byString=" + str;
+		}
+	</script>
+</body>
+
 </html>

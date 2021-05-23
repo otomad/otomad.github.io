@@ -1,6 +1,6 @@
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-import classNames from "../../js/classnames.es6module.js";
+import classNames from "../../js/classnames.mjs";
 import { guideCard } from "./BetGuideCard.js";
 
 var { circSize, circMargin, guideCardHeight } = rootCSS.val;

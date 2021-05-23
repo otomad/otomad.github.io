@@ -23,19 +23,18 @@ interface Document {
 	Import(src: string, type?: string): void
 }
 
-var society: number = 1;
-//0表示普通加减计算，1表示舍去进位计算，2表示四舍五入进位计算……
+var society: number = 1; //0表示普通加减计算，1表示舍去进位计算，2表示四舍五入进位计算……
 var money: any;
 
 (function () {
-	let _resetMoney: symbol = Symbol('resetMoney');
+	let resetMoney: symbol = Symbol('resetMoney');
 	money = class money { //钱对象
 		type: string;
 		constructor(type: string) {
 			this.type = type;
-			this[_resetMoney]();
+			this[resetMoney]();
 		}
-		private [_resetMoney](): void {
+		private [resetMoney](): void {
 			//非法或未定义数值
 			if (cookie.get(this.type) === null || !isFinite(Number(cookie.get(this.type))))
 				cookie.set(this.type, 4000);
@@ -45,7 +44,7 @@ var money: any;
 			if (amount < -1e14) cookie.set(this.type, -1e14);
 		}
 		amount(): number {
-			this[_resetMoney]();
+			this[resetMoney]();
 			return cookie.get(this.type) - 0;
 		}
 		amountName(): string {
@@ -182,7 +181,7 @@ var money: any;
 			s = s.replace(new RegExp(a[i], (caseInsensitive ? "gi" : "g")), (b ? b[i] : ''));
 		return s;
 	}
-	document.Import = function(src: string, type: string = "text/javascript"): void {
+	document.Import = function (src: string, type: string = "text/javascript"): void {
 		var script = document.createElement('script');
 		script.src = src;
 		script.type = type;

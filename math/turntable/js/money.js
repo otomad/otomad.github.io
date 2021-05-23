@@ -1,15 +1,14 @@
 'use strict';
-var society = 1;
-//0表示普通加减计算，1表示舍去进位计算，2表示四舍五入进位计算……
+var society = 1; //0表示普通加减计算，1表示舍去进位计算，2表示四舍五入进位计算……
 var money;
 (function () {
-    let _resetMoney = Symbol('resetMoney');
+    let resetMoney = Symbol('resetMoney');
     money = class money {
         constructor(type) {
             this.type = type;
-            this[_resetMoney]();
+            this[resetMoney]();
         }
-        [_resetMoney]() {
+        [resetMoney]() {
             //非法或未定义数值
             if (cookie.get(this.type) === null || !isFinite(Number(cookie.get(this.type))))
                 cookie.set(this.type, 4000);
@@ -21,7 +20,7 @@ var money;
                 cookie.set(this.type, -1e14);
         }
         amount() {
-            this[_resetMoney]();
+            this[resetMoney]();
             return cookie.get(this.type) - 0;
         }
         amountName() {

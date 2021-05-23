@@ -8,7 +8,7 @@ Object.createSameValue = (value, ..._keys) => {
 		obj[key] = value;
 	return obj;
 }
-var defaultChannel = Object.createSameValue(true, 'RGBHSLA'.split(''))
+var defaultChannel = Object.createSameValue(true, 'RGBHSLA'.split(''));
 class Chobi {
 	constructor(elem) {
 		this.debug = true;
@@ -166,6 +166,12 @@ class Chobi {
 			this.imageData.data[i] = source[i];
 		return this;
 	}
+	/**
+	 * 取色
+	 * @param {number} x - 给定图像像素的 X 坐标。
+	 * @param {number} y - 给定图像像素的 Y 坐标。
+	 * @returns {object} 返回包含所取像素颜色数据的对象。
+	 */
 	getColorAt(x, y) {
 		var index = (y * 4) * this.imageData.width + (x * 4);
 		var colorData = {
@@ -176,6 +182,13 @@ class Chobi {
 		};
 		return colorData;
 	}
+	/**
+	 * 设色
+	 * @param {number} x - 给定图像像素的 X 坐标。
+	 * @param {number} y - 给定图像像素的 Y 坐标。
+	 * @param {object} obj - 给定包含像素颜色数据的对象。红、绿、蓝、不透明度的四个参数分别应为 {@code red}, {@code green}, {@code blue}, {@code alpha}。
+	 * @returns {bool} 返回 true 或错误信息。
+	 */
 	setColorAt(x, y, obj) {
 		var index = (y * 4) * this.imageData.width + (x * 4);
 		try {
@@ -258,6 +271,59 @@ class Chobi {
 		}
 		return this;
 	}
+	blackAndWhite4(amount = -85, channel = defaultChannel) {
+		var channelTrueNum = 0, theOnlyTrueChannel;
+		for (const ch in channel) {
+			if (ch == 'A') continue;
+			if (channel[ch]) {
+				channelTrueNum++;
+				theOnlyTrueChannel = ch;
+			}
+		}
+		const ch = c => theOnlyTrueChannel == c;
+		amount = this.map(amount, -255, 255, 0, 3);
+		var value = amount % 1;
+		var imageData = this.imageData;
+		for (var i = 0; i < imageData.width; i++) {
+			for (var j = 0; j < imageData.height; j++) {
+				var index = (j * 4) * imageData.width + (i * 4);
+				function setColor(color) {
+					if (color === undefined) return false;
+					imageData.data[index] = color;
+					imageData.data[index + 1] = color;
+					imageData.data[index + 2] = color;
+					return true;
+				}
+				if (channelTrueNum === 1)
+					if (setColor(imageData.data[index + (
+						ch('R') ? 0 :
+							ch('G') ? 1 :
+								ch('B') ? 2 : NaN
+					)]));
+					else {
+						let hsl = RGB2HSL.apply(null, imageData.data.slice(index, index + 3));
+						setColor(
+							ch('H') ? this.map(hsl.H, 0, 360, 0, 255) :
+								ch('S') ? this.map(hsl.S, 0, 1, 0, 255) :
+									ch('L') ? this.map(hsl.L, 0, 1, 0, 255) : void 0
+						);
+					}
+				else {
+					/* let c = 0;
+					for (let i = 0; i < 3; i++)
+						c += restrict(l2h(amount, i), 0, 255) / 255 * imageData.data[index + i];
+					setColor(c); */
+					const color = imageData.data.slice(index, index + 3);
+					for (let i = 0; i < 3; i++)
+						if (amount < i + 1 || amount == 3) {
+							setColor(color[i] * (1 - value) + color[(i + 1) % 3] * value)
+							break;
+						}
+				}
+			}
+		}
+		return this;
+	}
 	sepia(amount = 255, channel = defaultChannel) {
 		if (amount < 0)
 			this.negative(-amount - 255, channel); //this.negative(amount+255); 有奇效
@@ -305,6 +371,12 @@ class Chobi {
 		}
 		return this;
 	}
+	/**
+	 * 生成给定两个数之间随机的数。
+	 * @param {number} min - 最小值。
+	 * @param {number} max - 最大值。
+	 * @returns {number} 随机数。
+	 */
 	random(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
@@ -376,6 +448,17 @@ class Chobi {
 		var percent = 1 + amount / 255;
 		return this.vintage(amount, channel).brightness_legacy(10 * percent, channel).contrast(50 * percent, channel);
 	}
+	/**
+	 * 即将一个数值从一个标度单位转移到另一个标度单位，新旧单位成线性关系，且不一定成正比关系，比如说摄氏度和华氏度的关系，返回对应的新值。
+	 * 比如说，将一个取值范围为 0 ~ 255 的颜色值转到 0 ~ 100 的值。
+	 * <h1>不准温度计</h1>
+	 * @param {number} x - 待转换的原标度数值。
+	 * @param {number} min - 原标度值（小）。
+	 * @param {number} max - 原标度值（大）。
+	 * @param {number} a - 新标度值（小）。
+	 * @param {number} b - 新标度值（大）。
+	 * @returns {number} 转换后的新标度数值。
+	 */
 	map(x, min, max, a, b) {
 		return ((b - a) * (x - min) / (max - min)) + a;
 	}
@@ -971,11 +1054,7 @@ class Chobi {
 	}
 	thermography(amount = 0, channel = defaultChannel) {
 		var imageData = this.imageData;
-		function l2h(x, t) {
-			// return -8.5*Math.asin(Math.abs(Math.sinDeg(36/51*x-60*t)))+510;
-			//垃圾不支持角度运算
-			return 2 * 765 / Math.PI * Math.asin(Math.abs(Math.sin((x - 255 / 3 * t) * Math.PI / 255 - Math.PI / 2))) - 255;
-		}
+		// l2h 函数放到全局变量去了。
 		for (var i = 0; i < imageData.width; i++) {
 			for (var j = 0; j < imageData.height; j++) {
 				var index = (j * 4) * imageData.width + (i * 4);
@@ -1261,6 +1340,14 @@ Chobi.myFilterList = {
 	}
 }
 
+/**
+ * HSL 颜色模型转 RGB 颜色模型。
+ * @param {number} H - 色相，取值范围为 [0,360) 。
+ * @param {number} S - 饱和度，取值范围为 [0,1] 。
+ * @param {number} L - 亮度，取值范围为 [0,1] 。
+ * @param {bool} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
+ * @returns 返回 RGB 颜色值。
+ */
 function HSL2RGB(H = 0, S = 0, L = 0, stringMode = false) {
 	H = H % 360;
 	S = restrict(S, 0, 1);
@@ -1298,6 +1385,14 @@ function HSL2RGB(H = 0, S = 0, L = 0, stringMode = false) {
 	}
 }
 
+/**
+ * RGB 颜色模型转 HSL 颜色模型。
+ * @param {number} R - 红色参量，取值范围为 [0,255] 。
+ * @param {number} G - 绿色参量，取值范围为 [0,255] 。
+ * @param {number} B - 蓝色参量，取值范围为 [0,255] 。
+ * @param {bool} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
+ * @returns 返回 HSL 颜色值。
+ */
 function RGB2HSL(R = 0, G = 0, B = 0, stringMode = false) {
 	const _R = R / 255;
 	const _G = G / 255;
@@ -1351,4 +1446,10 @@ function restrict(x, min, max) {
 	if (x < min) return min;
 	if (x > max) return max;
 	return x;
+}
+
+function l2h(x, t) {
+	// return -8.5*Math.asin(Math.abs(Math.sinDeg(36/51*x-60*t)))+510;
+	//垃圾不支持角度运算
+	return 2 * 765 / Math.PI * Math.asin(Math.abs(Math.sin((x - 255 / 3 * t) * Math.PI / 255 - Math.PI / 2))) - 255;
 }

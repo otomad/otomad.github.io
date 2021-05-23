@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" data-theme="light">
 
 <head>
 	<meta charset="UTF-8" />
@@ -23,6 +23,8 @@
 				简易计算器 | cssc/calc.html
 				课程表部件 | cssc/widget/index.html
 				随机扑克 | cssc/lz/601.html
+				数码管值计算 | cssc/led/index.html
+				弹跳 DVD 屏保 | cssc/dvd/index.html
 			$莹你一笑 | phone
 				乔碧萝来电 | hotkid/tel/来电.html
 				让你的照片动起来 | hotkid/nod-to-the-rhythm/index.html
@@ -62,6 +64,8 @@
 				游戏 | math/turntable/index.html?game
 				抽奖 | math/turntable/index.html?lottery
 				自定 | math/turntable/index.html?custom
+			$井字棋 | delicious
+				井字棋 | math/TicTacToc/index.html?normal
 			$更多趣味 | ellipsis-h
 				假的 Windows 更新界面 | https://taozhiyu.gitee.io/fake
 				能不能好好说话？ | https://lab.magiconch.com/nbnhhsh/
@@ -1239,12 +1243,45 @@
 		#login-page.control-list a {
 			width: auto;
 		}
+
+		/* 以下是浅色主题 */
+		@media (prefers-color-scheme: light) {
+			/* 要是改这里就不能手动改主题了 */
+		}
+		:root[data-theme=light] {
+			--page-background: linear-gradient(to bottom, #f1f4f9, #dff1ff);
+			--container-background: #ffffff5a;
+			--logo-title-color: #ddd;
+			--logo-title-hover-color: white;
+			--primary-color: #ff369b;
+			--inner-background: #0001;
+			--border: #ffffff1a #fff3 #fff3 #ffffff1a;
+			--section-color-1: #ff369b;
+			--section-color-2: #00d2ff;
+			--text-hover-color: black;
+			--outer-text-color: #444;
+			--button-hover-color: #fff8;
+			--button-active-color: #0002;
+		}
+		:root[data-theme=light] .container .menu-trigger * {
+			background: linear-gradient(-90deg, var(--text-hover-color) 50%, var(--outer-text-color) 50.01%) left / 200%;
+		}
+		:root[data-theme=light] .alert {
+			backdrop-filter: blur(5px) brightness(1.15);
+		}
+		:root[data-theme=light] .avatar-head {
+			background: linear-gradient(-45deg, #ff369b, #00d2ff) center top / 100% 135%;
+			animation: head-move 4.5s infinite;
+		}
+		:root[data-theme=light] .inner-container.search-on #search-tab {
+			background-color: #fff8;
+		}
 	</style>
-	<style id="live-style"></style>
+	<!-- <style id="live-style"></style> -->
 	<script>
 		var NightTime = {
 			lightDo: () => {
-				NightTime.appendStyle(`
+				/* NightTime.appendStyle(`
 					:root {
 						--page-background: linear-gradient(to bottom, #f1f4f9, #dff1ff);
 						--container-background: #ffffff5a;
@@ -1273,13 +1310,17 @@
 					.inner-container.search-on #search-tab {
 						background-color: #fff8;
 					}
-				`, "light-theme");
+				`, "light-theme"); */
+				document.documentElement.dataset.theme = "light";
+				$("#dark-mode").prop("checked", false);
 			},
 			nightDo: () => {
-				NightTime.removeStyle("light-theme");
+				// NightTime.removeStyle("light-theme");
+				document.documentElement.dataset.theme = "dark";
 				$("#dark-mode").prop("checked", true);
 			}
 		}
+		matchMedia("(prefers-color-scheme: light)").addListener(mql => NightTime[(mql.matches?"Light":"Dark")+"ModeStyle"]());
 	</script>
 </head>
 
@@ -1361,6 +1402,7 @@
 								<li><a onclick="alertv('你知道吗？搜索功能可以给您搜索你的真正父亲是谁。\n但是，我才是你的真正父亲！')">搜索</a></li>
 								<li><a>管理</a></li>
 								<li><a href="cssc/license.htm">许可条款</a></li>
+								<li><a href="psychometry.html">心理测验</a></li>
 							</ul>
 							<ul>
 								<li><a href="wwwroot/iisstart.htm">微软 IIS 详情</a></li>
@@ -1417,13 +1459,16 @@
 		// (function(){
 		onload = onresize = function () {
 			var width = innerWidth,
-				height = innerHeight;
-			$("#live-style").html(`
+				height = innerHeight,
+				root = document.documentElement.style;
+			root.setProperty("--logo-scale", Math.min(width, height, 3.5 * 400) / 400);
+			root.setProperty("--tangent", -Math.atan(width / height) / Math.PI * 180 + "deg");
+			/* $("#live-style").html(`
 				:root {
 					--logo-scale: ${Math.min(width, height, 3.5 * 400) / 400};
 					--tangent: ${-Math.atan(width / height) / Math.PI * 180}deg;
 				}
-			`);
+			`); */
 		}
 		liveTime();
 		setInterval(liveTime, 1000);

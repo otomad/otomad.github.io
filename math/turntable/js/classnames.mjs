@@ -5,9 +5,8 @@
   http://jedwatson.github.io/classnames
 */
 
-{
 	const camelToHyphenCase = str => str.replace(/([A-Z])/g, "-$1").toLowerCase();
-	function classNames() {
+	export default function classNames() {
 		const classes = [],
 			push = name => classes.push(classNames.toHyphenCase ? camelToHyphenCase(name) : name);
 		for (const arg of arguments) {
@@ -26,14 +25,3 @@
 		return classes.join(' ');
 	}
 	classNames.toHyphenCase = false;
-
-	if (typeof module !== 'undefined' && module.exports) {
-		classNames.default = classNames;
-		module.exports = classNames;
-	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
-		// register as 'classnames', consistent with npm package name
-		define('classnames', [], () => classNames);
-	} else {
-		window.classNames = classNames;
-	}
-}

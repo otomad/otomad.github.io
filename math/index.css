@@ -119,3 +119,10 @@ button,
 		height: 100vh;
 	}
 }
+
+.disabled,
+:disabled,
+[disabled] {
+	pointer-events: none !important;
+	user-select: none !important;
+}

@@ -1,0 +1,210 @@
+body,
+.input-group,
+label,
+.input-group,
+.form-control,
+.card,
+.card-body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  transition: all 250ms ease-out !important;
+}
+body,
+html {
+  overflow: hidden;
+}
+#root,
+#react-root {
+  width: 100vw;
+  height: 100vh;
+}
+#chessboard {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+#chessboard tr > td {
+  padding: 0.5rem;
+  width: 5rem;
+  height: 5rem;
+  transition: all 250ms ease-out;
+  cursor: pointer;
+}
+#chessboard tr > td:hover {
+  background-color: rgba(108, 117, 125, 0.3);
+}
+#chessboard tr > td:active {
+  background-color: rgba(108, 117, 125, 0.6);
+}
+#chessboard tr > td > .chessgrid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#chessboard tr > td > .chessgrid i.fa {
+  position: fixed;
+  font-size: 0px;
+  opacity: 0;
+  transition: all 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+#chessboard tr > td.win {
+  color: var(--red) !important;
+}
+#chessboard tr:nth-child(1) > td,
+#chessboard tr:nth-child(2) > td {
+  border-bottom: 1px solid var(--text-color);
+}
+#chessboard tr:nth-child(2) > td,
+#chessboard tr:nth-child(3) > td {
+  border-top: 1px solid var(--text-color);
+}
+#chessboard tr > td:nth-child(1),
+#chessboard tr > td:nth-child(2) {
+  border-right: 1px solid var(--text-color);
+}
+#chessboard tr > td:nth-child(2),
+#chessboard tr > td:nth-child(3) {
+  border-left: 1px solid var(--text-color);
+}
+#chessboard.o-1 tr:nth-child(1) > td:nth-child(1) {
+  cursor: no-drop;
+}
+#chessboard.o-1 tr:nth-child(1) > td:nth-child(1) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.o-2 tr:nth-child(1) > td:nth-child(2) {
+  cursor: no-drop;
+}
+#chessboard.o-2 tr:nth-child(1) > td:nth-child(2) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.o-3 tr:nth-child(1) > td:nth-child(3) {
+  cursor: no-drop;
+}
+#chessboard.o-3 tr:nth-child(1) > td:nth-child(3) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.o-4 tr:nth-child(2) > td:nth-child(1) {
+  cursor: no-drop;
+}
+#chessboard.o-4 tr:nth-child(2) > td:nth-child(1) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.o-5 tr:nth-child(2) > td:nth-child(2) {
+  cursor: no-drop;
+}
+#chessboard.o-5 tr:nth-child(2) > td:nth-child(2) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.o-6 tr:nth-child(2) > td:nth-child(3) {
+  cursor: no-drop;
+}
+#chessboard.o-6 tr:nth-child(2) > td:nth-child(3) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.o-7 tr:nth-child(3) > td:nth-child(1) {
+  cursor: no-drop;
+}
+#chessboard.o-7 tr:nth-child(3) > td:nth-child(1) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.o-8 tr:nth-child(3) > td:nth-child(2) {
+  cursor: no-drop;
+}
+#chessboard.o-8 tr:nth-child(3) > td:nth-child(2) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.o-9 tr:nth-child(3) > td:nth-child(3) {
+  cursor: no-drop;
+}
+#chessboard.o-9 tr:nth-child(3) > td:nth-child(3) i.fa.fa-circle-o {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-1 tr:nth-child(1) > td:nth-child(1) {
+  cursor: no-drop;
+}
+#chessboard.x-1 tr:nth-child(1) > td:nth-child(1) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-2 tr:nth-child(1) > td:nth-child(2) {
+  cursor: no-drop;
+}
+#chessboard.x-2 tr:nth-child(1) > td:nth-child(2) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-3 tr:nth-child(1) > td:nth-child(3) {
+  cursor: no-drop;
+}
+#chessboard.x-3 tr:nth-child(1) > td:nth-child(3) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-4 tr:nth-child(2) > td:nth-child(1) {
+  cursor: no-drop;
+}
+#chessboard.x-4 tr:nth-child(2) > td:nth-child(1) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-5 tr:nth-child(2) > td:nth-child(2) {
+  cursor: no-drop;
+}
+#chessboard.x-5 tr:nth-child(2) > td:nth-child(2) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-6 tr:nth-child(2) > td:nth-child(3) {
+  cursor: no-drop;
+}
+#chessboard.x-6 tr:nth-child(2) > td:nth-child(3) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-7 tr:nth-child(3) > td:nth-child(1) {
+  cursor: no-drop;
+}
+#chessboard.x-7 tr:nth-child(3) > td:nth-child(1) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-8 tr:nth-child(3) > td:nth-child(2) {
+  cursor: no-drop;
+}
+#chessboard.x-8 tr:nth-child(3) > td:nth-child(2) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+#chessboard.x-9 tr:nth-child(3) > td:nth-child(3) {
+  cursor: no-drop;
+}
+#chessboard.x-9 tr:nth-child(3) > td:nth-child(3) i.fa.fa-times {
+  font-size: 2rem !important;
+  opacity: 1 !important;
+}
+.btn-group {
+  position: fixed;
+  margin: 2rem;
+  bottom: 0;
+}
+.btn-group i.fa {
+  margin-right: 0.5em;
+}
+.avoid-click {
+  pointer-events: none !important;
+}

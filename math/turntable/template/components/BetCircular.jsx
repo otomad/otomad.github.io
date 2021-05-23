@@ -1,4 +1,4 @@
-import classNames from "../../js/classnames.es6module.js";
+import classNames from "../../js/classnames.mjs";
 import { guideCard } from "./BetGuideCard.js";
 
 var { circSize, circMargin, guideCardHeight } = rootCSS.val;

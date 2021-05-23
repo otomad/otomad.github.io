@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="description" content="心理测验：猜猜我是哪只狗？">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+	<link rel="icon" href="cssc/psychometry/MicroDogInstdrv.ico" type="image/x-icon" />
+	<link rel="shortcut icon" href="cssc/psychometry/MicroDogInstdrv.ico" type="image/x-icon" />
+	<title>慢着点，别急！</title>
+	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
+	<style>
+		@import url(/basis/css/ease.css);
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			user-select: none;
+		}
+
+		body,
+		html {
+			overflow: hidden;
+			background-color: black;
+		}
+
+		#slide {
+			transform-origin: left top;
+		}
+
+		.overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: var(--img-width);
+			height: var(--img-height);
+		}
+
+		.avoid-click {
+			pointer-events: none !important;
+		}
+
+		#title {
+			font-weight: 900;
+			position: absolute;
+			right: 0;
+			height: 100%;
+			writing-mode: vertical-rl;
+			text-align: center;
+			font-size: 64px;
+			padding: .5em;
+			background: linear-gradient(to left, #E0322D 25%, #A01C18 100%);
+			-webkit-background-clip: text;
+			-moz-background-clip: text;
+			-ms-background-clip: text;
+			-o-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			-webkit-text-stroke: 1px white;
+			-moz-text-stroke: 1px white;
+			-ms-text-stroke: 1px white;
+			-o-text-stroke: 1px white;
+			/* text-stroke: 1px white; */
+			text-shadow: 0 -4px 6px rgb(0 0 0 / 35%);
+		}
+
+		#center-info {
+			width: 100%;
+			line-height: var(--img-height);
+			text-align: center;
+			color: #4A452A;
+			font-size: 96px;
+			transform: scale(1);
+			opacity: 1;
+			transition: all 1s var(--ease-out-circ);
+			font-family: Garamond, "方正幼线简体", "方正盛世楷书简体_粗", "方正盛世楷书简体", "楷体_GB2312", "楷体", "华文楷体";
+			text-shadow: 0 1px 0 #ccc,
+				0 2px 0 #c9c9c9,
+				0 3px 0 #bbb,
+				0 4px 0 #b9b9b9,
+				0 5px 0 #aaa,
+				0 6px 1px rgba(0, 0, 0, .1),
+				0 0 5px rgba(0, 0, 0, .1),
+				0 1px 3px rgba(0, 0, 0, .3),
+				0 3px 5px rgba(0, 0, 0, .2),
+				0 5px 10px rgba(0, 0, 0, .25),
+				0 10px 10px rgba(0, 0, 0, .2),
+				0 20px 20px rgba(0, 0, 0, .15),
+				0 0 20px white,
+				0 0 20px white,
+				0 0 20px white;
+		}
+
+		#center-info.hide {
+			transition: all 1s var(--ease-in-circ);
+			/* font-size: 0; */
+			transform: scale(0);
+			opacity: 0;
+		}
+
+		map {
+			/* display: none; */
+			cursor: pointer;
+		}
+
+		#top-warning {
+			--height: 50px;
+			position: absolute;
+			top: 0;
+			width: 100%;
+			padding: .13cm .25cm;
+			background-color: red;
+			color: white;
+			font-weight: 400;
+			line-height: var(--height);
+			transition: all 1s var(--ease-out-circ);
+		}
+
+		#top-warning.hide {
+			top: calc(-10px - var(--height));
+			transition: all 1s var(--ease-in-circ);
+		}
+
+		#unlock-bar {
+			--height: 128px;
+			background-color: rgba(255, 0, 0, 0.5);
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			height: var(--height);
+			/* box-sizing: content-box; */
+			background: linear-gradient(#5e5e5eee, #313131ee 50%, #1b1b1bf0 50%, #111111f0);
+			box-shadow: 0 -2px 0 0 #6c6c6cee, 0 -4px 0 0 #2a2a2aee, 0 -6px 0 0 #52525266;
+			padding: 28px;
+			transition: bottom 750ms var(--ease-out-expo);
+		}
+
+		#unlock-bar * {
+			width: 100%;
+			height: 100%;
+			border-radius: 15px;
+		}
+
+		#unlock-groove-border {
+			background: linear-gradient(#4a4a4af0, #6f6f6ff0);
+			padding: 1px;
+		}
+
+		#unlock-groove {
+			background: linear-gradient(#030303cc, #282828cc);
+			padding: 4px;
+			overflow: hidden;
+		}
+
+		#unlock-slider {
+			background: linear-gradient(white, #dedede 50%, #cfcfcf 50%, #a3a3a3);
+			border-radius: 12px;
+			width: 80px;
+			box-shadow: 0 1px 2px 0 black;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			cursor: pointer;
+			position: relative;
+		}
+
+		/* #unlock-slider>* {
+			width: 58px;
+			height: 46px;
+			transform: scale(0.8);
+			pointer-events: none;
+		} */
+
+		#right-arrow {
+			width: 58px;
+			height: 46px;
+			transform: scale(0.8);
+			pointer-events: none;
+			clip-path: path("M1 14 30 14 30 2 56 23 30 44 30 32 1 32Z");
+			background: linear-gradient(#ccc, #aaa 50%, #888 50%, #5e5e5e);
+			/* border 或 box-shadow inset 弄不成了！ */
+		}
+
+		#unlock-info {
+			color: rgb(93, 93, 93);
+			text-align: center;
+			position: absolute;
+			line-height: 65px;
+			font-size: 175%;
+			pointer-events: none;
+			left: 0;
+		}
+
+		#unlock-info>span {
+			--size: 400%;
+			background: linear-gradient(to right, rgb(93, 93, 93) 30%, rgb(177, 177, 177), rgb(93, 93, 93) 70%) left center / var(--size) var(--size);
+			animation: unlock-info-shine 3s infinite linear;
+			-webkit-background-clip: text;
+			-moz-background-clip: text;
+			-ms-background-clip: text;
+			-o-background-clip: text;
+			background-clip: text;
+			color: transparent;
+			border-radius: 0;
+			font-weight: 500;
+			font-family: "方正中等线简体", -apple-system, BlinkMacSystemFont, "苹方", "苹方-简", "苹方 中等", "苹方 常规", 'Helvetica Neue', sans-serif;
+		}
+
+		@keyframes unlock-info-shine {
+			from {
+				background-position-x: 100%;
+			}
+
+			to {
+				background-position-x: 0%;
+			}
+		}
+
+		.recovery {
+			left: 0 !important;
+			opacity: 1 !important;
+			transition: all 250ms var(--ease-out-cubic);
+		}
+
+		.finish {
+			filter: brightness(0.4) grayscale(1);
+			transition: all 500ms var(--ease-in-out-quint);
+			pointer-events: none;
+		}
+
+		#unlock-bar.hide {
+			bottom: calc(-10px - var(--height));
+		}
+	</style>
+	<!-- <style id="live-screen"></style> -->
+</head>
+
+<body hidden>
+	<div id="slide">
+		<img src="cssc/psychometry/黄狗.jpeg" alt="Three Golden Retrievers or Yellow Dogs" usemap="#dogs">
+		<map name="dogs" id="dogs">
+			<area shape="poly" coords="262,129,238,165,269,200,261,214,270,219,242,267,246,288,202,343,201,350,138,441,134,503,142,525,134,540,148,539,154,547,174,543,199,550,201,534,218,549,268,551,291,566,294,579,304,581,337,570,320,541,348,535,354,564,390,553,381,534,388,399,401,362,396,311,408,285,396,259,386,245,392,221,386,219,385,208,391,216,399,202,399,194,408,187,401,150,391,124,362,111,323,102,293,112" alt="1">
+			<area shape="poly" coords="440,150,475,196,444,241,442,265,400,341,398,365,381,532,418,545,428,539,461,548,463,556,469,558,481,568,498,555,504,557,486,513,497,502,531,516,536,559,574,563,580,559,566,533,562,501,574,375,579,364,588,341,589,302,595,286,589,270,592,269,573,236,583,208,583,180,592,195,601,200,598,175,611,146,584,97,538,89,487,96" alt="2">
+			<area shape="poly" coords="639,292,617,350,629,364,642,376,626,389,596,419,589,429,588,445,574,451,564,475,561,496,584,495,622,507,617,526,617,546,740,533,779,548,796,551,792,547,798,543,799,536,793,528,786,515,776,479,781,424,757,378,758,371,760,371,767,350,773,348,771,334,777,330,766,321,758,291,735,286,709,276,694,275,656,287" alt="3">
+		</map>
+	</div>
+	<div class="overlay avoid-click">
+		<h1 id="title">心理测验，猜猜我是哪只狗？</h1>
+		<h1 id="center-info" class="hide">害怕</h1>
+		<h1 id="top-warning" class="hide">很抱歉，你答错了。</h1>
+	</div>
+	<div class="overlay avoid-click" style="overflow: hidden;">
+		<div id="unlock-bar" class="hide">
+			<div id="unlock-groove-border">
+				<div id="unlock-groove">
+					<div id="unlock-info">
+						<span>滑动来解锁</span>
+					</div>
+					<div id="unlock-slider">
+						<div id="right-arrow"></div>
+						<!-- <embed src="cssc/psychometry/right_arrow.svg" type="image/svg+xml"> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- <script id="debug-only">
+		document.getElementById("slide").style.justifyContent = "left";
+		var coords = [];
+		window.onclick = function(e) {
+			coords.push(e.pageX);
+			coords.push(e.pageY);
+			console.log(coords.join(','));
+		}
+	</script> -->
+	<script>
+		document.querySelectorAll("#dogs area").forEach(area => area.setAttribute("onclick", `operate(${area.alt});`));
+		onresize = function () {
+			const img = document.querySelector("#slide img"),
+				imgBox = document.querySelector("#slide"),
+				imgWidth = img.width,
+				imgHeight = img.height,
+				scaleX = innerWidth / imgWidth,
+				scaleY = innerHeight / imgHeight,
+				scaleHeight = imgHeight * scaleX,
+				condition = (scaleHeight > innerHeight),
+				root = document.documentElement.style; // document.documentElement.style.setProperty; --> 这是在想桃子？
+			imgBox.style.transform = `scale(${scaleX + (condition ? ',' + scaleY : '')})`;
+			root.setProperty("--img-width", innerWidth + "px");
+			root.setProperty("--img-height", (condition ? innerHeight : scaleHeight) + "px");
+			/* document.getElementById("live-screen").innerHTML = `
+				:root {
+					--img-width: ${innerWidth}px;
+					--img-height: ${condition ? innerHeight : scaleHeight}px;
+				}
+			`; */
+		}
+		onload = function () {
+			onresize();
+			document.body.hidden = false;
+		}
+		function showCenterInfo(text) {
+			showMessage(document.getElementById("center-info"), text);
+		}
+		function showTopWarning(text, hideLater = true) {
+			showMessage(document.getElementById("top-warning"), text, hideLater);
+		}
+		function showMessage(el = console.error(Error()), text, hideLater = true) {
+			el.innerText = text;
+			el.classList.remove("hide");
+			if (hideLater) setTimeout(() => el.classList.add("hide"), 1000);
+		}
+		function showUnlockBar() {
+			document.getElementById("unlock-bar").classList.remove("hide");
+			document.getElementsByClassName("overlay")[1].classList.remove("avoid-click");
+			console.log("恭喜你找到了周事狗");
+		}
+		function operate(num) {
+			const slide = document.getElementById("slide"),
+				expression = ["害怕", "恐惧", "乐观"],
+				expressionEn = ["fear", "scared", "optimistic"];
+			slide.classList.add("avoid-click");
+			bark[expressionEn[num - 1]].play();
+			showCenterInfo(expression[num - 1]);
+			setTimeout(() => {
+				num != 3 ? showTopWarning("很抱歉，你答错了。") : showTopWarning("恭喜你找到了黄狗！", false);
+				num == 3 ? showUnlockBar() : 0;
+			}, 2000);
+			setTimeout(() => slide.classList.remove("avoid-click"), 4000);
+		}
+		var bark = {
+			fear: new Audio("cssc/psychometry/6593.wav"),
+			scared: new Audio("cssc/psychometry/8268.wav"),
+			optimistic: new Audio("cssc/psychometry/8304.wav")
+		}
+		{
+			const unlockSlider = document.getElementById("unlock-slider"),
+				unlockInfo = document.getElementById("unlock-info");
+			let unlockSliderLeft = /* unlockSlider.offsetLeft */ 73;
+			unlockSlider.onmousedown = function (e) {
+				onmousemove = function (e) {
+					const Left = e.clientX,
+						Right = innerWidth - 2 * unlockSliderLeft;
+					let left = Left - unlockSliderLeft;
+					if (left < 0) left = 0;
+					if (left > Right) left = Right;
+					unlockSlider.style.left = left + 'px';
+					unlockInfo.style.opacity = (1 - left / Right) ** 3;
+				}
+			}
+			onmouseup = function (e) {
+				onmousemove = null;
+				const OK_percent = 0.9;
+				if (parseInt(unlockSlider.style.left) + unlockSliderLeft > OK_percent * innerWidth) {
+					alert("键盘已解锁！");
+					location.href = "option.html";
+					return document.body.classList.add("finish");
+				}
+				const el = [unlockSlider, unlockInfo];
+				el.forEach(i => {
+					i.classList.add("recovery");
+					i.style.cssText = '';
+				});
+				setTimeout(() => el.forEach(i => i.classList.remove("recovery")), 350);
+			}
+		}
+	</script>
+</body>
+
+</html>

@@ -1,3 +1,7 @@
+/*
+狂欢一下
+javascript:void(function(){var d = document,a = 'setAttribute',s = d.createElement('script');s[a]('type','text/javascript');s[a]('src','https://api.uixsj.cn/hi/happy.js');d.head.appendChild(s);})();
+*/
 setTimeout(le, 1000);
 function le() {
 	function loadCss() { //将自定义css文件引入页面
@@ -99,7 +103,7 @@ function le() {
 	var w = y();
 	var C = document.getElementsByTagName("*");
 	var k = null;
-	for (const targetDiv of C)
+	for (var targetDiv of C)
 		if (checkSize(targetDiv))
 			if (E(targetDiv)) {
 				k = targetDiv;
@@ -124,9 +128,8 @@ function le() {
 }
 var bgmSrc = "http://other.web.rc01.sycdn.kuwo.cn/resource/n3/14/1/2095438319.mp3";
 // var cssHref = "https://api.uixsj.cn/hi/kuanghai.css"; //设置页面动效css地址
-var cssHref = (function(){
+var cssHref = (function () {
 	const myName = "happy.js";
-	for (const script of document.getElementsByTagName("script"))
-		if(script.src == myName)
-			return script.src.replace(myName, "kuanghai.css");
+	let scripts = document.getElementsByTagName("script");
+	return scripts[scripts.length - 1].src.replace(myName, "kuanghai.css");
 }());

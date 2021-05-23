@@ -79,7 +79,7 @@
 						<li class="nav-item"><a href="#helpTab" data-toggle="tab" class="nav-link">使用说明</a></li>
 					</ul>
 					<div id="mytab-content" class="tab-content">
-						<div class="tab-pane fade show active" id="rgbTab">
+						<section class="tab-pane fade show active" id="rgbTab">
 							<div class="input-group mb-2">
 								<div class="input-group-prepend">
 									<label class="input-group-text" for="valR">R</label>
@@ -104,8 +104,8 @@
 								</div>
 								<input type="text" class="form-control" id="valA">
 							</div>
-						</div>
-						<div class="tab-pane fade" id="hslTab">
+						</section>
+						<section class="tab-pane fade" id="hslTab">
 							<div class="input-group mb-2">
 								<div class="input-group-prepend">
 									<label class="input-group-text" for="valH">H</label>
@@ -130,8 +130,8 @@
 								</div>
 								<input type="text" class="form-control" id="valAl">
 							</div>
-						</div>
-						<div class="tab-pane fade" id="helpTab">
+						</section>
+						<section class="tab-pane fade" id="helpTab">
 							<small>
 								<!-- <p>本功能通过 <code>eval</code> 函数实现，性能非常地差，如果图片比较大，那就等着死机吧。</p> -->
 								<p>支持的参数：<code>r(红)</code>、<code>g(绿)</code>、<code>b(蓝)</code>、<code>h(色相)</code>、<code>s(饱和度)</code>、<code>l(亮度)</code>、<code>a(不透明度)</code>。大小写均可。此外，可以用 <code>c</code> 代指当前输入框所对应的颜色，用 <code>amount</code> 表示滑块所设定的参数。</p>
@@ -144,7 +144,7 @@
 								<p>例如欲生成“反色”滤镜，可以先选择 RGB 模型，然后在对应的三个输入框中依次输入 <code>255-r</code>、<code>255-g</code>、<code>255-b</code> 即可。</p>
 								<p>双击文本框左边的标签可以快速清空文本框的内容。</p>
 							</small>
-						</div>
+						</section>
 					</div>
 				</div>
 				<div class="modal-footer separation">
@@ -180,6 +180,7 @@
 						<button id="fx0" data-amount="255" value="blackAndWhite">平均灰阶</button>
 						<button id="fx10" data-amount="255" value="blackAndWhite2">自然灰阶</button>
 						<button id="fx20" data-amount="255" value="blackAndWhite3">原色灰阶</button>
+						<button id="fx34" data-amount="-85" value="blackAndWhite4">通道灰阶</button>
 						<button id="fx1" data-amount="255" value="sepia">怀旧</button>
 						<button id="fx2" data-amount="0" value="negative">反色</button>
 						<button id="fx3" data-amount="0" value="vintage">复古</button>

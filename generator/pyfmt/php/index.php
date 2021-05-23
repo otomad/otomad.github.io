@@ -43,21 +43,32 @@
 				<div class="input-group mb-2">
 					<input type="text" name="raw" class="form-control" id="rawText" autofocus placeholder="输入你要转换的拼音" value="<?=$raw?>" />
 				</div>
-				<label for="modeGroup">选择转换类型</label>
+				<label for="modeGroup">选择转换类型<?=$type?></label>
 				<div class="input-group mb-2">
-					<select class="custom-select" name="type" id="modeGroup">
-						<option value="0" selected>全部小写字母</option>
-						<option value="1">全部大写字母</option>
-						<option value="2">全部小型大写字母</option>
-						<option value="3">所有拼音首字母大写，其余小写字母</option>
-						<option value="5">所有拼音首字母大写，其余小型大写字母</option>
-						<option value="4">仅第一个拼音首字母大写，其余小写字母</option>
-						<option value="6">仅第一个拼音首字母大写，其余小型大写字母</option>
+					<select class="custom-select form-control" name="type" id="modeGroup">
+						<?php
+							$typeList = array(
+								"全部小写字母",
+								"全部大写字母",
+								"全部小型大写字母",
+								"所有拼音首字母大写，其余小写字母",
+								"所有拼音首字母大写，其余小型大写字母",
+								"仅第一个拼音首字母大写，其余小写字母",
+								"仅第一个拼音首字母大写，其余小型大写字母"
+							);
+							$typeValueIndex = array(0, 1, 2, 3, 5, 4, 6);
+							for ($i = 0; $i < count($typeList); $i++) { 
+								echo '<option value="' . $typeValueIndex[$i] . '"';
+								if ($type == $typeValueIndex[$i] || $type === "" && $i == 0)
+									echo " selected";
+								echo ">" . $typeList[$i] . "</option>";
+							}
+						?>
 					</select>
 				</div>
 				<?php
-					if ($type !== "")
-						echo "<script>document.getElementById('modeGroup').value=" . $type . "</script>";
+					/* if ($type !== "")
+						echo "<script>document.forms[0].type.value = " . $type . "</script>"; */
 				?>
 				<label for="sep">选择分隔符</label>
 				<div class="input-group mb-3">
@@ -65,13 +76,13 @@
 				</div>
 				<input type="submit" class="btn btn-primary btn-block mb-3" id="create" value="生成" />
 				<?php
-					if ($raw === "" || $type === "") return;
-
-					echo '<label for="resultText">转换结果</label>';
-					echo '<div class="input-group"><input type="text" class="form-control" id="resultText" value="';
-					// echo strtolower(urldecode($_SERVER["QUERY_STRING"]));
-					echo $result;
-					echo '" /></div>';
+					if ($raw !== "" && $type !== "") {
+						echo <<< EOD
+							<label for="resultText">转换结果</label>
+							<div class="input-group"><input type="text" class="form-control" id="resultText" value="$result" /></div>
+						EOD;
+						// echo strtolower(urldecode($_SERVER["QUERY_STRING"]));
+					}
 				?>
 			</form>
 		</div>

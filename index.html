@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 
 <head>
 	<meta charset="utf-8" />
@@ -55,6 +55,10 @@
 		.rights a {
 			color: #BBF;
 		}
+
+		#jr {
+			text-align: right;
+		}
 	</style>
 </head>
 
@@ -96,12 +100,10 @@
 			}, sandrine());
 		}, false);
 		/* 控制台输出文字部分 */
-		console.log(
-			`使用方略：
+		console.log(`使用方略：
 点按“确定”键十次，忽略弹窗。指的是页面中的按钮，弹窗中的不算。然后右上角会出现一个叉，之后就能退出去进入主界面了。
 左下角的版权符号（即圈 C）可以刷新，避免误操作错过了点击十次。
-- 所以请不要再给我整提这个胡伯的傻逼小病毒了好吧！`
-		);
+- 所以请不要再给我整提这个胡伯的傻逼小病毒了好吧！`);
 		/* 判断浏览器内核及版本 */
 		function BrowserType() {
 			var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串 
@@ -150,8 +152,13 @@
 			}
 		}
 		if (!location.href.includes('#')) {
-			if (BrowserType() == "Firefox") jr.click();
-			if (BrowserType() == "Chrome" || BrowserType() == "Edge") if (getChromeVersion() >= 88) jr.click();
+			const browser = BrowserType();
+			if (browser == "Firefox" || (
+				browser == "Chrome" ||
+				browser == "Edge") &&
+				getChromeVersion() >= 88
+			) jr.click();
+			else if (Math.random() < 0.5) location.href = "psychometry.html";
 		}
 	</script>
 </body>

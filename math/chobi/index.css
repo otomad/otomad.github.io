@@ -223,6 +223,10 @@ label {
 	background-color: #2c3e50c0;
 }
 
+* {
+	scroll-behavior: smooth;
+}
+
 .btn-group-04 {
 	display: flex;
 	overflow-y: hidden;
@@ -477,8 +481,9 @@ body {
 
 .modal-footer.separation {
 	justify-content: space-between;
+	user-select: none;
 }
 
-.modal-footer.separation>div>button {
+.modal-footer.separation > div > button {
 	margin: 0 2px;
 }

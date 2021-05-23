@@ -1,4 +1,4 @@
-import classNames from "../../js/classnames.es6module.js";
+import classNames from "../../js/classnames.mjs";
 import { betCircular } from "./BetCircular.js";
 import CardTable, { cardTable } from "./PokerCard.js";
 
@@ -22,7 +22,7 @@ export default class GuideCard extends React.Component {
 				this.setState({
 					step,
 					title: `您的最终得分为 ${finalScore === 0 ? "0（无奖）" : finalScore}`,
-					text: (finalScore === 0 ? `很遗憾转到无奖，您将没收您下注的 ${betAmount} 元`
+					text: (finalScore === 0 ? `很遗憾转到无奖，将没收您下注的 ${betAmount} 元`
 						: `恭喜您没有转到无奖，您将得到三分之四倍您下注的 ${betAmount} 元，共计 ${reward} 元（取整）`),
 					primary: "重新开始",
 					enabled: true

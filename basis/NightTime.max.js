@@ -23,51 +23,46 @@
  */
 
 {
-	let thisPath = "";
-	for (let i of document.getElementsByTagName("script"))
-		if (i.src.includes("NightTime"))
-			thisPath = i.getAttribute("src");
+	let thisPath = document.getElementsByTagName("script");
+	thisPath = thisPath[thisPath.length - 1].getAttribute("src");
 	thisPath = thisPath.slice(0, thisPath.lastIndexOf("/") + 1);
 	let path = (href = "") => thisPath + href;
-	let type = obj => {
-		return Object.prototype.toString.call(obj).slice(8, -1);
-	}
-	let profile = new Object;
-	if (type(window["NightTime"]) === "Object")
+	let type = obj => (obj ? obj.constructor.name : Object.prototype.toString.call(obj).slice(8, -1));
+	let profile = {};
+	if (type(window.NightTime) === "Object")
 		Object.assign(profile, NightTime);
 
-	var NightTime = new Object;
+	var NightTime = {};
 
-	let _this = NightTime;
+	let _ = NightTime;
 	let hour = new Date().getHours();
-	if (hour < 7 || hour >= 19)
-		_this.darkModeFact = true; //晚上7点到次日早上7点启动深色主题
-	if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
-		_this.darkModeFact = true; //若浏览器开启了深色主题，也会启动深色主题
-	_this.theme = "";
-	_this.nightDo = _this.lightDo = () => {};
+	if (hour < 7 || hour >= 19 || //晚上7点到次日早上7点启动深色主题
+		matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) //若浏览器开启了深色主题，也会启动深色主题
+		_.darkModeFact = true;
+	_.theme = "";
+	_.nightDo = _.lightDo = () => { };
 	/** method description
 	 * 切换到当前主题
 	 * @returns void - 切换到正常情况下配置而应该呈现的主题
 	 */
-	_this.CurrentModeStyle = () => {
-		_this.css = document.getElementById("css");
-		if (_this.css) _this.theme = _this.css.getAttribute("data-theme").toLowerCase();
-		if (_this.darkModeFact) return _this.DarkModeStyle();
-		else return _this.LightModeStyle();
+	_.CurrentModeStyle = () => {
+		_.css = document.getElementById("css");
+		if (_.css) _.theme = _.css.getAttribute("data-theme").toLowerCase();
+		if (_.darkModeFact) return _.DarkModeStyle();
+		else return _.LightModeStyle();
 	}
 	/** method description
 	 * 切换到对立主题
 	 * @returns void - 切换到不是当前状态下的主题，即浅色深色模式互相切换
 	 */
-	_this.ToggleModeStyle = () => {
-		_this.darkModeFact = !_this.darkModeFact;
-		return _this.CurrentModeStyle();
+	_.ToggleModeStyle = () => {
+		_.darkModeFact = !_.darkModeFact;
+		return _.CurrentModeStyle();
 	}
-	_this.LightBackgroundColor = "white";
-	_this.DarkBackgroundColor = "#222";
-	_this.LightCSS = _this.DarkCSS = undefined;
-	_this.defineCustomBackgroundColor = false;
+	_.LightBackgroundColor = "white";
+	_.DarkBackgroundColor = "#222";
+	_.LightCSS = _.DarkCSS = undefined;
+	_.defineCustomBackgroundColor = false;
 	String.prototype.i = function (index, character = "") {
 		return this.slice(0, index) + character + this.slice(index + 1);
 	}
@@ -79,9 +74,9 @@
 		}
 		return hyphenCase;
 	}
-	_this.scrollbar = () => {
-		_this.appendStyleByAjax(`css/scrollbar.css`, "scrollbar", {
-			"var(--text-color-parts)": (_this.darkModeFact ? "255, 255, 255" : "0, 0, 0")
+	_.scrollbar = () => {
+		_.appendStyleByAjax(`css/scrollbar.css`, "scrollbar", {
+			"var(--text-color-parts)": (_.darkModeFact ? "255, 255, 255" : "0, 0, 0")
 		});
 	}
 	const notAvailableLog = new Error("The ID you specified has been occupied by the other element, please try to use other ID!");
@@ -92,7 +87,7 @@
 	 * @returns true - 添加成功
 	 * @exception false - 添加失败，输入的 id 名称被占用且不为 style 标签
 	 */
-	_this.appendStyle = (style, id = "") => {
+	_.appendStyle = (style, id = "") => {
 		var css;
 		if (type(style) == "Object") {
 			css = JSON.stringify(style, undefined, "\t");
@@ -119,7 +114,7 @@
 	 * @returns true - 添加成功
 	 * @exception false - 添加失败，输入的 id 名称被占用且不为 link 标签
 	 */
-	_this.appendCSSLink = (href, id = "") => {
+	_.appendCSSLink = (href, id = "") => {
 		var linkTag = document.getElementById(id);
 		if (!linkTag) {
 			linkTag = document.createElement("link");
@@ -143,7 +138,7 @@
 	 * @returns true - 添加成功
 	 * @exception false - 添加失败，输入的 id 名称被占用且不为 link 标签
 	 */
-	_this.appendStyleByAjax = (href, id = "", variable) => {
+	_.appendStyleByAjax = (href, id = "", variable) => {
 		var css = new XMLHttpRequest();
 		css.onreadystatechange = () => {
 			if (css.readyState == 4 && css.status == 200) {
@@ -178,7 +173,7 @@
 	 * @returns true - 移除成功
 	 * @exception false - 移除失败，移除的不是 style 或 link 标签
 	 */
-	_this.removeStyle = _this.removeCSSLink = id => {
+	_.removeStyle = _.removeCSSLink = id => {
 		let el = document.getElementById(id);
 		if (!el) return false;
 		if (el.tagName != "STYLE" && el.tagName != "LINK") return false;
@@ -189,10 +184,10 @@
 	 * 强制切换到深色主题
 	 * @returns void
 	 */
-	_this.DarkModeStyle = () => {
-		_this.darkModeFact = true;
-		if (_this.theme.includes("bootstrap")) {
-			_this.appendCSSLink("https://bootswatch.com/4/darkly/bootstrap.min.css", "css");
+	_.DarkModeStyle = () => {
+		_.darkModeFact = true;
+		if (_.theme.includes("bootstrap")) {
+			_.appendCSSLink("https://bootswatch.com/4/darkly/bootstrap.min.css", "css");
 			for (let i of document.getElementsByClassName("navbar")) {
 				i.classList.remove("navbar-light");
 				i.classList.remove("bg-light");
@@ -200,29 +195,29 @@
 				i.classList.add("bg-dark");
 			}
 			const bbolsf = "bootstrap-btn-outline-light-style-fix";
-			_this.appendStyleByAjax(`css/${bbolsf}.css`, bbolsf);
+			_.appendStyleByAjax(`css/${bbolsf}.css`, bbolsf);
 		}
-		_this.scrollbar();
-		_this.removeStyle("light-root");
-		_this.appendStyle({
+		_.scrollbar();
+		_.removeStyle("light-root");
+		_.appendStyle({
 			":root": {
 				"--text-color": "white",
-				"--background-color": _this.DarkBackgroundColor
+				"--background-color": _.DarkBackgroundColor
 			}
 		}, "dark-root");
-		_this.nightDo();
-		if (_this.defineCustomBackgroundColor) document.body.style.backgroundColor = _this.DarkBackgroundColor;
-		if (_this.DarkCSS) _this.appendCSSLink(_this.DarkCSS, "css");
+		_.nightDo();
+		if (_.defineCustomBackgroundColor) document.body.style.backgroundColor = _.DarkBackgroundColor;
+		if (_.DarkCSS) _.appendCSSLink(_.DarkCSS, "css");
 		return true;
 	}
 	/** method description
 	 * 强制切换到浅色主题
 	 * @returns void
 	 */
-	_this.LightModeStyle = () => {
-		_this.darkModeFact = false;
-		if (_this.theme.includes("bootstrap")) {
-			_this.appendCSSLink("https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css", "css");
+	_.LightModeStyle = () => {
+		_.darkModeFact = false;
+		if (_.theme.includes("bootstrap")) {
+			_.appendCSSLink("https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css", "css");
 			for (let i of document.getElementsByClassName("navbar")) {
 				i.classList.remove("navbar-dark");
 				i.classList.remove("bg-dark");
@@ -230,30 +225,30 @@
 				i.classList.add("bg-light");
 			}
 		}
-		_this.scrollbar();
-		_this.removeStyle("bootstrap-btn-outline-light-style-fix");
-		_this.removeStyle("dark-root");
-		_this.appendStyle({
+		_.scrollbar();
+		_.removeStyle("bootstrap-btn-outline-light-style-fix");
+		_.removeStyle("dark-root");
+		_.appendStyle({
 			":root": {
 				"--text-color": "black",
-				"--background-color": _this.LightBackgroundColor
+				"--background-color": _.LightBackgroundColor
 			}
 		}, "light-root");
-		_this.lightDo();
-		if (_this.defineCustomBackgroundColor) document.body.style.backgroundColor = _this.LightBackgroundColor;
-		if (_this.LightCSS) _this.appendCSSLink(_this.LightCSS, "css");
+		_.lightDo();
+		if (_.defineCustomBackgroundColor) document.body.style.backgroundColor = _.LightBackgroundColor;
+		if (_.LightCSS) _.appendCSSLink(_.LightCSS, "css");
 		return true;
 	}
-	if (type(profile.darkMode) === "Boolean") _this.darkModeFact = Boolean(profile.darkMode);
-	if (profile.nightDo && type(profile.nightDo) === "Function") _this.nightDo = profile.nightDo;
-	if (profile.darkDo && type(profile.darkDo) === "Function") _this.nightDo = profile.darkDo;
-	if (profile.lightDo && type(profile.lightDo) === "Function") _this.lightDo = profile.lightDo;
+	if (type(profile.darkMode) === "Boolean") _.darkModeFact = Boolean(profile.darkMode);
+	if (type(profile.nightDo) === "Function") _.nightDo = profile.nightDo;
+	if (type(profile.darkDo) === "Function") _.nightDo = profile.darkDo;
+	if (type(profile.lightDo) === "Function") _.lightDo = profile.lightDo;
 	if (profile.lightBackgroundColor || profile.darkBackgroundColor) {
-		if (profile.lightBackgroundColor) _this.LightBackgroundColor = profile.lightBackgroundColor;
-		if (profile.darkBackgroundColor) _this.DarkBackgroundColor = profile.darkBackgroundColor;
-		_this.defineCustomBackgroundColor = true;
+		if (profile.lightBackgroundColor) _.LightBackgroundColor = profile.lightBackgroundColor;
+		if (profile.darkBackgroundColor) _.DarkBackgroundColor = profile.darkBackgroundColor;
+		_.defineCustomBackgroundColor = true;
 	}
-	if (profile.lightCSS) _this.LightCSS = profile.lightCSS;
-	if (profile.darkCSS) _this.DarkCSS = profile.darkCSS;
-	_this.CurrentModeStyle();
+	if (profile.lightCSS) _.LightCSS = profile.lightCSS;
+	if (profile.darkCSS) _.DarkCSS = profile.darkCSS;
+	_.CurrentModeStyle();
 }

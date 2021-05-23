@@ -3,6 +3,8 @@ Copyright Alex Leone, David Nufer, David Truong, 2011-03-11. kathack.com
 
 javascript:var i,s,ss=['http://kathack.com/js/kh.js','http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js'];for(i=0;i!=ss.length;i++){s=document.createElement('script');s.src=ss[i];document.body.appendChild(s);}void(0);
 
+吸尘器
+javascript:var i,s,ss=['//www.ibloger.net/assets/demos/kathack/lib/kh.js','https://cdn.bootcss.com/jquery/1.5.1/jquery.min.js'];for(i=0;i!=ss.length;i++){s=document.createElement('script');s.src=ss[i];document.body.appendChild(s);}void(0);var title="Katamari!";
 */
 var BORDER_STYLE = "1px solid #bbb",
 	CSS_TRANSFORM = null,
@@ -726,7 +728,7 @@ function whenAllLoaded(gameDiv, popup, stickyNodes) {
 				bgmusic = document.createElement('audio');
 				bgmusic.id = 'khbgmusic';
 				bgmusic.loop = 'loop';
-				bgmusic.src = 'http://www.ibloger.net/assets/demos/kathack/lib/katamari.mp3';
+				bgmusic.src = 'https://otomad.github.io/gadgets/katamari.mp3';
 				gameDiv.appendChild(bgmusic);
 			}
 			bgmusic.play();

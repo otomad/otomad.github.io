@@ -5,7 +5,8 @@ var realTimeSlide, way = 0,
 var imgObj = null, //global Chobi object
 	imgThumb = null;
 
-const btns = ".btn-group-04 button";
+const btns = ".btn-group-04 button",
+	smallScreen = 992;
 
 testpic = "test.jpg";
 // testMode();
@@ -63,7 +64,7 @@ function myFilter() {
 	{	//验证数据合法性。下面这个示例的颜色就是Windows经典主题的默认灰色。
 		let r = 212, g = 208, b = 200, a = 255, h = 27.625, s = 30.855, l = 205.785, amount = 255;
 		function legal(n) {
-			return ((typeof n === "number") && (isFinite(n)))
+			return ((typeof n === "number") && (isFinite(n)));
 		}
 		function t(n) {
 			return (!legal(eval(v(n))));
@@ -91,7 +92,7 @@ function myFilter() {
 			return true;
 		} else myFilterList.push(filterName); */
 		const exist = Chobi.myFilterList.has(filterName);
-		Chobi.myFilterList.add.apply(Chobi.myFilterList, [filterName, customModule, (amountDefault === '' ? null : amountDefault - 0), ...(customModule == "rgb" ? [v('R'), v('G'), v('B'), v('A')] : [v('H'), v('S'), v('L'), v('Al')])])
+		Chobi.myFilterList.add.apply(Chobi.myFilterList, [filterName, customModule, (amountDefault === '' ? null : amountDefault - 0), ...(customModule == "rgb" ? [v('R'), v('G'), v('B'), v('A')] : [v('H'), v('S'), v('L'), v('Al')])]);
 
 		////
 
@@ -268,10 +269,14 @@ function loadImage(elem) {
 	});
 
 	//show filters to users
+	showButtons(!enableThumb);
+}
+
+function showButtons(special = true) {
 	$(btns).removeClass("active")
 	$("#fx-orig").addClass("active");
 	$("#start-info").hide();
-	if (!enableThumb) $("#filters").show();
+	if (special) $("#filters").show();
 	gridChange();
 }
 
@@ -305,12 +310,8 @@ function testMode() {
 function downloadImage() {
 	if (imgObj == null) {
 		$("#error").fadeIn();
-		setTimeout(function () {
-			$("#error").fadeOut();
-		}, 4000);
-		return;
-	}
-	imgObj.download(newDate(), "png");
+		setTimeout(() => $("#error").fadeOut(), 4000);
+	} else imgObj.download(newDate(), "png");
 }
 
 function newDate() {
@@ -352,8 +353,7 @@ $(document).on("click", ".layer-close", function () {
 });
 
 $("#fx-layer-list").bind('DOMSubtreeModified', function (e) {
-	if (this.innerHTML === "") $("#auto-hidden-divider").hide();
-	else $("#auto-hidden-divider").show();
+	$("#auto-hidden-divider")[this.innerHTML === "" ? "hide" : "show"]();
 });
 
 function reactiveButton() {
@@ -520,10 +520,6 @@ $("#custom-filter-modal").on('show.bs.modal', function (e) {
 });
 // $("#custom-filter-modal").modal("show");
 
-function showButtons() {
-	$("#filters").show();
-}
-
 function clearCustomFilterInput() {
 	$("#custom-filter-modal").find("input").val('').change();
 }
@@ -570,4 +566,19 @@ document.onkeydown = function (e) {
 	if (window.event.keyCode == 13)
 		if ($("#custom-filter-modal").hasClass("show"))
 			$("#new-filter").click();
+}
+
+//横向滚动
+document.addEventListener('DOMMouseScroll', handler, false);
+document.addEventListener('mousewheel', handler, false);
+function handler(event) {
+	if (innerWidth < smallScreen) {
+		const scrollStep = 400, // 57
+			el = $(".btn-group-04");
+		if (el.is(':hover')) {
+			var detail = event.wheelDelta || event.detail;
+			var step = scrollStep * (detail < 0 ? 1 : -1);
+			el[0].scrollLeft += step;
+		}
+	}
 }
