@@ -3,7 +3,7 @@ window.onload = function() {
 
 }
 $(document).ready(function(){
-	$('[data-toggle="tooltip"]').tooltip();
+	$('[data-bs-toggle="tooltip"]').tooltip();
 });
 
 $('textarea').each(function () {
@@ -16,30 +16,6 @@ function textarea_resize() {
 	});
 }
 //显示使用提示
-/* var help = document.getElementById("help");
-var helpButton = document.getElementById('userHelp');
-var helpButtonOn = document.getElementById('userHelpOn');
-
-function show_user_help() {
-	if (help.style.opacity == 0) {
-		helpButton.style.display = "none";
-		helpButtonOn.style.display = "";
-		helpButtonOn.style.color = "var(--blue)";
-		help.style.maxHeight = "300px";
-		help.style.transition = "all 250ms ease-out";
-		help.style.opacity = "1";
-		help.style.marginBottom = "1rem";
-		help.style.padding = ".75rem 1.25rem";
-	} else {
-		helpButton.style.display = "";
-		helpButtonOn.style.display = "none";
-		help.style.maxHeight = "0px";
-		help.style.transition = "all 250ms ease-out";
-		help.style.opacity = "0";
-		help.style.marginBottom = "0";
-		help.style.padding = "0 1.25rem";
-	}
-} */
 $(".user-help-button").click(function(){
 	$(".user-help-button").addClass("help-keep-on");
 });
@@ -58,24 +34,6 @@ $(".dropdown-item").click(function(){
 
 //引用参考资料
 $("#refBar").click(function(){
-	/* var refList = document.getElementById("refList");
-	var refButton = document.getElementById("expandRef");
-	var expand_ref_bar = document.getElementById("expand_ref_bar");
-	if (refList.style.display == "none") {
-		refButton.style.transform = "rotate(-180deg)";
-		refList.style.display = "";
-		setTimeout(function() {
-			refList.style.maxHeight = "150px";
-		}, 100);
-		expand_ref_bar.style.cursor = "zoom-out";
-	} else {
-		refButton.style.transform = "rotate(0deg)";
-		setTimeout(function() {
-			refList.style.display = "none";
-		}, 250);
-		refList.style.maxHeight = "0px";
-		expand_ref_bar.style.cursor = "zoom-in";
-	} */
 	if($("#refList").is(':hidden')){
 		$("#refBar").removeClass("radius-bottom");
 		$("#expandRef").css("transform","rotate(-180deg)");
@@ -89,50 +47,24 @@ $("#refBar").click(function(){
 	$("#refList").slideToggle("fast");
 });
 //类型参数转换
-/* var type_small = document.getElementById('small');
-var type_capital = document.getElementById('capital');
-var type_smallcapital = document.getElementById('smallcapital');
-var type_all = document.getElementById('initialAll');
-var type_first = document.getElementById('initialFirst');
-var mode_pinyin = document.getElementById('pinyin');
-var mode_bopomofo = document.getElementById('bopomofo');
-var mode_romatzyh = document.getElementById('romatzyh');
-var mode_ghhszm = document.getElementById('ghhszm');
-var mode_group = document.getElementById('modeGroup');
-var lisuBtn = document.getElementById('lisuBtn'); */
-/* $("#initial").find(".checkbox").each(function() {
-	$(this).click(function() {
-		var cur = $(this).attr('id');
-		if (this.checked) {
-			$(this).parent().children(".checkbox").each(function() {
-				if ($(this).attr('id') !== cur)
-					this.checked = false;
-			});
-		}
-	});
-}); */
-$("#initialAll").click(function() {
-	$("#initialFirst").prop("checked", false);
-})
-$("#initialFirst").click(function() {
-	$("#initialAll").prop("checked", false);
-})
+$("#initialAll").click(() => $("#initialFirst").prop("checked", false));
+$("#initialFirst").click(() => $("#initialAll").prop("checked", false));
 
 function lisuShow(show) {
 	if (show) $("#lisuBtn").fadeIn("fast");
 	else $("#lisuBtn").fadeOut("fast");
 }
 
-$('[name="type"]').parent().click(function(){	//typeChange
-	if ($(this).index() == 1)
+$("[name=type]").click(function () {	//typeChange
+	if ($("[name=type]").index(this) == 1)
 		$("#initialAll, #initialFirst").prop({"disabled":true,"checked":false});
 	else
 		$("#initialAll, #initialFirst").removeAttr("disabled");
-	setTimeout("tryChecked(1)", 100);
+	setTimeout(tryChecked, 100);
 });
 
-$('[name="mode"]').parent().click(function(){	//modeChange
-	var num = $(this).index(),
+$("[name=mode]").click(function (){	//modeChange
+	var num = $("[name=mode]").index(this),
 		el = $("#modeGroup").css("overflow", "hidden"),
 		curHeight = el.height(),
 		autoHeight = el.css('height', 'auto').height(),
@@ -149,7 +81,7 @@ $('[name="mode"]').parent().click(function(){	//modeChange
 		"opacity": opacity,
 		"margin-bottom": mb
 	});
-	if(autoHeight != 0) setTimeout(function(){
+	if(autoHeight != 0) setTimeout(() => {
 		$("#modeGroup").css({
 			"overflow": "",
 			"height": "auto"
@@ -159,25 +91,7 @@ $('[name="mode"]').parent().click(function(){	//modeChange
 	el = $("#ghhszm-msg");
 	if(num == 3) el.slideDown(500);
 	else el.slideUp(500);
-	/* switch (num) {
-		case 1:
-			mode_group.style.maxHeight = "0px";
-			mode_group.style.opacity = "0";
-			mode_group.style.marginBottom = "0.5rem";
-			setTimeout(function() {
-				mode_group.style.display = "none";
-			}, 250)
-			break;
-		default:
-			mode_group.style.display = "";
-			setTimeout(function() {
-				mode_group.style.maxHeight = "300px";
-				mode_group.style.opacity = "1";
-				mode_group.style.marginBottom = "1rem";
-			}, 1)
-			break;
-	} */
-	setTimeout("tryChecked(1)", 100);
+	setTimeout(tryChecked, 100);
 });
 
 //复制到剪贴板
@@ -204,41 +118,23 @@ function resetText() {
 }
 
 function showDialog() {
-	var dialog = $("#dialog").show();
-	setTimeout(function() {
-		dialog.css({
-			"top": "8px",
-			"opacity": 1
-		})
-	}, 1);
-	setTimeout(function() {
-		dialog.css({
-			"top": "-8px",
-			"opacity": 0
-		})
-		setTimeout(function() {
-			dialog.hide();
-		}, 250)
-	}, 1500);
+	$("#dialog").removeClass("hide");
+	setTimeout(() => $("#dialog").addClass("hide"), 1500);
 }
 
-//弹出dropdown的toggle也可以同时显示tooltips
-$("#dropdown-button").hover(dropdownTooltipShow); //暂时不知道为什么不能用on
-$("#dropdown-button").focus(dropdownTooltipShow);
-$("#dropdown-button").mouseout(dropdownTooltipHide);
-$("#dropdown-button").blur(dropdownTooltipHide);
-$("#dropdown-button").click(dropdownTooltipHide);
-$(".fa-chevron-down").hover(dropdownTooltipShow);
-function dropdownTooltipShow() {
-	$('#tooltip-for-dropdown').tooltip('show');
-}
-function dropdownTooltipHide() {
-	$('#tooltip-for-dropdown').tooltip('hide');
+{ //弹出dropdown的toggle也可以同时显示tooltips
+	const dropdownTooltipShow = () => $('#tooltip-for-dropdown').tooltip('show');
+	const dropdownTooltipHide = () => $('#tooltip-for-dropdown').tooltip('hide');
+	$("#dropdown-button").hover(dropdownTooltipShow)
+		.focus(dropdownTooltipShow)
+		.mouseout(dropdownTooltipHide)
+		.blur(dropdownTooltipHide)
+		.click(dropdownTooltipHide); //暂时不知道为什么不能用on
+	$(".fa-chevron-down").hover(dropdownTooltipShow);
 }
 
 //老傈僳文
 var lisuIsOpen = 0;
-
 $("#lisuBtn").click(function(){
 	var result = $("#resultText").val();
 	if (!($("#lisuCheck").is(":checked")) || lisuIsOpen == 0) {
@@ -265,10 +161,9 @@ function lisuData(pos = 1) {
 }
 //生成
 var mode = 0, type = 0; //, input, output, raw, result, sep;
-
-function tryChecked(sample) { //检查模式与类型勾选情况
-	mode = $('[name="mode"]').parent().siblings(".active").index();
-	type = $('[name="type"]').parent().siblings(".active").index();
+function tryChecked(sample = 1) { //检查模式与类型勾选情况
+	mode = $("[name=mode]").index($("[name=mode]").filter(":checked"));
+	type = $("[name=type]").index($("[name=type]").filter(":checked"));
 	if ($("#initialAll").is(":checked")) type += 3;
 	if ($("#initialFirst").is(":checked")) type += 4;
 	//更改使用提示的示例文本
@@ -281,13 +176,14 @@ function tryChecked(sample) { //检查模式与类型勾选情况
 				$("#lisuLabel").html("老傈僳文");
 			}, 250); //waitForChangeLisuBtnName()
 		}
-		$('#include5').html($('[name="mode"]')[mode].dataset.include5.trim().bool()?"5-入声；":"");
+		$('#include5').html($("[name=mode]")[mode].dataset.include5.trim().bool()?"5-入声；":"");
 		if (mode == 2 && type == 1) lisuShow(1);
 		else lisuShow(0);
 		$('#sampleResult').html(converse("xie4'zui4", $('#sep').val()));
 		getResult();
 	}
 }
+$("input[name=initial]").click(() => tryChecked());
 
 $('#rawText').bind('keyup', function(event) {
 	if (event.keyCode == "13") getResult(); //回车执行查询
@@ -298,7 +194,6 @@ function getResult() {
 	$("#resultText").val(converse($('#rawText').val(), $('#sep').val()));
 	textarea_resize();
 }
-
 function converse(raw, sep = " ") {
 	if (sep == "（空格）") sep = " ";
 	if (sep == "（留空）") sep = "";
@@ -318,6 +213,11 @@ function italic() {
 		$("#italicLabel").html("恢复常规");
 	}
 }
+
+$("[for]").click(function () {
+	document.getElementById(this.htmlFor).select();
+});
+
 //raw处理
 function preRaw(raw) {
 	//var interferedPunctuation["!","~","`","@","#","$","%","&","-","_","=","|","\\","\"",":",";","<",">",",","\+","\?","\."];
@@ -328,7 +228,6 @@ function preRaw(raw) {
 	if (raw != "") raw = raw + "\'";
 	return raw;
 }
-
 function backToAsciiPinyin(variant) {
 	var s = variant;
 	s = s.replaces(lisuLetter, upperLatin);
@@ -350,7 +249,7 @@ function backToAsciiPinyin(variant) {
 }
 
 //常用函数/对象
-String.prototype.replaces = function(stra, strb, sep = ",") { //字符串批量替换
+String.prototype.replaces = function (stra, strb, sep = ",") { //字符串批量替换
 	var s = this.valueOf(),
 		a = stra,
 		b = strb;
@@ -363,7 +262,7 @@ String.prototype.replaces = function(stra, strb, sep = ",") { //字符串批量�
 		for (var i = 0; i < a.length; i++)
 			s = s.replace(new RegExp(a[i], "g"), "")
 	return s;
-}
+};
 String.prototype.finds = function() { //字符串查找指定字符的数目
 	var n = 0,
 		arg = arguments;
@@ -374,16 +273,16 @@ String.prototype.finds = function() { //字符串查找指定字符的数目
 			if (this[j] == arg[i])
 				n++;
 	return n;
-}
+};
 String.prototype.reverse = function() { //字符串颠倒顺序
 	var t = "";
 	for (var i = this.length - 1; i >= 0; i--)
 		t += this[i];
 	return t;
-}
+};
 String.prototype.bool = function() { //字符串转布尔型
 	return (/^true$/i).test(this);
-}
+};
 String.prototype.is = function() { //字符串是否为括号里面数组中某个字符串
 	var n = 0,
 		arg = arguments;
@@ -393,27 +292,27 @@ String.prototype.is = function() { //字符串是否为括号里面数组中某�
 		if (this == arg[i])
 			return true;
 	return false;
-}
+};
 String.prototype.inTwo = function(sep = ",") { //字符串两两字符间插一个字符
 	var a = "", l = this.length - 1;
 	for (var i = 0;i < l;i++)
 		a += this[i] + sep;
 	return a += this[l];
-}
+};
 Array.prototype.indexOf = function(val) { //获取元素在数组的下标
 	for (var i = 0; i < this.length; i++)
 		if (this[i] == val)
 			return i;
 	return -1; 
-}
+};
 Array.prototype.remove = function(val) { //根据数组的下标，删除该下标的元素
 	var index = this.indexOf(val);
 	if (index > -1)
 		this.splice(index, 1);
-}
+};
 Array.prototype.trim = function() { //清除数组里面的空串
 	for (var i = 0;i < this.length;i++)
 		if (this[i] === '')
 			this.splice(i, 1);
 	return this;
-}
+};

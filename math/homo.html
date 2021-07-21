@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>数字论证</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<script src="homo.js"></script>
+	<script src="../generator/pyfmt/js/pinyin_dict_withtone.js"></script>
+	<script src="../generator/pyfmt/js/pinyinUtil.min.js"></script>
+	<script src="../generator/various/js/pangu/pangu.min.js"></script>
+	<script src="romaji.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+	<style>
+		.list-group i {
+			margin-right: .5rem;
+		}
+
+		.card {
+			transition: all 250ms ease-in-out, height 0ms !important;
+			overflow: hidden;
+			opacity: 0;
+		}
+
+		#result {
+			font-family: "Cambria Math", Cambria, Cochin, Georgia, "Noto Serif", "Times New Roman", Times, "微软雅黑", serif;
+		}
+		
+		#result > p {
+			margin: 1rem 0 0;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4>恶臭数字论证器</h4>
+		<meta name="discription" class="h6 mb-0" content="数字恶臭化工具" class="mb-3" />
+		<h6 class="text-muted">为什么不问问神奇海螺呢？</h6>
+		<input type="text" class="form-control mb-3" id="homo" placeholder="进攻如野兽：田所浩二扬言，要拿世界第一！">
+		<div class="card mb-3">
+			<div class="card-body" id="result"></div>
+		</div>
+		<div id="copy-link-template" hidden>
+			<p><a href="javascript:copy();" id="copy-link" data-bs-toggle="tooltip" title="复制到剪贴板">复制论述</a></p>
+		</div>
+		<div class="list-group mb-3">
+			<a href="https://lab.magiconch.com/homo/" class="list-group-item list-group-item-action"><i class="bi bi-box-arrow-right"></i>原作者项目地址</a>
+			<a href="https://github.com/itorr/homo" class="list-group-item list-group-item-action"><i class="bi bi-box-arrow-right"></i>仓库地址</a>
+		</div>
+		<p>使用键盘 <kbd>↑</kbd> <kbd>↓</kbd> 键可以直接调节数值。<br />目前仅支持数字（整数、小数、负数均可）、英文字母、汉字、假名。</p>
+	</div>
+	<script>
+		$(".list-group a").each((_, item) => {
+			item.innerHTML += "：" + item.href;
+		});
+		function cardResize(elements) {
+			for (const el_ of elements) {
+				const el = $(el_);
+				let curHeight = el.height(),
+					autoHeight = el.css("height", "auto").height(),
+					nothing = el.text() === "";
+				autoHeight += 16 * 2; // padding
+				if (nothing) autoHeight = 0;
+				// $("#copy-result")[0].hidden = nothing;
+				el.css({
+					"padding-top": nothing ? 0 : "",
+					"padding-bottom": nothing ? 0 : "",
+				}).parent().css("border-width", (nothing ? 0 : ""))[(nothing ? "remove" : "add") + "Class"]("mb-3");
+				el.height(curHeight).animate({
+					height: autoHeight
+				}, 50);
+			}
+		}
+		const crs = () => cardResize($("#result"));
+		crs();
+		String.prototype.i = function (index, character = "") {
+			return this.slice(0, index) + String(character) + this.slice(index + 1);
+		};
+		Math.sum = (...arr) => eval(arr.join('+')); // 一个神奇的求和函数
+		$("#homo").on("input propertychange change", function () {
+			moveCopyLink("#copy-link-template");
+			const value = this.value.trim();
+			let ok = false;
+			$("#result").html((orig => {
+				let value = orig;
+				const eChou = text => `这么恶臭的 ${text} 有必要论证吗？`;
+				if (value === "") return "";
+				if (["NaN", "Infinity", "-Infinity"].includes(value)) return eChou(value);
+				{
+					const _value = value.replace(/[^0-9A-Za-z一-龥ぁ-ゖァ-ヺｦ-ｯｱ-ﾝ]/g, '');
+					if (!isFinite(value)) {
+						if (_value === "") return eChou(value); // 目前仅支持数字、字母、汉字、假名
+						value = _value;
+					}
+				}
+				const queue = [];
+				if (isNaN(value - 0)) {
+					const chinese = [], english = [], number = [];
+					for (let i = 0; i < value.length; i++) { // 检查中文/日文
+						const char = value[i];
+						if (char.match(/[一-龥ぁ-ゖァ-ヺｦ-ｯｱ-ﾝ]/)) {
+							const err = () => { throw `字符 “${char}” 未定义`; };
+							let firstLetter = '';
+							if (char.match(/[一-龥]/)) firstLetter = pinyinUtil.getFirstLetter(char);
+							else if (char.match(/[ぁ-ゖァ-ヺｦ-ｯｱ-ﾝ]/)) firstLetter = romaji(char)[0].toUpperCase();
+							else err();
+							if (firstLetter.length !== 1) err();
+							chinese.push(`${char} = ${firstLetter}`);
+							value = value.i(i, firstLetter);
+						}
+					}
+					if (chinese.length)
+						queue.push(chinese.join(', ') + '.');
+					for (const char of value) { // 检查英文
+						if (char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z') {
+							const num = char.toUpperCase().charCodeAt() - 'A'.charCodeAt() + 1;
+							english.push(char);
+							number.push(num);
+						}
+						if (char >= '0' && char <= '9') {
+							english.push(char);
+							number.push(char - 0);
+						}
+					}
+					if (english.length) {
+						const sum = Math.sum.apply(null, number);
+						queue.push(english.join(' + ') + ' = ' + number.join(' + ') + (english.length > 1 ? ' = ' + sum : '') + '.');
+						value = sum;
+					} else throw new Error();
+				}
+				value -= 0; // 强制转换为数字
+				// if (typeof value != "number") throw value + " is not a Number";
+				const ec = fixFormula(homo(value)); // 恶臭
+				queue.push(`${value} = ${ec} ≅ 1 1 4 5 1 4.`);
+				queue.push(`${orig} = 114514 ≡ 野獣先輩 ≣ 田所浩二．`);
+				for (let i = 0; i < queue.length; i++) {
+					queue[i] = (
+						i === 0 ? '∵' :
+						i === queue.length - 1 ? '∴' :
+						'又 ∵'
+					) + ' ' + queue[i];
+				}
+				let result = `野兽先辈${orig}学说\n证明：\n` + queue.join('\n') + "\nQ. E. D.";
+				ok = true;
+				return pangu.spacing(result).replaceAll('\n', '<br />');
+			})(value));
+			if (ok) moveCopyLink("#result");
+			crs();
+		});
+		onresize = crs;
+		$(".card").css("opacity", 1);
+		function fixFormula(formula) {
+			return formula.replaceAll('+', ' + ').replaceAll('-', ' − ').replaceAll('*', ' × ').replaceAll('/', ' ÷ ');
+		}
+		onkeydown = e => {
+			if ($("#homo").is(":focus")) {
+				if (e.key == "ArrowUp" || e.key == "ArrowDown") {
+					let value = $("#homo").val().trim();
+					if (value === "" || !isFinite(value)) return;
+					if (e.key == "ArrowUp") value++;
+					else value--;
+					$("#homo").val(value).change();
+				}
+			}
+		}
+		$(document).ready(function () {
+			$('[data-bs-toggle="tooltip"]').tooltip();
+		});
+		function copy() {
+			var clipbtn = $("#copy-link");
+			clipbtn.focus();
+			clipbtn.attr("title", "这么恶臭的文字还有复制的必要吗？").tooltip("_fixTitle").tooltip("show");
+			setTimeout(() => {
+				clipbtn.attr("title", "复制到剪贴板").tooltip("_fixTitle");
+				clipbtn.mouseout(() => clipbtn.tooltip("hide"));
+			}, 500);
+		}
+		function moveCopyLink(container){
+			$(container).append($("#copy-link").parent());
+		}
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>

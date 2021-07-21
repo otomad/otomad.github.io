@@ -5,18 +5,15 @@
 	<meta charset="utf-8" />
 	<title>Option</title>
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-	<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-	<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
-	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="lowest.css" />
 	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
 	<link id="css" rel="stylesheet" data-theme="bootstrap" crossorigin="anonymous">
-	<!-- <link rel="stylesheet" id="fa"> -->
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
 	<style>
-		body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6 {transition: all 250ms ease-in-out !important;}
-
 		html,
 		body {
 			margin: 0;
@@ -35,8 +32,7 @@
 		.main-container {
 			width: 100%;
 			height: 100%;
-			background: rgb(247, 247, 247);
-			/* #222 */
+			background: #f7f7f7; /* #222 */
 		}
 
 		.toolbar {
@@ -70,7 +66,9 @@
 		}
 
 		.navbar {
-			padding: 8.8125px 1rem;
+			/* padding: 8.8125px 1rem; */
+			/* min-height: 74px; */
+			padding: .5rem 1rem;
 		}
 
 		.nav-final-link {
@@ -92,12 +90,41 @@
 			cursor: pointer;
 		}
 
-		#test {
-			display: unset;
+		#title {
+			display: inline;
+			font-weight: bold;
+			white-space: nowrap;
+			overflow: hidden;
+			/* margin: 9px 70px 9px 50px; */
+			/* margin-left: .5rem; */
+			user-select: none;
+			margin: 0;
+		}
+
+		.navbar-brand {
+			cursor: default;
+			/* position: fixed; */
+			top: 8.8125px;
+		}
+		
+		#holder {
+			width: 45px;
+		}
+		
+		#navbar-content {
+			justify-content: space-between;
+		}
+		
+		.navbar-text {
+			padding: 0 !important;
+		}
+		
+		a {
+			text-decoration: none;
 		}
 
 		@media (min-width: 992px) {
-			#test {
+			#title {
 				display: none;
 			}
 		}
@@ -110,43 +137,33 @@
 	</div>
 	<div class="black-mask" style="display:none"></div>
 	<div class="main-container">
-		<!-- <p class="sr-only"><br><br></p> -->
 		<div class="toolbar">
 			<nav class="navbar navbar-expand-lg navbar-light bg-light">
-				<a class="navbar-brand" style="cursor:default;position:fixed;top:8.8125px"><img src="../caption-logo.svg" width="30" height="30" alt="" loading="lazy"></a>
-				<!-- <div></div> -->
-				<span id="test" style="font-weight:bold;white-space:nowrap;overflow:hidden;margin:9px 70px 9px 50px;user-select:none;">　</span>
-				<!-- <div></div> -->
-				<div id="holder" style="width:45px"></div>
-				<button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="navbarToggler" style="position:fixed;right:16px;top:8.8125px">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav mr-auto">
-						<li class="nav-item">
-							<a class="nav-link" href="../option.html">主页<span class="sr-only">（当前）</span></a>
-						</li>
-						<li class="nav-item">
+				<div class="container-fluid">
+					<a class="navbar-brand">
+						<img src="../caption-logo.svg" width="30" height="30" alt="" loading="lazy">
+					</a>
+					<h5 id="title">　</h5>
+					<button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-content" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbar-content">
+						<div class="navbar-nav">
+							<a class="nav-link" aria-current="page" href="../option.html">主页</a>
 							<a class="nav-link" data-nav="emoji">抽象话生成器</a>
-						</li>
-						<li class="nav-item">
 							<a class="nav-link" data-nav="pyfmt">拼音格式化</a>
-						</li>
-						<li class="nav-item">
 							<a class="nav-link" data-nav="rain">彩虹文字生成器</a>
-						</li>
-						<li class="nav-item">
 							<a class="nav-link" data-nav="various">各种各样生成器</a>
-						</li>
-					</ul>
-					<span style="font-size:75%">
-						<a href="https://github.com/otomad/otomad.github.io" class="nav-final-link">
-							<svg class="octicon octicon-mark-github v-align-middle" height="16" viewBox="0 0 16 16" version="1.1" width="16" aria-hidden="true" style="margin-right:0.5em;position:relative;top:-2px;fill:var(--text-color)">
-								<path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
-								</path>
-							</svg><!-- <i class="fa fa-github" style="padding-right:0.5em"></i> -->GitHub
-						</a>
-					</span>
+							<a class="nav-link" data-nav="nbnhhsh">能不能好好说话</a>
+						</div>
+						<span class="navbar-text">
+							<a href="https://github.com/otomad/otomad.github.io" class="nav-final-link">
+								<svg class="octicon octicon-mark-github v-align-middle" height="16" viewBox="0 0 16 16" version="1.1" width="16" aria-hidden="true" style="margin-right:0.5em;position:relative;top:-2px;fill:var(--text-color)">
+									<path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+								</svg>GitHub
+							</a>
+						</span>
+					</div>
 				</div>
 			</nav>
 		</div>
@@ -161,17 +178,16 @@
 				$("html,body,.main-container").css("background", "");
 				$(".iframe-container").css("background", "");
 			}
-		}
-		$(document).ready(function () {
+		};
+		$(document).ready(() => {
 			$(".toolbar").css("opacity", 1);
 		});
 		String.prototype.splitOnce = function (sep) {
 			var before = this.split(sep)[0],
 				after = this.slice(before.length + 1);
 			return [before, after];
-		}
-		var iframe = $("#iframe")[0],
-			title;
+		};
+		var iframe = $("#iframe")[0], title;
 		$(function () {
 			if (iframe.attachEvent) // for IE
 				iframe.attachEvent("onload", onloadDo);
@@ -180,20 +196,16 @@
 			var arg = location.href.splitOnce('?')[1];
 			nav(arg);
 		});
-
 		function onloadDo() {
 			$("#iframe").contents().find("nav").hide();
 			title = $("#iframe").contents().attr("title");
 			document.title = title + " - Option";
-			$("#test").text(title);
+			$("#title").text(title);
 			findActive(title);
 		}
-
 		function nav(nav) {
 			var path;
-			if (!nav) {
-				path = "../cssc/taichi.html";
-			}
+			if (!nav) path = "../cssc/taichi.html";
 			else {
 				path = nav + '';
 				path = (path.includes('&')
@@ -206,29 +218,26 @@
 			history.pushState("", "", '?' + (nav ? nav : ''));
 			if (!nav) history.pushState("", "", location.href.slice(0, -1));
 		}
-		var navbarToggler = $(".navbar-toggler")[0];
-		$(".navbar-nav li a").click(function () {
-			if (innerWidth < 992)
-				navbarToggler.click();
+		function showBlackMask(show) {
+			$(".black-mask")["fade" + (show ? "In" : "Out")]().css("pointer-events", show ? "" : "none");
+		}
+		$(".navbar-nav .nav-link").click(function () {
+			onresize();
+			if (innerWidth < 992);
+				// $(".navbar-toggler").click();
 			else {
-				$(".black-mask").fadeIn();
+				showBlackMask(true);
 				if (iframe.onload || iframe.attachEvent)
-					$(".black-mask").fadeOut();
+					showBlackMask(false);
 			}
 		});
-		$(".navbar-toggler").click(function () {
-			if ($(".navbar-toggler").hasClass("collapsed"))
-				$(".black-mask").fadeIn();
-			else
-				$(".black-mask").fadeOut();
-		});
-		$(".black-mask").click(navbarToggler.click);
-
+		$(".navbar-toggler").click(() => setTimeout(() => showBlackMask(!$(".navbar-toggler").hasClass("collapsed")), 100));
+		$(".black-mask").click(() => $(".navbar-toggler").click());
 		function findActive(name) {
 			$(".active").removeClass("active");
 			for (let i of document.getElementsByClassName("nav-link"))
 				if (i.innerText == name)
-					$(i).parent().addClass("active");
+					$(i).addClass("active");
 		}
 		$("[data-nav]").click(function () {
 			nav(this.dataset.nav);
@@ -236,7 +245,10 @@
 		$("[data-nav]").dblclick(function () {
 			$(this).click();
 			location.href = iframe.src;
-		})
+		});
+		onresize = () => {
+			if (!$(".navbar-toggler").hasClass("collapsed")) $(".navbar-toggler").click();
+		};
 	</script>
 	<script src="/basis/NightTime.js"></script>
 </body>

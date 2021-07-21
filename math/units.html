@@ -5,33 +5,13 @@
 	<meta charset="utf-8">
 	<title>单位换算</title>
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
 	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
 	<style>
-		body,
-		.input-group,
-		label,
-		.input-group,
-		.card,
-		.card-body,
-		h1,
-		h2,
-		h3,
-		h4,
-		h5,
-		h6,
-		tr {
-			transition: all 250ms ease-in-out !important;
-		}
-
-		h4 {
-			margin: 0.75em 0 1em;
-		}
-
 		.form-inline {
 			flex-wrap: nowrap;
 		}
@@ -73,6 +53,14 @@
 				grid-template-columns: 1fr 1fr 1fr;
 			}
 		}
+		
+		table * {
+			transition: all 250ms ease-out, color 0ms !important;
+		}
+		
+		input.form-control {
+			transition: all 250ms ease-out, background-position 0ms !important;
+		}
 	</style>
 </head>
 
@@ -82,27 +70,27 @@
 		<div class="form-group mb-3">
 			<!-- <label for="physical">选择物理量</label> -->
 			<div class="input-group input-group-lg mb-3">
-				<select class="custom-select" id="physical"></select>
+				<select class="form-select" id="physical"></select>
 			</div>
 		</div>
-		<div class="form-row mb-3">
+		<div class="row mb-3 g-3">
 			<div class="col-8">
 				<input type="number" class="form-control" id="amount1">
 			</div>
 			<div class="col-4">
-				<select class="custom-select" id="unit1"></select>
+				<select class="form-select" id="unit1"></select>
 			</div>
 		</div>
-		<button type="button" class="btn btn-info btn-block mb-3" id="exchange"><i class="fa fa-arrows-v"></i></button>
-		<div class="form-row mb-3">
+		<div class="d-grid"><button type="button" class="btn btn-info btn-block mb-3" id="exchange"><i class="fa fa-arrows-v"></i></button></div>
+		<div class="row mb-3 g-3">
 			<div class="col-8">
 				<input type="number" class="form-control" id="amount2">
 			</div>
 			<div class="col-4">
-				<select class="custom-select" id="unit2"></select>
+				<select class="form-select" id="unit2"></select>
 			</div>
 		</div>
-		<button type="button" class="btn btn-danger mb-3 font-weight-bold float-right" id="ac">AC</button>
+		<button type="button" class="btn btn-danger mb-3 font-weight-bold float-right btm-sm" id="ac">AC</button>
 		<p style="color:var(--gray)">国际单位：<span id="principal-unit"></span></p>
 		<div class="alert alert-warning" role="alert" id="warning" style="display:none"></div>
 		<table class="table table-hover">

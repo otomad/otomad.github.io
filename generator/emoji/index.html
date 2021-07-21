@@ -10,18 +10,18 @@
 
 		<meta name="description" content="一键生成抽象话">
 		<meta name="author" content="chenxuuu">
-		<script src="js/jquery.min.js"></script>
+		<!-- <script src="js/jquery.min.js"></script> -->
 		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
-		 crossorigin="anonymous">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous">
 		<!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
 		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<script type="text/javascript" src="js/cxh-data.js"></script>
 		<script type="text/javascript" src="js/cxh.js"></script>
-		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 		<script type="text/javascript" src="js/grapheme-splitter.min.js"></script>
-		<style>body,.input-group,label,.input-group,.form-control,h1,h2,h3,h4,h5,h6{transition: all 250ms ease !important;}
+		<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
+		<style>
 			textarea.form-control {
 				height: 38px;
 				min-height: 38px;
@@ -38,6 +38,10 @@
 				padding: 0 3px;
 				margin-bottom: 4px;
 				float: right;
+			}
+			
+			label {
+				margin-bottom: .5rem;
 			}
 		</style>
 	</head>
@@ -73,61 +77,49 @@
 			<div class="row">
 				<div class="col-sm-8">
 					<h1>抽象话生成器</h1>
-					<p>一键生成抽象话</p>
+					<h6>一键生成抽象话</h6>
 				</div>
 				<div class="col-sm-4">
-					<div class="alert alert-warning alert-dismissable" style="/*max-width:400px;display:*/">
-						<div style="padding:0 5px">
-							<h4 style="padding:10px 0">温馨提示：</h4>
+					<div class="alert alert-warning alert-dismissable">
+						<div>
+							<h4>温馨提示：</h4>
 							<p>生成时请注意温文儒雅。<p>
 						</div>
 					</div>
-					<!-- <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="display:none">
-						<div class="toast-header">
-							<strong class="mr-auto">Bootstrap</strong>
-							<small class="text-muted">just now</small>
-							<button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="toast-body">
-							See? Just like this.
-						</div>
-					</div> -->
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-lg-8">
-					<div class="form-group">
-						<label for="rawText" data-toggle="tooltip" data-placement="left" title="目前仅支持转换中文">
+					<div class="mb-3">
+						<label for="rawText" data-bs-toggle="tooltip" data-bs-placement="left" title="目前仅支持转换中文">
 							要转换的语句
 						</label>
-						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(0)" title="重设" data-toggle="tooltip">
+						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(0)" title="重设" data-bs-toggle="tooltip">
 							<i class="fa fa-times fa-fw"></i>
 						</button>
 						<textarea type="text" class="form-control" id="rawText" autofocus placeholder="输入你要转换的语句"></textarea>
 					</div>
-					<button class="btn btn-primary btn-block" onclick="getResult()" id="create">
+					<div class="d-grid"><button class="btn btn-primary btn-block mb-3" onclick="getResult()" id="create">
 						生成抽象话
-					</button>
-					<div class="form-group" style="margin-top:0.75em">
+					</button></div>
+					<div class="mb-3">
 						<label for="resultText">
 							转换结果
 						</label>
 						<textarea type="text" class="form-control" id="resultText"></textarea>
 					</div>
-					<button class="btn btn-secondary btn-block" id="d_clip_button" data-clipboard-target="#resultText" data-toggle="tooltip"
-					 data-placement="bottom" title="复制到剪贴板">
+					<div class="d-grid"><button class="btn btn-secondary btn-block" id="d_clip_button" data-clipboard-target="#resultText" data-bs-toggle="tooltip"
+					 data-bs-placement="bottom" title="复制到剪贴板">
 						复制结果
-					</button>
+					</button></div>
 					<br />
 				</div>
 				<div class="col-lg-4">
-					<div class="form-group">
-						<label for="chouxiangText" data-toggle="tooltip" data-placement="left" title="只支持还原本工具转换的结果">
+					<div class="mb-3">
+						<label for="chouxiangText" data-bs-toggle="tooltip" data-bs-placement="left" title="只支持还原本工具转换的结果">
 							<span class="text-danger" style="margin-right:0.5em">新功能</span>还原抽象话到拼音
 						</label>
-						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(1)" title="重设" data-toggle="tooltip">
+						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(1)" title="重设" data-bs-toggle="tooltip">
 							<i class="fa fa-times fa-fw"></i>
 						</button>
 						<button class="btn btn-outline-secondary btn-sm sm" type="button" id="pasteText" id="paste-button" title="粘贴<br />（浏览器可能会弹出剪贴板读取请求，请点击允许）" data-toggle="tooltip" data-html="true">
@@ -135,9 +127,9 @@
 						</button>
 						<textarea type="text" class="form-control" id="chouxiangText" placeholder="此处粘贴你要还原的绘文字"></textarea>
 					</div>
-					<button class="btn btn-primary btn-block" onclick="retrenResult()">
+					<div class="d-grid"><button class="btn btn-primary btn-block" onclick="retrenResult()">
 						还原抽象话到拼音
-					</button>
+					</button></div>
 				</div>
 			</div>
 			<br />
@@ -146,7 +138,7 @@
 
 		<script>
 			$(document).ready(function() {
-				$('[data-toggle="tooltip"]').tooltip();
+				$('[data-bs-toggle="tooltip"]').tooltip();
 			});
 			$("#create").attr({"disabled": "disabled"});
 			$("#create").text("加载中，请稍候……");

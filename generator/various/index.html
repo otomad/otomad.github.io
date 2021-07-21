@@ -7,12 +7,12 @@
 		content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>各种各样生成器</title>
-	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-	<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<script src="js/pangu/pangu.min.js"></script>
 	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-	<link id="css" data-theme="bootstrap" rel="stylesheet"
-		href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous">
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
 	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
 	<style>
 		h1 {
@@ -45,6 +45,10 @@
 		[onclick] {
 			cursor: pointer !important;
 		}
+		
+		label {
+			margin-bottom: .5rem;
+		}
 	</style>
 </head>
 
@@ -53,36 +57,33 @@
 		<h1 onclick="reload()">各种各样生成器</h1>
 		<div class="row">
 			<div class="col-lg-5 mb-3">
-				<div class="form-group">
+				<div class="mb-3">
 					<label for="选择名人名言">选择名人名言</label>
 					<div class="input-group input-group-lg mb-3">
-						<select class="custom-select" id="选择名人名言"></select>
+						<select class="form-select" id="选择名人名言"></select>
 					</div>
 				</div>
 				<p>源码：<span id="源码"></span></p>
 				<hr />
 				<template id="这里将会冒出一堆输入框的模板">
-					<div class="form-group">
+					<div class="mb-3">
 						<label for="输入框-0"></label>
 						<div class="input-group">
 							<input type="text" class="form-control" id="输入框-0" />
-							<select class="custom-select" id="下拉菜单-0"></select>
-							<div class="input-group-append">
-								<button class="btn btn-outline-secondary 叉叉" type="button">
-									<i class="fa fa-times fa-fw"></i>
-								</button>
-							</div>
+							<select class="form-select" id="下拉菜单-0"></select>
+							<button class="btn btn-outline-secondary 叉叉" type="button">
+								<i class="fa fa-times fa-fw"></i>
+							</button>
 						</div>
 					</div>
 				</template>
 				<div id="这里将会冒出一堆输入框"></div>
-				<button class="btn btn-primary btn-block" id="一键生成">一键生成</button>
+				<div class="d-grid"><button class="btn btn-primary btn-block" id="一键生成">一键生成</button></div>
 			</div>
 			<div class="col-lg-7">
-				<div class="form-group">
+				<div class="mb-3">
 					<label for="生成结果">生成结果</label>
-					<button class="btn btn-outline-secondary btn-sm sm" type="button" id="复制按钮" title="复制到剪贴板"
-						data-toggle="tooltip" data-trigger="hover">
+					<button class="btn btn-outline-secondary btn-sm sm" type="button" id="复制按钮" title="复制到剪贴板" data-bs-toggle="tooltip" data-bs-trigger="hover">
 						<i class="fa fa-copy fa-fw"></i>
 					</button>
 					<div class="card">

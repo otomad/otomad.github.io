@@ -14,18 +14,20 @@
 		<title>拼音格式化 (PHP)</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<meta name="description" content="对键盘输入的拼音进行格式化处理">
-		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous">
+		<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
 		<style>
 			h1 {
 				margin: 20px 0 0;
 			}
 			[hidden] {
 				display: none;
+			}
+			form > label {
+				margin-bottom: .5rem;
 			}
 		</style>
 	</head>
@@ -35,17 +37,17 @@
 		</div>
 		<div class="container-fluid">
 			<h1>拼音格式化</h1>
-			<small class="text-info">PHP 版</small>
+			<h6 class="text-info">PHP 版</h6>
 			<p class="mt-1">本页面版本乃 PHP 后端版，需开启服务器后方可正常显示本页面。或者您可以尝试&nbsp;<a href="../index.html">JavaScript&nbsp;前端版页面</a>体验更多功能。</p>
 			<hr />
-			<form action="index.php" class="form-group">
+			<form action="index.php" class="mb-3">
 				<label for="rawText">要转换的拼音</label>
 				<div class="input-group mb-2">
 					<input type="text" name="raw" class="form-control" id="rawText" autofocus placeholder="输入你要转换的拼音" value="<?=$raw?>" />
 				</div>
 				<label for="modeGroup">选择转换类型<?=$type?></label>
 				<div class="input-group mb-2">
-					<select class="custom-select form-control" name="type" id="modeGroup">
+					<select class="form-select" name="type" id="modeGroup">
 						<?php
 							$typeList = array(
 								"全部小写字母",
@@ -74,7 +76,7 @@
 				<div class="input-group mb-3">
 					<input type="text" name="sep" class="form-control" id="sep" placeholder="留空" value="<?=$sep?>" />
 				</div>
-				<input type="submit" class="btn btn-primary btn-block mb-3" id="create" value="生成" />
+				<div class="d-grid"><input type="submit" class="btn btn-primary btn-block mb-3" id="create" value="生成" /></div>
 				<?php
 					if ($raw !== "" && $type !== "") {
 						echo <<< EOD

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
+	<style>
+		#card-group {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		#card-group>.card {
+			width: 30rem;
+			height: 18rem;
+			transition: all 250ms ease-out;
+			/* flex: initial !important; */
+			margin: .5rem;
+			flex: 1 0 auto;
+		}
+
+		#card-group>.card.hide {
+			transition: all 250ms ease-in;
+			transform: scale(.75);
+			opacity: 0;
+		}
+
+		#card-group>.card>.card-body {
+			display: flex;
+			justify-content: space-around;
+			flex-direction: column;
+		}
+
+		#card-group>.card>.card-body.card-plus {
+			text-align: center;
+			font-size: 6rem;
+			cursor: pointer;
+		}
+
+		#card-group>.card>.card-body.card-plus>i {
+			transition: all 250ms ease-out;
+		}
+
+		#card-group>.card>.card-body.card-plus:hover>i {
+			opacity: 0.5;
+		}
+
+		.card-title-time {
+			display: block;
+			padding-right: .5rem;
+		}
+		
+		@media (max-width: 530px) {
+			#card-group>.card {
+				width: 96%;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4><title>世界时间</title></h4>
+		<div class="input-group mb-3"></div>
+		<template id="card-template">
+			<div class="card mb-3 hide">
+				<div class="card-body">
+					<div class="row card-title-time">
+						<button type="button" class="btn-close" style="float: right;"></button>
+						<h1 id="current-time-">00:00:00</h1>
+					</div>
+					<div class="row">
+						<label for="timezone-" class="col-sm-3 col-form-label">选择时区</label>
+						<div class="col-sm-9">
+							<div class="input-group">
+								<select class="form-select timezone-list" id="timezone-"></select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<label for="assign-time-" class="col-sm-3 col-form-label">指定时间</label>
+						<div class="col-sm-9">
+							<input type="time" class="form-control" id="assign-time-" value="00:00:00" step="1">
+						</div>
+					</div>
+				</div>
+			</div>
+		</template>
+		<div id="card-group" class="mb-3">
+			<div class="card mb-3">
+				<div class="card-body card-plus">
+					<i class="bi bi-plus-lg"></i>
+				</div>
+			</div>
+		</div>
+		<div class="list-group" style="margin-left: .5rem; margin-right: .5rem;">
+			<a href="date.html" class="list-group-item list-group-item-action"><i class="bi bi-clock" style="margin-right: .5rem;"></i>日期推算</a>
+		</div>
+	</div>
+	<script>
+		class TimeZone {
+			constructor(offset, city) {
+				if (!isFinite(offset)) throw "Offset Not a Number";
+				this.offset = Number(offset);
+				this.city = city;
+			}
+			utcOffset() {
+				let hour = Math.trunc(this.offset),
+					minute = Math.round(this.offset % 1 * 60);
+				if (hour < 0) minute = (60 - minute) % 60;
+				let result = String(hour) + ':' + String(minute).padStart(2, '0');
+				if (hour >= 0) result = "+" + result;
+				return result;
+			}
+		}
+		const timeZoneList = [
+			new TimeZone(-11, "阿洛菲（纽埃）"),
+			new TimeZone(-10, "埃达克（美国）"),
+			new TimeZone(-9.5, "泰奥哈埃（法属波利尼西亚）"),
+			new TimeZone(-9, "安克雷奇（美国）"),
+			new TimeZone(-8, "伯克利（美国）"),
+			new TimeZone(-7, "剑桥湾（加拿大）"),
+			new TimeZone(-6, "奥斯汀（美国）"),
+			new TimeZone(-5, "波士顿（美国）"),
+			new TimeZone(-4, "格兰德营（巴西）"),
+			new TimeZone(-3, "贝伦（巴西）"),
+			new TimeZone(-2, "费尔南多-迪诺罗尼亚岛（巴西）"),
+			new TimeZone(-1, "蓬塔德尔加达（葡萄牙）"),
+			new TimeZone(0, "爱丁堡（英国）"),
+			new TimeZone(1, "巴黎（法国）"),
+			new TimeZone(2, "大马革士（叙利亚）/安曼（约旦）"),
+			new TimeZone(3, "土耳其（安卡拉）"),
+			new TimeZone(3.5, "德黑兰（伊朗）"),
+			new TimeZone(4, "伏尔加格勒（俄罗斯）"),
+			new TimeZone(5, "彼尔姆（俄罗斯）"),
+			new TimeZone(5.5, "孟买（印度）"),
+			new TimeZone(6, "达卡（孟加拉国）"),
+			new TimeZone(6.5, "仰光（缅甸）"),
+			new TimeZone(7, "曼谷（泰国）"),
+			new TimeZone(8, "北京（中国）"),
+			new TimeZone(8.75, "尤克拉（澳大利亚）"),
+			new TimeZone(9, "东京（日本）"),
+			new TimeZone(9.5, "达尔文（澳大利亚）"),
+			new TimeZone(10, "布里斯班（澳大利亚）"),
+			new TimeZone(10.5, "阿德莱德（澳大利亚）"),
+			new TimeZone(11, "悉尼（澳大利亚）"),
+			new TimeZone(12, "阿纳德尔（俄罗斯）"),
+			new TimeZone(13, "奥克兰（新西兰）"),
+			new TimeZone(13.75, "查塔姆群岛（新西兰）"),
+			new TimeZone(14, "阿皮亚（萨摩亚）"),
+		];
+		class Time {
+			#_hour;
+			#_minute;
+			#_second;
+			constructor(hour, minute, second, offset = 0) {
+				if (!isFinite(hour) || !isFinite(minute) || !isFinite(second) || !isFinite(offset)) throw NaN;
+				/* this.hour(hour, offset);
+				this.minute(minute);
+				this.second(second); */
+				this.value(((parseInt(hour, 10) - parseInt(offset, 10) + 24) % 24 * 60 + parseInt(minute, 10)) * 60 + parseInt(second, 10));
+			}
+			hour(n, offset = 0) {
+				if (!isFinite(n)) return this.#_hour;
+				else this.#_hour = (parseInt(n, 10) - offset + 24) % 24;
+			}
+			minute(n) {
+				if (!isFinite(n)) return this.#_minute;
+				else this.#_minute = parseInt(n, 10) % 60;
+			}
+			second(n) {
+				if (!isFinite(n)) return this.#_second;
+				else this.#_second = parseInt(n, 10) % 60;
+			}
+			value(n) {
+				if (!isFinite(n) || n < 0) return (this.hour() * 60 + this.minute()) * 60 + this.second();
+				n = parseInt(n, 10);
+				this.#_second = n % 60;
+				n = Math.floor(n / 60);
+				this.#_minute = n % 60;
+				n = Math.floor(n / 60);
+				this.#_hour = n % 24;
+			}
+			toString(offset = 0) {
+				if (!isFinite(offset)) throw "Offset Not a Number";
+				let newTime = new Time(this.#_hour, this.#_minute, this.#_second, -offset);
+				return `${String(newTime.hour()).padStart(2, '0')}:${String(newTime.minute()).padStart(2, '0')}:${String(newTime.second()).padStart(2, '0')}`;
+			}
+		}
+		class TimeZoneCard {
+			static list = [];
+			constructor(offset = 0) {
+				let i = $("#card-group")[0].childElementCount;
+				const card = $("#card-template").contents().not("text").clone(true);
+				this.card = card;
+				this.#setId(i);
+				this.#initTimeZoneList(offset);
+				$(".card-plus").parent().before(card);
+				card.find(".btn-close").click(this.remove);
+				card.find(".timezone-list").change(refresh);
+				refresh(true);
+				card.find("[id^=assign-time]").change(this.#assign);
+				setTimeout(() => {card.removeClass("hide"); refresh(true);}, 100);
+				TimeZoneCard.list.push(this);
+			}
+			#initTimeZoneList(offset) {
+				const select = this.card.find(".timezone-list");
+				select.html('');
+				for (const timeZone of timeZoneList) {
+					const option = document.createElement("option");
+					option.value = timeZone.offset;
+					option.innerText = `UTC${timeZone.utcOffset()}\t${timeZone.city}`;
+					select.append(option);
+				}
+				select.val(offset);
+			}
+			#setId(i) {
+				var rep = (words, attr) => this.card.find(`[${attr}^=${words}]`).attr(attr, words + i);
+				rep("current-time-", "id");
+				rep("timezone-", "for");
+				rep("timezone-", "id");
+				rep("assign-time-", "for");
+				rep("assign-time-", "id");
+			}
+			remove = () => {
+				this.card.addClass("hide");
+				setTimeout(() => {
+					let i = TimeZoneCard.list.indexOf(this);
+					if (i != -1) TimeZoneCard.list.splice(i, 1);
+					this.card.remove();
+					for (let i = 0; i < TimeZoneCard.list.length; i++) {
+						const card = TimeZoneCard.list[i];
+						card.#setId(i + 1);
+					}
+				}, 250);
+			}
+			currentTime(time, firstTime = false) {
+				if (!(time instanceof Date)) throw "Please Input a Date Object";
+				const curTime = this.card.find("[id^=current-time]"),
+					offset = this.card.find(".timezone-list").val() - 0;
+				let t = time.getTime()
+				t += offset * 60 * 60 * 1000;
+				const newTime = new Date(t);
+				let value = newTime.format("hh:mm:ss");
+				curTime.text(value);
+				if (firstTime) this.card.find("[id^=assign-time]").val(value);
+			}
+			#assign = () => {
+				let value = this.card.find("[id^=assign-time]").val(),
+					[h, m, s] = value.split(':');
+				if (!s) s = 0;
+				let offset = this.card.find(".timezone-list").val() - 0,
+					time = new Time(h, m, s, offset);
+				for (const timezone of TimeZoneCard.list) {
+					if (timezone === this) continue;
+					let offset = timezone.card.find(".timezone-list").val() - 0;
+					timezone.card.find("[id^=assign-time]").val(time.toString(offset));
+				}
+			}
+		}
+		Date.prototype.format = function (format) {
+			var o = {
+				"M+": this.getUTCMonth() + 1, //month
+				"d+": this.getUTCDate(), //day
+				"h+": this.getUTCHours(), //hour
+				"m+": this.getUTCMinutes(), //minute
+				"s+": this.getUTCSeconds(), //second
+				"q+": Math.floor((this.getUTCMonth() + 3) / 3), //quarter
+				"S": this.getUTCMilliseconds() //millisecond
+			};
+			if (/(y+)/.test(format))
+				format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+			for (var k in o)
+				if (new RegExp("(" + k + ")").test(format))
+					format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+			return format;
+		}
+		$(".card-plus").click(() => new TimeZoneCard());
+		new TimeZoneCard(8);
+		new TimeZoneCard(-8);
+		setInterval(refresh, 1000);
+		function refresh(firstTime = false) {
+			var time = new Date();
+			for (const card of TimeZoneCard.list)
+				card.currentTime(time, firstTime);
+		}
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>

@@ -55,7 +55,7 @@ class 名人名言 {
 			}
 			$("#这里将会冒出一堆输入框").append(输入框组);
 			$(".叉叉").click(function () {
-				var 输入框 = this.parentNode.previousElementSibling;
+				var 输入框 = this.previousElementSibling;
 				输入框.value = 输入框.tagName != "SELECT" ? "" : 输入框.firstChild.value;
 			});
 			i++;
@@ -74,7 +74,7 @@ class 名人名言 {
 		if (Object.prototype.toString.call(this.结果) !== "[object Function]")
 			结果 = "<p class='text-danger'>无法生成结果，因为对象未定义。</p>";
 		else {
-			this.最终结果 = this.结果(this.用户输入());
+			this.最终结果 = pangu.spacing(this.结果(this.用户输入())); // 盘古之白处理
 			结果 = "<p>" + this.最终结果.replace(/\n/g, "</p><p>") + "</p>";
 		}
 		$("#生成结果").html(结果);
@@ -149,7 +149,7 @@ function urlToLink(str) {
 };
 
 $(document).ready(function () {
-	$('[data-toggle="tooltip"]').tooltip();
+	$('[data-bs-toggle="tooltip"]').tooltip();
 });
 
 $("#复制按钮").click(function () {

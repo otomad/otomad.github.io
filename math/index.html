@@ -5,37 +5,41 @@
 		<title>数学工具</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<meta name="description" content="求解各种数学问题">
-		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-		<!-- <script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script> -->
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
 		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
 		 crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+		<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
 		<link rel="stylesheet" href="index.css">
 	</head>
 	<body>
 		<div class="row">
 			<div class="col-lg-3" id="nav-part">
-				<button type="button" id="nav-toggler" class="btn btn-outline-secondary"><i class="fa fa-navicon"></i></button>
-				<h1><i class="fa fa-angle-left" onclick="window.location.href='../option.html';"></i><span id="pagename"></span></h1>
+				<button type="button" id="nav-toggler" class="btn btn-outline-secondary navbar-toggler"><i class="bi bi-list navbar-toggler-icon"></i></button>
+				<h3><i class="bi bi-chevron-left" onclick="window.location.href='../option.html';"></i><span id="pagename"></span></h3>
 				<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-					<a class="nav-link" id="v-sum"      data-toggle="pill">三数求和</a>
-					<a class="nav-link" id="v-prime"    data-toggle="pill">求质数</a>
-					<a class="nav-link" id="v-factor"   data-toggle="pill">公约数与公倍数</a>
-					<a class="nav-link" id="v-carry"    data-toggle="pill">进位制转换</a>
-					<a class="nav-link" id="v-horner"   data-toggle="pill">秦九韶算法</a>
-					<a class="nav-link" id="v-vertical" data-toggle="pill">竖式计算</a>
-					<a class="nav-link" id="v-date"     data-toggle="pill">日期推算</a>
-					<a class="nav-link" id="v-color"    data-toggle="pill">颜色模型转换</a>
-					<a class="nav-link" id="v-hue"      data-toggle="pill">图片主色调</a>
-					<a class="nav-link" id="v-matrix"   data-toggle="pill">矩阵计算器</a>
-					<a class="nav-link" id="v-amount"   data-toggle="pill">大写数字</a>
-					<a class="nav-link" id="v-bv2av"    data-toggle="pill">AV/BV号转换</a>
-					<a class="nav-link" id="v-units"    data-toggle="pill">单位换算</a>
-					<a class="nav-link" id="v-qrcode"   data-toggle="pill">二维码生成</a>
+					<a class="nav-link" id="v-sum"         data-bs-toggle="pill">三数求和</a>
+					<a class="nav-link" id="v-prime"       data-bs-toggle="pill">求质数</a>
+					<a class="nav-link" id="v-factor"      data-bs-toggle="pill">公约数与公倍数</a>
+					<a class="nav-link" id="v-carry"       data-bs-toggle="pill">进位制转换</a>
+					<a class="nav-link" id="v-horner"      data-bs-toggle="pill">秦九韶算法</a>
+					<a class="nav-link" id="v-vertical"    data-bs-toggle="pill">竖式计算</a>
+					<a class="nav-link" id="v-date"        data-bs-toggle="pill">日期推算</a>
+					<a class="nav-link" id="v-global-time" data-bs-toggle="pill">世界时间</a>
+					<a class="nav-link" id="v-color"       data-bs-toggle="pill">颜色模型转换</a>
+					<a class="nav-link" id="v-hue"         data-bs-toggle="pill">图片主色调</a>
+					<a class="nav-link" id="v-matrix"      data-bs-toggle="pill">矩阵计算器</a>
+					<a class="nav-link" id="v-amount"      data-bs-toggle="pill">大写数字</a>
+					<a class="nav-link" id="v-bv2av"       data-bs-toggle="pill">AV/BV号转换</a>
+					<a class="nav-link" id="v-units"       data-bs-toggle="pill">单位换算</a>
+					<a class="nav-link" id="v-qrcode"      data-bs-toggle="pill">二维码生成</a>
+					<a class="nav-link" id="v-char-encode" data-bs-toggle="pill">字符编码转换</a>
+					<a class="nav-link" id="v-crc"         data-bs-toggle="pill">CRC 校验码</a>
+					<a class="nav-link" id="v-homo"        data-bs-toggle="pill">数字论证</a>
 					<div class="nav-link-hr"></div>
-					<a class="nav-link" id="v-more"     data-toggle="pill">更多工具</a>
+					<a class="nav-link" id="v-more"        data-bs-toggle="pill">更多工具</a>
 				</div>
 			</div>
 			<div class="col-lg-9">

@@ -4,17 +4,16 @@
 		<meta charset="utf-8">
 		<title>三数求和</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 		<script src="math.min.js"></script>
-		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
-		 crossorigin="anonymous">
+		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+		<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+		<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
 		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
-		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,.input-group-append,.col-lg-4,h1,h2,h3,h4,h5,h6{transition: all 300ms ease-in-out !important;}
-			h4 {
-				margin:0.75em 0 0.5em;
+		<style>
+			.input-group-append, .col-lg-4 {
+				transition: all 250ms ease-in-out !important;
 			}
 			.input-label {
 				padding: 6px 17px;
@@ -37,13 +36,9 @@
 	<body>
 		<template>
 			<div class="input-group mb-2" id="number0" style="display:none;margin-top:1.5em;opacity:0;">
-				<div class="input-group-prepend">
-					<label class="input-group-text input-group-addon input-label" id="label0" for="num0">0</span>
-				</div>
+				<label class="input-group-text input-group-addon input-label" id="label0" for="num0">0</label>
 				<input type="number" class="form-control r-radius" id="num0">
-				<div class="input-group-append" style="width:0;display:none">
-					<button class="btn btn-outline-secondary btn-times" type="button" id="trash0"><i class="fa fa-trash fa-fw"></i></button>
-				</div>
+				<button class="btn btn-outline-secondary btn-times" type="button" id="trash0" style="width:0;display:none"><i class="fa fa-trash fa-fw"></i></button>
 			</div>
 		</template>
 		<!-- 以上的输入框是当作模板使用的 -->
@@ -98,7 +93,8 @@
 			}
 			function createNew() {
 				n++;
-				var newNumber = $("template")[0].content.querySelector("#number0").cloneNode(true);
+				// var newNumber = $("template")[0].content.querySelector("#number0").cloneNode(true);
+				var newNumber = $("template").contents().filter("#number0").clone(true);
 				newNumber.attr("id","number"+n);
 				var label=newNumber.find("#label0"),
 					input=newNumber.find("#num0"),
@@ -118,10 +114,8 @@
 			}); */
 			function notNew(id){
 				if($("#num"+id).val()!=""){
-					$("#num"+id).attr("onchange","");
-					$("#num"+id).removeClass("r-radius");
-					$("#trash"+id).parent().show();
-					$("#trash"+id).parent().animate({
+					$("#num"+id).attr("onchange","").removeClass("r-radius");
+					$("#trash"+id).show().animate({
 						width: "45px"
 					}, 250);
 					createNew();

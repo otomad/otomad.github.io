@@ -22,7 +22,7 @@
  * @return void - 只声明不返回值
  */
 
-{
+(function () {
 	let thisPath = document.getElementsByTagName("script");
 	thisPath = thisPath[thisPath.length - 1].getAttribute("src");
 	thisPath = thisPath.slice(0, thisPath.lastIndexOf("/") + 1);
@@ -31,10 +31,7 @@
 	let profile = {};
 	if (type(window.NightTime) === "Object")
 		Object.assign(profile, NightTime);
-
-	var NightTime = {};
-
-	let _ = NightTime;
+	let _ = {};
 	let hour = new Date().getHours();
 	if (hour < 7 || hour >= 19 || //晚上7点到次日早上7点启动深色主题
 		matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) //若浏览器开启了深色主题，也会启动深色主题
@@ -79,7 +76,6 @@
 			"var(--text-color-parts)": (_.darkModeFact ? "255, 255, 255" : "0, 0, 0")
 		});
 	}
-	const notAvailableLog = new Error("The ID you specified has been occupied by the other element, please try to use other ID!");
 	/** method description
 	 * 输入 CSS 文本并添加到 style 标签
 	 * @param style: string | object - 必选，可以是模板字符串或对象，将会添加到 style 标签中
@@ -101,7 +97,7 @@
 			document.head.appendChild(styleTag);
 		}
 		if (styleTag.tagName != "STYLE") {
-			console.error(notAvailableLog);
+			console.error(resource().notAvailableLog);
 			return false;
 		}
 		styleTag.innerHTML = css;
@@ -124,7 +120,7 @@
 			document.head.appendChild(linkTag);
 		}
 		if (linkTag.tagName != "LINK") {
-			console.error(notAvailableLog);
+			console.error(resource().notAvailableLog);
 			return false;
 		}
 		linkTag.href = href;
@@ -156,7 +152,7 @@
 					document.head.appendChild(styleTag);
 				}
 				if (styleTag.tagName != "STYLE") {
-					console.error(notAvailableLog);
+					console.error(resource().notAvailableLog);
 					return false;
 				}
 				styleTag.innerHTML = cssText;
@@ -187,7 +183,7 @@
 	_.DarkModeStyle = () => {
 		_.darkModeFact = true;
 		if (_.theme.includes("bootstrap")) {
-			_.appendCSSLink("https://bootswatch.com/4/darkly/bootstrap.min.css", "css");
+			_.appendCSSLink(resource().bootstrap4DarkLink, "css");
 			for (let i of document.getElementsByClassName("navbar")) {
 				i.classList.remove("navbar-light");
 				i.classList.remove("bg-light");
@@ -217,7 +213,7 @@
 	_.LightModeStyle = () => {
 		_.darkModeFact = false;
 		if (_.theme.includes("bootstrap")) {
-			_.appendCSSLink("https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css", "css");
+			_.appendCSSLink(resource().bootstrap4LightLink, "css");
 			for (let i of document.getElementsByClassName("navbar")) {
 				i.classList.remove("navbar-dark");
 				i.classList.remove("bg-dark");
@@ -251,4 +247,16 @@
 	if (profile.lightCSS) _.LightCSS = profile.lightCSS;
 	if (profile.darkCSS) _.DarkCSS = profile.darkCSS;
 	_.CurrentModeStyle();
-}
+	window.NightTime = _;
+	
+	/**
+	 * 底部的资源文件
+	 */
+	function resource() {
+		return {
+			notAvailableLog: new Error("The ID you specified has been occupied by the other element, please try to use other ID!"),
+			bootstrap4LightLink: "https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css",
+			bootstrap4DarkLink: "https://bootswatch.com/5/darkly/bootstrap.min.css",
+		};
+	}
+}());

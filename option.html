@@ -25,6 +25,7 @@
 				随机扑克 | cssc/lz/601.html
 				数码管值计算 | cssc/led/index.html
 				弹跳 DVD 屏保 | cssc/dvd/index.html
+				3D 地球世界地图 | cssc/earth/index.html
 			$莹你一笑 | phone
 				乔碧萝来电 | hotkid/tel/来电.html
 				让你的照片动起来 | hotkid/nod-to-the-rhythm/index.html
@@ -37,6 +38,7 @@
 				狗屁不通文章生成器 | generator/index.html?various&saying=狗屁不通文章生成器
 				明哥体生成器 | generator/index.html?various&saying=明哥体生成器
 				笑话生成器 | generator/index.html?various&saying=笑话生成器
+				能不能好好说话 | generator/index.html?nbnhhsh
 			$数学工具 | sort-numeric-asc
 				三数求和 | math/index.html?sum
 				求质数 | math/index.html?prime
@@ -45,13 +47,17 @@
 				秦九韶算法 | math/index.html?horner
 				竖式计算 | math/index.html?vertical
 				日期推算 | math/index.html?date
+				世界时间 | math/index.html?global-time
 				颜色模型转换 | math/index.html?color
 				图片主色调 | math/index.html?hue
 				矩阵计算器 | math/index.html?matrix
 				大写数字 | math/index.html?amount
-				AV/BV号转换 | math/index.html?bv2av
+				AV/BV 号转换 | math/index.html?bv2av
 				单位换算 | math/index.html?units
 				二维码生成 | math/index.html?qrcode
+				字符编码转换 | math/index.html?char-encode
+				CRC 校验码 | math/index.html?crc
+				数字论证 | math/index.html?homo
 			$照片滤镜 | photo
 				Chobi | math/chobi/index.html
 				Flickty | math/flickity/index.html
@@ -68,7 +74,6 @@
 				井字棋 | math/TicTacToc/index.html?normal
 			$更多趣味 | ellipsis-h
 				假的 Windows 更新界面 | https://taozhiyu.gitee.io/fake
-				能不能好好说话？ | https://lab.magiconch.com/nbnhhsh/
 	</script>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=yes" />
@@ -1688,11 +1693,12 @@
 			if (a.val() !== '' && b.val() !== '') btn.removeAttr("disabled"); else btn.attr("disabled", "disabled");
 		});
 		function searchTools(word) {
+			word = word.toLowerCase();
 			if (!word || isEmpty(word) || word.includes('\t')) return null;
 			var searchResult = {}, flag = false;
 			for (let i = 0; i < searchIndex.length; i++) {
-				const item = searchIndex[i];
-				if (item.includes(word)) {
+				const item = searchIndex[i], itemLwr = item.toLowerCase();
+				if (itemLwr.includes(word)) {
 					searchResult[i] = item;
 					flag = true;
 				}
@@ -1706,7 +1712,8 @@
 			if (result === null) return;
 			for (const index in result) {
 				if (Object.hasOwnProperty.call(result, index)) {
-					const itemName = result[index].replaceAll(word, emmet.get(`span.keyword{${word}}`)).replace('\t', rightAngle);
+					/*const itemName = result[index].replaceAll(word.toLowerCase(), emmet.get(`span.keyword{${word.toLowerCase()}}`)).replaceAll(word.toUpperCase(), emmet.get(`span.keyword{${word.toUpperCase()}}`)).replace('\t', rightAngle);*/
+					const itemName = result[index].replace(RegExp(`(${word})`, "gi"), emmet.get(`span.keyword{\\$1}`)).replace('\t', rightAngle);
 					$(".search-result").append(`<p onclick="$('[data-index=\\'${index}\\']').click()">${itemName}</p>`);
 				}
 			}

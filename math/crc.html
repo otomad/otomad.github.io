@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>CRC 校验码</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css"> -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
+	<style>
+		.gap-row>* {
+			margin-bottom: 1rem;
+		}
+
+		label {
+			user-select: none;
+		}
+
+		div.input-group-text.addon2 {
+			padding: 0;
+			flex-direction: column;
+			justify-content: flex-start;
+			background-color: transparent;
+			border-color: var(--addon2-border-color);
+		}
+
+		div.input-group-text.addon2>button {
+			border-top: none;
+			border-left: none;
+			border-right: none;
+			border-radius: 0;
+		}
+
+		div.input-group-text.addon2>button:first-of-type {
+			border-top-right-radius: .25rem;
+		}
+
+		#original-data {
+			border-right-color: var(--addon2-border-color);
+		}
+
+		.access-key {
+			opacity: 0.75;
+			margin-left: 0.25em;
+			font-family: monospace;
+		}
+
+		.btn-group>* {
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4 class="mb-4">CRC 校验码</h4>
+		<form class="row g-3">
+			<div class="col-lg-8 gap-row">
+				<div class="col-12">
+					<label for="check-algorithm" class="form-label">校验算法</label>
+					<select id="check-algorithm" class="form-select"></select>
+				</div>
+				<div class="col-12">
+					<label for="original-data" class="form-label">原始数据</label>
+					<div class="d-grid mb-3">
+						<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+							<input type="radio" class="btn-check" name="original-form-radio" id="original-hex" autocomplete="off">
+							<label class="btn btn-outline-primary" for="original-hex" data-bs-toggle="tooltip" data-bs-placement="top" title="输入 16 进制数">Hex</label>
+							<input type="radio" class="btn-check" name="original-form-radio" id="original-ascii" autocomplete="off">
+							<label class="btn btn-outline-primary" for="original-ascii" data-bs-toggle="tooltip" data-bs-placement="top" title="输入基本拉丁文（ASCII 字符）">ASCII</label>
+						</div>
+					</div>
+					<div class="input-group">
+						<textarea class="form-control" id="original-data" rows="7"></textarea>
+						<div class="input-group-text addon2">
+							<button class="btn btn-outline-secondary" type="button" id="copy-orig" accesskey="p" data-target="#original-data">复制</button>
+							<button class="btn btn-outline-secondary" type="button" id="paste-orig" accesskey="v" data-target="#original-data">粘贴</button>
+							<button class="btn btn-outline-secondary" type="button" id="clear-orig" accesskey="r" data-target="#original-data">清空</button>
+						</div>
+					</div>
+				</div>
+				<div class="d-grid">
+					<button class="btn btn-primary" type="button" id="calculate" accesskey="a">计算</button>
+				</div>
+				<div class="col-12">
+					<label for="result-data" class="form-label">CRC 校验码</label>
+					<div class="input-group mb-3">
+						<input type="text" class="form-control" id="result-data" readonly>
+						<button class="btn btn-outline-secondary" type="button" id="copy-result" accesskey="c" data-target="#result-data">复制</button>
+					</div>
+				</div>
+				<div class="col-12">
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="result-form-radio" id="result-hex" checked>
+						<label class="form-check-label" for="result-hex" data-bs-toggle="tooltip" data-bs-placement="bottom" title="输出 16 进制数" data-bs-offset="10,0">Hex</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="result-form-radio" id="result-bin">
+						<label class="form-check-label" for="result-bin" data-bs-toggle="tooltip" data-bs-placement="bottom" title="输出 2 进制数">Bin</label>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-4">
+				<div class="card mb-3">
+					<div class="card-body">
+						<h5 class="card-title">信息</h5>
+						<table class="table table-hover card-text">
+							<tbody id="info-table"></tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script>
+		var NightTime = {
+			lightDo: () => document.documentElement.style.setProperty("--addon2-border-color", "var(--bs-secondary)"),
+			darkDo: () => document.documentElement.style.setProperty("--addon2-border-color", "var(--bs-light)"),
+		}
+		const type = obj => (obj ? obj.constructor.name : Object.prototype.toString.call(obj).slice(8, -1));
+		/**
+		 * 16 进制类，方便直接输入/输出 16 进制数据
+		 */
+		class Hex {
+			constructor(data) {
+				this.data = BigInt(data);
+			}
+			toNumber() {
+				return this.data;
+			}
+			toString() { // 利用这个神奇的函数名字可以非常方便地转字符串
+				return "0x" + this.data.toString(16).padStart(4, '0').toUpperCase();
+			}
+		}
+		const hex = data => new Hex(data);
+		class CRC {
+			static list = [];
+			/**
+			 * @param {object} info - CRC 校验算法的相关信息。
+			 * @param {function} formula - CRC 校验算法的计算函数。
+			 */
+			constructor(info, formula) {
+				if (
+					type(formula) != "Function" ||
+					type(info) != "Object" ||
+					type(info.name) != "String"
+				) throw "N/A";
+				this.info = info;
+				this.formula = formula;
+				this.appendOption()
+				CRC.list.push(this);
+				$("#check-algorithm").change();
+			}
+			appendOption() {
+				const option = document.createElement("option");
+				// option.value = this.info.name;
+				option.value = $("#check-algorithm").children().length;
+				const queue = [this.info.name];
+				if (this.info.expression) queue.push(this.info.expression);
+				if (this.info.details) queue.push(this.info.details);
+				option.innerText = queue.join(' ');
+				$("#check-algorithm").append(option);
+			}
+			/**
+			 * CRC16 校验码 的便捷封装函数
+			 * @param {string} data - 直接输入 16 进制内容的字符串。
+			 * @return {string[]} 也会直接返回一个字符串数组。第零位是修改过的原数据，第一位才是结果。
+			 */
+			getCrc(data) {
+				if (data == 0 || data == '') return [data === '' ? '' : 0, 0];
+				if (type(data) == "Number" && isFinite(data) || type(data) == "BigInt") data = data.toString(16);
+				if (type(data) == "String") {
+					data = formatHex(data);
+					data = data.splitWithinSeveralChar(2);
+				}
+				if (type(data) == "Array") {
+					let original = "";
+					for (const char of data) {
+						if (typeof char != "number" || char < 0 || char > 0xff)
+							throw NaN;
+						original += char.toString(16).padStart(2, '0').toUpperCase() + ' ';
+					}
+					original = original.slice(0, -1); // 去掉末尾多余的空格
+					const isBinMulti = resultHex() ? 1 : 4;
+					let result = this.formula(data, data.length).toString(resultHex() ? 16 : 2).padStart(4 * isBinMulti, '0').toUpperCase();
+					return [
+						originalHex() ? original : ascii2hex(original, false),
+						this.info.order ? result.slice(-2 * isBinMulti) + result.slice(-4 * isBinMulti, -2 * isBinMulti) : result.slice(-4 * isBinMulti)
+					];
+				}
+				throw NaN;
+			}
+			showInfo() {
+				$("#info-table").html('');
+				for (let key in this.info) {
+					let value = this.info[key];
+					const
+						tr = document.createElement("tr"),
+						th = document.createElement("th"),
+						td = document.createElement("td");
+					key = key[0].toUpperCase() + key.slice(1);
+					if (type(value) == "Boolean")
+						value = value ? "True" : "False";
+					th.scope = "row";
+					th.innerText = key;
+					td.innerText = value;
+					tr.appendChild(th);
+					tr.appendChild(td);
+					$("#info-table").append(tr);
+				}
+			}
+		}
+		$("#original-data").css("min-height", (() => {
+			const btns = $(".input-group-text.addon2").children();
+			return (btns[0].clientHeight + 1) * btns.length + 2 + "px";
+		})());
+		$("[accesskey]").each((_, item) => {
+			item.innerHTML += `<kbd class="access-key">${item.accessKey.toUpperCase()}</kbd>`;
+		});
+		$("#clear-orig").click(function () {
+			$(this.dataset.target).val('').focus();
+		});
+		$("#check-algorithm").change(() => CRC.list[$("#check-algorithm").val()].showInfo());
+		$("#calculate").click(() => {
+			let original = $("#original-data").val();
+			if (!originalHex()) original = ascii2hex(original, true);
+			const result = CRC.list[$("#check-algorithm").val()].getCrc(original);
+			$("#original-data").val(result[0]);
+			$("#result-data").val(result[1]);
+		});
+		$("[id^=copy]").click(function () {
+			$(this.dataset.target).select();
+			document.execCommand("copy");
+			this.focus();
+		});
+		$("[id^=paste]").click(async function (e) {
+			const target = $(this.dataset.target);
+			target.focus();
+			try {
+				const text = await navigator.clipboard.readText();
+				target.val(text);
+			} catch (err) {
+				console.error('Failed to read clipboard contents: ', err);
+			}
+		});
+		$("[name=original-form-radio]").click(() => {
+			const isHex = originalHex();
+			if (isHex == originalHex.curIsHex) return;
+			originalHex.curIsHex = isHex;
+			const original = $("#original-data");
+			original.val(ascii2hex(original.val(), isHex)).attr("placeholder", isHex ? "例：11 22 33 44 或 0x11 0x22 0x33 或 0x11,0x22,0x33" : "");
+		});
+		$("[name=result-form-radio").click(() => $("#calculate").click());
+		function resultHex() {
+			return $("#result-hex").is(":checked");
+		}
+		function originalHex() {
+			return $("#original-hex").is(":checked");
+		}
+		originalHex.curIsHex = false;
+		function formatHex(hex) {
+			hex = hex.toUpperCase().replaceAll("0x", '').replace(/[^A-F0-9]/g, '');
+			while (hex[0] == '0') hex = hex.slice(1);
+			if (hex.length % 2) hex = '0' + hex;
+			return hex;
+		}
+		String.prototype.splitWithinSeveralChar = function (several = 1) {
+			let arr = [];
+			for (let i = 0; i < this.length; i += several)
+				arr.push(parseInt(this.slice(i, i + several), 16));
+			return arr;
+		};
+		function ascii2hex(data, toHex = true) {
+			if (type(data) != "String") throw "Not a String";
+			if (!toHex) {
+				data = formatHex(data);
+				const arr = data.splitWithinSeveralChar(2);
+				let str = String.fromCharCode.apply(null, arr);
+				return str;
+			} else {
+				const arr = [];
+				for (const char of data) {
+					let charCode = char.charCodeAt().toString(16);
+					if (charCode.length % 2) charCode = '0' + charCode;
+					arr.push(charCode);
+				}
+				return arr.join(' ').toUpperCase();
+			}
+		}
+		var CRC16_XMODEM = new CRC({
+			name: "CRC-16/XMODEM",
+			width: 16,
+			expression: "x16+x12+x5+1",
+			poly: hex(0x1021),
+			init: hex(0x0000),
+			refIn: false,
+			refOut: false,
+			xorOut: hex(0x0000),
+			alias: `CRC-16/ZMODEM, CRC16/ACORN`,
+			order: true,
+			details: `高字节在前，低字节在后`,
+		},
+			/**
+			 * CRC16/XMODEM 校验码
+			 * @param {number[]} puchMsg - 传入一个存储十六进制输入的数组，数组的每一位只能有一个字节。
+			 * @return {number} - 以数字形式返回校验码，需要用 {@code toString(16)} 转换为 16 进制字符串。
+			 */
+			puchMsg => {
+				let usDataLen = puchMsg.length,
+					wCRCin = 0x0000,
+					wCPoly = 0x1021,
+					wChar = 0;
+				for (let j = 0; j < usDataLen; j++) {
+					wChar = puchMsg[j];
+					wCRCin ^= wChar << 8;
+					for (let i = 0; i < 8; i++)
+						if (wCRCin & 0x8000)
+							wCRCin = (wCRCin << 1) ^ wCPoly;
+						else
+							wCRCin = wCRCin << 1;
+				}
+				return wCRCin;
+			});
+		$(document).ready(function () {
+			$('[data-bs-toggle="tooltip"]').tooltip();
+		});
+		document.onkeydown = e => {
+			if (e.key == "Enter") {
+				$("#calculate").click();
+			}
+		};
+		$("#original-hex").click(); // 仅仅是为了调用一遍函数
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>

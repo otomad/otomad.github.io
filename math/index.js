@@ -24,30 +24,38 @@ $("#nav-toggler").click(function() {
 
 function resizeIframe() {
 	if ($(window).width() < 992) {
-		$('#v-pills-tab').slideUp();
+		$("#v-pills-tab").slideUp();
 		$("#nav-toggler").show();
 	} else {
-		$('#v-pills-tab').slideDown();
+		$("#v-pills-tab").slideDown();
 		$("#nav-toggler").hide();
 	}
 }
 $(".nav-link").not("#nav-full-size").click(function() {
 	if ($(window).width() < 992)
 		$('#v-pills-tab').slideUp();
-	document.title = $("#iframe").contents().attr("title") + " - " + title;
+	// document.title = $("#iframe").contents().attr("title") + " - " + title;
 	var state = this.id.slice(2);
 	var path = state + ".html";
 	document.getElementById("iframe").src = path;
 	window.history.pushState("", "", "?" + state);
+	document.body.style.cssText = "";
+	document.documentElement.className = "";
+}).dblclick(function () {
+	location.href = this.id.slice(2) + ".html";
 });
 
 function findActive(name) {
 	$(".active").removeClass("active");
 	$("#v-" + name).addClass("active");
-	document.title = $("#iframe").contents().attr("title") + " - " + title;
+	// document.title = $("#iframe").contents().attr("title") + " - " + title;
 }
 
 $("#nav-full-size").click(() => {
 	var href = $("#iframe")[0].src;
-	window.location.href = href;
+	location.href = href;
 });
+
+setInterval(() => {
+	document.title = $("#iframe").contents().attr("title") + " - " + title;
+}, 1000);

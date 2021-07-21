@@ -17,7 +17,6 @@ td {
 	padding: 0;
 }
 
-
 .container-fluid {
 	height: 100%;
 }
@@ -76,7 +75,7 @@ xmp {
 
 #row-html {
 	height: 0;
-	border: 0px solid rgba(0, 0, 0, .125);
+	border: 0 solid rgba(0, 0, 0, .125);
 }
 
 .card-content {
@@ -95,7 +94,7 @@ xmp {
 }
 
 .clearfix {
-	text-shadow: #000 0px 1px 15px;
+	text-shadow: #000 0 1px 15px;
 }
 
 .clearfix:after {
@@ -161,6 +160,7 @@ xmp {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0.25rem;
 	transition: all 250ms ease-in-out;
+	height: 100%;
 }
 
 .sm {
@@ -181,4 +181,8 @@ xmp {
 
 #text-str {
 	transition: all 250ms ease-out, height 0ms;
+}
+
+.card-body {
+	overflow: hidden;
 }

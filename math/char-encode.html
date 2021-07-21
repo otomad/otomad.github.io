@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>字符编码转换</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
+	<style>
+		.form-check-label {
+			user-select: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4 class="mb-3">字符编码转换</h4>
+		<div class="mb-3">
+			<label for="char-input" class="form-label">输入文字</label>
+			<textarea class="form-control" id="char-input" rows="3"></textarea>
+			<div class="d-grid gap-2 mt-2">
+				<button class="btn btn-primary" id="char-button">转换</button>
+			</div>
+		</div>
+		<div class="mb-3">
+			<label for="unicode-input" class="form-label">Unicode 编码</label>
+			<textarea class="form-control" id="unicode-input" rows="3"></textarea>
+		</div>
+		<div class="mb-3">
+			<label for="utf8-input" class="form-label">UTF-8 编码</label>
+			<textarea class="form-control" id="utf8-input" rows="3"></textarea>
+		</div>
+		<div class="mb-3">
+			<label for="gbk-input" class="form-label">GBK 编码</label>
+			<textarea class="form-control" id="gbk-input" rows="3"></textarea>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">输出形式</label>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="view-form" id="view-form-1" checked>
+				<label class="form-check-label" for="view-form-1">16 进制数组</label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="view-form" id="view-form-2">
+				<label class="form-check-label" for="view-form-2">URL</label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="view-form" id="view-form-3">
+				<label class="form-check-label" for="view-form-3">JavaScript 转义字符串</label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input" type="radio" name="view-form" id="view-form-4">
+				<label class="form-check-label" for="view-form-4">C 转义字符串</label>
+			</div>
+		</div>
+		<br />
+	</div>
+	<script src="gbk.js"></script>
+	<script>
+		var char2 = {
+			unicode: char => [char.charCodeAt(0)],
+			utf8: char => {
+				var unicode = char2.unicode(char)[0];
+				if (unicode < 0x80) return [unicode];
+				var gbk = encodeURI(char).split('%');
+				gbk.splice(0, 1);
+				for (let i = 0; i < gbk.length; i++)
+					gbk[i] = parseInt(gbk[i], 16);
+				return gbk;
+			},
+			gbk: char => {
+				var unicode = char2.unicode(char)[0];
+				if (unicode < 0x80) return [unicode];
+				var gbk = GBK.encode(char).split('%');
+				gbk.splice(0, 1);
+				for (let i = 0; i < gbk.length; i++)
+					gbk[i] = parseInt(gbk[i], 16);
+				return gbk;
+			},
+		}
+		function viewForm(arr) {
+			if (!arr) return [];
+			var form = getRadioCheck("view-form"), newArr = [];
+			for (let i = 0; i < arr.length; i++) {
+				const ch = arr[i],
+					pad = (c = ch, pad) => {
+						c = c.toString(16);
+						if (pad === undefined) pad = Math.ceil(c.length / 2) * 2;
+						return c.padStart(pad, '0');
+					};
+				switch (form) {
+					case 1:
+						newArr.push("0x" + pad(ch));
+						break;
+					case 2:
+						newArr.push("%" + pad(ch >> 4 * 2, 2).toUpperCase());
+						newArr.push("%" + pad(ch & 0xff, 2).toUpperCase());
+						break;
+					case 3:
+						newArr.push("\\u" + pad(ch, 4));
+						break;
+					case 4:
+						newArr.push("\\x" + pad(ch >> 4 * 2, 2));
+						newArr.push("\\x" + pad(ch & 0xff, 2));
+						break;
+					default:
+						break;
+				}
+			}
+			return newArr;
+		}
+		function getRadioCheck(name) {
+			var radios = $(`input[type=radio][name="${name}"]`);
+			for (let i = 0; i < radios.length; i++)
+				if (radios[i].checked)
+					return i + 1;
+			return 0;
+		}
+		$("#char-button").click(() => {
+			var str = $("#char-input").val(),
+				result = {
+					unicode: [],
+					utf8: [],
+					gbk: [],
+				};
+			for (const ch of str)
+				for (const encode in result)
+					result[encode].push(...viewForm(char2[encode](ch)));
+			for (const encode in result) {
+				const form = getRadioCheck("view-form");
+				$(`#${encode}-input`).val(result[encode].join(form === 1 ? ',' : ''));
+			}
+		});
+		$("input[type=radio][name='view-form']").change(() => $("#char-button").click());
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>

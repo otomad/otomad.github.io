@@ -68,6 +68,7 @@ if (String) {
 	}
 	/** method description
 	 * @brief 字符串颠倒顺序。
+	 * 使用 {@code Array.from()} 可以避免 Unicode BMP 外的其它字符不能正常翻转的问题。
 	 * @returns {string}
 	 */
 	String.prototype.reverse = function () {

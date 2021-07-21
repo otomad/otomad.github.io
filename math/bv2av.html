@@ -1,103 +1,97 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>AV/BV号转换</title>
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<!-- <meta http-equiv="refresh" content="0;url=bv2av/index.html"> -->
-		<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/popper.js/1.16.1/umd/popper.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<script src="bv2av/BV 号跋扈　～ Who done it!.js"></script>
-		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
-		<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"
-		 crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
-		<style>body,.input-group,label,.input-group,.form-control,.card,.card-body,h1,h2,h4,h4,h5,h6{transition: all 250ms ease-in-out !important;}
-			h4 {
-				margin:0.75em 0 0.5em;
-			}
-			.col-7-5 {
-				flex: 0 0 63%;
-				max-width: 63%;
-			}
-			.fa-times {
-				max-width: 12.56px;
-			}
-			.btn-times {
-				padding-left : 10px;
-				padding-right: 10px;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container-fluid">
-			<h4 class="mb-3">AV/BV号转换</h4>
-			<div class="form-group mb-3">
-				<div class="input-group">
-					<div class="input-group-prepend">
-						<label class="input-group-text input-group-addon" for="txt1">BV号</span>
-					</div>
-					<input type="text" class="form-control" id="txt1">
-					<div class="input-group-append">
-						<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(1)"><i class="fa fa-times fa-fw"></i></button>
-					</div>
-				</div>
-			</div>
-			<div class="btn-group btn-block mb-3" role="group">
-				<button type="button" onclick="change(1)" id="to-down" class="btn btn-primary"><i class="fa fa-arrow-down"></i></button>
-				<button type="button" onclick="change(2)" id="to-up" class="btn btn-secondary"><i class="fa fa-arrow-up"></i></button>
-			</div>
-			<div class="form-group mb-3">
-				<div class="input-group">
-					<div class="input-group-prepend">
-						<label class="input-group-text input-group-addon" for="txt2">AV号</span>
-					</div>
-					<input type="text" class="form-control" id="txt2">
-					<div class="input-group-append">
-						<button class="btn btn-outline-secondary btn-times" type="button" onclick="clearText(2)"><i class="fa fa-times fa-fw"></i></button>
-					</div>
-				</div>
-			</div>
-			<h5>Choose a style:</h5>
-			<a href="bv2av/index.html" class="btn btn-info" style="margin-right:.25em">BV to AV</a>
-			<a href="bv2av/BVwhodoneit.html" class="btn btn-info">BV who done it</a>
-			<hr />
-			<div>
-				BvToAv by <a href="https://www.bv2av.com/" target="_blank">bv2av</a><br />
-				Code by <a href="https://www.zhihu.com/question/381784377/answer/1099438784" target="_blank">mcfx</a><br />
-				Built by <a href="https://github.com/Blokura/bv2av" target="_blank">Blokura</a><br />
-				JavaScript by <a href="https://mrhso.github.io/IshisashiWebsite/BVwhodoneit/" target="_blank">mrhso</a><br />
-				Theme by <a href="https://www.drblack-system.com" target="_blank">DrBlackの锦里</a>
+
+<head>
+	<meta charset="utf-8">
+	<title>AV/BV号转换</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<!-- <meta http-equiv="refresh" content="0;url=bv2av/index.html"> -->
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<script src="bv2av/BV 号跋扈　～ Who done it!.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
+	<style>
+		.col-7-5 {
+			flex: 0 0 63%;
+			max-width: 63%;
+		}
+
+		.fa-times {
+			max-width: 12.56px;
+		}
+
+		.btn-times {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4 class="mb-3">AV/BV号转换</h4>
+		<div class="input-group mb-3">
+			<label class="input-group-text" for="bv">BV号</label>
+			<input type="text" class="form-control" id="bv">
+			<button class="btn btn-outline-secondary btn-times" type="button"><i class="bi bi-x-lg"></i></button>
+		</div>
+		<div class="d-grid">
+			<div class="btn-group mb-3" role="group">
+				<button type="button" id="to-down" class="btn btn-primary"><i class="bi bi-arrow-down"></i></button>
+				<button type="button" id="to-up" class="btn btn-secondary"><i class="bi bi-arrow-up"></i></button>
 			</div>
 		</div>
-		<script>
-			
-			$("label").click(function() {
-				$("#" + $(this).attr("for")).select();
-			});
-			function clearText(id) {
-				$("#txt" + id).val("").select();
+		<div class="input-group mb-3">
+			<label class="input-group-text" for="av">AV号</label>
+			<input type="text" class="form-control" id="av">
+			<button class="btn btn-outline-secondary btn-times" type="button"><i class="bi bi-x-lg"></i></button>
+		</div>
+		<div class="d-grid">
+			<button type="button" class="btn btn-success mb-3" id="get-info" onclick="goLink()" disabled>获取视频信息</button>
+		</div>
+		<h5>Choose a style:</h5>
+		<a href="bv2av/index.html" class="btn btn-info" style="margin-right:.25em">BV to AV</a>
+		<a href="bv2av/BVwhodoneit.html" class="btn btn-info">BV who done it</a>
+		<a href="https://github.com/otomad/otomad.github.io/tree/master/math/bv2av/python" class="btn btn-info">运行/CMD 命令直接查询 (Python)</a>
+		<hr />
+		<div>
+			BvToAv by <a href="https://www.bv2av.com/" target="_blank">bv2av</a><br />
+			Code by <a href="https://www.zhihu.com/question/381784377/answer/1099438784" target="_blank">mcfx</a><br />
+			Built by <a href="https://github.com/Blokura/bv2av" target="_blank">Blokura</a><br />
+			JavaScript by <a href="https://mrhso.github.io/IshisashiWebsite/BVwhodoneit/" target="_blank">mrhso</a><br />
+			Theme by <a href="https://www.drblack-system.com" target="_blank">DrBlackの锦里</a>
+		</div>
+	</div>
+	<script>
+		const ERROR = "¿你在想桃子？"
+		// $("label").click(() => $("#" + $(this).attr("for")).select());
+		$("[id$=v]").on('input propertychange change', () => $("#get-info")[0].disabled = true);
+		$(".btn-times").click(function () {
+			$(this).prev().val("").change().select();
+		});
+		document.onkeydown = e => {
+			if (e.keyCode == 13) {
+				if ($("#bv").is(":focus")) $("#to-down").click();
+				if ($("#av").is(":focus")) $("#to-up").click();
 			}
-			$(document).ready(function() {
-				// $('[data-toggle="tooltip"]').tooltip();
-				// math.config({number: 'BigNumber'});
-			});
-			document.onkeydown = function(e) {
-				// $('.input-group').tooltip('hide');
-				if (window.event.keyCode == 13) {
-					if($("#txt1").is(":focus")) $("#to-down").click();
-					if($("#txt2").is(":focus")) $("#to-up").click();
-				}
+		};
+		$("[id^=to]").click(function () {
+			const way = ($("[id^=to]")[1] === this) + 1;
+			if (way == 1) av.value = bv2av(bv.value);
+			else {
+				av.value = (av.value[0] !== 'a' ? 'av' : '') + av.value.toLowerCase();
+				bv.value = av2bv(av.value)
 			}
-			var password="fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF";
-			
-			function change(way) {
-				var bv = $("#txt1").val(), av = $("#txt2").val();
-				if(way == 1) $("#txt2").val(bv2av(bv));
-				else $("#txt1").val(av2bv(av));
-			}
-		</script>
-	</body>
-	<script src="/basis/NightTime.js"></script>
+			if (av.value != ERROR && bv.value != ERROR) setTimeout(() => $("#get-info")[0].disabled = false, 50); // 这里要弄一个延迟是因为如果键盘按下 Enter 键，上面的改变文本触发命令也会生效，这样按钮又会被接着禁用了
+		});
+		function goLink() {
+			location.href = "https://www.bilibili.com/video/" + $("#av").val().trim();
+		}
+	</script>
+</body>
+<script src="/basis/NightTime.js"></script>
+
 </html>
