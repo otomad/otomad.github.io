@@ -1,194 +1,214 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>质数/素数</title>
-		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
-		<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
-		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
-		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
-		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
-		<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
-		<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
-		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
-		<style>
-			.card-title {
-				margin-bottom: 1em;
-			}
-			.dividend {
-				border-bottom: 1px solid;
-				border-left: 1px solid;
-			}
-			.divisor, .dividend{
-				display: inline-block;
-				padding: 0 0.2em;
-			}
-			#factor-box {
-				text-align: right;
-				position: absolute;
-				left: 50%;
-				transform: translate(-50%, 0);
-			}
-			#factor-center {
-				text-align: center;
-			}
-			.card {
-				height: 0;
-				overflow: hidden;
-				border-width: 0;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container-fluid">
-			<h4>质数/素数</h4>
-			<div class="row">
-				<div class="col-lg-4">
-					<div class="form-group">
-						<label for="raw-num">在这里输入一个正整数</label>
-						<div class="input-group mb-3">
-							<input type="number" class="form-control" id="raw-num" />
-								<button class="btn btn-outline-secondary" type="button" onclick="clearText()" title="重设" data-bs-toggle="tooltip">
-									<i class="fa fa-times fa-fw" style="max-width:16px"></i>
-								</button>
+
+<head>
+	<meta charset="utf-8">
+	<title>质数/素数</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	<style>
+		.card-title {
+			margin-bottom: 1em;
+		}
+
+		.dividend {
+			border-bottom: 1px solid;
+			border-left: 1px solid;
+		}
+
+		.divisor,
+		.dividend {
+			display: inline-block;
+			padding: 0 0.2em;
+		}
+
+		#factor-box {
+			text-align: right;
+			position: absolute;
+			left: 50%;
+			transform: translate(-50%, 0);
+		}
+
+		#factor-center {
+			text-align: center;
+		}
+
+		.card {
+			height: 0;
+			overflow: hidden;
+			border-width: 0;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h4>质数/素数</h4>
+		<div class="row">
+			<div class="col-lg-4">
+				<div class="form-group">
+					<label for="raw-num">在这里输入一个正整数</label>
+					<div class="input-group mb-3">
+						<input type="text" class="form-control" id="raw-num" />
+						<button class="btn btn-outline-secondary" type="button" onclick="clearText()" title="重设" data-bs-toggle="tooltip">
+							<i class="fa fa-times fa-fw" style="max-width:16px"></i>
+						</button>
+					</div>
+				</div>
+				<div class="d-grid"><button class="btn btn-block btn-primary mb-3" type="button" id="confirm">判断</button></div>
+			</div>
+			<div class="col-lg-8">
+				<div class="row">
+					<div class="col-xl-6">
+						<div class="card mb-2" id="row-result">
+							<div class="card-body">
+								<h5 class="card-title" id="result-title"></h5>
+								<span class="card-content" id="result-explain"></span>
+							</div>
+						</div>
+						<div class="card mb-2" id="row-sqrt">
+							<div class="card-body">
+								<h5 class="card-title">算术平方根</h5>
+								<span class="card-content formula" id="sqrt-val">`\sqrt{-6\times10^{+3}}=77\cdotsi`</span>
+							</div>
 						</div>
 					</div>
-					<div class="d-grid"><button class="btn btn-block btn-primary mb-3" type="button" id="confirm">判断</button></div>
-				</div>
-				<div class="col-lg-8">
-					<div class="row">
-						<div class="col-xl-6">
-							<div class="card mb-2" id="row-result">
-								<div class="card-body">
-									<h5 class="card-title" id="result-title"></h5>
-									<span class="card-content" id="result-explain"></span>
-								</div>
-							</div>
-							<div class="card mb-2" id="row-sqrt">
-								<div class="card-body">
-									<h5 class="card-title">算术平方根</h5>
-									<span class="card-content formula" id="sqrt-val">`\sqrt{-6\times10^{+3}}=77\cdotsi`</span>
-								</div>
-							</div>
-						</div>
-						<div class="col-xl-6">
-							<div class="card mb-2" id="row-factor">
-								<div class="card-body">
-									<h5 class="card-title">分解质因数</h5>
-									<div class="card-content" id="factor-box"></div>
-								</div>
+					<div class="col-xl-6">
+						<div class="card mb-2" id="row-factor">
+							<div class="card-body">
+								<h5 class="card-title">分解质因数</h5>
+								<div class="card-content" id="factor-box"></div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<script>
-			$(document).ready(function() {
-				$('[data-bs-toggle="tooltip"]').tooltip();
-			});
-			function clearText() {
-				$("#raw-num").val("").focus();
-			}
-			var noNumber=0;
-			$("#confirm").click(function(){
-				noNumber=1;
-				var explain="", raw=$("#raw-num").val()-0, ans, neg=0; //"-0"可以直接转为数字类型
-				if($("#raw-num").val()==""||raw.toString=="NaN"){
-					noNumber=0;
-					cardResize2x();
-					return false;
-				}
-				//算术平方根部分
-				var mathRaw=$("#raw-num").val();
-				if(mathRaw.search(/e/i)!=-1)
-					mathRaw=mathRaw.split(/e/i)[0]+"\\times10^{"+mathRaw.split(/e/i)[1].replace("+","")+"}";
-				if(raw<0){
-					raw=-raw;
-					explain+="不能输入负数，已自动取负。";
-					neg=1;
-				}
-				var sqrtAns=Math.sqrt(raw)+(neg==1?"i":"");
-				sqrtAns=(sqrtAns.length>16?"\\approx":"=")+sqrtAns;
-				$("#sqrt-val").html(`\`\\sqrt{${mathRaw}}${sqrtAns}\``);
-				MathJax.Hub.Queue(["Typeset",MathJax.Hub,"sqrt-val"]);
-				//判断质数与否部分
-				if(raw!=parseInt(raw)){
-					raw=parseInt(raw);
-					explain+="不能输入小数，已自动取整。";
-				}
-				if(explain) explain+="改变后的值为 "+raw+"。";
-				$("#raw-num").val(raw);
-				ans=prime(raw);
-				$("#result-title").html(ans[0]);
-				explain+=raw+" "+(ans[1]==-1?ans[0]:"是一个"+ans[0])+"。";
-				if(ans[1]==0) explain+="它可以被整除的最小整数是 "+ans[2]+"。";
-				$("#result-explain").html(explain);
-				//分解质因数部分
-				$("#factor-box").html("");
-				if(ans[1]!=0){
-					$("#factor-box").html(raw);
-				}
-				else{
-					var dividend=new Array(),divisor=new Array(),
-						divd=raw,divr;
-					for(var i=0;i<1000;i++){ //限制额定行数，避免错误造成死循环。因此用for而不是while
-						dividend.push(divd);
-						if(prime(divd)[1]!=0) break;
-						divr=prime(divd)[2]
-						divisor.push(divr);
-						divd/=divr;
-					}
-					for(var i=0;i<divisor.length;i++){
-						$("#factor-box").append('<div class="divisor">'+divisor[i]+'</div>');
-						$("#factor-box").append('<div class="dividend">'+dividend[i]+'</div><br />');
-					}
-					$("#factor-box").append('<div class="divisor">'+dividend[dividend.length-1]+'</div>');
-					/* $("#factor-box").append(`
-						<div class="divisor">2</div>
-						<div class="dividend">16</div>
-					`); */
-				}
+	</div>
+	<script>
+		$(document).ready(function () {
+			$('[data-bs-toggle="tooltip"]').tooltip();
+		});
+		function clearText() {
+			$("#raw-num").val("").focus();
+		}
+		var noNumber = 0;
+		$("#raw-num").on('input propertychange change', function () {
+			this.value = this.value.replace(/[^0-9]/g, "");
+		});
+		$("#confirm").click(function () {
+			noNumber = 1;
+			var explain = "", raw = $("#raw-num").val() - 0, ans, neg = 0; // "-0"可以直接转为数字类型
+			if ($("#raw-num").val() == "" || raw.toString == "NaN") {
+				noNumber = 0;
 				cardResize2x();
-			});
-			function prime(na){
-				n=Math.abs(parseInt(na)); //这一步至少在本页面上是多余的操作，主要用于外部调用或作为常用函数供以后使用。
-				if(n<2) return ["不是质数也不是合数",-1];
-				var i, r, sqrtn;
-				sqrtn = Math.sqrt(n);
-				for (i = 2; i <= sqrtn; i++) {
-					r = n % i;
-					if (r == 0)
-						return ["合数",0,i];
+				return false;
+			}
+			//算术平方根部分
+			var mathRaw = $("#raw-num").val();
+			if (mathRaw.search(/e/i) != -1)
+				mathRaw = mathRaw.split(/e/i)[0] + "\\times10^{" + mathRaw.split(/e/i)[1].replace("+", "") + "}";
+			if (raw < 0) {
+				raw = -raw;
+				explain += "不能输入负数，已自动取负。";
+				neg = 1;
+			}
+			var sqrtAns = Math.sqrt(raw) + (neg == 1 ? "i" : "");
+			sqrtAns = (sqrtAns.length > 16 ? "\\approx" : "=") + sqrtAns;
+			$("#sqrt-val").html(`\`\\sqrt{${mathRaw}}${sqrtAns}\``);
+			try {
+				MathJax.Hub.Queue(["Typeset", MathJax.Hub, "sqrt-val"]);
+			} catch (error) {
+				console.error(new ReferenceError(`错误：
+				MathJax 公式显示插件无法正常加载。请检查服务端是否访问异常！
+				
+				错误信息如下：
+				`.replaceAll('\t', '') + error.message));
+			}
+			//判断质数与否部分
+			if (raw != parseInt(raw)) {
+				raw = parseInt(raw);
+				explain += "不能输入小数，已自动取整。";
+			}
+			if (explain) explain += "改变后的值为 " + raw + "。";
+			$("#raw-num").val(raw);
+			ans = prime(raw);
+			$("#result-title").html(ans[0]);
+			explain += raw + " " + (ans[1] == -1 ? ans[0] : "是一个" + ans[0]) + "。";
+			if (ans[1] == 0) explain += "它可以被整除的最小整数是 " + ans[2] + "。";
+			$("#result-explain").html(explain);
+			//分解质因数部分
+			$("#factor-box").html("");
+			if (ans[1] != 0) {
+				$("#factor-box").html(raw);
+			}
+			else {
+				var dividend = new Array(), divisor = new Array(),
+					divd = raw, divr;
+				for (var i = 0; i < 1000; i++) { //限制额定行数，避免错误造成死循环。因此用for而不是while
+					dividend.push(divd);
+					if (prime(divd)[1] != 0) break;
+					divr = prime(divd)[2]
+					divisor.push(divr);
+					divd /= divr;
 				}
-				return ["质数",1];
-			}
-			document.onkeydown = function(e) {
-				if (window.event.keyCode == 13){
-					$("#confirm").click();
-					$("input").blur();
+				for (var i = 0; i < divisor.length; i++) {
+					$("#factor-box").append('<div class="divisor">' + divisor[i] + '</div>');
+					$("#factor-box").append('<div class="dividend">' + dividend[i] + '</div><br />');
 				}
+				$("#factor-box").append('<div class="divisor">' + dividend[dividend.length - 1] + '</div>');
+				/* $("#factor-box").append(`
+					<div class="divisor">2</div>
+					<div class="dividend">16</div>
+				`); */
 			}
-			function cardResize() {
-				for (var i = 0; i < $(".card").length; i++) {
-					var el = $('#'+$(".card")[i].id),
-						curHeight = el.height(),
-						autoHeight = el.css('height', 'auto').height();
-					if($(".card")[i].id=="row-factor")
-						autoHeight += $("#factor-box").height();
-					if(noNumber==0) autoHeight = 0;
-					el.height(curHeight).animate({
-						height: autoHeight
-					}, 250);
-					el.css("border-width",(noNumber==0?0:1));
-				}
+			cardResize2x();
+		});
+		function prime(na) {
+			n = Math.abs(parseInt(na)); //这一步至少在本页面上是多余的操作，主要用于外部调用或作为常用函数供以后使用。
+			if (n < 2) return ["不是质数也不是合数", -1];
+			var i, r, sqrtn;
+			sqrtn = Math.sqrt(n);
+			for (i = 2; i <= sqrtn; i++) {
+				r = n % i;
+				if (r == 0)
+					return ["合数", 0, i];
 			}
-			window.onresize = cardResize2x;
-			function cardResize2x(){
-				cardResize();
-				setTimeout(cardResize,500);
+			return ["质数", 1];
+		}
+		document.onkeydown = function (e) {
+			if (window.event.keyCode == 13) {
+				$("#confirm").click();
+				$("input").blur();
 			}
-		</script>
-		<script src="/basis/NightTime.js"></script>
-	</body>
+		}
+		function cardResize() {
+			for (var i = 0; i < $(".card").length; i++) {
+				var el = $('#' + $(".card")[i].id),
+					curHeight = el.height(),
+					autoHeight = el.css('height', 'auto').height();
+				if ($(".card")[i].id == "row-factor")
+					autoHeight += $("#factor-box").height();
+				if (noNumber == 0) autoHeight = 0;
+				el.height(curHeight).animate({
+					height: autoHeight
+				}, 250);
+				el.css("border-width", (noNumber == 0 ? 0 : 1));
+			}
+		}
+		onresize = cardResize2x;
+		function cardResize2x() {
+			cardResize();
+			setTimeout(cardResize, 500);
+		}
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
 </html>

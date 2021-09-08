@@ -40,10 +40,10 @@ onload = onresize = function () {
 	const transform = function (value) {
 		$(".container").style.transform = `scale(${value})`;
 	},
-		width = $("#led").clientWidth + $("#message").clientWidth,
-		height = $("#led").clientHeight;
-	if (height < innerHeight) transform(innerWidth / (width + margin));
-	else transform(innerHeight / (height + margin));
+		width = $("#led").clientWidth + $("#message").clientWidth + margin,
+		height = $("#led").clientHeight + margin;
+	if (height * innerWidth / width < innerHeight) transform(innerWidth / width);
+	else transform(innerHeight / height);
 };
 $("#info").onclick = function () {
 	$("#led").classList.toggle("skew");

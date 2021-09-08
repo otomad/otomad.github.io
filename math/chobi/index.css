@@ -360,6 +360,15 @@ label {
 	.col-lg-4 {
 		padding: 0 15px;
 	}
+	
+	.item-temp {
+		width: 90px;
+		height: 0;
+		margin: 2px;
+		margin-bottom: 0;
+		border: none;
+		padding: 0;
+	}
 }
 
 body {
@@ -429,15 +438,6 @@ body {
 
 #fx-layer-list .dropdown-item::after {
 	content: unset;
-}
-
-.item-temp {
-	width: 90px;
-	height: 0;
-	margin: 2px;
-	margin-bottom: 0;
-	border: none;
-	padding: 0;
 }
 
 .translucent {

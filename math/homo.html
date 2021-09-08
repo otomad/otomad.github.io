@@ -34,6 +34,10 @@
 		#result > p {
 			margin: 1rem 0 0;
 		}
+		
+		.list-group-item {
+			transition: all 250ms ease-out;
+		}
 	</style>
 </head>
 
@@ -75,6 +79,7 @@
 				el.height(curHeight).animate({
 					height: autoHeight
 				}, 50);
+				homoColorful(!nothing);
 			}
 		}
 		const crs = () => cardResize($("#result"));
@@ -91,7 +96,7 @@
 				let value = orig;
 				const eChou = text => `这么恶臭的 ${text} 有必要论证吗？`;
 				if (value === "") return "";
-				if (["NaN", "Infinity", "-Infinity"].includes(value)) return eChou(value);
+				if (["NaN", "Infinity", "-Infinity", "+Infinity"].includes(value)) return eChou(value);
 				{
 					const _value = value.replace(/[^0-9A-Za-z一-龥ぁ-ゖァ-ヺｦ-ｯｱ-ﾝ]/g, '');
 					if (!isFinite(value)) {
@@ -146,7 +151,8 @@
 						'又 ∵'
 					) + ' ' + queue[i];
 				}
-				let result = `野兽先辈${orig}学说\n证明：\n` + queue.join('\n') + "\nQ. E. D.";
+				let result = /* `野兽先辈${orig}学说\n证明：\n` */ `${orig}野兽先辈说\n证明：\n`
+					+ queue.join('\n') + "\nQ. E. D.";
 				ok = true;
 				return pangu.spacing(result).replaceAll('\n', '<br />');
 			})(value));
@@ -183,6 +189,15 @@
 		}
 		function moveCopyLink(container){
 			$(container).append($("#copy-link").parent());
+		}
+		function homoColorful(isHomo = true) {
+			const HOMO_COLOR = "#d0b164";
+			let win = window, complete = false;
+			while (!complete) {
+				if (win === top) complete = true;
+				win.document.body.style.backgroundColor = isHomo ? HOMO_COLOR : "";
+				win = win.parent;
+			}
 		}
 	</script>
 	<script src="/basis/NightTime.js"></script>

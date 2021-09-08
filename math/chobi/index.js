@@ -398,12 +398,12 @@ function reset(clear = true, AC = false) {
 	}
 	imgObj.changeImageData($("#original")[0]).loadImageToCanvas();
 }
-$("#slider").mousedown(function () {
+$("#slider").on("mousedown touchstart", function () {
 	realTimeSlide = setInterval(function () {
 		$("#slider-num").val($("#slider").val());
 	}, 0.01);
 });
-$("#slider").mouseup(function () {
+$("#slider").on("mouseup touchend", function () {
 	clearInterval(realTimeSlide);
 	if (filterId != "reset" && filterId != "custom") {
 		filterArray[filterArray.length - 1].amount = this.value - 0;
@@ -429,6 +429,9 @@ $("#slider-num").on('input propertychange change', function () {
 $("#modal-ok-button").click(function () {
 	way = 1;
 	loadImage($("#path").val());
+});
+$("#path").on("input propertychange change", function () {
+	$("#modal-ok-button")[0].disabled = !this.value.length;
 });
 
 Date.prototype.format = function (format) {
@@ -476,9 +479,10 @@ function gridChange() { //grid系统
 	else
 		$("#canvas,#original").css("transform", "scale(1)");
 }
-document.onkeydown = function (e) {
-	if (window.event.keyCode == 13) {
+document.onkeydown = e => {
+	if (e.key == "Enter") {
 		if ($("#path").is(":focus")) $("#modal-ok-button").click();
+		if ($("#custom-filter-modal").hasClass("show")) $("#new-filter").click();
 	}
 }
 $("#channel-dropdown-menu .dropdown-item").click(function () {
@@ -561,12 +565,6 @@ $.contextMenu({
 		},
 	}
 });
-
-document.onkeydown = function (e) {
-	if (window.event.keyCode == 13)
-		if ($("#custom-filter-modal").hasClass("show"))
-			$("#new-filter").click();
-}
 
 //横向滚动
 document.addEventListener('DOMMouseScroll', handler, false);
