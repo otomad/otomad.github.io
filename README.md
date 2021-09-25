@@ -3,12 +3,12 @@
 Navigation Optional for 217.
 
 This is my personal webpage for school years, about what I seen and heard. 
-Almost everything is full of local aera jokes.
+Almost everything is full of local area jokes.
 
 Hope it can interested you. Have fun!
 
 ![Badge](https://img.shields.io/badge/STATE-UPDATING-green?style=flat-square)
-![Badge](https://img.shields.io/badge/VERSION-1.11-orange?style=flat-square)
+![Badge](https://img.shields.io/badge/VERSION-1.17-orange?style=flat-square)
 
 ----
 
