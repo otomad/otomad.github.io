@@ -1,0 +1,108 @@
+.tool__wrapper.wrapper {
+	min-height: initial;
+	padding-bottom: 0;
+}
+.tool__wrapper.wrapper > .tool__form-shadow {
+	margin-bottom: 0;
+}
+.wrapper {
+	background-color: initial;
+	max-width: initial;
+}
+body {
+	background-color: initial;
+}
+.tool__list-title--mobile-popup {
+	overflow-x: hidden;
+}
+textarea.tool__textarea.tool__textarea--right {
+	text-align: right;
+	padding: 24px 24px 56px 24px;
+}
+textarea.tool__textarea {
+	font-family: Times, "Times New Roman", Garamond, "Georgia Pro", Georgia, Cochin, Cambria, serif;
+	font-size: 18px;
+	font-style: italic;
+}
+
+.tool__list-header {
+	background-color: white;
+	border-radius: 8px 8px 0 0;
+}
+
+[data-theme=light] body {
+	background-color: white;
+}
+
+[data-theme=dark] textarea.tool__textarea.tool__textarea--right {
+	background-color: #282828 !important;
+}
+
+[data-theme=dark] * {
+	color: white;
+}
+
+[data-theme=dark] body,
+[data-theme=dark] textarea.tool__textarea.tool__textarea--left {
+	background-color: #222;
+}
+
+[data-theme=dark] .tool__list-header,
+[data-theme=dark] .tool__title-wrapper {
+	background-color: #303030;
+}
+
+[data-theme=dark] .tool__item-title.cur,
+[data-theme=dark] .tool__item-title.selected,
+[data-theme=dark] .tool__btn-mobile-popup {
+	color: #eba4ff;
+}
+
+[data-theme=dark] .tool__line-title,
+[data-theme=dark] label.tool__item-title--mobile-popup.cur::before,
+[data-theme=dark] label.tool__item-title--mobile-popup.selected::before {
+	background-color: #cf74e8;
+}
+
+[data-theme=dark] .tool__list-header,
+[data-theme=dark] .tool__item--left,
+[data-theme=dark] .tool__btn-result-mobile-popup {
+	border-bottom-color: #6c6c6c;
+	border-right-color: #6c6c6c;
+}
+
+[data-theme=dark] .tool__form {
+	border: 1px solid #3d3d3d;
+}
+
+.tool__clear,
+.tool__copy,
+.tool__reverse {
+	background-color: transparent;
+}
+
+.tool__clear:hover,
+.tool__copy:hover,
+.tool__reverse:hover {
+	background-color: #d900ff14;
+}
+
+.tool__clear:active,
+.tool__copy:active,
+.tool__reverse:active {
+	--active-color: #b129d63d;
+	background-color: var(--active-color);
+	-webkit-tap-highlight-color: var(--active-color);
+}
+
+[data-theme=dark] .tool__clear:hover:not(:active),
+[data-theme=dark] .tool__copy:hover:not(:active),
+[data-theme=dark] .tool__reverse:hover:not(:active) {
+	background-color: #df5bf62e;
+}
+
+[data-theme=dark] .tool__clear:active,
+[data-theme=dark] .tool__copy:active,
+[data-theme=dark] .tool__reverse:active {
+	--active-color: #b000cf47;
+}

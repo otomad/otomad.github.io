@@ -117,7 +117,7 @@
 		$(document).ready(function () {
 			$('[data-bs-toggle="tooltip"]').tooltip();
 		});
-		$(".val-rgb").on('input propertychange change', function () {
+		$(".val-rgb").on("input propertychange change", function () {
 			$(this).val(Math.floor($(this).val()));
 			if ($(this).val() < 0) $(this).val(0);
 			if ($(this).val() > 255) $(this).val(255);
@@ -128,7 +128,7 @@
 			toHex();
 			changeColor(this);
 		});
-		$(".val-hsl").on('input propertychange change', function () {
+		$(".val-hsl").on("input propertychange change", function () {
 			if ($(this).val() < 0) $(this).val(0);
 			$(this).val(Math.floor($(this).val()));
 			if ($("#valH").val() >= 360) $("#valH").val(359);

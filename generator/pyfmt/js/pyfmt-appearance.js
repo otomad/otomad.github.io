@@ -1,8 +1,6 @@
 //所有预处理
-window.onload = function() {
-
-}
-$(document).ready(function(){
+window.onload = null;
+$(document).ready(function () {
 	$('[data-bs-toggle="tooltip"]').tooltip();
 });
 
@@ -16,27 +14,27 @@ function textarea_resize() {
 	});
 }
 //显示使用提示
-$(".user-help-button").click(function(){
+$(".user-help-button").click(function () {
 	$(".user-help-button").addClass("help-keep-on");
 });
 $('#helpModal').on('hide.bs.modal', function () {
-	if(!($("#refList").is(':hidden')))
+	if (!($("#refList").is(':hidden')))
 		$("#refBar").click();
-	setTimeout(function(){
+	setTimeout(function () {
 		$(".user-help-button").removeClass("help-keep-on");
-	},500);
+	}, 500);
 });
 
-$(".dropdown-item").click(function(){
+$(".dropdown-item").click(function () {
 	$("#sep").val(this.text);
-	tryChecked(1);
+	tryChecked(true);
 });
 
 //引用参考资料
-$("#refBar").click(function(){
-	if($("#refList").is(':hidden')){
+$("#refBar").click(function () {
+	if ($("#refList").is(':hidden')) {
 		$("#refBar").removeClass("radius-bottom");
-		$("#expandRef").css("transform","rotate(-180deg)");
+		$("#expandRef").css("transform", "rotate(-180deg)");
 		$(".primary-mark").addClass("list-group-item-primary").css("color","#1d2f42");
 	}
 	else{
@@ -55,15 +53,15 @@ function lisuShow(show) {
 	else $("#lisuBtn").fadeOut("fast");
 }
 
-$("[name=type]").click(function () {	//typeChange
+$("[name=type]").click(function () { //typeChange
 	if ($("[name=type]").index(this) == 1)
-		$("#initialAll, #initialFirst").prop({"disabled":true,"checked":false});
+		$("#initialAll, #initialFirst").prop({ "disabled": true, "checked": false });
 	else
 		$("#initialAll, #initialFirst").removeAttr("disabled");
 	setTimeout(tryChecked, 100);
 });
 
-$("[name=mode]").click(function (){	//modeChange
+$("[name=mode]").click(function () { //modeChange
 	var num = $("[name=mode]").index(this),
 		el = $("#modeGroup").css("overflow", "hidden"),
 		curHeight = el.height(),
@@ -95,7 +93,7 @@ $("[name=mode]").click(function (){	//modeChange
 });
 
 //复制到剪贴板
-$("#d_clip_button").click(function(){
+$("#d_clip_button").click(function () {
 	$("#resultText").select();
 	document.execCommand("copy");
 	showDialog();
@@ -103,12 +101,10 @@ $("#d_clip_button").click(function(){
 	clipboardReact("已复制");
 });
 function clipboardReact(title) {
-	var clipbtn = $("#d_clip_button");
+	const clipbtn = $("#d_clip_button");
 	clipbtn.focus().attr('title', title).tooltip('_fixTitle').tooltip('show');
-	setTimeout(function() {
-		clipbtn.attr('title', "复制结果").tooltip('_fixTitle').mouseout(function() {
-			clipbtn.tooltip('hide');
-		});
+	setTimeout(() => {
+		clipbtn.attr('title', "复制结果").tooltip('_fixTitle').mouseout(() => clipbtn.tooltip('hide'));
 	}, 500);
 }
 
@@ -134,44 +130,37 @@ function showDialog() {
 }
 
 //老傈僳文
-var lisuIsOpen = 0;
-$("#lisuBtn").click(function(){
-	var result = $("#resultText").val();
-	if (!($("#lisuCheck").is(":checked")) || lisuIsOpen == 0) {
-		result = lisuData(1);
-		lisuIsOpen = 1;
-		$("#lisuLabel").html("拉丁字母").attr('title',"　当前：老傈僳文　　<br>单击后：大写拉丁字母").tooltip('_fixTitle').tooltip('show');
-	} else {
-		result = lisuData(0);
-		lisuIsOpen = 0;
-		$("#lisuLabel").html("老傈僳文").attr('title',"　当前：大写拉丁字母<br>单击后：老傈僳文　　").tooltip('_fixTitle').tooltip('show');
-	}
+let lisuIsOpen = false;
+$("#lisuBtn").click(function () {
+	let result = $("#resultText").val();
+	lisuIsOpen = !lisuIsOpen;
+	result = lisuData(lisuIsOpen);
+	const captions = ["拉丁字母", "老傈僳文"], tooltips = ["大写拉丁字母", "老傈僳文　　"];
+	$("#lisuLabel").html(captions[+!lisuIsOpen]).attr("title", `　当前：${tooltips[+lisuIsOpen]}<br>单击后：${tooltips[+!lisuIsOpen]}`).tooltip("_fixTitle").tooltip("show");
 	$("#resultText").val(result);
 });
 
-var upperLatin = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,R,S,T,U,V,W,X,Y,Z";
-var lisuLetter = "ꓮ,ꓐ,ꓚ,ꓓ,ꓰ,ꓝ,ꓖ,ꓧ,ꓲ,ꓙ,ꓗ,ꓡ,ꓟ,ꓠ,ꓳ,ꓑ,ꓣ,ꓢ,ꓔ,ꓴ,ꓦ,ꓪ,ꓫ,ꓬ,ꓜ";
+const upperLatin = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,R,S,T,U,V,W,X,Y,Z";
+const lisuLetter = "ꓮ,ꓐ,ꓚ,ꓓ,ꓰ,ꓝ,ꓖ,ꓧ,ꓲ,ꓙ,ꓗ,ꓡ,ꓟ,ꓠ,ꓳ,ꓑ,ꓣ,ꓢ,ꓔ,ꓴ,ꓦ,ꓪ,ꓫ,ꓬ,ꓜ";
 
-function lisuData(pos = 1) {
-	if (pos != 0)
-		result = result.replaces(upperLatin, lisuLetter);
-	else
-		result = result.replaces(lisuLetter, upperLatin);
+function lisuData(pos = true) {
+	if (pos) result = result.replaces(upperLatin, lisuLetter);
+	else result = result.replaces(lisuLetter, upperLatin);
 	return result;
 }
 //生成
 var mode = 0, type = 0; //, input, output, raw, result, sep;
-function tryChecked(sample = 1) { //检查模式与类型勾选情况
+function tryChecked(sample = true) { //检查模式与类型勾选情况
 	mode = $("[name=mode]").index($("[name=mode]").filter(":checked"));
 	type = $("[name=type]").index($("[name=type]").filter(":checked"));
 	if ($("#initialAll").is(":checked")) type += 3;
 	if ($("#initialFirst").is(":checked")) type += 4;
 	//更改使用提示的示例文本
-	if (sample == 1) {
-		if (!(mode == 2 && type == 1 && lisuIsOpen == 1)) {
-			lisuIsOpen = 0;
-			$("#lisuBtn").attr("class","btn btn-outline-secondary btn-sm");
-			$("#lisuLabel").attr('title',"　当前：大写拉丁字母<br>单击后：老傈僳文　　").tooltip('_fixTitle');
+	if (sample) {
+		if (!(mode == 2 && type == 1 && lisuIsOpen)) {
+			lisuIsOpen = false;
+			// $("#lisuBtn").attr("class","btn btn-outline-secondary btn-sm");
+			$("#lisuLabel").attr('title',"　当前：大写拉丁字母<br>单击后：老傈僳文　　").tooltip("_fixTitle");
 			setTimeout(function() {
 				$("#lisuLabel").html("老傈僳文");
 			}, 250); //waitForChangeLisuBtnName()
@@ -190,7 +179,7 @@ $('#rawText').bind('keyup', function(event) {
 });
 
 function getResult() {
-	tryChecked(0);
+	tryChecked(false);
 	$("#resultText").val(converse($('#rawText').val(), $('#sep').val()));
 	textarea_resize();
 }
@@ -199,12 +188,11 @@ function converse(raw, sep = " ") {
 	if (sep == "（留空）") sep = "";
 	raw = preRaw(raw);
 	result = sentence(raw, sep, mode, type);
-	if (lisuIsOpen == 1) result = lisuData(1);
+	if (lisuIsOpen == 1) result = lisuData(true);
 	return result = result.replace(/undefined/g, "");
 }
 //开启斜体
 function italic() {
-	var italicCheck = document.getElementById("italicCheck");
 	if ($("#italicCheck").is(":checked")) {
 		$("body").css("font-style","normal");
 		$("#italicLabel").html("开启斜体");
@@ -220,7 +208,7 @@ $("[for]").click(function () {
 
 //raw处理
 function preRaw(raw) {
-	//var interferedPunctuation["!","~","`","@","#","$","%","&","-","_","=","|","\\","\"",":",";","<",">",",","\+","\?","\."];
+	//var interferedPunctuation = ["!","~","`","@","#","$","%","&","-","_","=","|","\\","\"",":",";","<",">",",","\+","\?","\."];
 	raw = pinyinUtil.getPinyin(raw, "\'");
 	raw = backToAsciiPinyin(raw);
 	for (var i = 0; i <= 9; i++)
@@ -249,18 +237,12 @@ function backToAsciiPinyin(variant) {
 }
 
 //常用函数/对象
-String.prototype.replaces = function (stra, strb, sep = ",") { //字符串批量替换
-	var s = this.valueOf(),
-		a = stra,
-		b = strb;
-	if (!Array.isArray(stra)) a = stra.split(sep);
-	if (strb) {
-		if (!Array.isArray(strb)) b = strb.split(sep);
-		for (var i = 0; i < a.length; i++)
-			s = s.replace(new RegExp(a[i], "g"), b[i])
-	} else
-		for (var i = 0; i < a.length; i++)
-			s = s.replace(new RegExp(a[i], "g"), "")
+String.prototype.replaces = function (a, b, sep = ",") { //字符串批量替换
+	var s = this.valueOf();
+	if (!Array.isArray(a)) a = a.split(sep);
+	if (!!b && !Array.isArray(b)) b = b.split(sep);
+	for (var i = 0; i < a.length; i++)
+		s = s.replace(new RegExp(a[i], "g"), b ? b[i] : "")
 	return s;
 };
 String.prototype.finds = function() { //字符串查找指定字符的数目

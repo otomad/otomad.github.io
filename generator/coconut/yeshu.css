@@ -1,0 +1,132 @@
+#panel-preview {
+	display: none;
+	text-align: center;
+	margin: 0 auto;
+	/* background-color: #ffffff; */
+}
+
+#panel-edit {
+	font-family: Arial, sans-serif;
+	/* width: 300px;
+	height: 630px;
+	font-size: 30px; */
+	margin: 0 auto;
+}
+
+#banner {
+	max-width: 90vw;
+}
+
+#yeshu {
+	width: 100%;
+	height: 100%;
+	/* width: auto;
+	height: 0; */
+	margin: 0 auto;
+	background-color: #000;
+	border: 2px solid #feef50;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	padding: 6px 0;
+
+	font-weight: bold;
+	text-align: center;
+	line-height: 1;
+	
+	/* width: 300px; */
+	transition: all 500ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.yeshu-center {
+	margin: 0 12px;
+	background-color: #feef50;
+	padding: 3px;
+}
+
+.yeshu-title {
+	color: #000;
+	height: 5%;
+	font-size: 33px;
+}
+
+.yeshu-inner {
+	background-color: #0021fc;
+	border: 1.2px solid #000000;
+	color: #ffffff;
+	padding: 1.2px 1.2px 12px;
+}
+
+.yeshu-zhengzong {
+	font-size: 33px;
+	vertical-align: baseline;
+	margin: 3px 0;
+}
+
+.yeshu-brand {
+	border: 1.2px solid #feef50;
+	border-radius: 15px;
+	background-color: #fd0000;
+	padding: 3px;
+
+	font-size: 108px;
+}
+
+.yeshu-year {
+	margin: 3px 0;
+	text-shadow: -1.2px -1.2px 0 #000, 1.2px -1.2px 0 #000, -1.2px 1.2px 0 #000, 1.2px 1.2px 0 #000;
+	font-size: 3.3rem;
+}
+
+.yeshu-island {
+	color: #feef50;
+	font-size: 36px;
+}
+
+.yeshu-fresh {
+	border: 2.4px solid #fd0000;
+	border-radius: 3px;
+	background-color: #feef50;
+	color: #fd0000;
+	margin: 3px -3px;
+	padding: 3px;
+
+	font-size: 36px;
+}
+
+.yeshu-xianzha {
+	color: #feef50;
+	font-size: 120px;
+	text-shadow: -1.2px -1.2px 0 #000, 1.2px -1.2px 0 #000, -1.2px 1.2px 0 #000, 1.2px 1.2px 0 #000;
+}
+
+.yeshu-no-addon {
+	border: 1.8px solid #feef50;
+	border-radius: 9px;
+	background-color: #fd0000;
+	padding: 3px;
+	margin: -3px 3px;
+	color: #ffffff;
+}
+
+.yeshu-no-addon > p {
+	line-height: 1;
+	margin: 0;
+	font-size: 36px;
+}
+
+.yeshu-no-addon > p:first-child {
+	font-size: 45px;
+}
+
+.yeshu {
+	transition: all 250ms ease-out;
+}
+
+.yeshu:focus {
+	--shadow-config: 0 0 0 0.3rem;
+	outline: none;
+	border-color: #adb5bd;
+	box-shadow: var(--shadow-config) #80808080;
+	text-shadow: 0 0 50px black;
+}

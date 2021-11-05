@@ -7,18 +7,16 @@
 	<link rel="shortcut icon" href="./favicon.png">
 	<link rel="bookmark" href="./favicon.png">
 	<title>彩虹文字生成器</title>
-	<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
 	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
 	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous">
 	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
-	<!-- <link href="./css/bootstrap.min.css" rel="stylesheet"> -->
 	<link href="./css/index.css" rel="stylesheet">
 	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 	<script src="./js/jqColorPicker.min.js"></script>
-	<!-- <script src="./js/colors.js"></script>
-	<script src="./js/jqColorPicker.js"></script> -->
 	<script src="./js/clipboard.min.js"></script>
+	<script src="../content-info.js"></script>
 	<style>
 		
 	</style>
@@ -39,7 +37,7 @@
 						<div class="input-group mb-3">
 								<label class="input-group-text input-group-addon" id="basic-addon1" for="text-str">生成文字</label><br />
 									<button class="btn btn-outline-secondary btn-sm sm" type="button" id="reset" data-bs-placement="bottom" title="重设" data-bs-toggle="tooltip">
-										<i class="fa fa-rotate-left"></i>
+										<i class="bi bi-arrow-counterclockwise" style="margin: 0;"></i>
 									</button>
 							<textarea id="text-str" class="form-control" rows="3" style="min-height:78px;height:125px" autofocus placeholder="请在这里填写需要生成的文字内容（最多140个字）"></textarea>
 						</div>
@@ -123,7 +121,14 @@
 						</div>
 					</div>
 				</div>
-				<br /><br />
+				<content-info>
+					<p>彩虹文字生成器，这个在线工具可以将你输入的文字转换成颜色线性渐变过渡的效果，输出的文字色彩就如同彩虹一般缤纷绚丽，故取名为“彩虹字”。</p>
+					<p>输出的代码中的每一个字都被加上了一段颜色代码，正是这些代码使得文字在网页上呈现出颜色渐变过渡效果。本工具默认生成的是UBB代码，也被称为安全代码，这种代码通常在论坛、博客、网络社区、留言板等都可以获得较好的支持。你也可以手动选择输出HTML代码，它在网页中具有更广泛的支持。</p>
+					<p>彩虹字可以使文字更醒目、更好看。不过由于彩虹字的代码量较多，故不宜对字数过多的文章进行全篇生成，实际上对一篇文章中的部分文字彩虹化更合适宜。</p>
+					<p>彩虹文字生成器使用说明：</p>
+					<p>在文本框中输入需要转换的文字，然后选择你喜欢的过渡颜色，然后点击“生成”按钮即可输出对应的预览效果，同时在下方输出代码，满意后即可复制代码粘贴到需要的地方。如果对输出的效果不满意，则改变色彩样式后再重新生成。</p>
+				</content-info>
+				<br />
 				<script>
 					var clipboard = new ClipboardJS("#copy-code");
 					$("#copy-code").click(function () {
@@ -132,11 +137,11 @@
 					function clipboardReact(title) {
 						var clipbtn = $("#copy-code");
 						clipbtn.focus();
-						clipbtn.attr('title', title).tooltip('_fixTitle').tooltip('show');
+						clipbtn.attr("title", title).tooltip("_fixTitle").tooltip("show");
 						setTimeout(function () {
-							clipbtn.attr('title', "复制到剪贴板").tooltip('_fixTitle');
+							clipbtn.attr("title", "复制到剪贴板").tooltip("_fixTitle");
 							clipbtn.mouseout(function () {
-								clipbtn.tooltip('hide');
+								clipbtn.tooltip("hide");
 							});
 						}, 500);
 					}
@@ -151,7 +156,7 @@
 
 					$(function () {
 						wr_style(1);
-						$('.color').colorPicker({
+						$(".color").colorPicker({
 							opacity: false
 						});
 					});

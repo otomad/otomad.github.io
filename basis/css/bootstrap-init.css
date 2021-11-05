@@ -6,6 +6,7 @@ label,
 .card,
 .card-body,
 .form-check-input,
+.list-group-item,
 h1,
 h2,
 h3,
@@ -56,4 +57,21 @@ meta[name="discription"] {
 .form-group > label,
 .form-group :not(.input-group) label {
 	margin-bottom: .5rem;
+}
+
+.btn.btn-sm > i[class^=bi] {
+	margin: 2px;
+}
+
+.btn.btn-sm {
+	border-radius: 0.25rem !important;
+}
+
+.card-body > :last-child,
+.card-body > section:last-child > :last-child,
+.card-body > div:last-child > :last-child,
+.accordion-body > :last-child,
+.accordion-body > section:last-child > :last-child,
+.accordion-body > div:last-child > :last-child {
+	margin-bottom: 0;
 }

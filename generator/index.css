@@ -1,0 +1,159 @@
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	background: rgb(247, 247, 247);
+}
+
+div,
+iframe {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.main-container {
+	width: 100%;
+	height: 100%;
+	background: #f7f7f7; /* #222 */
+}
+
+.toolbar {
+	background: #aaa;
+	opacity: 0;
+	transition: opacity 250ms ease-in-out;
+}
+
+.iframe-container {
+	position: absolute;
+	top: 59px;
+	bottom: 0;
+	width: 100%;
+	background: #ebebeb;
+	overflow-y: hidden;
+}
+
+.iframe-container iframe {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.black-mask {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background-color: #0008;
+	left: 0;
+	transition: opacity 500ms cubic-bezier(0.22, 0.61, 0.36, 1);;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.black-mask.show {
+	opacity: 1;
+	pointer-events: all;
+}
+
+.black-mask.continuous-show {
+	opacity: 1;
+}
+
+.navbar {
+	/* padding: 8.8125px 1rem; */
+	/* min-height: 74px; */
+	padding: .5rem 1rem;
+}
+
+.nav-final-link {
+	/* color: rgba(255,255,255,0.6); */
+	color: inherit;
+	opacity: 0.6;
+	display: inline-block;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+
+.nav-final-link:hover {
+	text-decoration: none;
+	color: inherit;
+	opacity: 1;
+}
+
+.nav-link {
+	cursor: pointer;
+}
+
+#title {
+	display: inline;
+	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
+	/* margin: 9px 70px 9px 50px; */
+	/* margin-left: .5rem; */
+	user-select: none;
+	margin: 0;
+}
+
+.navbar-brand {
+	cursor: default;
+	/* position: fixed; */
+	top: 8.8125px;
+}
+
+#holder {
+	width: 45px;
+}
+
+#navbar-content {
+	justify-content: space-between;
+}
+
+.navbar-text {
+	padding: 0 !important;
+}
+
+a {
+	text-decoration: none;
+}
+
+.navbar-nav .dropdown-menu {
+	margin: 0 -0.5rem;
+}
+
+.toolbar {
+	user-select: none;
+}
+
+.navbar-brand img {
+	-webkit-user-drag: none;
+}
+
+@media (max-width: 991px) {
+	.dropdown-item {
+		padding: 0.25rem 0.75rem;
+	}
+	.navbar-nav .dropdown-menu {
+		margin: 0 -0.75rem;
+	}
+}
+
+@media (min-width: 992px) {
+	#title {
+		display: none;
+	}
+	.navbar-nav .dropdown-menu {
+		box-shadow: 0 1.5px 4px 0 #0000003b;
+	}
+}
+
+[data-theme=dark] html,
+[data-theme=dark] body,
+[data-theme=dark] .main-container {
+	background: #303030;
+}
+
+[data-theme=dark] .iframe-container {
+	background: #555;
+}

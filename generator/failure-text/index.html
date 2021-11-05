@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<meta name="keywords" content="故障文字生成器, 故障文字在线生成, 故障文本转换器, 故障文字生成工具" />
+	<meta name="description" content=" 故障文本也称为“可怕文本”或“小故障”文本。这些文本通过使用“组合字符代码”连接在一起。范围是U + 0300~U + 036F。单个字符的代码可以与多个“组合字符代码”连接。人们喜欢使用不同风格的文字，看起来很可怕但可识别。" />
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<script src="../content-info.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+	<style>
+		#level-form-control {
+			display: table-cell;
+		}
+		#level {
+			vertical-align: middle;
+		}
+		#example {
+			border: 1px solid #d3d3d3;
+			padding: 1rem 2rem;
+			font-size: 23px;
+			width: fit-content;
+			margin: 1rem auto;
+			border-radius: 0.25rem;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<title class="h4">故障文字生成器</title>
+		<div id="bodywrap" class="mb-3">
+			<div id="content">
+				<div class="mb-2">
+					<textarea id="input" class="form-control" rows="7" placeholder="请在这里输入需要生成的内容"></textarea>
+				</div>
+				<div class="mb-2">
+					<div class="input-group">
+						<label class="input-group-text" for="level">故障等级</label>
+						<div class="form-control" id="level-form-control">
+							<input id="level" type="range" class="form-range" min="0" max="12" step="1" />
+						</div>
+					</div>
+				</div>
+				<div class="mb-2 d-grid">
+					<div class="btn-group">
+						<button id="convert" type="button" class="btn btn-primary">生成</button>
+						<button id="copy" type="button" class="btn btn-secondary">复制到剪贴板</button>
+					</div>
+				</div>
+				<div class="mb-2">
+					<textarea id="output" class="form-control" rows="7" placeholder="结果" readonly></textarea>
+				</div>
+			</div>
+		</div>
+		<content-info accordion>
+			<h3>什么是“故障文字”？</h3>
+			<div id="example"><code>
+								A + ͛ &nbsp;= A͛<br />
+								A + ͛ &nbsp;+ ̂ &nbsp;= A͛̑<br />
+								A + ͛ &nbsp;+ ̂ &nbsp;+ ̥ &nbsp;= Ḁ͛̑<br />
+								A + ͛ &nbsp;+ ̂ &nbsp;+ ̥ &nbsp;+ ̰ &nbsp;= Ḁ̰͛̑
+							</code></div>
+			<p>这些文本通过使用“组合字符代码”连接在一起。范围是 <code>U+0300 ~ U+036F</code>。单个字符的代码可以与多个“组合字符代码”连接。Zalgo 文本也称为“可怕文本”或“小故障”文本。人们喜欢使用不同风格的文字，看起来很可怕但可识别。在这个在线工具中，我们还添加了一些西里尔语言代码，使您的文字更酷。您可以复制并粘贴到任何地方以制作“故障”文本。</p>
+			<p>在文本区域输入任何文本（英文），它将转换为“故障”文本。点击“生成”转换故障文字。点击“复制”即可粘贴到微信，微博或任何应用中。</p>
+		</content-info>
+	</div>
+	<script>
+		var TEST = "", MOBILE_DEVICE = 'desktop classic';
+
+		function r(o, n) {
+			var e = "";
+			return (
+				typeof n == "object" && (
+					n = function (o, n) {
+						return Math.floor(Math.random() * (n - o + 1)) + o
+					}(n[0], n[1])
+				),
+				function (o, n) {
+					for (var e = 0; e < n; e++) o()
+				}(function () {
+					e = e.concat(combines[o][function (o) {
+						return parseInt(Math.random() * o)
+					}(combines[o].length)])
+				}, n), e
+			)
+		}
+		function o(o) {
+			var n = input.val(), e = $("#level").val();
+			n + "#" + e !== d && (d = n + "#" + e, output.val(function (o) {
+				var n, e = "", d = o.split(""), u = i[$("#level").val()];
+				for (var a in console.log(JSON.stringify(u)), d) n = d[a], e = e.concat(n), " " !== n && (e = (e = (e = (e = (e = e.concat(r("mid", u.mid))).concat(r("above", u.above))).concat(r("under", u.under))).concat(r("up", u.up))).concat(r("down", u.down)));
+				return e
+			}(n)))
+		}
+		var d,
+			combines = {
+				up: ["̀", "́", "̂", "̃", "̄", "̅", "̆", "̇", "̈", "̉", "̊", "̋", "̌", "̍", "̎", "̏", "̐", "̑", "̒", "̓", "̔", "̚", "̽", "̾", "̿", "̀", "́", "͂", "̓", "̈́", "͆", "͊", "͋", "͌", "͐", "͑", "͒", "͗", "͛"],
+				mid: ["̴", "̵", "̶", "̷", "̸", "҈", "҉"],
+				down: ["̖", "̗", "̘", "̙", "̜", "̝", "̞", "̟", "̠", "̣", "̤", "̥", "̦", "̩", "̪", "̫", "̬", "̭", "̮", "̯", "̰", "̱", "̲", "̳", "ͅ", "͇", "͈", "͉", "͍", "͎", "͓", "͔", "͕", "͖", "͙", "͚"],
+				under: ["̡", "̢", "̧", "̨", "͜", "͢"],
+				above: ["̕", "̛", "͝", "͞", "͠", "͡", "҇"],
+				other: ["͏", "͘", "ͣ", "ͤ", "ͥ", "ͦ", "ͧ", "ͨ", "ͩ", "ͪ", "ͫ", "ͬ", "ͭ", "ͮ", "ͯ"],
+				"": ["̹", "̺", "̻", "̼", "͟"]
+			},
+			i = ([].concat(combines.up, combines.down, combines.mid), [
+				{ mid: 0, above: 0, under: 0, up: 0, down: 0 },
+				{ mid: 0, above: 1, under: 0, up: [2, 5], down: 0 },
+				{ mid: 0, above: 1, under: 0, up: [4, 12], down: 0 },
+				{ mid: 1, above: 1, under: 0, up: [8, 16], down: 0 },
+				{ mid: 0, above: 0, under: 1, up: 0, down: [2, 5] },
+				{ mid: 0, above: 0, under: 1, up: 0, down: [4, 12] },
+				{ mid: 1, above: 0, under: 1, up: 0, down: [8, 16] },
+				{ mid: 1, above: 0, under: 0, up: 0, down: 0 },
+				{ mid: [1, 2], above: 0, under: 0, up: 0, down: 0 },
+				{ mid: 1, above: 1, under: 1, up: 0, down: 0 },
+				{ mid: 1, above: 1, under: 1, up: [1, 3], down: [1, 3] },
+				{ mid: 1, above: 1, under: 1, up: [2, 5], down: [2, 5] },
+				{ mid: 1, above: 1, under: 1, up: [2, 8], down: [2, 8] },
+				{ mid: 0, above: 0, under: 0, up: [4, 12], down: [4, 12] },
+				{ mid: 1, above: 0, under: 0, up: [4, 12], down: [4, 12] },
+				{ mid: 0, above: 0, under: 0, up: [4, 16], down: [4, 16] },
+				{ mid: 1, above: 0, under: 0, up: [4, 16], down: [4, 16] },
+				{ mid: 0, above: 0, under: 0, up: [8, 16], down: [8, 16] },
+				{ mid: 1, above: 0, under: 0, up: [8, 16], down: [8, 16] },
+				{ mid: 0, above: 0, under: 0, up: [12, 24], down: [12, 24] },
+				{ mid: 1, above: 0, under: 0, up: [12, 24], down: [12, 24] }
+			]),
+			input = $("#input"),
+			output = $("#output"),
+			level = $("#level");
+		if (level.prop("max", i.length - 1), window.localStorage) {
+			var zalgoLevel = "zalgo_level", localStorage = window.localStorage.getItem(zalgoLevel);
+			localStorage = localStorage ?? "13";
+			$("#level").val(localStorage), $("#level").on("input", function () {
+				window.localStorage.setItem(zalgoLevel, $(this).val())
+			})
+		}
+		input.on("keyup", o), level.on("input", o);
+		/* if (input.on("keyup", o), level.on("input", o)) {
+			//new ClipboardJS("#copy").on("success", function (o) { output.fadeOut().fadeIn().blur() });
+		}
+		else $("#copy").hide(); */
+		$("#copy").click(function () {
+			$("#output").select();
+			document.execCommand("copy");
+			this.focus();
+		});
+		input.val(TEST);
+		$("#convert").click(function () {
+			d = "", input.trigger("keyup")
+		});
+		$("#convert").click();
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>

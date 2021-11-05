@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>导航选项</title>
-	<meta name="version" content="1.17" />
+	<meta name="version" content="2.11.5.0" />
 	<script type="进入密码你猜猜" id="content">
 		#classify
 			$早期 | font-awesome
@@ -38,7 +38,13 @@
 				狗屁不通文章生成器 | generator/index.html?various&saying=狗屁不通文章生成器
 				明哥体生成器 | generator/index.html?various&saying=明哥体生成器
 				笑话生成器 | generator/index.html?various&saying=笑话生成器
+				乱数假文生成器 | generator/index.html?various&saying=乱数假文生成器
 				能不能好好说话 | generator/index.html?nbnhhsh
+				图片转点阵文本生成器 | generator/index.html?braille
+				乱序文字生成器 | generator/index.html?disorder
+				在线文字翻转工具 | generator/index.html?flip
+				故障文字生成器 | generator/index.html?failure-text
+				椰树椰汁风格图片生成器 | generator/index.html?coconut
 			$数学工具 | sort-numeric-asc
 				三数求和 | math/index.html?sum
 				求质数 | math/index.html?prime
@@ -1283,50 +1289,15 @@
 			background-color: #fff8;
 		}
 	</style>
-	<!-- <style id="live-style"></style> -->
 	<script>
 		var NightTime = {
 			lightDo: () => {
-				/* NightTime.appendStyle(`
-					:root {
-						--page-background: linear-gradient(to bottom, #f1f4f9, #dff1ff);
-						--container-background: #ffffff5a;
-						--logo-title-color: #ddd;
-						--logo-title-hover-color: white;
-						--primary-color: #ff369b;
-						--inner-background: #0001;
-						--border: #ffffff1a #fff3 #fff3 #ffffff1a;
-						--section-color-1: #ff369b;
-						--section-color-2: #00d2ff;
-						--text-hover-color: black;
-						--outer-text-color: #444;
-						--button-hover-color: #fff8;
-						--button-active-color: #0002;
-					}
-					.container .menu-trigger * {
-						background: linear-gradient(-90deg, var(--text-hover-color) 50%, var(--outer-text-color) 50.01%) left / 200%;
-					}
-					.alert {
-						backdrop-filter: blur(5px) brightness(1.15);
-					}
-					.avatar-head {
-						background: linear-gradient(-45deg, #ff369b, #00d2ff) center top / 100% 135%;
-						animation: head-move 4.5s infinite;
-					}
-					.inner-container.search-on #search-tab {
-						background-color: #fff8;
-					}
-				`, "light-theme"); */
-				document.documentElement.dataset.theme = "light";
 				$("#dark-mode").prop("checked", false);
 			},
 			nightDo: () => {
-				// NightTime.removeStyle("light-theme");
-				document.documentElement.dataset.theme = "dark";
 				$("#dark-mode").prop("checked", true);
 			}
 		}
-		matchMedia("(prefers-color-scheme: light)").addListener(mql => NightTime[(mql.matches?"Light":"Dark")+"ModeStyle"]());
 	</script>
 </head>
 
@@ -1685,7 +1656,7 @@
 			if ($(this).is(":checked")) NightTime.DarkModeStyle();
 			else NightTime.LightModeStyle();
 		})
-		$("#form-username, #form-password").on('input propertychange change', function () {
+		$("#form-username, #form-password").on("input propertychange change", function () {
 			var a = $("#form-username"),
 				b = $("#form-password"),
 				btn = $("#form-login, #form-register");

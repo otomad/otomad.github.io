@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>翻转</title>
+	<meta name="yandex-verification" content="724909cb3a987d62">
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+	<meta name="keywords" content="在线文字翻转工具, 在线英文翻转工具, 文字翻转在线工具, Flip Title" />
+	<meta name="description" content="在线文字翻转工具，输入英文字母则自动翻转倒置；如果输入的是中文，则会倒序显示，以输入「一个在线工具箱」为例，网页显示的结果为「箱具工线在个一」。" />
+	<meta property="og:url" content="https://unicode-table.com/cn/tools/flip/">
+	<meta property="og:title" content="翻转">
+	<meta property="og:type" content="website">
+	<meta property="og:description" content="Unicode (萬國碼、國際碼、統一碼) 字符搜索Web服务。 查找并复制您最喜欢的角色：😎表情符号，▶Ar箭头，✪星星，💲货币，🈂️书写系统等🚩">
+	<meta property="og:image" content="https://uc-table.azureedge.net/i/favicons/favicon.ico">
+	<link rel="canonical" href="https://unicode-table.com/cn/tools/flip/">
+	<meta name="theme-color" content="#ffffff">
+	
+	<link rel="stylesheet" type="text/css" href="css/new_disign.css">
+	<link rel="stylesheet" href="css/new_design_fonts.css" as="style" onload="this.rel='stylesheet'" media="all">
+	<link rel="stylesheet" href="css/fix.css">
+</head>
+
+<body>
+	<section class="tool">
+		<div class="tool__wrapper wrapper">
+
+			<form class="tool__form tool__form-shadow" method="post" action="https://unicode-table.com/cn/tools/flip/" name="f" id="flipper">
+				<ul class="tool__list-header tool__list-header--mobile-popup">
+					<li class="tool__item-header">
+						<h2 class="tool__title tool__title--mobile-popup">
+							<label for="ta-left">文本</label>
+						</h2>
+					</li>
+					<li class="tool__item-header tool__list-header--mobile-popup tool__item-header--right">
+						<h2 class="tool__title tool__title--mobile-popup tool__title--right">
+							<div class="tool__list-title tool__list-title--mobile-popup  flip-backed">
+								<button type="button" class="tool__btn-mobile-popup js-btn-mobile-popup">倒过来！</button>
+								<div class="tool__title-wrapper js-title-wrapper">
+									<button type="button" class="tool__btn-result-mobile-popup js-btn-mobile-popup-result">
+										<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M10.0321 11.9626L16.1833 5.65435C16.5836 5.24402 16.5754 4.58882 16.1649 4.18869C15.7545 3.78855 15.0994 3.7968 14.6992 4.20712C7.08961 12.0108 7.10062 11.9995 7.10062 11.9995C7.10062 11.9995 8.21488 13.0861 14.8928 19.5983C15.0975 19.7978 15.3641 19.8961 15.6295 19.8927C15.8948 19.8894 16.1589 19.7845 16.3585 19.5798C16.7588 19.1695 16.7505 18.5143 16.34 18.1142L10.0321 11.9626Z" fill="#8D8D8D"></path>
+										</svg>
+										<span>结果</span>
+									</button>
+
+									<label class="tool__item-title tool__item-title--mobile-popup item cur js-title-tool" data-value="flip">
+										倒过来！
+									</label>
+									<label class="tool__item-title tool__item-title--mobile-popup item js-title-tool" data-value="back">
+										只调换顺序
+									</label>
+								</div>
+								<span class="tool__line-title js-line-tool" style="width: 106px;"></span>
+							</div>
+						</h2>
+					</li>
+				</ul>
+
+				<ul class="tool__list js-list-show tool__list--active">
+					<li class="tool__item tool__item--left">
+						<textarea class="tool__textarea tool__textarea--left" id="ta-left"></textarea>
+						<button type="button" class="tool__clear js-flip-clear">
+							<svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M9.5674 8.09973L15.7975 1.86933C16.2029 1.46407 16.2029 0.808817 15.7975 0.403556C15.3922 -0.001706 14.737 -0.001706 14.3317 0.403556L8.10147 6.63395L1.87139 0.403556C1.46595 -0.001706 0.810898 -0.001706 0.405645 0.403556C0.000201762 0.808817 0.000201762 1.46407 0.405645 1.86933L6.63572 8.09973L0.405645 14.3301C0.000201762 14.7354 0.000201762 15.3906 0.405645 15.7959C0.607607 15.9981 0.873157 16.0996 1.13852 16.0996C1.40388 16.0996 1.66924 15.9981 1.87139 15.7959L8.10147 9.5655L14.3317 15.7959C14.5339 15.9981 14.7992 16.0996 15.0646 16.0996C15.33 16.0996 15.5953 15.9981 15.7975 15.7959C16.2029 15.3906 16.2029 14.7354 15.7975 14.3301L9.5674 8.09973Z" fill="currentColor"></path>
+							</svg>
+						</button>
+					</li>
+					<li class="tool__item tool__item--right">
+						<textarea class="tool__textarea tool__textarea--right" name="flipped" id="ta-right" readonly>ǝldɯɐxǝ uɐ sı sıɥʇ</textarea>
+						<button type="button" class="tool__copy js-flip-copy">
+							<svg width="20" height="24" viewBox="0 0 20 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M13.4 6H2.6C1.71634 6 1 6.71634 1 7.6V21.4C1 22.2837 1.71635 23 2.6 23H13.4C14.2837 23 15 22.2837 15 21.4V7.6C15 6.71634 14.2837 6 13.4 6Z" stroke="currentColor" stroke-width="2"></path>
+								<path d="M5 5V2.6C5 1.71634 5.71634 1 6.6 1H17.4C18.2837 1 19 1.71634 19 2.6V15.4C19 16.2837 18.2837 17 17.4 17H14.9167" stroke="currentColor" stroke-width="2"></path>
+							</svg>
+						</button>
+						<div class="tool__message-block js-succes-message">
+							<span class="tool__message">已复制！</span>
+						</div>
+					</li>
+				</ul>
+			</form>
+
+		</div>
+	</section>
+
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="js/go.js"></script>
+	<script src="js/Class.js"></script>
+	<script src="js/Ext.js"></script>
+	<script src="js/DualWin.js"></script>
+	<script src="js/Flip.js"></script>
+	<script>(new Tools.Flip("#flipper"));</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>

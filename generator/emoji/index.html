@@ -10,17 +10,16 @@
 
 		<meta name="description" content="一键生成抽象话">
 		<meta name="author" content="chenxuuu">
-		<!-- <script src="js/jquery.min.js"></script> -->
 		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
 		<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous">
-		<!-- <link href="css/bootstrap.min.css" rel="stylesheet"> -->
-		<link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+		<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
 		<script type="text/javascript" src="js/cxh-data.js"></script>
 		<script type="text/javascript" src="js/cxh.js"></script>
 		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
 		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
 		<script type="text/javascript" src="js/grapheme-splitter.min.js"></script>
-		<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
+		<script src="../content-info.js"></script>
 		<style>
 			textarea.form-control {
 				height: 38px;
@@ -39,7 +38,6 @@
 				margin-bottom: 4px;
 				float: right;
 			}
-			
 			label {
 				margin-bottom: .5rem;
 			}
@@ -95,7 +93,7 @@
 							要转换的语句
 						</label>
 						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(0)" title="重设" data-bs-toggle="tooltip">
-							<i class="fa fa-times fa-fw"></i>
+							<i class="bi bi-x-lg"></i>
 						</button>
 						<textarea type="text" class="form-control" id="rawText" autofocus placeholder="输入你要转换的语句"></textarea>
 					</div>
@@ -120,10 +118,10 @@
 							<span class="text-danger" style="margin-right:0.5em">新功能</span>还原抽象话到拼音
 						</label>
 						<button class="btn btn-outline-secondary btn-sm sm" type="button" onclick="resetText(1)" title="重设" data-bs-toggle="tooltip">
-							<i class="fa fa-times fa-fw"></i>
+							<i class="bi bi-x-lg"></i>
 						</button>
 						<button class="btn btn-outline-secondary btn-sm sm" type="button" id="pasteText" id="paste-button" title="粘贴<br />（浏览器可能会弹出剪贴板读取请求，请点击允许）" data-toggle="tooltip" data-html="true">
-							<i class="fa fa-paste fa-fw"></i>
+							<i class="bi bi-clipboard"></i>
 						</button>
 						<textarea type="text" class="form-control" id="chouxiangText" placeholder="此处粘贴你要还原的绘文字"></textarea>
 					</div>
@@ -132,8 +130,26 @@
 					</button></div>
 				</div>
 			</div>
-			<br />
-			<p class="footer form-text text-muted mb-3" style="font-size:90%">源码来自 宇露网</p>
+			<content-info>
+				<style scoped>
+					.strong {
+						font-weight: bold;
+						font-style: italic;
+					}
+					.center {
+						text-align: center;
+					}
+					.right {
+						text-align: right;
+					}
+				</style>
+				<p class="strong mb-0 center">其实根本没有孙笑川，或者说人人都是孙笑川</p>
+				<p class="strong right">——孙笑川</p>
+				<p class="strong center">人人都说抽象话，无人识得李老八。</p>
+				<p>抽象话是指从孙笑川所属的抽象工作室流传出的词汇，而现在随着狗粉丝们不断造梗，也出现了一些新的词语。抽象话本来只反复出现在孙笑川微博的评论里面，但随着抽象文化的兴起，抽象话也随之在互联网上扩散，许多地方都有抽象话的影子。</p>
+				<p>分清场合，适度玩梗，要有基本社会道德，请勿滥用此梗或幸灾乐祸！</p>
+				<p class="footer form-text text-muted mb-3" style="font-size:90%">源码来自 宇露网</p>
+			</content-info>
 		</div>
 
 		<script>
@@ -144,25 +160,25 @@
 			$("#create").text("加载中，请稍候……");
 
 			const vs16 = '\ufe0f';
-			var addEmojiVS = text => Array.from(text).join(vs16) + vs16;
-			var removeEmojiVS = text => text.replaceAll(vs16, '');
+			const addEmojiVS = text => Array.from(text).join(vs16) + vs16;
+			const removeEmojiVS = text => text.replaceAll(vs16, "");
+			const rawText = $("#rawText")[0], chouxiangText = $("#chouxiangText")[0], resultText = $("#resultText")[0];
 
 			function getResult() {
-				if (document.getElementById('rawText').value == "") {
-					// document.getElementById("resultText").value = "👇🈹🌶里转🈳7⃣呢¿敲🐔🈹字8⃣❕";
-					document.getElementById("resultText").value = "👇🈹🌶里转🈳7⃣呢¿敲🐔🈹字8⃣❕";
+				if (rawText.value == "") {
+					resultText.value = "👇🈹🌶里转🈳7⃣呢¿敲🐔🈹字8⃣❕";
 				} else {
-					document.getElementById("resultText").value = "生成中，请稍候……";
-					document.getElementById("resultText").value = addEmojiVS(chouxiang(document.getElementById('rawText').value));
+					resultText.value = "生成中，请稍候……";
+					resultText.value = addEmojiVS(chouxiang(rawText.value));
 				}
 			}
 
 			function retrenResult() {
-				if (document.getElementById('chouxiangText').value == "") {
-					document.getElementById("resultText").value = "你搁那里转空气呢？敲几个字吧！";
+				if (chouxiangText.value == "") {
+					resultText.value = "你搁那里转空气呢？敲几个字吧！";
 				} else {
-					document.getElementById("resultText").value = "还原中，请稍候……";
-					document.getElementById("resultText").value = dechouxiang(removeEmojiVS(document.getElementById('chouxiangText').value));
+					resultText.value = "还原中，请稍候……";
+					resultText.value = dechouxiang(removeEmojiVS(chouxiangText.value));
 				}
 			}
 		</script>
@@ -170,34 +186,34 @@
 		<script type="text/javascript" src="js/cxh.js"></script>
 		<script type="text/javascript" src="js/grapheme-splitter.js"></script>
 		<script>
-			var btn = document.getElementById('d_clip_button');
+			var btn = document.getElementById("d_clip_button");
 			var clipboard = new ClipboardJS(btn);
-			clipboard.on('success', function() {
+			clipboard.on("success", function() {
 				clipboardReact("复制成功~");
 			});
-			clipboard.on('error', function() {
+			clipboard.on("error", function() {
 				clipboardReact("复制失败了呢，你还是手动复制吧……");
 			});
 
 			function clipboardReact(title) {
 				var clipbtn = $("#d_clip_button");
 				clipbtn.focus();
-				clipbtn.attr('title', title).tooltip('_fixTitle').tooltip('show');
+				clipbtn.attr("title", title).tooltip("_fixTitle").tooltip("show");
 				setTimeout(function() {
-					clipbtn.attr('title', "复制到剪贴板").tooltip('_fixTitle');
+					clipbtn.attr("title", "复制到剪贴板").tooltip("_fixTitle");
 					clipbtn.mouseout(function() {
-						clipbtn.tooltip('hide');
+						clipbtn.tooltip("hide");
 					});
 				}, 500);
 			}
 			
-			$('textarea').each(function () {
-			  this.setAttribute('style', 'height:' + (this.scrollHeight) + 'px;overflow-y:hidden;');
-			}).on('input', textarea_resize);
+			$("textarea").each(function () {
+				$(this).css({ height: this.scrollHeight + "px", overflowY: "hidden" })
+			}).on("input", textarea_resize);
 			function textarea_resize() {
-				$('textarea').each(function () {
-					this.style.height = '38px';
-					this.style.height = (this.scrollHeight) + 'px';
+				$("textarea").each(function () {
+					this.style.height = "38px";
+					this.style.height = (this.scrollHeight) + "px";
 				});
 			}
 			
@@ -207,38 +223,14 @@
 				$(txt2[num]).select();
 				textarea_resize();
 			}
-			// function pasteText() {
-				/* $("#chouxiangText").val("");
-				$("#chouxiangText").select();
-				$("#chouxiangText").val(Window.clipboardData.getData("Text"));
-				$("#chouxiangText").blur(); */
-				/* navigator.permissions.query({
-				  name: 'clipboard-read'
-				}).then(permissionStatus => {
-				  // Will be 'granted', 'denied' or 'prompt':
-				  console.log(permissionStatus.state);
-				
-				  // Listen for changes to the permission state
-				  permissionStatus.onchange = () => {
-				    console.log(permissionStatus.state);
-				  };
-				});
-				console.log(navigator.clipboard.readText()); */
-				/* async (e) => {
-					$("#chouxiangText").focus();
-					const text = navigator.clipboard.readText();
-					console.log(text);
-					$("#chouxiangText").val(text);
-				} */
-			// }
-			document.getElementById("pasteText").addEventListener('click', async (e) => {
+			document.getElementById("pasteText").addEventListener("click", async (e) => {
 				$("#chouxiangText").focus();
 				try {
 					const text = await navigator.clipboard.readText();
-					console.log('Pasted content: ', text);
+					console.log("Pasted content: ", text);
 					$("#chouxiangText").val(text);
 				} catch (err) {
-					console.error('Failed to read clipboard contents: ', err);
+					console.error("Failed to read clipboard contents: ", err);
 				}
 			});
 		</script>

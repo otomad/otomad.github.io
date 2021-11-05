@@ -8,7 +8,7 @@ Almost everything is full of local area jokes.
 Hope it can interested you. Have fun!
 
 ![Badge](https://img.shields.io/badge/STATE-UPDATING-green?style=flat-square)
-![Badge](https://img.shields.io/badge/VERSION-1.17-orange?style=flat-square)
+![Badge](https://img.shields.io/badge/VERSION-2.11.5.0-orange?style=flat-square)
 
 ----
 

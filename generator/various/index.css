@@ -1,0 +1,42 @@
+h1 {
+	margin: 20px 0;
+	display: inline-block;
+}
+
+.input-group-lg * {
+	font-weight: bolder;
+	font-size: 36px !important;
+}
+
+.card-body p {
+	/* margin-bottom: .5em; */
+	text-indent: 2em;
+}
+
+.card-body p:last-child {
+	margin-bottom: 0;
+}
+
+.sm {
+	border: none;
+	height: 24px;
+	padding: 0 3px;
+	margin-bottom: 4px;
+	float: right;
+}
+
+[onclick] {
+	cursor: pointer !important;
+}
+
+label {
+	margin-bottom: 0.5rem;
+}
+
+.form-control.form-switch > input[type=checkbox] {
+	pointer-events: none;
+}
+
+.form-control.form-switch {
+	padding-left: 3.1rem;
+}

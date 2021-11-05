@@ -12,6 +12,14 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
 	<meta name="viewport" content="width=device-width,user-scalable=0">
+	<style>
+		.nbnhhsh-box-pop {
+			background-color: var(--background-color) !important;
+		}
+		.nbnhhsh-box-pop::before {
+			border-bottom-color: var(--background-color) !important;
+		}
+	</style>
 </head>
 
 <body>
@@ -65,9 +73,9 @@
 	</div>
 	<div class="content-box container-fluid mb-3" id="content">
 		<div class="list-group">
-			<a href="https://lab.magiconch.com/nbnhhsh/" class="list-group-item list-group-item-action"><i class="bi bi-box-arrow-right"></i>原作者项目地址</a>
-			<a href="https://github.com/itorr/nbnhhsh" class="list-group-item list-group-item-action"><i class="bi bi-box-arrow-right"></i>仓库地址</a>
-			<a href="https://greasyfork.org/zh-CN/scripts/398555" class="list-group-item list-group-item-action"><i class="bi bi-box-arrow-right"></i>GreasyFork 脚本下载</a>
+			<a href="https://lab.magiconch.com/nbnhhsh/" class="list-group-item list-group-item-action" target="_blank"><i class="bi bi-box-arrow-right"></i>原作者项目地址</a>
+			<a href="https://github.com/itorr/nbnhhsh" class="list-group-item list-group-item-action" target="_blank"><i class="bi bi-box-arrow-right"></i>仓库地址</a>
+			<a href="https://greasyfork.org/zh-CN/scripts/398555" class="list-group-item list-group-item-action" target="_blank"><i class="bi bi-box-arrow-right"></i>GreasyFork 脚本下载</a>
 			<button type="button" class="list-group-item list-group-item-action list-group-item-primary" :class="{active: shown}" id="show-all-content" @click="show"><i :class="icon()"></i>{{caption()}}</button>
 		</div>
 		<div id="all-content" style="display: none;">

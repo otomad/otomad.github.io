@@ -1,0 +1,92 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title></title>
+	<style>
+		td {
+			vertical-align: top;
+			padding: .5rem;
+		}
+		pre {
+			display: inline;
+		}
+	</style>
+</head>
+<body>
+	<table>
+		<tbody id="table"></tbody>
+		<!--<tr>
+			<td><pre><code>hello world</code></pre></td>
+			<td>hello<br>world</td>
+		</tr>-->
+	</table>
+	<script>
+		const table = document.getElementById("table");
+		function clearTable() {
+			table.innerHTML = "";
+		}
+		function addRow(key, value) {
+			const tr = document.createElement("tr");
+			table.append(tr);
+			const td1 = document.createElement("td");
+			tr.append(td1);
+			const pre = document.createElement("pre");
+			td1.append(pre);
+			const code = document.createElement("code");
+			pre.append(code);
+			code.innerText = key;
+			const td2 = document.createElement("td");
+			tr.append(td2);
+			td2.innerText = value;
+		}
+		function getRowsCount() {
+			return table.children.length;
+		}
+		function getRow(i) {
+			const rows = table.children[i];
+			let key = rows.children[0].innerText, value = rows.children[1].innerText;
+			return [key, value];
+		}
+		function getObject(isObject = true) {
+			var obj = [];
+			for (let i = 0; i < getRowsCount(); i++)
+				obj.push(getRow(i));
+			return isObject ? Object.fromEntries(obj) : obj;
+		}
+		function jsobj2csobj(obj) {
+			let str = "";
+			for (let key in obj) {
+				let value = obj[key].replaceAll('\n', '\\n').replaceAll('\r', '\\r').replaceAll('"', '\\"');
+				str += `${key} = "${value}",\n`;
+			}
+			return str;
+		}
+		function prepare(str) {
+			window.origStr = str.replaceAll('\t', '').replaceAll('\r\n', '\n').replaceAll('=', ':').replace(/(?<!\\)"/g, '`');
+			origStr = '{' + origStr + '}';
+			window.orig = null;
+			eval("orig = " + origStr);
+			for (let key in orig) {
+				addRow(key, orig[key])
+			}
+		}
+		function getResult() {
+			console.log(jsobj2csobj(getObject(true)));
+		}
+		function toString() {
+			const res = getObject(true);
+			const arr = [];
+			for (let key in res)
+				arr.push(res[key].replaceAll('\n', '\\n'));
+			console.log(arr.join('\n'));
+		}
+		var j = 0;
+		function fromString(str) {
+			const arr = str.split('\n');
+			for (let i = 0; i < arr.length; i++, j++) {
+				table.children[j].children[1].innerText = arr[i];
+			}
+		}
+	</script>
+</body>
+</html>

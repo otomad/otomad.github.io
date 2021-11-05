@@ -13,129 +13,14 @@
 	<link rel="icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 	<link rel="stylesheet" href="/basis/css/bootstrap-init.css">
-	<style>
-		html,
-		body {
-			margin: 0;
-			padding: 0;
-			height: 100%;
-			background: rgb(247, 247, 247);
-		}
-
-		div,
-		iframe {
-			margin: 0;
-			padding: 0;
-			border: 0;
-		}
-
-		.main-container {
-			width: 100%;
-			height: 100%;
-			background: #f7f7f7; /* #222 */
-		}
-
-		.toolbar {
-			background: #aaa;
-			opacity: 0;
-			transition: opacity 250ms ease-in-out;
-		}
-
-		.iframe-container {
-			position: absolute;
-			top: 59px;
-			bottom: 0;
-			width: 100%;
-			background: #ebebeb;
-			overflow-y: hidden;
-		}
-
-		.iframe-container iframe {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-		}
-
-		.black-mask {
-			position: fixed;
-			width: 100%;
-			height: 100%;
-			background-color: #0008;
-			left: 0;
-			/* transition: opacity 250ms ease-in-out; */
-		}
-
-		.navbar {
-			/* padding: 8.8125px 1rem; */
-			/* min-height: 74px; */
-			padding: .5rem 1rem;
-		}
-
-		.nav-final-link {
-			/* color: rgba(255,255,255,0.6); */
-			color: inherit;
-			opacity: 0.6;
-			display: inline-block;
-			padding-top: 0.5rem;
-			padding-bottom: 0.5rem;
-		}
-
-		.nav-final-link:hover {
-			text-decoration: none;
-			color: inherit;
-			opacity: 1;
-		}
-
-		.nav-link {
-			cursor: pointer;
-		}
-
-		#title {
-			display: inline;
-			font-weight: bold;
-			white-space: nowrap;
-			overflow: hidden;
-			/* margin: 9px 70px 9px 50px; */
-			/* margin-left: .5rem; */
-			user-select: none;
-			margin: 0;
-		}
-
-		.navbar-brand {
-			cursor: default;
-			/* position: fixed; */
-			top: 8.8125px;
-		}
-		
-		#holder {
-			width: 45px;
-		}
-		
-		#navbar-content {
-			justify-content: space-between;
-		}
-		
-		.navbar-text {
-			padding: 0 !important;
-		}
-		
-		a {
-			text-decoration: none;
-		}
-
-		@media (min-width: 992px) {
-			#title {
-				display: none;
-			}
-		}
-	</style>
+	<link rel="stylesheet" href="index.css">
 </head>
 
 <body onclick="">
 	<div class="iframe-container">
 		<iframe src="../cssc/taichi.html" id="iframe" frameborder="0">Your browser is kaput!</iframe>
 	</div>
-	<div class="black-mask" style="display:none"></div>
+	<div class="black-mask"></div>
 	<div class="main-container">
 		<div class="toolbar">
 			<nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -155,6 +40,16 @@
 							<a class="nav-link" data-nav="rain">彩虹文字生成器</a>
 							<a class="nav-link" data-nav="various">各种各样生成器</a>
 							<a class="nav-link" data-nav="nbnhhsh">能不能好好说话</a>
+							<li class="nav-item dropdown">
+								<span class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">其它生成器</span>
+								<ul class="dropdown-menu">
+									<a class="dropdown-item" data-nav="braille">图片转盲文</a>
+									<a class="dropdown-item" data-nav="disorder">乱序文字</a>
+									<a class="dropdown-item" data-nav="flip">翻转</a>
+									<a class="dropdown-item" data-nav="failure-text">故障文字</a>
+									<a class="dropdown-item" data-nav="coconut">椰树牌椰汁</a>
+								</ul>
+							</li>
 						</div>
 						<span class="navbar-text">
 							<a href="https://github.com/otomad/otomad.github.io" class="nav-final-link">
@@ -169,7 +64,7 @@
 		</div>
 	</div>
 	<script>
-		var NightTime = {
+		/* var NightTime = {
 			nightDo: () => {
 				$("html,body,.main-container").css("background", "rgb(48,48,48)");
 				$(".iframe-container").css("background", "#555");
@@ -178,7 +73,7 @@
 				$("html,body,.main-container").css("background", "");
 				$(".iframe-container").css("background", "");
 			}
-		};
+		}; */
 		$(document).ready(() => {
 			$(".toolbar").css("opacity", 1);
 		});
@@ -187,7 +82,8 @@
 				after = this.slice(before.length + 1);
 			return [before, after];
 		};
-		var iframe = $("#iframe")[0], title;
+		const iframe = $("#iframe")[0];
+		let title;
 		$(function () {
 			if (iframe.attachEvent) // for IE
 				iframe.attachEvent("onload", onloadDo);
@@ -197,11 +93,13 @@
 			nav(arg);
 		});
 		function onloadDo() {
-			$("#iframe").contents().find("nav").hide();
-			title = $("#iframe").contents().attr("title");
+			showBlackMask(false);
+			$(iframe).contents().find("nav").hide();
+			title = $(iframe).contents().attr("title");
 			document.title = title + " - Option";
 			$("#title").text(title);
 			findActive(title);
+			iframe.contentDocument.addEventListener("click", hideDropdowns);
 		}
 		function nav(nav) {
 			var path;
@@ -211,7 +109,7 @@
 				path = (path.includes('&')
 					? (path.splitOnce('&')[0] + "/index.html?" + path.splitOnce('&')[1])
 					: (path + "/index.html")
-				)
+				);
 			}
 			iframe.src = path;
 			// var state = "?" + path.replace(/\//g, "&");
@@ -219,16 +117,15 @@
 			if (!nav) history.pushState("", "", location.href.slice(0, -1));
 		}
 		function showBlackMask(show) {
-			$(".black-mask")["fade" + (show ? "In" : "Out")]().css("pointer-events", show ? "" : "none");
+			$(".black-mask").removeClass("show continuous-show").addClass(`${show == 1 ? "show" : ""} ${show == 2 ? "continuous-show" : ""}`);
 		}
-		$(".navbar-nav .nav-link").click(function () {
+		$(".navbar-nav .nav-link:not(.dropdown-toggle), .navbar-nav .nav-item.dropdown .dropdown-item").click(function () {
 			onresize();
 			if (innerWidth < 992);
 				// $(".navbar-toggler").click();
 			else {
-				showBlackMask(true);
-				if (iframe.onload || iframe.attachEvent)
-					showBlackMask(false);
+				showBlackMask(2);
+				// if (iframe.onload || iframe.attachEvent) showBlackMask(false);
 			}
 		});
 		$(".navbar-toggler").click(() => setTimeout(() => showBlackMask(!$(".navbar-toggler").hasClass("collapsed")), 100));
@@ -248,7 +145,11 @@
 		});
 		onresize = () => {
 			if (!$(".navbar-toggler").hasClass("collapsed")) $(".navbar-toggler").click();
+			hideDropdowns();
 		};
+		function hideDropdowns() {
+			$(".nav-item.dropdown > .dropdown-toggle").dropdown("hide");
+		}
 	</script>
 	<script src="/basis/NightTime.js"></script>
 </body>

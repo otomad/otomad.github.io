@@ -1,5 +1,7 @@
 /* 更改到btn-outline-light样式 */
-.btn-outline-secondary {
+
+.btn-outline-secondary,
+.btn-check:checked + .btn-outline-secondary {
 	color: #adb5bd;
 	border-color: #adb5bd;
 }
@@ -55,21 +57,31 @@
 	border-color: rgb(173, 181, 189);
 }
 
-.form-control:focus {
+.form-control:focus,
+.accordion-button:focus {
 	border-color: #adb5bd;
 	-webkit-box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.5);
 	box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.5);
 }
 
-.custom-select {
-	background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23d0d0d0' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right 0.75rem center/8px 10px ;
+.custom-select,
+.form-select {
+	/* background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23d0d0d0' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right 0.75rem center/8px 10px; */
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23d0d0d0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
 	color: white;
 	background-color: rgb(34, 34, 34);
 	border-color: rgb(173, 181, 189);
 }
 
-.custom-control-label::before {
+.custom-control-label::before,
+.form-check-input[type=radio]:not(:checked),
+.form-check-input[type=checkbox]:not(:checked) {
 	background-color: #222;
+	border: 1px solid #ffffff40;
+}
+
+.form-switch .form-check-input {
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28255, 255, 255, 0.25%29'/%3e%3c/svg%3e");
 }
 
 .form-control:disabled,
@@ -78,5 +90,14 @@
 }
 
 hr {
-	border-color: rgb(173, 181, 189);
+	border-color: #adb5bd;
+}
+
+.accordion-button:not(.collapsed) {
+	background-color: #d7dee5;
+}
+
+.accordion-item {
+	border-color: #adb5bd;
+	background-color: #303030;
 }

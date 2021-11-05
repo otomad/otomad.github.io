@@ -1,5 +1,5 @@
 "use strict";
-/** configuration description
+/**
  * <p>
  * 	<strong> 请将本 js 放在页面最末尾引用，否则可能不起作用。 </strong><br>
  * 	由于不带 min 的 js 路径已经被过多页面使用了，因此直接以“.js”结尾的便是压缩版了，而源文件就只好用 min 的反义词 max 来表示了。 <br>
@@ -33,28 +33,29 @@
 		Object.assign(profile, NightTime);
 	let _ = {};
 	let hour = new Date().getHours();
-	if (hour < 7 || hour >= 19 || //晚上7点到次日早上7点启动深色主题
-		matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) //若浏览器开启了深色主题，也会启动深色主题
+	if (hour < 7 || hour >= 19 || // 晚上 7 点到次日早上 7 点启动深色主题。
+		matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) // 若浏览器开启了深色主题，也会启动深色主题。
 		_.darkModeFact = true;
 	_.theme = "";
 	_.nightDo = _.lightDo = () => { };
-	/** method description
-	 * 切换到当前主题
-	 * @returns void - 切换到正常情况下配置而应该呈现的主题
+	/**
+	 * 切换到当前主题。
+	 * 切换到正常情况下配置而应该呈现的主题。
 	 */
 	_.CurrentModeStyle = () => {
 		_.css = document.getElementById("css");
 		if (_.css) _.theme = _.css.getAttribute("data-theme").toLowerCase();
-		if (_.darkModeFact) return _.DarkModeStyle();
-		else return _.LightModeStyle();
+		if (_.darkModeFact) _.DarkModeStyle();
+		else _.LightModeStyle();
+		window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", mediaQueryList => _[(mediaQueryList.matches ? "Light" : "Dark") + "ModeStyle"]());
 	}
-	/** method description
-	 * 切换到对立主题
-	 * @returns void - 切换到不是当前状态下的主题，即浅色深色模式互相切换
+	/**
+	 * 切换到对立主题。
+	 * 切换到不是当前状态下的主题，即浅色深色模式互相切换。
 	 */
 	_.ToggleModeStyle = () => {
 		_.darkModeFact = !_.darkModeFact;
-		return _.CurrentModeStyle();
+		_.CurrentModeStyle();
 	}
 	_.LightBackgroundColor = "white";
 	_.DarkBackgroundColor = "#222";
@@ -76,12 +77,11 @@
 			"var(--text-color-parts)": (_.darkModeFact ? "255, 255, 255" : "0, 0, 0")
 		});
 	}
-	/** method description
-	 * 输入 CSS 文本并添加到 style 标签
-	 * @param style: string | object - 必选，可以是模板字符串或对象，将会添加到 style 标签中
-	 * @param id?: string - 可选，添加到的 style 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期
-	 * @returns true - 添加成功
-	 * @exception false - 添加失败，输入的 id 名称被占用且不为 style 标签
+	/**
+	 * 输入 CSS 文本并添加到 style 标签。
+	 * @param {string | object} style - 必选，可以是模板字符串或对象，将会添加到 style 标签中。
+	 * @param {string?} id - 可选，添加到的 style 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期。
+	 * @returns {boolean} true - 添加成功；false - 添加失败，输入的 id 名称被占用且不为 style 标签。
 	 */
 	_.appendStyle = (style, id = "") => {
 		var css;
@@ -103,12 +103,11 @@
 		styleTag.innerHTML = css;
 		return true;
 	}
-	/** method description
-	 * 输入 CSS 文件链接并添加到 link 标签
-	 * @param href: string - 必选，CSS 文件的链接地址
-	 * @param id?: string - 可选，添加到的 link 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期
-	 * @returns true - 添加成功
-	 * @exception false - 添加失败，输入的 id 名称被占用且不为 link 标签
+	/**
+	 * 输入 CSS 文件链接并添加到 link 标签。
+	 * @param {string} href - 必选，CSS 文件的链接地址。
+	 * @param {string?} id - 可选，添加到的 link 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期。
+	 * @returns {boolean} true - 添加成功；false - 添加失败，输入的 id 名称被占用且不为 link 标签。
 	 */
 	_.appendCSSLink = (href, id = "") => {
 		var linkTag = document.getElementById(id);
@@ -126,13 +125,12 @@
 		linkTag.href = href;
 		return true;
 	}
-	/** method description
-	 * 输入 CSS 文件链接并添加到 style 标签，通过异步实现
-	 * @param href: string - 必选，CSS 文件的链接地址
-	 * @param id?: string - 可选，添加到的 link 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期
-	 * @param variable?: object - 可选，变量名称，规定 CSS 文件的某些变量的替换值
-	 * @returns true - 添加成功
-	 * @exception false - 添加失败，输入的 id 名称被占用且不为 link 标签
+	/**
+	 * 输入 CSS 文件链接并添加到 style 标签，通过异步实现。
+	 * @param {string} href - 必选，CSS 文件的链接地址。
+	 * @param {string?} id - 可选，添加到的 link 标签的 id 名称。如果留空，则直接添加而不配置 id 名称，这样做可能无法规定生命周期。
+	 * @param {{string: string}?} variable - 可选，变量名称，规定 CSS 文件的某些变量的替换值。
+	 * @returns {boolean} true - 添加成功；false - 添加失败，输入的 id 名称被占用且不为 link 标签。
 	 */
 	_.appendStyleByAjax = (href, id = "", variable) => {
 		var css = new XMLHttpRequest();
@@ -162,12 +160,11 @@
 		css.open("GET", path(href), true);
 		return css.send();
 	}
-	/** method description
-	 * 移除样式或 CSS 链接标签
-	 * removeStyle 和 removeCSSLink 效果是一样的
-	 * @param id: string - 必选，要移除的 CSS 样式的 id 名称
-	 * @returns true - 移除成功
-	 * @exception false - 移除失败，移除的不是 style 或 link 标签
+	/**
+	 * 移除样式或 CSS 链接标签。
+	 * removeStyle 和 removeCSSLink 效果是一样的。
+	 * @param {string} id - 必选，要移除的 CSS 样式的 id 名称。
+	 * @returns {boolean} true - 移除成功；false - 移除失败，移除的不是 style 或 link 标签。
 	 */
 	_.removeStyle = _.removeCSSLink = id => {
 		let el = document.getElementById(id);
@@ -176,14 +173,13 @@
 		el.remove();
 		return true;
 	}
-	/** method description
+	/**
 	 * 强制切换到深色主题
-	 * @returns void
 	 */
 	_.DarkModeStyle = () => {
 		_.darkModeFact = true;
 		if (_.theme.includes("bootstrap")) {
-			_.appendCSSLink(resource().bootstrap4DarkLink, "css");
+			_.appendCSSLink(resource().bootstrap5DarkLink, "css");
 			for (let i of document.getElementsByClassName("navbar")) {
 				i.classList.remove("navbar-light");
 				i.classList.remove("bg-light");
@@ -201,19 +197,18 @@
 				"--background-color": _.DarkBackgroundColor
 			}
 		}, "dark-root");
+		document.documentElement.dataset.theme = "dark";
 		_.nightDo();
 		if (_.defineCustomBackgroundColor) document.body.style.backgroundColor = _.DarkBackgroundColor;
 		if (_.DarkCSS) _.appendCSSLink(_.DarkCSS, "css");
-		return true;
 	}
-	/** method description
+	/**
 	 * 强制切换到浅色主题
-	 * @returns void
 	 */
 	_.LightModeStyle = () => {
 		_.darkModeFact = false;
 		if (_.theme.includes("bootstrap")) {
-			_.appendCSSLink(resource().bootstrap4LightLink, "css");
+			_.appendCSSLink(resource().bootstrap5LightLink, "css");
 			for (let i of document.getElementsByClassName("navbar")) {
 				i.classList.remove("navbar-dark");
 				i.classList.remove("bg-dark");
@@ -230,10 +225,10 @@
 				"--background-color": _.LightBackgroundColor
 			}
 		}, "light-root");
+		document.documentElement.dataset.theme = "light";
 		_.lightDo();
 		if (_.defineCustomBackgroundColor) document.body.style.backgroundColor = _.LightBackgroundColor;
 		if (_.LightCSS) _.appendCSSLink(_.LightCSS, "css");
-		return true;
 	}
 	if (type(profile.darkMode) === "Boolean") _.darkModeFact = Boolean(profile.darkMode);
 	if (type(profile.nightDo) === "Function") _.nightDo = profile.nightDo;
@@ -250,13 +245,14 @@
 	window.NightTime = _;
 	
 	/**
-	 * 底部的资源文件
+	 * 底部的资源文件。
+	 * 利用函数提升特性。
 	 */
 	function resource() {
 		return {
 			notAvailableLog: new Error("The ID you specified has been occupied by the other element, please try to use other ID!"),
-			bootstrap4LightLink: "https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css",
-			bootstrap4DarkLink: "https://bootswatch.com/5/darkly/bootstrap.min.css",
+			bootstrap5LightLink: "https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css",
+			bootstrap5DarkLink: "https://bootswatch.com/5/darkly/bootstrap.min.css",
 		};
 	}
 }());
