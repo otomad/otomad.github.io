@@ -8,7 +8,7 @@ Almost everything is full of local area jokes.
 Hope it can interested you. Have fun!
 
 ![Badge](https://img.shields.io/badge/STATE-UPDATING-green?style=flat-square)
-![Badge](https://img.shields.io/badge/VERSION-2.11.5.0-orange?style=flat-square)
+![Badge](https://img.shields.io/badge/VERSION-3.2.27.0-orange?style=flat-square)
 
 ----
 
@@ -16,13 +16,13 @@ Hope it can interested you. Have fun!
 
 * Enter the [mainpage](//otomad.github.io).
 * You may see that **your browser needs to be updated**! 
-<span style="color:red;">It just a joke. </span>
+<span style="color: red;">It just a joke. </span>
 Just click the **"OK"** botton for **10 times**. Then you will see a close button 
-On the **right-top corner** of the page. Just click it. Then you will see the 
+on the **right-top corner** of the page. Just click it. Then you will see the 
 main page.
 * Now it's easy to click the **three stripes** to toggle the menu.
 
-## Update Log
+## Update Logs
 
 ### Version 1.11 <small>(2020/11/11 15:26:03)</small>
 This is the **Single Update**!!!

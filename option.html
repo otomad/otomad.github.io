@@ -4,7 +4,6 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>导航选项</title>
-	<meta name="version" content="2.11.5.0" />
 	<script type="进入密码你猜猜" id="content">
 		#classify
 			$早期 | font-awesome
@@ -1493,7 +1492,6 @@
 		}
 		// document.meta = name => document.querySelector(`meta[name="${name}"]`).content;
 		document.meta = name => document.getElementsByName(name)[0].content;
-		var version = document.meta("version");
 		function isEmpty(str) {
 			return (str.replace(/(^\s*)|(\s*$)/g, "").length == 0);
 		}
@@ -1598,7 +1596,14 @@
 				}
 			}());
 		}());
-		$("#version").text("版本号：" + document.meta("version"));
+		const setVersion = (version = "未知") => $("#version").text("版本号：" + version);
+		setVersion();
+		fetch("./README.md")
+				.then(response => response.text())
+				.then(text => {
+					const matched = text.match(/(?<=!\[Badge\][^\r\n]+VERSION-)[\d.]+(?=-)/);
+					if (matched) setVersion(matched[0]);
+				}).catch(e => { console.warn(e); });
 		function alertv(text = "") {
 			$(".alert .content").html(text.replace(/\n/g, '<br />'));
 			$(".alert").removeClass("hidden");
