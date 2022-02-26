@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+		<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+		<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+		<style>
+			#input-unit {
+				width: auto;
+				flex-grow: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<title class="h4">身高计算器</title>
+			<!-- <meta name="discription" class="h6" content="" class="mb-3" /> -->
+			<div class="input-group mb-3">
+				<select class="form-select" id="input-unit">
+					<option selected>厘米</option>
+				</select>
+				<input type="number" class="form-control" id="raw" />
+				<button type="button" class="btn btn-outline-secondary" id="ans">计算</button>
+			</div>
+			<div class="alert alert-primary" role="alert" id="result-alert" style="display: none;">
+				你的身高是&nbsp;<span id="result">0</span>&nbsp;米。
+			</div>
+			<p class="small">本测试结果基于科学的方法、先进的技术进行计算，<br />具有实质性的参考意义。</p>
+			<div class="accordion small" id="accordionExample">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingOne">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne"> 简介 </button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+						<div class="accordion-body">
+							<p>这个软件绝对是，<br />光能手电筒之后最牛逼的软件之一。</p>
+							<p><u><b>身高计算器</b></u><br />贼厉害，就没出过错。<br />计算极其准确，准确率高达 100%。</p>
+							<p>只需要输入自己的身高，<br />就可以准确计算出我们的身高。</p>
+							<p>源地址：<a href="https://sg.brhiza.ml/" target="_blank">https://sg.brhiza.ml/</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			$("#ans").click(function () {
+				let raw = $("#raw").val();
+				let result = raw / 100;
+				result = parseFloat(result.toFixed(16))
+				if (raw !== "") {
+					$("#result").text(result);
+					$("#result-alert").slideDown();
+				} else $("#result-alert").slideUp();
+			});
+			
+			document.onkeydown = e => {
+				if (e.key == "Enter")
+					if ($("#raw").is(":focus"))
+						$("#ans").click();
+			};
+		</script>
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>

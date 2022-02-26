@@ -65,6 +65,8 @@
 				CRC 校验码 | math/index.html?crc
 				数字论证 | math/index.html?homo
 				千字文编号 | math/index.html?1000char
+				身高计算器 | math/index.html?stature
+				百度密文 | math/index.html?baidu-code
 			$照片滤镜 | photo
 				Chobi | math/chobi/index.html
 				Flickty | math/flickity/index.html
@@ -131,6 +133,9 @@
 		html {
 			background: var(--page-background);
 			overflow: hidden;
+			width: 100vw;
+			height: 100vh;
+			position: relative;
 		}
 
 		.container {
@@ -139,7 +144,7 @@
 			height: var(--container-height);
 			background: var(--container-background);
 			border-radius: var(--radius);
-			box-shadow: 0px 9px 13px 0px #0000004d;
+			box-shadow: 0 9px 13px 0 #0000004d;
 			overflow: hidden;
 			position: absolute;
 			border: 1px solid;
@@ -272,7 +277,7 @@
 			height: 42px;
 			position: absolute;
 			cursor: pointer;
-			transform: rotate(-45deg) scale(1.2) translate(-18px, 0px);
+			transform: rotate(-45deg) scale(1.2) translate(-18px, 0);
 			z-index: 5;
 			transition: all 0.3s var(--ease-out-quart);
 		}
@@ -291,7 +296,7 @@
 		}
 
 		.container .menu-trigger:active {
-			transform: rotate(-45deg) scale(1) translate(-22px, 0px);
+			transform: rotate(-45deg) scale(1) translate(-22px, 0);
 		}
 
 		.container .menu-trigger *:nth-of-type(1) {
@@ -382,7 +387,7 @@
 			z-index: 4;
 			border: 1px solid;
 			border-color: var(--border);
-			box-shadow: 0 2px 7px 0px #0004;
+			box-shadow: 0 2px 7px 0 #0004;
 		}
 
 		.container.active .menu-banner {
@@ -497,7 +502,7 @@
 			/* padding: .5rem; */
 			margin: var(--waterfall-margin) 0;
 			overflow: hidden;
-			box-shadow: 0 2px 3px 0px #0005;
+			box-shadow: 0 2px 3px 0 #0005;
 		}
 
 		.classify-card * {
@@ -572,20 +577,20 @@
 
 		.recent-list p:hover {
 			background-color: var(--inner-background);
-			box-shadow: 0 2px 5px 0px #0005, 0 2px 5px 0px #0000 inset;
+			box-shadow: 0 2px 5px 0 #0005, 0 2px 5px 0 #0000 inset;
 		}
 
 		.recent-list p:active {
-			box-shadow: 0 2px 5px 0px #0000, 0 2px 5px 0px #0005 inset;
+			box-shadow: 0 2px 5px 0 #0000, 0 2px 5px 0 #0005 inset;
 		}
 
-		.alert {
+		.alert > .alert-window {
 			position: fixed;
 			width: calc(100vw - 8rem);
 			background-color: var(--inner-background);
 			backdrop-filter: blur(5px) brightness(.6);
 			height: auto;
-			z-index: 9;
+			z-index: 21;
 			padding: 1rem;
 			margin: 0 4rem;
 			font-size: 150%;
@@ -593,10 +598,10 @@
 			border-radius: var(--radius);
 			transform-origin: center top;
 			transition: all 250ms var(--ease-out-cubic), backdrop-filter 0s;
-			box-shadow: 0 2px 5px 0px #000b;
+			box-shadow: 0 2px 5px 0 #000b;
 		}
 
-		.alert.hidden {
+		.alert.hidden > .alert-window {
 			transform: scale(.85);
 			opacity: 0;
 			transition: all 250ms var(--ease-in-cubic);
@@ -635,6 +640,28 @@
 		.alert button:focus {
 			box-shadow: 0 0 5px 0 var(--primary-color);
 		}
+		
+		.alert > .backdrop {
+			width: 100vw;
+			height: 100vh;
+			position: fixed;
+			left: 0;
+			top: 0;
+			background-color: #00000080;
+			z-index: 20;
+			transition: all 250ms ease-out;
+			backdrop-filter: blur(5px) grayscale(0.85);
+		}
+		
+		.alert.hidden > .backdrop {
+			opacity: 0;
+			pointer-events: none;
+			transition: all 250ms ease-in;
+		}
+		
+		.alert > .alert-window * {
+			color: white;
+		}
 
 		#history-tab .fa-remove {
 			float: right;
@@ -671,7 +698,7 @@
 
 		body>section.point-color .color:nth-child(1) {
 			top: -35vh;
-			left: 0vw;
+			left: 0;
 			width: 120vw;
 			height: 120vh;
 			background: radial-gradient(var(--section-color-1), transparent 70%);
@@ -880,7 +907,7 @@
 
 		.control-list ul {
 			margin-bottom: 1rem;
-			box-shadow: 0 2px 3px 0px #0005;
+			box-shadow: 0 2px 3px 0 #0005;
 			border-radius: var(--radius);
 		}
 
@@ -889,7 +916,7 @@
 			display: block;
 			border: 1px solid;
 			border-color: var(--border);
-			border-bottom: 0px;
+			border-bottom: 0;
 			transition: all 250ms ease-out;
 		}
 
@@ -1021,7 +1048,6 @@
 		.form .inputBox input {
 			width: 100%;
 			background: rgba(255, 255, 255, 0.2);
-			border: none;
 			padding: 10px 20px;
 			border-radius: 35px;
 			border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1075,7 +1101,6 @@
 
 		.forget a {
 			font-weight: 600;
-			display: inline;
 			transition: all 350ms ease-out;
 			display: table-cell;
 			padding: 1rem;
@@ -1142,7 +1167,7 @@
 		.container #search-tab {
 			width: 100%;
 			height: calc(100% - 75px);
-			top: 0px;
+			top: 0;
 			/* top: -10px; */
 			position: relative;
 			overflow: hidden;
@@ -1278,8 +1303,8 @@
 		:root[data-theme=light] .container .menu-trigger * {
 			background: linear-gradient(-90deg, var(--text-hover-color) 50%, var(--outer-text-color) 50.01%) left / 200%;
 		}
-		:root[data-theme=light] .alert {
-			backdrop-filter: blur(5px) brightness(1.15);
+		:root[data-theme=light] .alert > .alert-window {
+			backdrop-filter: blur(10px) brightness(1.65);
 		}
 		:root[data-theme=light] .avatar-head {
 			background: linear-gradient(-45deg, #ff369b, #00d2ff) center top / 100% 135%;
@@ -1429,8 +1454,11 @@
 		</div>
 	</div>
 	<div class="alert hidden">
-		<div class="content"></div>
-		<button>了然</button>
+		<div class="backdrop"></div>
+		<div class="alert-window">
+			<div class="content"></div>
+			<button>了然</button>
+		</div>
 	</div>
 	<script>
 		// (function(){
@@ -1440,12 +1468,7 @@
 				root = document.documentElement.style;
 			root.setProperty("--logo-scale", Math.min(width, height, 3.5 * 400) / 400);
 			root.setProperty("--tangent", -Math.atan(width / height) / Math.PI * 180 + "deg");
-			/* $("#live-style").html(`
-				:root {
-					--logo-scale: ${Math.min(width, height, 3.5 * 400) / 400};
-					--tangent: ${-Math.atan(width / height) / Math.PI * 180}deg;
-				}
-			`); */
+			$("#dark-mode").prop("checked", NightTime.isDark);
 		}
 		liveTime();
 		setInterval(liveTime, 1000);
@@ -1609,6 +1632,17 @@
 			cookie.set("recentTool", recentTool);
 			location.href = this.href;
 		});
+		$(".alert > .backdrop").click(function () {
+			if (!$(".alert").hasClass("hidden"))
+				$(".alert > .alert-window")[0].animate([
+					{ transform: "scale(1)" },
+					{ transform: "scale(1.05)" },
+					{ transform: "scale(1)" },
+				], {
+					duration: 500,
+					iterations: 1
+				});
+		});
 		function closeLogin() {
 			$(".control-flex").removeClass("login register");
 			$("#form-username, #form-password").val("").removeClass("typed");
@@ -1653,8 +1687,7 @@
 			cookie.set("recentTool", '');
 		});
 		$("#dark-mode").click(function () {
-			if ($(this).is(":checked")) NightTime.DarkModeStyle();
-			else NightTime.LightModeStyle();
+			NightTime.isDark = $(this).is(":checked");
 		})
 		$("#form-username, #form-password").on("input propertychange change", function () {
 			var a = $("#form-username"),

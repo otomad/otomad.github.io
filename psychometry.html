@@ -290,12 +290,6 @@
 			imgBox.style.transform = `scale(${scaleX + (condition ? ',' + scaleY : '')})`;
 			root.setProperty("--img-width", innerWidth + "px");
 			root.setProperty("--img-height", (condition ? innerHeight : scaleHeight) + "px");
-			/* document.getElementById("live-screen").innerHTML = `
-				:root {
-					--img-width: ${innerWidth}px;
-					--img-height: ${condition ? innerHeight : scaleHeight}px;
-				}
-			`; */
 		}
 		onload = function () {
 			onresize();
@@ -354,6 +348,7 @@
 				onmousemove = null;
 				const OK_percent = 0.9;
 				if (parseInt(unlockSlider.style.left) + unlockSliderLeft > OK_percent * innerWidth) {
+					// unlockSlider.style.left = innerWidth - unlockSliderLeft / 2 - unlockSlider.clientWidth + "px";
 					alert("键盘已解锁！");
 					location.href = "option.html";
 					return document.body.classList.add("finish");

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+	<style>
+		img.example-img {
+			width: 100%;
+			max-width: 1000px;
+			margin: 0 auto;
+			display: block;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<title class="h4">百度密文</title>
+		<meta name="discription" class="h6" content="将转换后的文字，复制到百度搜索框中，其自动完成下拉菜单就会显示想表达的内容。" class="mb-3" />
+		<div class="form-group mb-3">
+			<label for="encode">加密</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="encode" />
+				<button class="btn btn-outline-secondary clear-text">
+					<i class="bi bi-x-lg"></i>
+				</button>
+			</div>
+		</div>
+		<div class="form-group mb-3">
+			<label for="decode">解密</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="decode" />
+				<button class="btn btn-outline-secondary clear-text">
+					<i class="bi bi-x-lg"></i>
+				</button>
+			</div>
+		</div>
+		<label class="mb-2">示例：</label>
+		<img src="./baidu_code_example.png" alt="百度密文示例" class="rounded mx-auto d-block example-img" />
+	</div>
+	<script>
+		$(".clear-text").click(function () {
+			/** @type {HTMLInputElement} */
+			const input = this.parentElement.getElementsByTagName("input")[0];
+			if (input) {
+				input.value = "";
+				input.select();
+			}
+		});
+		$("#encode").on("input propertychange change", function () {
+			/** @type {string[]} */
+			const buffer = Array.from(this.value);
+			for (let i = 0; i < buffer.length; i++)
+				if ((buffer[i].codePointAt(0) & ~0xffff) !== 0) // 为什么逻辑与的优先级比不等于号低？
+					buffer.splice(i--, 1);
+			this.value = buffer.join("");
+			let result = "";
+			for (const char of buffer)
+				result += String.fromCodePoint(char.codePointAt(0) | 0x20000);
+			$("#decode").val(result);
+		});
+		$("#decode").on("input propertychange change", function () {
+			this.value = this.value.replace(/(&\s*#|&\s*|#\s*)\s*\d+\s*;/g, str => String.fromCodePoint(str.match(/\d+/)[0])); // 增加的针对 HTML 实体特性进行处理。
+			let result = "";
+			for (const char of this.value)
+				result += String.fromCodePoint(char.codePointAt(0) & 0xffff);
+			$("#encode").val(result);
+		});
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>
