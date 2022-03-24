@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>宠物窝</title>
+	<link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+	<header data-content="HTML5+CSS3"></header>
+	<div class="container">
+		<aside>
+			<a href="#home">最新消息</a>
+			<a href="#flash">Flash 动画</a>
+			<a href="#movie">短片欣赏</a>
+			<a href="#music">音乐欣赏</a>
+			<a href="#message">留言板</a>
+		</aside>
+		<article>
+			<iframe src="home.html" frameborder="0"></iframe>
+		</article>
+	</div>
+	<footer>欢迎光临我的网站！！</footer>
+	
+	<script>
+		const TITLE = document.title;
+		function navigate() {
+			let hash = location.hash.slice(1);
+			if (!hash) return;
+			document.querySelector("iframe").src = hash + ".html";
+			/** @type NodeListOf<HTMLAnchorElement> */
+			const anchors = document.querySelectorAll(".container aside > a");
+			anchors.forEach(a => {
+				a.classList.remove("active");
+				if (a.getAttribute("href").slice(1) === hash) {
+					a.classList.add("active");
+					document.title = TITLE + " - " + a.textContent;
+				}
+			});
+		}
+		window.addEventListener("hashchange", navigate);
+		navigate();
+	</script>
+</body>
+
+</html>

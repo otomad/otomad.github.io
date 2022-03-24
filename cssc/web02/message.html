@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>留言板</title>
+	<link rel="stylesheet" href="article.css">
+</head>
+
+<body>
+	<img src="images/message.gif" alt="留言板" class="title-gif">
+	<form action="#message" method="get" onreset="return confirm('确定要重写？');">
+		<section class="row">
+			<label for="name">姓名</label>
+			<input type="text" name="name" id="name">
+		</section>
+		<section class="row">
+			<label for="email">E-mail</label>
+			<input type="email" name="email" id="email">
+		</section>
+		<section>
+			<label for="message">留言内容</label>
+			<textarea name="message" id="message" cols="30" rows="10"></textarea>
+		</section>
+		<section id="buttons">
+			<input type="submit" value="送出" onclick="alert('发送成功，我们已成功接收到了您的留言！');">
+			<input type="reset" value="重写">
+		</section>
+	</form>
+</body>
+
+</html>

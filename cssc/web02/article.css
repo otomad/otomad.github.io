@@ -1,0 +1,70 @@
+html,
+body {
+	max-width: 1000px;
+	margin: 0.5rem auto;
+	cursor: url(images/my.cur), url(images/my.png), auto;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+fieldset {
+	border-radius: 1rem;
+}
+
+legend {
+	text-align: center;
+}
+
+.puppies-gallery {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 4rem;
+}
+
+.puppies-gallery > img {
+	border: 5px solid black;
+	border-radius: 1rem;
+}
+
+.title-gif {
+	border: 3px solid black;
+	border-radius: 1rem;
+	display: block;
+	margin-bottom: 1rem;
+	user-select: none;
+}
+
+form section label {
+	min-width: 4em;
+	display: inline-block;
+}
+
+form section input:not([type=button], [type=submit], [type=reset]) {
+	width: 100%;
+}
+
+form section.row {
+	display: flex;
+}
+
+form section {
+	margin-bottom: 1rem;
+}
+
+form section#buttons {
+	display: flex;
+	justify-content: right;
+}
+
+form section#buttons > * {
+	margin-left: 0.5rem;
+}
+
+form textarea {
+	width: 100% !important;
+	min-height: 7rem;
+}
