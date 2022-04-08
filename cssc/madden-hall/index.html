@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+	<meta charset="UTF-8">
+	<title>淋堂选择处</title>
+	<meta name="description" content="澡堂淋浴头坏了一个，急时主动与施工方联系，目前配件正在快递路上。">
+	<link rel="stylesheet" href="https://bootswatch.com/5/darkly/bootstrap.min.css">
+	<link rel="stylesheet" href="/basis/css/bootstrap-btn-outline-light-style-fix.css">
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<style>
+		body {
+			width: 100%;
+			height: 100vh;
+			background-image: url(image/澡堂淋浴头坏了一个，急时主动与施工方联系，目前配件正在快递路上。.jpeg);
+			background-repeat: no-repeat;
+			background-size: cover;
+			overflow: hidden;
+			padding: 0;
+			margin: 0;
+		}
+
+		.container {
+			height: 100%;
+			background-image: linear-gradient(135deg, #000a, transparent);
+			padding: 1.5rem 2rem;
+			color: white;
+			overflow-y: auto;
+			box-sizing: border-box;
+			max-width: unset !important;
+		}
+	
+		form {
+			max-width: 744px;
+		}
+		
+		form label {
+			display: block;
+		}
+		
+		form section {
+			margin-bottom: 0.5rem;
+		}
+		
+		.form-control, .form-control:focus {
+			background-color: rgba(34, 34, 34, 0.85);
+		}
+		
+		[hidden] {
+			display: none !important;
+		}
+		
+		iframe,
+		.mask {
+			position: fixed;
+			width: 100vw;
+			height: 100vh;
+			top: 0;
+			left: 0;
+		}
+		
+		iframe {
+			position: fixed;
+			z-index: 10;
+		}
+		
+		.mask {
+			background-color: black;
+			z-index: 20;
+			opacity: 0;
+			pointer-events: none;
+			transition: opacity 250ms ease;
+		}
+		
+		.mask.shown {
+			opacity: 1;
+			pointer-events: all;
+		}
+		
+		#unsupportedPicModal .modal-content {
+			animation: swing 1s infinite ease-out;
+		}
+		
+		@keyframes swing {
+			0% { transform: rotate(-5deg); }
+			20% { transform: rotate(4deg); }
+			40% { transform: rotate(-3deg); }
+			60% { transform: rotate(2deg); }
+			80% { transform: rotate(-1deg); }
+			100% { transform: rotate(0); }
+		}
+		</style>
+</head>
+
+<body>
+	<div class="container">
+		<h1>淋堂选择处</h1>
+		<h6 class="mb-3">澡堂淋浴头坏了一个，急时主动与施工方联系，目前配件正在快递路上。</h6>
+		<form action="main/index.html" method="get">
+			<section class="mb-3">
+				<label class="form-label" for="textTop">横批</label>
+				<input class="form-control" type="text" id="textTop" name="textTop" placeholder="XX千古" required>
+			</section>
+			<section class="mb-3">
+				<label class="form-label" for="textRight">上联</label>
+				<input class="form-control" type="text" id="textRight" name="textRight" placeholder="香消玉殒">
+			</section>
+			<section class="mb-3">
+				<label class="form-label" for="textLeft">下联</label>
+				<input class="form-control" type="text" id="textLeft" name="textLeft" placeholder="梦断北堂">
+			</section>
+			<section class="mb-3">
+				<label class="form-label" for="personFrame">人物框架文本</label>
+				<input class="form-control" type="text" id="personFrame" name="personFrame" placeholder="奠">
+			</section>
+			<section class="mb-3">
+				<label class="form-label" for="photo">照片</label>
+				<input class="form-control" type="file" name="photo" id="photo" accept="image/*" required>
+			</section>
+			<div class="d-grid"><input type="button" class="btn btn-dark" value="开始！" id="start"></div>
+		</form>
+	</div>
+	<div class="mask"></div>
+	<div class="modal fade" id="unsupportedPicModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="unsupportedPicModalLabel">错误</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					错误：无法打开图片，请更换其它图片！<br />
+					错误原因：可能是图片文件或尺寸过大，请使用更小的图片！
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+						<ruby>丨<rp>(</rp><rt>gǔn</rt><rp>)</rp></ruby>！
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<script>
+		document.getElementById("start").addEventListener("click", () => {
+			const form = document.forms[0],
+				submit = () => form.requestSubmit();
+			if (form.textTop.value.trim() === "" || form.photo.value === "")
+				return submit();
+			for (const text of [form.textRight, form.textLeft, form.personFrame])
+				if (text.value.trim() === "") text.value = text.placeholder;
+			// submit();
+			showFrame();
+		});
+		
+		const mask = document.getElementsByClassName("mask")[0];
+		function showFrame() {
+			location.hash = "on";
+			mask.classList.add("shown");
+			setTimeout(() => {
+				const iframe = document.createElement("iframe");
+				iframe.src = "main/index.html";
+				document.body.append(iframe);
+				document.title = "劲爆淋堂";
+			}, 250);
+			setTimeout(() => mask.classList.remove("shown"), 500);
+		}
+		
+		function deleteFrame(isClickBack = false) {
+			if (!isClickBack) history.go(-1);
+			mask.classList.add("shown");
+			setTimeout(() => {
+				document.querySelectorAll("iframe").forEach(i => i.remove());
+				document.title = "淋堂选择处";
+				mask.classList.remove("shown");
+			}, 250);
+		}
+		
+		const info = {};
+		function getInfo() {
+			document.querySelectorAll("form [name]").forEach(input => info[input.name] = input.value);
+			const photoFile = document.getElementById("photo");
+			if (photoFile.files.length) info.photo = window.URL.createObjectURL(photoFile.files[0]);
+			var reader = new FileReader();
+			reader.readAsDataURL(photoFile.files[0]);
+			reader.onload = function (evt) {
+				var replaceSrc = evt.target.result;
+				var imageObj = new Image();
+				imageObj.src = replaceSrc;
+				imageObj.onload = function () {
+					console.log(imageObj.width, imageObj.height);
+					// 执行上传的方法，获取外网路径，上传进度等
+					info.photoWidth = imageObj.width;
+					info.photoHeight = imageObj.height;
+				};
+			};
+			return info;
+		}
+		
+		window.addEventListener("hashchange", () => {
+			if (document.querySelectorAll("iframe").length) return deleteFrame(true);
+		});
+		
+		document.getElementById("photo").addEventListener("change", () => {
+			console.log(getInfo());
+		});
+		
+		function showUnsupportedPicModalLabel() {
+			new bootstrap.Modal(document.getElementById("unsupportedPicModal")).show();
+		}
+	</script>
+</body>
+
+</html>

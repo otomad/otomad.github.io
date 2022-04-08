@@ -71,8 +71,11 @@ GBK=function(){
 					return a;
 				}
 			}).replace(/%[\w]{2}/g,function(a){
-				return decodeURIComponent(a);
-			
+				try {
+					return decodeURIComponent(a);
+				} catch (error) {
+					return "\ufffd";
+				}
 			});
 		}
 	};

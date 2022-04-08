@@ -1,0 +1,19 @@
+canvas#app {
+	cursor: default;
+}
+
+canvas#app:not(.thin) {
+	height: 100vh;
+}
+
+canvas#app.thin {
+	width: 100vw;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	background-color: floralwhite;
+}

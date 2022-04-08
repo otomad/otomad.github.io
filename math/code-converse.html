@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans-CN">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+	<style>
+		.float-right {
+			float: right;
+		}
+
+		.float-right>button {
+			border: none !important;
+		}
+
+		small {
+			display: block;
+			overflow-wrap: break-word;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<title class="h4">编码转换</title>
+		<meta name="discription" class="h6" content="将一个编码的字符串转换为另一个编码" class="mb-3" />
+		<div class="mb-3">
+			<div class="float-right">
+				<button type="button" class="btn btn-outline-primary btn-sm copy-button" data-bs-toggle="tooltip" title="复制"><i class="bi bi-files"></i></button>
+				<button type="button" class="btn btn-outline-primary btn-sm paste-button" data-bs-toggle="tooltip" title="粘贴"><i class="bi bi-clipboard"></i></button>
+				<button type="button" class="btn btn-outline-danger btn-sm clear-button" data-bs-toggle="tooltip" title="清空"><i class="bi bi-x"></i></button>
+			</div>
+			<label for="utf8-input" class="form-label">UTF-8</label>
+			<textarea class="form-control" id="utf8-input" rows="3"></textarea>
+			<small></small>
+		</div>
+		<div class="mb-3">
+			<div class="float-right">
+				<button type="button" class="btn btn-outline-primary btn-sm copy-button" data-bs-toggle="tooltip" title="复制"><i class="bi bi-files"></i></button>
+				<button type="button" class="btn btn-outline-primary btn-sm paste-button" data-bs-toggle="tooltip" title="粘贴"><i class="bi bi-clipboard"></i></button>
+				<button type="button" class="btn btn-outline-danger btn-sm clear-button" data-bs-toggle="tooltip" title="清空"><i class="bi bi-x"></i></button>
+			</div>
+			<label for="gbk-input" class="form-label">GBK</label>
+			<textarea class="form-control" id="gbk-input" rows="3"></textarea>
+			<small></small>
+		</div>
+		<div class="mb-3">
+			<div class="float-right">
+				<button type="button" class="btn btn-outline-primary btn-sm copy-button" data-bs-toggle="tooltip" title="复制"><i class="bi bi-files"></i></button>
+				<button type="button" class="btn btn-outline-primary btn-sm paste-button" data-bs-toggle="tooltip" title="粘贴"><i class="bi bi-clipboard"></i></button>
+				<button type="button" class="btn btn-outline-danger btn-sm clear-button" data-bs-toggle="tooltip" title="清空"><i class="bi bi-x"></i></button>
+			</div>
+			<label for="big5-input" class="form-label">Big5</label>
+			<textarea class="form-control" id="big5-input" rows="3"></textarea>
+			<small></small>
+		</div>
+		<div class="mb-3">
+			<div class="float-right">
+				<button type="button" class="btn btn-outline-primary btn-sm copy-button" data-bs-toggle="tooltip" title="复制"><i class="bi bi-files"></i></button>
+				<button type="button" class="btn btn-outline-primary btn-sm paste-button" data-bs-toggle="tooltip" title="粘贴"><i class="bi bi-clipboard"></i></button>
+				<button type="button" class="btn btn-outline-danger btn-sm clear-button" data-bs-toggle="tooltip" title="清空"><i class="bi bi-x"></i></button>
+			</div>
+			<label for="shiftjis-input" class="form-label">Shift-JIS</label>
+			<textarea class="form-control" id="shiftjis-input" rows="3"></textarea>
+			<small></small>
+		</div>
+	</div>
+	<script src="gbk.js"></script>
+	<script src="utf.js"></script>
+	<script src="charTo-toChar.js"></script>
+	<script>
+		$(document).ready(() => {
+			$('[data-bs-toggle="tooltip"]').tooltip();
+		});
+		/** 
+		 * @param {HTMLButtonElement} that
+		 * @returns {HTMLTextAreaElement}
+		 */
+		const _floatRightButtonGetTextarea = that => that.parentElement.parentElement.querySelector("textarea");
+		$(".clear-button").click(function () {
+			_floatRightButtonGetTextarea(this).value = "";
+		});
+		$(".copy-button").click(function () {
+			const textarea = _floatRightButtonGetTextarea(this);
+			textarea.select();
+			document.execCommand("copy");
+			textarea.blur();
+			const icon = this.children[0];
+			icon.className = "bi bi-check2";
+			setTimeout(() => { icon.className = "bi bi-files"; }, 2000);
+		});
+		$(".paste-button").click(async function (e) {
+			const target = _floatRightButtonGetTextarea(this);
+			target.focus();
+			try {
+				const text = await navigator.clipboard.readText();
+				target.value = text;
+				$(target).change();
+			} catch (err) {
+				console.error("Failed to read clipboard contents: ", err);
+			} finally {
+				target.blur();
+			}
+		});
+
+		function updateSmall(input, encode) {
+			$("small").each((_, small) => {
+				small.textContent = "";
+				if (small.parentElement === input.parentElement) small.textContent = encode;
+			});
+		}
+		$("[id$=-input]").on("input propertychange change", function () {
+			if (!this.value) return;
+			const value = this.value;
+			const code = this.id.replace(/-input$/, "");
+			const encode =
+				code === "utf8" ? encodeURI(value) :
+				code === "gbk" ? GBK.encode(value) :
+				"";
+			updateSmall(this, encode);
+			decodes(encode);
+			this.value = value;
+		});
+		function decodes(encode) {
+			$("#utf8-input").val(decodeURI(encode));
+			$("#gbk-input").val(GBK.decode(encode));
+		}
+	</script>
+	<script src="/basis/NightTime.js"></script>
+</body>
+
+</html>
