@@ -17,3 +17,57 @@ body {
 	justify-content: center;
 	background-color: floralwhite;
 }
+
+#help-dialog > div {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	user-select: none;
+	transform: scale(0);
+	transition: transform 300ms cubic-bezier(0, 0, 0.2, 1);
+	max-height: 100vh;
+	overflow-y: auto;
+	margin: 1.5rem;
+	flex-wrap: wrap;
+	padding-bottom: 1.5rem;
+	box-sizing: border-box;
+}
+
+#help-dialog img {
+	mix-blend-mode: darken;
+}
+
+#help-dialog {
+	background-color: white;
+	width: 100vw;
+	height: 100vh;
+	z-index: 10;
+	position: fixed;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	transition: opacity 300ms ease-out;
+	opacity: 0;
+	pointer-events: none;
+}
+
+#help-dialog.shown {
+	opacity: 0.85;
+	pointer-events: all;
+}
+
+#help-dialog.shown > div {
+	transform: scale(1);
+}
+
+@media (max-width: 719px) {
+	#help-dialog > div {
+		display: block;
+	}
+
+	#help-dialog > div > *:nth-child(2) {
+		text-align: center;
+		margin-top: 1.5rem;
+	}
+}

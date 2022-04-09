@@ -1,12 +1,14 @@
-if (window.parent == window) location.href = "../index.html";
+// if (window.parent == window) location.href = "../index.html";
 const goBack = () => window.parent.deleteFrame();
 const showPicError = () => window.parent.showUnsupportedPicModalLabel();
 function blobHolder() { return window.parent.document.getElementById("blob-holder"); }
 const info = window.parent.getInfo();
-const photoEl = document.getElementById("photo");
-photoEl.src = info.photo;
-photoEl.width = info.photoWidth;
-photoEl.height = info.photoHeight;
+{
+	const photoEl = document.getElementById("photo");
+	photoEl.src = info.photo;
+	photoEl.width = info.photoWidth;
+	photoEl.height = info.photoHeight;
+}
 
 var app = new PIXI.Application(1060, 760, { forceFXAA: true, antialias: true, backgroundColor: colorHex(255, 250, 240) });//0x1099bb
 PIXI.settings.ROUND_PIXELS = true; PIXI.settings.RESOLUTION = 1;
@@ -20,7 +22,6 @@ if ("onmousewheel" in document) {
 	document.addEventListener('DOMMouseScroll', function(ev){canvasMouseWheel(ev)}, false);
 }
 window.document.onmousemove = function(ev){canvasMouseMove(ev)};
-window.document.onmouseup = function(ev){canvasMouseUp(ev)};
 window.document.onmouseup = function(ev){canvasMouseUp(ev)};
 function onresize() {
 	app.view.classList.remove("thin");
@@ -883,7 +884,11 @@ function SliderSpeed(x, y, width, height, radius, defaultValue)
 		.on('pointerupoutside', this.stateOut)
 		.on('pointerover', this.stateHover)
 		.on('pointerout', this.stateNormal)
-		.on('pointermove', this.stateMove);
+		.on('pointermove', this.stateMove)
+		.on('mousedown', this.stateDown)
+		.on('mouseup', this.stateRelease)
+		.on('touchstart', this.stateDown)
+		.on('touchend', this.stateRelease);
 }
 
 function DragCircle(radius, defaultFreq, defaultQ, defaultGain, range, id)
@@ -2723,12 +2728,12 @@ var WaveButton = new WaveformButton(1006,710,45,40,6,ControlWindow,true);
 
 var HRTFWindow = new Ui3DHRTF(15,457,315,240);
 
-var thanksImage = PIXI.Sprite.from('../image/thanks.png');
+/* var thanksImage = PIXI.Sprite.from('../image/thanks.png');
 thanksImage.anchor.set(0.5);
 thanksImage.position.set(530, 380);
 thanksImage.interactive = true;
 thanksImage.visible = false;
-app.stage.addChild(thanksImage);
+app.stage.addChild(thanksImage); */
 InitWindow();
 
 drawEQCurve();
@@ -2846,6 +2851,7 @@ function InitMusic()
 		let bgmList = ['Bad Apple!!.m4a', '禁じざるをえない遊戯.m4a', '死を賭して.m4a', 'かわいい悪魔　〜 Innocence.m4a', '幽夢　〜 Inanimate Dream（未使用バージョン）.m4a', 'Romantic Children.m4a', 'プラスチックマインド.m4a', '魔鏡.m4a'];
 		let bgm = bgmList[Math.floor(Math.random() * bgmList.length)];
 		console.log(`BGM: ${bgm}`);
+		setCurrentBgmName(bgm);
 		Music = new Howl({
 			src: [`../bgm/${bgm}`],
 			autoplay: false,
@@ -2988,9 +2994,10 @@ function InitMusic()
 
 function buttonShowHelpAction()
 {
-	thanksImage.visible = !thanksImage.visible;
+	/* thanksImage.visible = !thanksImage.visible;
 	if (thanksImage.visible) buttonHelp.text.text = "鸣谢";
-	else buttonHelp.text.text = "鸣谢";
+	else buttonHelp.text.text = "鸣谢"; */
+	showHelpAction();
 }
 
 function ResetSideChainTime(){
@@ -3017,9 +3024,11 @@ function getEQGraphGainValue(a, freq, Q, gain)
 }
 
 function onFileChanged(event) {
-	var Selector =document.getElementById('FileSelector');
+	/** @type HTMLInputElement */
+	var Selector = document.getElementById('FileSelector');
 	if (Selector.files[0] != undefined && Selector.files[0].size > 0) {
 		var file = Selector.files[0];
+		setCurrentBgmName(file.name);
 		var reader = new FileReader();
 			if(Music != undefined){
 				Music.stop();
@@ -3271,4 +3280,19 @@ function GetVolume(BufferArray,channel,AudioProcesser){
 }
 
 console.log("%c欢迎来到动感灵堂！"," color: #d00; font-family: Microsoft Yahei; font-weight:bolder; text-shadow: 0 1px 0 #ccc,0 2px 0 #c9c9c9,0 3px 0 #bbb,0 4px 0 #b9b9b9,0 5px 0 #aaa,0 6px 1px rgba(0,0,0,.1),0 0 5px rgba(0,0,0,.1),0 1px 3px rgba(0,0,0,.3),0 3px 5px rgba(0,0,0,.2),0 5px 10px rgba(0,0,0,.25),0 10px 10px rgba(0,0,0,.2),0 20px 20px rgba(0,0,0,.15);font-size:8em");
-console.log("%cIshisashi 修改。在此感谢原作者。"," color: #fff; background-image:repeating-linear-gradient(-50deg, #000, #000 5px, #666 5px, #666 10px);padding:0.5em");
+console.log("%cIshisashi 修改。在此感谢原作者。", " color: #fff; background-image:repeating-linear-gradient(-50deg, #000, #000 5px, #666 5px, #666 10px);padding:0.5em");
+
+function setCurrentBgmName(name = "") { document.getElementById("current-bgm").textContent = name.replace(/\.[^\.]*$/g, ""); }
+{
+	const helpDialog = document.getElementById("help-dialog");
+	let isAvoidDoubleReact = false;
+	function showHelpAction() {
+		isAvoidDoubleReact = true;
+		helpDialog.classList.add("shown");
+		setTimeout(() => isAvoidDoubleReact = false, 1000);
+	}
+	helpDialog.addEventListener("click", function () {
+		if (isAvoidDoubleReact) return;
+		this.classList.remove("shown");
+	})
+}

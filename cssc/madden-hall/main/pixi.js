@@ -9689,7 +9689,7 @@ var PIXI = (function (exports) {
 			/* this._process = window.createImageBitmap(info.blobHolder,
 				0, 0, this.source.width, this.source.height, {
 					premultiplyAlpha: this.premultiplyAlpha ? 'premultiply' : 'none',
-				}); */
+				}); */ // 本段代码由于跨域问题暂时禁用了，目前并未根本上解决问题。
 			this._process = info.imgBmp;
 				
 			this._process.then(function (bitmap) {

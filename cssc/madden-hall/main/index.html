@@ -8,7 +8,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="index.css">
-	<img id="photo" style="display:none" src="../image/E 某玉照-黑杠.png">
+	<img id="photo" style="display: none;" src="../image/E 某玉照-黑杠.png">
 	<script src="onbeat.js"></script>
 	<script src="bpm.js"></script>
 	<script src="pixi.js"></script>
@@ -17,8 +17,29 @@
 </head>
 
 <body oncontextmenu="return(false);">
-	<input id="FileSelector" type="file" style="display:none" name="FileSelector">
+	<input id="FileSelector" type="file" accept="audio/*, video/*" style="display: none;" name="FileSelector">
+	
+	<div id="help-dialog">
+		<div>
+			<div>
+				<h1>「动感淋堂」0.1</h1>
+				<p>基于「俄苏灵堂 V4」，在此对原作者表示感谢。</p>
+				<h4>BGM 来源：</h4>
+				<ul><li lang="ja">《幺樂団の歴史》ZUN（太田順也）</li></ul>
+				<h4>当前播放</h4>
+				<ul><li id="current-bgm"></li></ul>
+				<h4>制作人员</h4>
+				<ul>
+					<li>「俄苏灵堂 V4」原作者</li>
+					<li>Ishisashi（魔改）</li>
+				</ul>
+				<h4>原项目地址</h4>
+				<a href="https://mrhso.github.io/IshisashiWebsite/%E5%8A%B2%E7%88%86%E6%B7%8B%E5%A0%82/" target="_blank">https://mrhso.github.io/IshisashiWebsite/劲爆淋堂/<!-- https://esuadmin.github.io/%E5%8A%B2%E7%88%86%E6%B7%8B%E5%A0%82/ --></a>
+			</div>
+			<div><img src="../image/thanks-pattern.png"></div>
+		</div>
+	</div>
+	<script src="main-pixi.js"></script>
 </body>
-<script src="main-pixi.js"></script>
 
 </html>
