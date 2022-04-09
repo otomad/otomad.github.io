@@ -78,6 +78,9 @@
 			#link {
 				background: #fff6;
 			}
+			[hidden] {
+				display: none !important;
+			}
 		</style>
 
 	</head>
@@ -86,7 +89,9 @@
 		<div class="input-group mb-3 link">
 			<input type="text" class="form-control" id="link" />
 			<button class="btn btn-outline-secondary" type="button" onclick="go()">确定</button>
+			<button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('browse').click();">浏览</button>
 		</div>
+		<input type="file" id="browse" accept="image/*" hidden>
 		<img src="img.jpg" id='image'>
 	</body>
 	<script>
@@ -146,6 +151,12 @@
 				if($("#link").is(":focus")) document.querySelector("[onclick='go()']").click();
 			}
 		}
+		document.getElementById("browse").addEventListener("change", function () {
+			if (this.files.length) {
+				document.getElementById("link").value = URL.createObjectURL(this.files[0]);
+				go();
+			}
+		});
 	</script>
 	<script src="/basis/NightTime.js"></script>
 </html>

@@ -3,7 +3,9 @@ class DvdLogo {
 	constructor(id) {
 		this.embed = document.getElementById(id);
 		this.svg = this.embed.getSVGDocument().firstElementChild;
-		this.size = { width: 384, height: 180 };
+		// this.size = { width: 384, height: 180 };
+		const height = Math.min(innerHeight, innerWidth) * 0.2;
+		this.size = { width: height / 180 * 384, height };
 		Object.assign(this.embed, this.size);
 		this.count = 0;
 		this.setColor(this.count);

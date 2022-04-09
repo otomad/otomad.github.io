@@ -28,6 +28,7 @@
 
 		#slide {
 			transform-origin: left top;
+			height: 100vh;
 		}
 
 		.overlay {
@@ -333,9 +334,10 @@
 			const unlockSlider = document.getElementById("unlock-slider"),
 				unlockInfo = document.getElementById("unlock-info");
 			let unlockSliderLeft = /* unlockSlider.offsetLeft */ 73;
-			unlockSlider.onmousedown = function (e) {
-				onmousemove = function (e) {
-					const Left = e.clientX,
+			unlockSlider.onpointerdown = function (e) {
+				ontouchmove = onmousemove = function (e) {
+					// console.log(e);
+					const Left = e.clientX || e.touches[0].clientX,
 						Right = innerWidth - 2 * unlockSliderLeft;
 					let left = Left - unlockSliderLeft;
 					if (left < 0) left = 0;
@@ -344,8 +346,8 @@
 					unlockInfo.style.opacity = (1 - left / Right) ** 3;
 				}
 			}
-			onmouseup = function (e) {
-				onmousemove = null;
+			ontouchend = onpointerup = function (e) {
+				ontouchmove = onmousemove = null;
 				const OK_percent = 0.9;
 				if (parseInt(unlockSlider.style.left) + unlockSliderLeft > OK_percent * innerWidth) {
 					// unlockSlider.style.left = innerWidth - unlockSliderLeft / 2 - unlockSlider.clientWidth + "px";

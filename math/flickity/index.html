@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html >
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0">
@@ -25,7 +25,7 @@
  <div class="phone relative bg-white" >
 
      <div @click="triggerFilePicker" v-if="!photoHasBeenUploaded" class="empty-state absolute tc top-1 left-1 right-1 bottom-1 flex items-center justify-center pa3 ba">
-        <input @change="handlePhotoUpload" class="hide" ref="upload" type="file">
+        <input @change="handlePhotoUpload" class="hide" ref="upload" type="file" accept="image/*">
         <h2 class="fw5 f5 black-30">Click to upload an image</h2>
      </div>
   <transition name="fade">

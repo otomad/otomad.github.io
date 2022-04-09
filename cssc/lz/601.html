@@ -9,8 +9,17 @@
 		<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css"> -->
 		<style>
+			html,
 			body {
 				user-select: none;
+				overflow: hidden;
+				position: relative;
+				height: 100vh;
+			}
+			
+			.center,
+			#full {
+				width: 144px;
 			}
 			
 			.center {
@@ -21,7 +30,6 @@
 				right: 0px;
 				bottom: 0px;
 				margin: auto;
-				width: 144px;
 				height: 192px;
 				transition: width 500ms ease-in-out;
 			}
@@ -41,6 +49,14 @@
 				-webkit-box-align: center;
 				-moz-box-pack: center;
 				-webkit-box-pack: center;
+			}
+			
+			.card.shown {
+				transform: scale(1);
+			}
+			
+			.card.shown ~ #full {
+				width: 0;
 			}
 			
 			.center-text{
@@ -80,8 +96,8 @@
 			}
 		</style>
 	</head>
-	<body>
-		<div class="center card" onclick="hideCard()">
+	<body onclick="hideCard()">
+		<div class="center card">
 			<div class="center-text">黑桃 A</div>
 			<div class="left-up">♠&#65039;<br>A</div>
 			<div class="right-down">♠&#65039;<br>A</div>
@@ -110,10 +126,12 @@
 			var card = document.getElementsByClassName('card')[0];
 			
 			window.onload = function(){
-			    document.onmousemove = function(event){
-			        getMousePos(pic,10,10,event);
+			    ontouchmove = onmousemove = function(event){
+			        getMousePos(pic,10,10, event.touches?.[0] ?? event);
 			    }
 			}
+			
+			ontouchend = showCard;
 			
 			var numList = new Array;
 			reNumList();
@@ -122,6 +140,7 @@
 			}
 			
 			function showCard(){
+				if (card.classList.contains("shown")) return;
 				for(var i=0;i<54;i++){
 					if(numList[i]==0) break;
 					if(i==53) reNumList();
@@ -158,13 +177,12 @@
 				if(flower==2||flower==4||rand==54) document.body.style.color="red";
 				else document.body.style.color="black";
 				//
-				pic.style.width=0+'px';
-				card.style.transform = "scale(1)";
+				card.classList.add("shown");
 			}
 			
 			function hideCard(){
-				pic.style.width=144+'px';
-				card.style.transform = "scale(0)";
+				if (getComputedStyle(pic).width == "0px")
+					card.classList.remove("shown");
 			}
 			
 			

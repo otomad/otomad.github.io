@@ -45,6 +45,13 @@ iframe {
 	transition: all 250ms ease-in-out, height 0ms !important;
 }
 
+@media (pointer: coarse) {
+	.nav-pills,
+	#v-pills-tab {
+		height: calc(100vh - 120px);
+	}
+}
+
 .fa-angle-left,
 .bi-chevron-left {
 	margin-right: 0.5em;

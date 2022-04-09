@@ -11,6 +11,7 @@ h1 {
 .card-body p {
 	/* margin-bottom: .5em; */
 	text-indent: 2em;
+	text-align: justify;
 }
 
 .card-body p:last-child {
