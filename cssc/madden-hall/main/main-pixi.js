@@ -888,7 +888,8 @@ function SliderSpeed(x, y, width, height, radius, defaultValue)
 		.on('mousedown', this.stateDown)
 		.on('mouseup', this.stateRelease)
 		.on('touchstart', this.stateDown)
-		.on('touchend', this.stateRelease);
+		.on('touchend', this.stateRelease)
+		.on('touchmove', this.stateMove);
 }
 
 function DragCircle(radius, defaultFreq, defaultQ, defaultGain, range, id)
