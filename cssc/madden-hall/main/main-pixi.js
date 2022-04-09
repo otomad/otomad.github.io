@@ -385,7 +385,7 @@ function SliderHorizontal(x, y, width, height, radius, text, defaultValue, type)
 	}
 
 	this.stateDown = function(event){
-		if (event.data.originalEvent.button != 0 || event.data.originalEvent.constructor.name === "TouchEvent"){
+		if (event.data.originalEvent.button != 0 && event.data.originalEvent.constructor.name !== "TouchEvent"){
 			this.value = this.defaultValue;
 		} else {
 			this.isDragging = true;
@@ -636,7 +636,7 @@ function SliderFFT(x, y, width, height, radius, defaultValue)
 	}
 
 	this.stateDown = function(event){
-		if (event.data.originalEvent.button != 0 || event.data.originalEvent.constructor.name === "TouchEvent"){
+		if (event.data.originalEvent.button != 0 && event.data.originalEvent.constructor.name !== "TouchEvent"){
 			this.value = 7;
 		} else {
 			this.isDragging = true;
@@ -789,7 +789,7 @@ function SliderSpeed(x, y, width, height, radius, defaultValue)
 	}
 
 	this.stateDown = function(event){
-		if (event.data.originalEvent.button != 0 || event.data.originalEvent.constructor.name === "TouchEvent"){
+		if (event.data.originalEvent.button != 0 && event.data.originalEvent.constructor.name !== "TouchEvent"){
 			this.value = 24;
 		} else {
 			this.isDragging = true;
@@ -1494,7 +1494,7 @@ function SliderHorizontalAdaptive(x, y, width, height, radius, text, defaultValu
 
 	this.stateDown = function(event){
 		let ScaleValue = this.max - this.min;
-		if (event.data.originalEvent.button != 0 || event.data.originalEvent.constructor.name === "TouchEvent"){
+		if (event.data.originalEvent.button != 0 && event.data.originalEvent.constructor.name !== "TouchEvent"){
 			if(this.valueType == 4 && Settings.AutoSetLimiterRelease){
 				this.value = 60 / SongBPM * 100;
 			} else if(this.valueType == "BPMSlider"){
