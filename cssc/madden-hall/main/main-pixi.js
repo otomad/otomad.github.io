@@ -54,6 +54,7 @@ var Settings = {
 	Auto3DHRTF : false,
 }
 var SideChainCurve = new Float32Array(10),NextSideChainTime = 0,LastSeekTime = 0.0;
+var loopPlay = true, negative = false;
 
 var Music;
 var AnalyserNode;
@@ -1722,7 +1723,7 @@ function WaveformButton(x, y, w, h,radius, onClick, shadow = true)
 		if (!this.isMouseDown) return;
 		let inWaveform = onClick(event);
 		if(inWaveform){
-		   this.text.text = "▥";
+			this.text.text = "▥";
 			this.text.x = x + w/2;
 			this.text.y = y + h/2; 
 		} else {
@@ -1822,11 +1823,15 @@ function UiWaveSettings(x, y ,w ,h){
 	this.UiControls["sliderLimiterAttack"] = new SliderHorizontalAdaptive(uiX,uiY,200,8,3,"起始时间：10 ms",0.01,3,0,1); uiX += (addWidth * 1.5);
 	this.UiControls["sliderLimiterRelease"] = new SliderHorizontalAdaptive(uiX,uiY,200,8,3,"释放时间：250 ms",0.25,4,0.001,1);uiX = DefaultX + addWidth + 30; uiY += addHeight;
 	this.UiControls["sliderLimiterRatio"] = new SliderHorizontalAdaptive(uiX,uiY,200,8,3,"压缩比例：1:14",14,5,1,20);uiX += (addWidth * 1.5);
-	this.UiControls["checkBoxAutoSetRelease"] = new CheckBox(uiX,uiY, 24,16,8,5,"自动设置释放时间",
+	this.UiControls["checkBoxAutoSetRelease"] = new CheckBox(uiX,uiY-6, 24,16,8,5,"自动设置释放时间",
 		(event,id,state) => {
 			Settings.AutoSetLimiterRelease = state;
 		}
 	,"AutoSetRelease",true);
+	this.UiControls["checkBoxLoopPlay"] = new CheckBox(uiX, uiY + 20, 24, 16, 8, 5, "循环播放",
+		(event, id, state) => loopPlay = state, "LoopPlay", true);
+	this.UiControls["checkBoxNegative"] = new CheckBox(uiX + 102, uiY + 20, 24, 16, 8, 5, "反转",
+		(event, id, state) => negative = state, "Negative", false);
 
 	//Other Region
 	uiX = DefaultX + addWidth + 30; uiY = DefaultY + 135;
@@ -2180,9 +2185,12 @@ function Ui3DHRTF(x, y ,w ,h){
 		this.drawRect(x,y + h - 50,w,2);
 		this.endFill();
 
-		let CalcY = (this.NowY - (this.py + this.ph / 2 - 50)) / this.ph * (3.402 * 2);
+		let CalcY = (/* (this.py * 2 + this.ph - 50) -  */this.NowY - (this.py + this.ph / 2 - 50)) / this.ph * (3.402 * 2);
 		let CalcX = (this.NowX - (this.px + this.pw / 2)) / this.pw * (3.402 * 2);
 
+		// console.log("CalcY:", CalcY, " NowY:", this.NowY, " py:", this.py, " ph:", this.ph);
+		// console.log("CalcX:", CalcX, " NowX:", this.NowX, " px:", this.px, " pw:", this.pw);
+		CalcY = 1.4175 - CalcY;
 		PannerNode.setPosition(CalcX,CalcY,CalcY / 2);
 	}
 
@@ -2230,7 +2238,8 @@ function Ui3DHRTF(x, y ,w ,h){
 
 		let CalcY = (HRTFWindow.graphics.NowY - (HRTFWindow.graphics.py + HRTFWindow.graphics.ph / 2 - 50)) / HRTFWindow.graphics.ph * (3.402 * 2);
 		let CalcX = (HRTFWindow.graphics.NowX - (HRTFWindow.graphics.px + HRTFWindow.graphics.pw / 2)) / HRTFWindow.graphics.pw * (3.402 * 2);
-
+		
+		CalcY = 1.4175 - CalcY;
 		PannerNode.setPosition(CalcX,CalcY,CalcY / 2);
 	}
 	this.graphics
@@ -2494,8 +2503,8 @@ app.stage.addChild(personMask);
 app.stage.addChild(personBack);
 app.stage.addChild(imagePerson);
 //image filter
-var imageColorFilter = new PIXI.filters.ColorMatrixFilter;
-imagePerson.filters = [imageColorFilter];
+var imageColorFilter = new PIXI.filters.ColorMatrixFilter, imageColorFilter2 = new PIXI.filters.ColorMatrixFilter;
+imagePerson.filters = [imageColorFilter, imageColorFilter2];
 //imageColorFilter.blackAndWhite(true);
 //imageColorFilter.saturate(1,true);
 imageColorFilter.saturate(-1,false);
@@ -2748,6 +2757,9 @@ drawEQCurve();
 //Update
 //var timeSum = 0;
 //app.ticker.minFPS=60;
+var lastImageScale = 0;
+var imageScales = [];
+var isNegative = false;
 app.ticker.add(function(delta){
 	PrevTime = CurrentTime;
 	CurrentTime = performance.now();
@@ -2766,6 +2778,17 @@ app.ticker.add(function(delta){
 
 		let SpeakerScale = (LevelMeterNode.volume[0]+LevelMeterNode.volume[1])/2;
 		imageScale = 1 + scaleStretch;
+		if (IsMusicPlaying) {
+			imageScales.push(imageScale);
+			if (imageScales.length > 100) imageScales.splice(0, 1);
+			const max = Math.max(...imageScales), min = Math.min(...imageScales), aver = (max - min) / 2;
+			const THRESHOLD = aver + min; // 1.3;
+			if (aver > 0.05 && (imageScale > THRESHOLD) === (lastImageScale < THRESHOLD)) {
+				if (!negative) imagePerson.width = -imagePerson.width;
+				else imageColorFilter2.negative(isNegative = !isNegative);
+			}
+			lastImageScale = imageScale;
+		}
 		imagePerson.width = imageW * imageScale;
 		imagePerson.height = imageH * imageScale;
 		imageColorFilter.saturate(-1 + 4 * scaleStretch,false);
@@ -2878,11 +2901,13 @@ function InitMusic()
 				});
 			},
 			onend:function(){
-				if(PlayButton != undefined)
-					PlayButton.setState(false,PlayButton);
 				if(uiWaveProgressBar != undefined)
-					uiWaveProgressBar.WaveProgressBarCurrentTime = uiWaveProgressBar.graphics.Width;
+				uiWaveProgressBar.WaveProgressBarCurrentTime = uiWaveProgressBar.graphics.Width;
 				ResetSideChainTime();
+				if (loopPlay) {
+					if (PlayButton != undefined)
+						PlayButton.setState(false, PlayButton);
+				} else ControlMusic();
 			}
 		});
 	}
