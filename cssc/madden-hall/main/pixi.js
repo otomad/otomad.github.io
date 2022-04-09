@@ -9686,21 +9686,22 @@ var PIXI = (function (exports) {
 	            return Promise.resolve(this);
 	        }
 			
-			this._process = window.createImageBitmap(blobHolder(),
-				0, 0, this.source.width, this.source.height,
-				{
+			/* this._process = window.createImageBitmap(info.blobHolder,
+				0, 0, this.source.width, this.source.height, {
 					premultiplyAlpha: this.premultiplyAlpha ? 'premultiply' : 'none',
-				})
-				.then(function (bitmap) {
-					if (this$1.destroyed) {
-						return Promise.reject();
-					}
-					this$1.bitmap = bitmap;
-					this$1.update();
-					this$1._process = null;
+				}); */
+			this._process = info.imgBmp;
+				
+			this._process.then(function (bitmap) {
+				if (this$1.destroyed) {
+					return Promise.reject();
+				}
+				this$1.bitmap = bitmap;
+				this$1.update();
+				this$1._process = null;
 
-					return Promise.resolve(this$1);
-				});
+				return Promise.resolve(this$1);
+			});
 			
 			this._process.then(undefined, e => {
 				console.error(e);

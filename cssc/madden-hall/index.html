@@ -198,6 +198,9 @@
 						// 执行上传的方法，获取外网路径，上传进度等
 						blobHolder.width = info.photoWidth = imageObj.width;
 						blobHolder.height = info.photoHeight = imageObj.height;
+						info.blobHolder = blobHolder;
+						info.imgBmp = window.createImageBitmap(info.blobHolder,
+							0, 0, imageObj.width, imageObj.height, { premultiplyAlpha: "premultiply" });
 					};
 				};
 			}
