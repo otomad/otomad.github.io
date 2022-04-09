@@ -976,7 +976,7 @@ function DragCircle(radius, defaultFreq, defaultQ, defaultGain, range, id)
 	}
 
 	this.stateDown = function(event){
-		if(event.data.originalEvent.button != 0){
+		if (event.data.originalEvent.button != 0 && event.data.originalEvent.constructor.name !== "TouchEvent"){
 			this.x = this.defaultX;
 			this.y = this.defaultY;
 			this.freq = this.defaultFreq;
@@ -2122,7 +2122,7 @@ function Ui3DHRTF(x, y ,w ,h){
 	}
 	this.stateDown = (event) => {
 		if(Settings.Auto3DHRTF) return;
-		if(event.data.originalEvent.button != 0){
+		if (event.data.originalEvent.button != 0 && event.data.originalEvent.constructor.name !== "TouchEvent"){
 			this.SetValue(this.graphics.px + this.graphics.pw / 2 + 1,this.graphics.py + (this.graphics.ph - 50) / 2 + 1);
 			return;
 		}
