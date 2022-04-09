@@ -119,6 +119,7 @@
 			<section class="mb-3">
 				<label class="form-label" for="photo">照片</label>
 				<input class="form-control" type="file" name="photo" id="photo" accept="image/*" required>
+				<img id="blob-holder" hidden crossorigin>
 			</section>
 			<div class="d-grid"><input type="button" class="btn btn-dark" value="开始！" id="start"></div>
 		</form>
@@ -183,20 +184,23 @@
 		function getInfo() {
 			document.querySelectorAll("form [name]").forEach(input => info[input.name] = input.value);
 			const photoFile = document.getElementById("photo");
-			if (photoFile.files.length) info.photo = window.URL.createObjectURL(photoFile.files[0]);
-			var reader = new FileReader();
-			reader.readAsDataURL(photoFile.files[0]);
-			reader.onload = function (evt) {
-				var replaceSrc = evt.target.result;
-				var imageObj = new Image();
-				imageObj.src = replaceSrc;
-				imageObj.onload = function () {
-					console.log(imageObj.width, imageObj.height);
-					// 执行上传的方法，获取外网路径，上传进度等
-					info.photoWidth = imageObj.width;
-					info.photoHeight = imageObj.height;
+			const blobHolder = document.getElementById("blob-holder");
+			if (photoFile.files.length) {
+				blobHolder.src = info.photo = window.URL.createObjectURL(photoFile.files[0]);
+				var reader = new FileReader();
+				reader.readAsDataURL(photoFile.files[0]);
+				reader.onload = function (evt) {
+					var replaceSrc = evt.target.result;
+					var imageObj = new Image();
+					imageObj.src = replaceSrc;
+					imageObj.onload = function () {
+						console.log(imageObj.width, imageObj.height);
+						// 执行上传的方法，获取外网路径，上传进度等
+						blobHolder.width = info.photoWidth = imageObj.width;
+						blobHolder.height = info.photoHeight = imageObj.height;
+					};
 				};
-			};
+			}
 			return info;
 		}
 		

@@ -9686,8 +9686,8 @@ var PIXI = (function (exports) {
 	            return Promise.resolve(this);
 	        }
 			
-			this._process = window.createImageBitmap(this.source,
-				0, 0, this.source.width /* info.photoWidth */, this.source.height /* info.photoHeight */,
+			this._process = window.createImageBitmap(blobHolder(),
+				0, 0, this.source.width, this.source.height,
 				{
 					premultiplyAlpha: this.premultiplyAlpha ? 'premultiply' : 'none',
 				})

@@ -1,6 +1,7 @@
 if (window.parent == window) location.href = "../index.html";
 const goBack = () => window.parent.deleteFrame();
 const showPicError = () => window.parent.showUnsupportedPicModalLabel();
+function blobHolder() { return window.parent.document.getElementById("blob-holder"); }
 const info = window.parent.getInfo();
 const photoEl = document.getElementById("photo");
 photoEl.src = info.photo;
