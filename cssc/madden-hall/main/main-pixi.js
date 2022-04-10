@@ -1,4 +1,4 @@
-// if (window.parent == window) location.href = "../index.html";
+if (window.parent == window) location.href = "../index.html";
 const goBack = () => window.parent.deleteFrame();
 const showPicError = () => window.parent.showUnsupportedPicModalLabel();
 function blobHolder() { return window.parent.document.getElementById("blob-holder"); }
@@ -2780,7 +2780,7 @@ app.ticker.add(function(delta){
 		imageScale = 1 + scaleStretch;
 		if (IsMusicPlaying) {
 			imageScales.push(imageScale);
-			if (imageScales.length > 100) imageScales.splice(0, 1);
+			if (imageScales.length > 100) imageScales.shift();
 			const max = Math.max(...imageScales), min = Math.min(...imageScales), aver = (max - min) / 2;
 			const THRESHOLD = aver + min; // 1.3;
 			if (aver > 0.05 && (imageScale > THRESHOLD) === (lastImageScale < THRESHOLD)) {
@@ -2904,7 +2904,7 @@ function InitMusic()
 				if(uiWaveProgressBar != undefined)
 				uiWaveProgressBar.WaveProgressBarCurrentTime = uiWaveProgressBar.graphics.Width;
 				ResetSideChainTime();
-				if (loopPlay) {
+				if (!loopPlay) {
 					if (PlayButton != undefined)
 						PlayButton.setState(false, PlayButton);
 				} else ControlMusic();
@@ -3093,6 +3093,7 @@ function onFileChanged(event) {
 							InitMusic();
 							CanPlay = true;
 							Howler.DeleteAudioBuffer(); //We Dont need it now
+							imageScales.length = 0;
 						});
 					},
 					onend:function(){

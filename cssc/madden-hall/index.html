@@ -147,6 +147,11 @@
 	</div>
 	
 	<script>
+		function clearUrlParam() {
+			if (location.href.match(/[?#]/))
+				history.replaceState(null, "", location.href.match(/^[^?#]*/)[0]);
+		}
+		clearUrlParam();
 		document.getElementById("start").addEventListener("click", () => {
 			const form = document.forms[0],
 				submit = () => form.requestSubmit();
@@ -177,6 +182,7 @@
 			setTimeout(() => {
 				document.querySelectorAll("iframe").forEach(i => i.remove());
 				document.title = "淋堂选择处";
+				clearUrlParam();
 				mask.classList.remove("shown");
 			}, 250);
 		}
