@@ -371,6 +371,40 @@ class Chobi {
 		}
 		return this;
 	}
+	overexposed(amount = 255, channel = defaultChannel) {
+		amount /= 255;
+		function changeColor(value) {
+			const originalValue = value;
+			if (amount >= 0) {
+				if (value < 128)
+					value *= 2;
+				else
+					value = (255 - value) * 2;
+			} else {
+				if (value < 128)
+					value = (128 - value) * 2;
+				else
+					value = (value - 128) * 2;
+			}
+			return (value - originalValue) * Math.abs(amount) + originalValue;
+		}
+		var imageData = this.imageData;
+		for (var i = 0; i < imageData.width; i++) {
+			for (var j = 0; j < imageData.height; j++) {
+				var index = (j * 4) * imageData.width + (i * 4),
+					red = imageData.data[index],
+					green = imageData.data[index + 1],
+					blue = imageData.data[index + 2],
+					nred = changeColor(red),
+					ngreen = changeColor(green),
+					nblue = changeColor(blue);
+				if (channel.R) imageData.data[index] = nred;
+				if (channel.G) imageData.data[index + 1] = ngreen;
+				if (channel.B) imageData.data[index + 2] = nblue;
+			}
+		}
+		return this;
+	}
 	/**
 	 * 生成给定两个数之间随机的数。
 	 * @param {number} min - 最小值。
