@@ -361,7 +361,7 @@ function reactiveButton() {
 	$(filterArray.length ? `.btn-group-04 button[value='${filterArray[filterArray.length - 1].filter}']` : "#fx-orig").addClass("active");
 }
 
-function filter(id, value) { //id的方法不用了
+function filter(_id, value) { // id 的方法不用了
 	if (value === undefined) return null;
 	if (imgObj == null) {
 		alert("选择张照片先!");
@@ -433,6 +433,9 @@ $("#modal-ok-button").click(function () {
 $("#path").on("input propertychange change", function () {
 	$("#modal-ok-button")[0].disabled = !this.value.length;
 });
+$("#image-password").on("input propertychange change", function () {
+	$("#image-password-ok-button")[0].disabled = !this.value.length;
+});
 
 Date.prototype.format = function (format) {
 	var o = {
@@ -483,6 +486,7 @@ document.onkeydown = e => {
 	if (e.key == "Enter") {
 		if ($("#path").is(":focus")) $("#modal-ok-button").click();
 		if ($("#custom-filter-modal").hasClass("show")) $("#new-filter").click();
+		if ($("#image-password-modal").hasClass("show")) $("#image-password-ok-button").click();
 	}
 }
 $("#channel-dropdown-menu .dropdown-item").click(function () {
@@ -580,3 +584,28 @@ function handler(event) {
 		}
 	}
 }
+
+$("#input-path").on("shown.bs.modal", function () {
+	if (navigator.userAgentData.mobile === false) // 注意必须是 false，不能是 undefined。
+		$("#path").select().focus();
+});
+$("#image-password-modal").on("shown.bs.modal", function () {
+	if (navigator.userAgentData.mobile === false) // 注意必须是 false，不能是 undefined。
+		$("#image-password").select().focus();
+});
+
+$("#image-password-ok-button").click(function () {
+	const password = $("#image-password").val();
+	if (password == null || password == "") return;
+	if (imgObj == null) {
+		alert("选择张照片先!");
+		return null;
+	}
+	const overlay = document.getElementById("overlay").checked;
+	if (!overlay) reset();
+	filterId = "imagePassword";
+	channel = getChannelValue();
+	imgObj.imagePassword(password, $("#image-password-method").val(), channel);
+	// filterArray[filterArray.length - 1].data = imgObj.imageData.data.slice();
+	imgObj.loadImageToCanvas();
+});

@@ -35,8 +35,8 @@
 		<div class="modal-dialog modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="ModalLabel">输入图片地址</h5>
-					<button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<h5 class="modal-title">输入图片地址</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span>&times;</span>
 					</button>
 				</div>
@@ -59,8 +59,8 @@
 		<div class="modal-dialog modal-dialog-scrollable">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="CustomFilterLabel">自定义滤镜</h5>
-					<button id="modal-times-button" type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<h5 class="modal-title">自定义滤镜</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span>&times;</span>
 					</button>
 				</div>
@@ -159,6 +159,41 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="image-password-modal" tabindex="-1">
+		<div class="modal-dialog modal-dialog-scrollable">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">请输入加密/解密密码</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span>&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="input-group mb-2">
+						<input type="text" class="form-control" id="image-password" placeholder="密码">
+					</div>
+					<div class="input-group mb-2">
+						<div class="input-group-prepend">
+							<label class="input-group-text" for="image-password-method">加密/解密算法</label>
+						</div>
+						<select class="custom-select" id="image-password-method">
+							<option value="add">相加</option>
+							<option value="sub">相减</option>
+							<option value="xor">异或</option>
+							<option value="choko">球球 Choko</option>
+							<option value="choko+" selected>球球 Choko+</option>
+							<option value="choko_decrypt">球球 Choko 解密</option>
+							<option value="choko+_decrypt">球球 Choko+ 解密</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-success" data-dismiss="modal" id="image-password-ok-button" disabled>确定</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<div style="height:80px"></div>
 	<div class="container-fluid">
 		<div class="row">
@@ -213,6 +248,7 @@
 						<button id="fx32" data-amount="4" value="posterize">色调分离</button>
 						<button id="fx33" data-amount="" value="primaryColor">三原色三间色</button>
 						<button id="fx34" data-amount="255" value="overexposed">曝光过度</button>
+						<button class="notFx btn btn-outline-warning mb-1" value="password" data-toggle="modal" data-target="#image-password-modal"><i class="ms-Icon ms-Icon--PasswordField"></i>图片加密</button>
 						<button class="notFx btn btn-outline-warning mb-1" value="custom" id="myfilter" data-toggle="modal" data-target="#custom-filter-modal"><i class="ms-Icon ms-Icon--Add"></i>自定义滤镜</button><!-- onclick="myFilter()" -->
 						<button class="notFx btn btn-outline-warning mb-1" value="watermark" onclick="document.getElementById('second').click()"><i class="ms-Icon ms-Icon--Font"></i>水印</button>
 					</div>

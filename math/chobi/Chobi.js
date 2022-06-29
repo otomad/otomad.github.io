@@ -679,7 +679,7 @@ class Chobi {
 		return this;
 		/* var width = imageData.width;//设备像素
 		var length = data.length;
-	    
+
 		for(var i=0;i<length;i++){//遍历每个像素
 			//不让超过最后一行
 			if(i<length-width*4*amount){ //不包含最后一行
@@ -949,23 +949,23 @@ class Chobi {
 						sumblue += b;
 					}
 				}
-				// calculate new RGB value  
+				// calculate new RGB value
 				var nr = (sumred / 25.0);
 				var ng = (sumgreen / 25.0);
 				var nb = (sumblue / 25.0);
-				// clear previous for next pixel point  
+				// clear previous for next pixel point
 				sumred = 0.0;
 				sumgreen = 0.0;
 				sumblue = 0.0;
-				// assign new pixel value      
+				// assign new pixel value
 				if (channel.R)
-					tempCanvasData.data[idx + 0] = nr; // Red channel      
+					tempCanvasData.data[idx + 0] = nr; // Red channel
 				if (channel.G)
-					tempCanvasData.data[idx + 1] = ng; // Green channel      
+					tempCanvasData.data[idx + 1] = ng; // Green channel
 				if (channel.B)
-					tempCanvasData.data[idx + 2] = nb; // Blue channel      
+					tempCanvasData.data[idx + 2] = nb; // Blue channel
 				if (channel.A)
-					tempCanvasData.data[idx + 3] = 255; // Alpha channel      
+					tempCanvasData.data[idx + 3] = 255; // Alpha channel
 			}
 		}
 		return this;
@@ -975,48 +975,48 @@ class Chobi {
 		var tempCanvasData = this.imageData;
 		for (var x = 1; x < tempCanvasData.width - 1; x++) {
 			for (var y = 1; y < tempCanvasData.height - 1; y++) {
-				// Index of the pixel in the array      
+				// Index of the pixel in the array
 				var idx = (x + y * tempCanvasData.width) * 4;
 				var bidx = ((x - 1) + y * tempCanvasData.width) * 4;
 				var aidx = ((x + 1) + y * tempCanvasData.width) * 4;
-				// calculate new RGB value  
+				// calculate new RGB value
 				var nr = tempCanvasData.data[bidx + 0] - tempCanvasData.data[aidx + 0] + 128;
 				var ng = tempCanvasData.data[bidx + 1] - tempCanvasData.data[aidx + 1] + 128;
 				var nb = tempCanvasData.data[bidx + 2] - tempCanvasData.data[aidx + 2] + 128;
 				nr = (nr < 0) ? 0 : ((nr > 255) ? 255 : nr);
 				ng = (ng < 0) ? 0 : ((ng > 255) ? 255 : ng);
 				nb = (nb < 0) ? 0 : ((nb > 255) ? 255 : nb);
-				// assign new pixel value      
+				// assign new pixel value
 				if (channel.R)
-					tempCanvasData.data[idx + 0] = nr; // Red channel      
+					tempCanvasData.data[idx + 0] = nr; // Red channel
 				if (channel.G)
-					tempCanvasData.data[idx + 1] = ng; // Green channel      
+					tempCanvasData.data[idx + 1] = ng; // Green channel
 				if (channel.B)
-					tempCanvasData.data[idx + 2] = nb; // Blue channel      
+					tempCanvasData.data[idx + 2] = nb; // Blue channel
 				if (channel.A)
-					tempCanvasData.data[idx + 3] = 255; // Alpha channel      
+					tempCanvasData.data[idx + 3] = 255; // Alpha channel
 			}
 		}
 		return this;
 	}
 	mirror(amount = 0, channel = defaultChannel) {
 		var tempCanvasData = this.imageData;
-		for (var x = (amount >= 0 ? 0 : tempCanvasData.width); (amount >= 0 ? x < tempCanvasData.width / 2 : x > tempCanvasData.width / 2); (amount >= 0 ? x++ : x--)) // column  
+		for (var x = (amount >= 0 ? 0 : tempCanvasData.width); (amount >= 0 ? x < tempCanvasData.width / 2 : x > tempCanvasData.width / 2); (amount >= 0 ? x++ : x--)) // column
 		{
-			for (var y = 0; y < tempCanvasData.height; y++) // row  
+			for (var y = 0; y < tempCanvasData.height; y++) // row
 			{
-				// Index of the pixel in the array      
+				// Index of the pixel in the array
 				var idx = (x + y * tempCanvasData.width) * 4;
 				var midx = (((tempCanvasData.width - 1) - x) + y * tempCanvasData.width) * 4;
-				// assign new pixel value      
+				// assign new pixel value
 				if (channel.R)
-					tempCanvasData.data[midx + 0] = tempCanvasData.data[idx + 0]; // Red channel      
+					tempCanvasData.data[midx + 0] = tempCanvasData.data[idx + 0]; // Red channel
 				if (channel.G)
-					tempCanvasData.data[midx + 1] = tempCanvasData.data[idx + 1]; // Green channel      
+					tempCanvasData.data[midx + 1] = tempCanvasData.data[idx + 1]; // Green channel
 				if (channel.B)
-					tempCanvasData.data[midx + 2] = tempCanvasData.data[idx + 2]; // Blue channel     
+					tempCanvasData.data[midx + 2] = tempCanvasData.data[idx + 2]; // Blue channel
 				if (channel.A)
-					tempCanvasData.data[midx + 3] = tempCanvasData.data[idx + 3]; // Alpha channel      
+					tempCanvasData.data[midx + 3] = tempCanvasData.data[idx + 3]; // Alpha channel
 			}
 		}
 		return this;
@@ -1026,7 +1026,7 @@ class Chobi {
 		if (amount >= 0) {
 			for (var x = 0; x < imageData.width / 2; x++) // column
 			{
-				for (var y = 0; y < imageData.height; y++) // row  
+				for (var y = 0; y < imageData.height; y++) // row
 				{
 					var idx = (x + y * imageData.width) * 4;
 					var midx = (((imageData.width - 1) - x) + y * imageData.width) * 4;
@@ -1043,7 +1043,7 @@ class Chobi {
 		} else {
 			for (var x = 0; x < imageData.width; x++) // column
 			{
-				for (var y = 0; y < imageData.height / 2; y++) // row  
+				for (var y = 0; y < imageData.height / 2; y++) // row
 				{
 					var idx = (x + y * imageData.width) * 4;
 					var midx = (((imageData.height - 1) - y) * imageData.width + x) * 4;
@@ -1153,6 +1153,90 @@ class Chobi {
 					imageData.data[index + 2] = blue;
 				if (channel.A)
 					imageData.data[index + 3] = alpha;
+			}
+		}
+		return this;
+	}
+	/**
+	 * 为图片加密马赛克。
+	 * @param {string} password - 为图片加密的密码字符串。
+	 * @param {"add" | "sub" | "xor" | "choko" | "choko+" | "choko_decrypt" | "choko+_decrypt"} method - 操作方法枚举。
+	 * @param {object} channel - 通道。
+	 * @returns {Chobi}
+	 */
+	imagePassword(password, method, channel = defaultChannel) {
+		if (typeof password !== "string" || password.length === 0)
+			throw new TypeError("Illegal password.");
+		const iterator = (function* () {
+			const passwordBuffer = [];
+			let passwordCursor = 0;
+			while (isFinite(password.charCodeAt(passwordCursor))) {
+				let byte = password.charCodeAt(passwordCursor++);
+				if (byte > 255) byte = [byte >> 8, byte & 255];
+				else byte = [byte];
+				passwordBuffer.push(...byte);
+			}
+			passwordCursor = 0;
+			while (true) {
+				yield passwordBuffer[passwordCursor++];
+				if (passwordCursor >= passwordBuffer.length) passwordCursor = 0;
+			}
+		})();
+		function PNMod(value, mod = 256) {
+			while (value < 0) value += mod;
+			return value % mod;
+		}
+		const imageData = this.imageData;
+		for (let i = 0; i < imageData.width; i++) {
+			for (let j = 0; j < imageData.height; j++) {
+				/**
+				 * @param {number} value
+				 * @param {"r" | "g" | "b" | "a"} ch
+				 */
+				function calc(value, ch) {
+					const colorPosition = ch === "r" ? i : ch === "g" ? j : i * j;
+					switch (method) {
+						case "add": return PNMod(value + iterator.next().value);
+						case "sub": return PNMod(value - iterator.next().value);
+						case "xor": return PNMod(value ^ iterator.next().value);
+						case "choko": case "choko+": {
+							let result = (value + colorPosition + iterator.next().value ** 2) % 256;
+							if (method === "choko+") {
+								if ((colorPosition + iterator.next().value ** 2) / 256 | 0 !== (value + colorPosition + iterator.next().value ** 2) / 256 | 0) {
+									if (result % 2 === 0) result++;
+								}
+								else {
+									if (result % 2 !== 0) result--;
+								}
+							}
+							return result;
+						}
+						case "choko_decrypt": case "choko+_decrypt": {
+							const passwordCursor = (i ** 2 * j ** 2) ** 2 % (password.length - 2) + (ch === "r" ? 0 : ch === "g" ? 1 : 2);
+							// const passwordSquare = iterator.next().value ** 2;
+							const passwordSquare = password[passwordCursor] ** 2;
+							let result = PNMod(value - colorPosition - passwordSquare);
+							if (method === "choko+_decrypt") {
+								let temp = (colorPosition + passwordSquare) / 256 + (value % 2 == 0 ? 0 : 1);
+								result = 256 * temp + value - colorPosition - passwordSquare;
+								if (value % 2 == 0) result++; else result--;
+							}
+							return result;
+						}
+						default: throw TypeError("Unknown method.");
+					}
+				}
+				let index = (j * 4) * imageData.width + (i * 4),
+					red = imageData.data[index],
+					green = imageData.data[index + 1],
+					blue = imageData.data[index + 2],
+					nred = red, ngreen = green, nblue = blue;
+				if (channel.R) nred = calc(red, "r");
+				if (channel.G) ngreen = calc(green, "g");
+				if (channel.B) nblue = calc(blue, "b");
+				imageData.data[index] = nred;
+				imageData.data[index + 1] = ngreen;
+				imageData.data[index + 2] = nblue;
 			}
 		}
 		return this;
