@@ -4,6 +4,10 @@
           animation-duration: .3s;
 }
 
+:root {
+	--inner-height: 100vh;
+}
+
 html,
 body {
 	overflow: hidden !important;
@@ -46,8 +50,8 @@ button {
 
 .wrap {
   overflow: hidden;
-  height: 100vh;
-  max-height: 100vh;
+  height: var(--inner-height);
+  max-height: var(--inner-height);
 }
 @media (min-width: 30em) {
   .wrap {

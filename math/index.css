@@ -45,12 +45,12 @@ iframe {
 	transition: all 250ms ease-in-out, height 0ms !important;
 }
 
-@media (pointer: coarse) {
+/* @media (pointer: coarse) {
 	.nav-pills,
 	#v-pills-tab {
 		height: calc(var(--inner-height) - 120px);
 	}
-}
+} */
 
 .fa-angle-left,
 .bi-chevron-left {

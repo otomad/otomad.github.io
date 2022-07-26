@@ -1,7 +1,18 @@
 (function () {
-	const declareInnerHeight = () =>
-		document.documentElement.style.setProperty("--inner-height", window.innerHeight + "px");
+	const declareInnerHeight = () => {
+		const innerHeight = window.innerHeight;
+		document.documentElement.style.setProperty("--inner-height",
+			`min(${innerHeight}px, 100vh)`);
+		return innerHeight;
+	}
 	declareInnerHeight();
-	["resize", "load"].forEach(type =>
-		window.addEventListener(type, declareInnerHeight));
+	window.addEventListener("load", declareInnerHeight);
+	window.addEventListener("resize", async () => {
+		let height = NaN, prevHeight = NaN;
+		do {
+			prevHeight = height;
+			height = declareInnerHeight();
+			await new Promise(resolve => setTimeout(resolve, 100));
+		} while (height != prevHeight);
+	});
 })();

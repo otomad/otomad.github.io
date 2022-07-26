@@ -759,6 +759,9 @@ class Chobi {
 		}
 		return this;
 	}
+	midBrightAndMaxSaturate(amount, channel = defaultChannel) {
+		return this.midBright(undefined, channel).maxSaturate(undefined, channel);
+	}
 	saturation(amount = 100, channel = defaultChannel) {
 		var imageData = this.imageData;
 		amount = this.map(amount, -255, 255, 0, 2);

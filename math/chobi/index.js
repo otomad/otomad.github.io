@@ -231,6 +231,7 @@ function loadImage(elem) {
 		this.loadImageToCanvas();
 		this.canvas = $("#canvas")[0];
 		this.loadImageToCanvas();
+		gridChange();
 
 		if (enableThumb) {	//缩略图部分
 			let orig = $("#fx-orig canvas")[0];
@@ -398,13 +399,16 @@ function reset(clear = true, AC = false) {
 	}
 	imgObj.changeImageData($("#original")[0]).loadImageToCanvas();
 }
-$("#slider").on("mousedown touchstart", function () {
+/* $("#slider").on("mousedown touchstart", function () {
 	realTimeSlide = setInterval(function () {
 		$("#slider-num").val($("#slider").val());
-	}, 0.01);
-});
-$("#slider").on("mouseup touchend", function () {
-	clearInterval(realTimeSlide);
+	}, 10);
+}); */
+setInterval(function () {
+	$("#slider-num").val($("#slider").val());
+}, 10);
+$("#slider").on("mouseup touchend change", function () {
+	// clearInterval(realTimeSlide);
 	if (filterId != "reset" && filterId != "custom") {
 		filterArray[filterArray.length - 1].amount = this.value - 0;
 		filterArray[filterArray.length - 1].channel = getChannelValue();
@@ -475,8 +479,17 @@ $("[for]").dblclick(function () { //$(".input-group-prepend label")
 $.fn.rmcss = function () {
 	return this.removeAttr("style");
 }
-window.onload = window.onresize = gridChange;
-function gridChange() { //grid系统
+window.addEventListener("load", () => gridChange());
+window.addEventListener("resize", async () => {
+	let scale = NaN, prevScale = NaN;
+	do {
+		gridChange();
+		await new Promise(resolve => setTimeout(resolve, 100));
+		prevScale = scale;
+		scale = parseFloat(($("#canvas")[0].style.transform.match(/(?<=scale\().*(?=\))/) ?? [NaN])[0]);
+	} while (scale != prevScale);
+});
+function gridChange() { // grid系统
 	if ($("#canvas-part")[0].clientWidth < $("#canvas")[0].clientWidth)
 		$("#canvas,#original").css("transform", `scale(${$("#canvas-part")[0].clientWidth / $("#canvas")[0].clientWidth})`)
 	else
