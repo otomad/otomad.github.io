@@ -21,7 +21,7 @@ iframe {
 	padding: 0;
 	border: 0;
 	width: 100%;
-	height: calc(100vh - 60px);
+	height: calc(var(--inner-height) - 60px);
 }
 
 .nav-link {
@@ -41,14 +41,14 @@ iframe {
 	display: block;
 	padding-bottom: 12px;
 	overflow: auto;
-	height: calc(100vh - 72px);
+	height: calc(var(--inner-height) - 72px);
 	transition: all 250ms ease-in-out, height 0ms !important;
 }
 
 @media (pointer: coarse) {
 	.nav-pills,
 	#v-pills-tab {
-		height: calc(100vh - 120px);
+		height: calc(var(--inner-height) - 120px);
 	}
 }
 
@@ -134,7 +134,7 @@ button,
 	}
 
 	iframe {
-		height: 100vh;
+		height: var(--inner-height);
 	}
 }
 
@@ -151,4 +151,8 @@ button,
 
 :root.dark-font-color * {
 	color: white !important;
+}
+
+:root {
+	--inner-height: 100vh;
 }

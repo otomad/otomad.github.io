@@ -94,14 +94,16 @@
 	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 	<script src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js"></script>
 	<script src="/basis/emmet.min.js"></script>
+	<script src="/basis/innerheight.js"></script>
 	<style>
 		@import url(/basis/css/ease.css);
 
 		:root {
+			--inner-height: 100vh;
 			--container-margin: 2rem;
 			--radius: 12px;
 			--container-width: calc(100vw - 2 * var(--container-margin));
-			--container-height: calc(100vh - 2 * var(--container-margin));
+			--container-height: calc(var(--inner-height) - 2 * var(--container-margin));
 			--waterfall-margin: calc(var(--container-margin) / 2);
 		}
 
@@ -136,7 +138,7 @@
 			background: var(--page-background);
 			overflow: hidden;
 			width: 100vw;
-			height: 100vh;
+			height: var(--inner-height);
 			position: relative;
 		}
 
@@ -651,7 +653,7 @@
 		
 		.alert > .backdrop {
 			width: 100vw;
-			height: 100vh;
+			height: var(--inner-height);
 			position: fixed;
 			left: 0;
 			top: 0;
@@ -695,7 +697,7 @@
 
 		body>section.point-color {
 			width: 100vw;
-			height: 100vh;
+			height: var(--inner-height);
 			position: absolute;
 			overflow: hidden;
 		}
@@ -716,7 +718,7 @@
 			bottom: -27vh;
 			right: -50vw;
 			width: 100vw;
-			height: 100vh;
+			height: var(--inner-height);
 			background: radial-gradient(var(--section-color-1), transparent 70%);
 		}
 
@@ -848,7 +850,7 @@
 
 		section.animate-block {
 			position: absolute;
-			height: 100vh;
+			height: var(--inner-height);
 			width: 100vw;
 		}
 

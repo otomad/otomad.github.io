@@ -55,6 +55,10 @@
 	box-shadow: 0 0 0 0.2rem rgba(173, 181, 189, 0.5);
 }
 
+:root {
+	--inner-height: 100vh;
+}
+
 .reset-on-right-float {
 	margin: 19px 0;
 }
@@ -209,7 +213,7 @@ label {
 }
 
 #canvas-part {
-	height: calc(100vh - 80px - 148px);
+	height: calc(var(--inner-height) - 80px - 148px);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -333,7 +337,7 @@ label {
 
 @media (min-width: 992px) {
 	#canvas-part {
-		height: calc(100vh - 80px);
+		height: calc(var(--inner-height) - 80px);
 	}
 
 	#title {
@@ -342,7 +346,7 @@ label {
 	}
 
 	#filters {
-		height: calc(100vh - 80px);
+		height: calc(var(--inner-height) - 80px);
 	}
 
 	.btn-group-04 {
@@ -374,7 +378,7 @@ label {
 html, body {
 	overflow: hidden;
 	width: 100vw;
-	height: 100vh;
+	height: var(--inner-height);
 	position: relative;
 }
 
