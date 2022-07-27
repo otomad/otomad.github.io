@@ -399,16 +399,14 @@ function reset(clear = true, AC = false) {
 	}
 	imgObj.changeImageData($("#original")[0]).loadImageToCanvas();
 }
-/* $("#slider").on("mousedown touchstart", function () {
+$("#slider").on("mousedown touchstart", function () {
 	realTimeSlide = setInterval(function () {
 		$("#slider-num").val($("#slider").val());
 	}, 10);
-}); */
-setInterval(function () {
-	$("#slider-num").val($("#slider").val());
-}, 10);
+});
 $("#slider").on("mouseup touchend change", function () {
-	// clearInterval(realTimeSlide);
+	clearInterval(realTimeSlide);
+	$("#slider-num").val($("#slider").val());
 	if (filterId != "reset" && filterId != "custom") {
 		filterArray[filterArray.length - 1].amount = this.value - 0;
 		filterArray[filterArray.length - 1].channel = getChannelValue();

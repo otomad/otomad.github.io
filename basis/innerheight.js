@@ -4,7 +4,7 @@
 		document.documentElement.style.setProperty("--inner-height",
 			`min(${innerHeight}px, 100vh)`);
 		return innerHeight;
-	}
+	};
 	declareInnerHeight();
 	window.addEventListener("load", declareInnerHeight);
 	window.addEventListener("resize", async () => {
