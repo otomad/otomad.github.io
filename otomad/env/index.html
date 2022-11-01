@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>音MAD制作環境</title>
+	<link rel="stylesheet" href="index.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+	<script src="https://cdn.staticfile.org/jquery/3.6.1/jquery.min.js"></script>
+</head>
+
+<body>
+	<div class="stage">
+		<img id="banner" alt="result">
+		<main>
+			<div id="body">
+				<header>
+					<h1><span lang="ja">#音MAD制作環境</span><span lang="zh-CN">#音MAD制作环境#</span></h1>
+					<div class="input" id="name-section">
+						<label for="name"><span lang="ja">名前</span><span lang="zh-CN">姓名</span></label>
+						<input type="text" id="name">
+					</div>
+				</header>
+				<div class="fields">
+					<fieldset>
+						<legend><span lang="ja">音MADを作る機器</span><span lang="zh-CN">音MAD制作设备</span></legend>
+						<div class="devices">
+							<div>
+								<i class="fa-solid fa-computer"></i>
+								<div><span lang="ja">デスクトップPC</span><span lang="zh-CN">台式电脑</span></div>
+								<div class="systems">
+									<div>Windows</div>
+									<div>Mac</div>
+									<div>Linux</div>
+								</div>
+							</div>
+							<div title="AIPC">
+								<i class="fa-solid fa-laptop"></i>
+								<div><span lang="ja">ノートPC</span><span lang="zh-CN">笔记本电脑</span></div>
+								<div class="systems">
+									<div>Windows</div>
+									<div>Mac</div>
+									<div>Linux</div>
+								</div>
+							</div>
+							<div>
+								<i class="fa-solid fa-tablet-screen-button"></i>
+								<div><span lang="ja">タブレットPC</span><span lang="zh-CN">平板电脑</span></div>
+								<div class="systems">
+									<div>iPad</div>
+									<div>Android</div>
+									<div>Windows</div>
+								</div>
+							</div>
+							<div>
+								<i class="fa-solid fa-mobile-screen-button"></i>
+								<div><span lang="ja">携帯電話</span><span lang="zh-CN">手机</span></div>
+								<div class="systems">
+									<div>iPhone</div>
+									<div>Android</div>
+									<div>Others</div>
+								</div>
+							</div>
+							<div>
+								<i class="fa-solid fa-server"></i>
+								<div class="count-checkbox"><span lang="ja">サーバー</span><span lang="zh-CN">服务器</span></div>
+							</div>
+							<div>
+								<i class="fa-solid fa-desktop"></i>
+								<div class="count-checkbox"><span lang="ja">マルチモニター</span><span lang="zh-CN">多屏电脑</span></div>
+							</div>
+						</div>
+						<div class="input other other-device"><label for="other-device"><span lang="ja">その他</span><span lang="zh-CN">其他</span></label><div id="other-device" contenteditable="true"></div></div>
+					</fieldset>
+					<fieldset>
+						<legend><span lang="ja">音MAD音声制作ソフト</span><span lang="zh-CN">音MAD音频制作软件</span></legend>
+						<div class="grids">
+							<div><input type="checkbox"><label>REAPER</label></div>
+							<div><input type="checkbox"><label>ACID</label></div>
+							<div><input type="checkbox"><label>UTAU</label></div>
+							<div><input type="checkbox"><label>Audacity</label></div>
+							<div><input type="checkbox"><label><span lang="ja">ピストンコラージュ</span><span lang="zh-CN">PxTone</span></label></div>
+							<div><input type="checkbox"><label>Vegas </label></div>
+							<div><input type="checkbox"><label>RadioLine</label></div>
+							<div><input type="checkbox"><label>WaveTone</label></div>
+							<div><input type="checkbox"><label>SoundEngine</label></div>
+							<div><input type="checkbox"><label>Melodyne</label></div>
+							<div><input type="checkbox"><label>VocalShifter</label></div>
+							<div><input type="checkbox"><label>FL Studio</label></div>
+							<div><input type="checkbox"><label>Audition</label></div>
+							<div><input type="checkbox"><label>Cool Edit</label></div>
+							<div><input type="checkbox"><label>GoldWave</label></div>
+							<div><input type="checkbox"><label>VOCALOID</label></div>
+							<div><input type="checkbox"><label>Cakewalk</label></div>
+							<div><input type="checkbox"><label>Caustic</label></div>
+							<div><input type="checkbox"><label>Cubase</label></div>
+							<div><input type="checkbox"><label>iZotope</label></div>
+							<div><input type="checkbox"><label>OpenUTAU</label></div>
+							<div><input type="checkbox"><label>OpenMPT</label></div>
+							<div class="input other"><label for="other-audio"><span lang="ja">その他</span><span lang="zh-CN">其他</span></label><div id="other-audio" contenteditable="true"></div></div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend><span lang="ja">音MAD歴</span><span lang="zh-CN">音MAD龄</span></legend>
+						<div><input type="radio" name="age"><label><span lang="ja">1年未満</span><span lang="zh-CN">1 年以内</span></label></div>
+						<div><input type="radio" name="age"><label><span lang="ja">1～3年</span><span lang="zh-CN">1 ~ 3年</span></label></div>
+						<div><input type="radio" name="age"><label><span lang="ja">4～6年</span><span lang="zh-CN">4 ~ 6年</span></label></div>
+						<div><input type="radio" name="age"><label><span lang="ja">7年以上</span><span lang="zh-CN">7 年以上</span></label></div>
+					</fieldset>
+					<div id="rnm-tuiquan"></div>
+					<fieldset>
+						<legend><span lang="ja">音MAD映像制作ソフト</span><span lang="zh-CN">音MAD视频制作软件</span></legend>
+						<div class="grids">
+							<div><input type="checkbox"><label><span lang="ja">Windows ムービーメーカー</span><span lang="zh-CN">Windows Movie Maker</span></label></div>
+							<div><input type="checkbox"><label>AviUtl</label></div>
+							<div><input type="checkbox"><label>iMovie</label></div>
+							<div><input type="checkbox"><label>NicoVisualEffects (NiVE)</label></div>
+							<div><input type="checkbox"><label>Vegas</label></div>
+							<div><input type="checkbox"><label>Premiere Elements</label></div>
+							<div><input type="checkbox"><label>Final Cut Pro</label></div>
+							<div><input type="checkbox"><label>After Effects</label></div>
+							<div><input type="checkbox"><label>Video Studio</label></div>
+							<div><input type="checkbox"><label>Premiere Pro</label></div>
+							<div><input type="checkbox"><label>Movie Pro（神）</label></div>
+							<div><input type="checkbox"><label><span lang="ja">ニコニコムービーメーカー（糞）</span><span lang="zh-CN">Niconico Movie Maker（粪）</span></label></div>
+							<div><input type="checkbox"><label>PowerPoint（神）</label></div>
+							<div><input type="checkbox"><label>DaVinci Resolve</label></div>
+							<div><input type="checkbox"><label>Clipchamp</label></div>
+							<div><input type="checkbox"><label>Alight Motion</label></div>
+							<div><input type="checkbox"><label>Blender</label></div>
+							<div><input type="checkbox"><label>Cinema 4D</label></div>
+							<div><input type="checkbox"><label>3ds Max</label></div>
+							<div><input type="checkbox"><label>Maya</label></div>
+							<div><input type="checkbox"><label>MikuMikuDance</label></div>
+							<div><input type="checkbox"><label><span lang="ja">キネマスタ</span><span lang="zh-CN">巧影</span></label></div>
+							<div><input type="checkbox"><label><span lang="ja">PowerDirector</span><span lang="zh-CN">威力导演</span></label></div>
+							<div><input type="checkbox"><label><span lang="ja">CapCut</span><span lang="zh-CN">剪映</span></label></div>
+							<div><input type="checkbox"><label><span lang="ja">BCut</span><span lang="zh-CN">必剪</span></label></div>
+							<div class="input other"><label for="other-video"><span lang="ja">その他</span><span lang="zh-CN">其他</span></label><div id="other-video" contenteditable="true"></div></div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend><span lang="ja">PCスペック</span><span lang="zh-CN">电脑配置</span></legend>
+						<div class="specifications">
+							<div><label for="cpu">CPU</label><div id="cpu" contenteditable="true"></div></div>
+							<div><label for="memory"><span lang="ja">メモリ</span><span lang="zh-CN">内存</span></label><div id="memory" contenteditable="true"></div><label for="memory">GB</label></div>
+							<div><label for="gpu"><span lang="ja">グラボ</span><span lang="zh-CN">GPU</span></label><div id="gpu" contenteditable="true"></div></div>
+							<div><label for="os"><span lang="ja">OS</span><span lang="zh-CN">操作系统</span></label><div id="os" contenteditable="true"></div></div>
+							<div><label for="ssd"><span lang="ja">SSD</span><span lang="zh-CN">固态硬盘</span></label><div id="ssd" contenteditable="true"></div><label for="ssd">GB</label></div>
+							<div><label for="hdd"><span lang="ja">HDD</span><span lang="zh-CN">机械硬盘</span></label><div id="hdd" contenteditable="true"></div><label for="hdd">GB</label></div>
+							<div><label for="external-ssd"><span lang="ja">外付けSSD</span><span lang="zh-CN">外置固态硬盘</span></label><div id="external-ssd" contenteditable="true"></div><label for="external-ssd">GB</label></div>
+							<div><label for="external-hdd"><span lang="ja">外付けHDD</span><span lang="zh-CN">外置机械硬盘</span></label><div id="external-hdd" contenteditable="true"></div><label for="external-hdd">GB</label></div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend><span lang="ja">音MADを作りながら何がする？</span><span lang="zh-CN">做音MAD的同时也会做些什么呢？</span></legend>
+						<div class="grids">
+							<div><input type="checkbox"><label><span lang="ja">何もしない</span><span lang="zh-CN">什么都不做</span></label></div>
+							<div><input type="checkbox"><label><span lang="ja">ゲーム</span><span lang="zh-CN">打游戏</span></label></div>
+							<div><input type="checkbox"><label><span lang="ja">音楽鑑賞</span><span lang="zh-CN">音乐鉴赏</span></label></div>
+							<div><input type="checkbox"><label><span lang="ja">アニメ</span><span lang="zh-CN">看动画</span></label></div>
+							<div><input type="checkbox"><label><span lang="ja">テレビ番組</span><span lang="zh-CN">看电视节目</span></label></div>
+							<div><input type="checkbox"><label><span lang="ja">ニコニコ</span><span lang="zh-CN">niconico</span></label></div>
+							<div><input type="checkbox"><label>Twitter</label></div>
+							<div><input type="checkbox"><label>YouTube</label></div>
+							<div><input type="checkbox"><label>Skype</label></div>
+							<div><input type="checkbox"><label>Facebook</label></div>
+							<div><input type="checkbox"><label><span lang="ja">ビリビリ</span><span lang="zh-CN">bilibili</span></label></div>
+							<div><input type="checkbox"><label>QQ</label></div>
+							<div><input type="checkbox"><label>Discord</label></div>
+							<div><input type="checkbox"><label>Telegram</label></div>
+							<div class="input other"><label for="other-fun"><span lang="ja">その他</span><span lang="zh-CN">其他</span></label><div id="other-fun" contenteditable="true"></div></div>
+						</div>
+					</fieldset>
+				</div>
+			</div>
+		</main>
+	</div>
+	<div class="controler">
+		<div class="languages">
+			<input type="radio" name="language" data-lang="ja" id="japanese" checked><label for="japanese">日本語</label>
+			<input type="radio" name="language" data-lang="zh-CN" id="chinese"><label for="chinese">简体中文</label>
+		</div>
+		<div class="buttons">
+			<button id="save-image">
+				<span lang="ja">画像を生成</span><span lang="zh-CN">生成图片</span>
+				<span class="is-saving"><span lang="ja">変更を戻す</span><span lang="zh-CN">返回修改</span></span>
+			</button>
+			<button id="otomading">音MADing!</button>
+		</div>
+		<audio id="bgm" src="shibamata.mp3"></audio>
+	</div>
+	<details>
+		<summary><span lang="ja">説明</span><span lang="zh-CN">说明</span></summary>
+		<ul>
+			<li><span lang="ja">「音MADを作る機器」で、左クリックしてデバイスを追加し、右クリックしてデバイスを削減します。</span><span lang="zh-CN">在“音MAD制作设备”中，单击鼠标左键增加设备，单击鼠标右键减少设备。</span></li>
+			<li><span lang="ja">「音MAD制作ソフト」で、中クリックしてアイテムを削除します。「その他」でEnterキーを押してアイテムを追加します。</span><span lang="zh-CN">在“音MAD制作软件”中，单击鼠标中键删除项目。在“其他”中按回车键添加项目。</span></li>
+		</ul>
+	</details>
+
+	<script src="html2canvas.min.js"></script>
+	<script src="index.js"></script>
+</body>
+
+</html>

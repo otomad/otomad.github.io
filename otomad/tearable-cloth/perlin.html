@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		body {
+			background-color: #214a75;
+		}
+
+		canvas {
+			display: block;
+		}
+	</style>
+	<script src="https://wow.techbrood.com/libs/jquery/jquery-1.11.1.min.js"></script>
+	<script src="perlin.js"></script>
+	<!--<script src="https://raw.githubusercontent.com/josephg/noisejs/master/perlin.js"></script>-->
+</head>
+
+<body>
+	<!-- https://wow.techbrood.com/fiddle/31234 -->
+	<script>
+		class Vector2 {
+			constructor(x = 0, y = 0) {
+				this.set(x, y);
+			}
+
+			add(v) {
+				this.x += v.x;
+				this.y += v.y;
+				return this;
+			}
+
+			multiply(v) {
+				this.x *= v.x;
+				this.y *= v.y;
+				return this;
+			}
+
+			multiplyScalar(s) {
+				this.x *= s;
+				this.y *= s;
+				return this;
+			}
+
+			set(x, y) {
+				this.x = x;
+				this.y = y;
+				return this;
+			}
+
+			clone() {
+				return Vector2.from(this);
+			}
+
+			static random() {
+				return new Vector2(
+					Math.random() * 2 - 1,
+					Math.random() * 2 - 1
+				);
+			}
+
+			static from(v) {
+				return new Vector2(v.x, v.y);
+			}
+		}
+
+		class Line {
+			constructor(start, end) {
+				this.start = start;
+				this.end = end;
+
+				this.startOffset = new Vector2();
+				this.endOffset = new Vector2();
+			}
+
+			update() {
+				const t = Date.now() / 1000 / 2;
+
+				const offsetStart = noise.perlin2(
+					this.start.x + t,
+					this.start.y + t
+				);
+				const offsetEnd = noise.perlin2(
+					this.end.x + t,
+					this.end.y + t
+				);
+
+				this.startOffset.set(
+					Math.cos(offsetStart * Math.PI * 2) *
+					Line.ANIMATION_AMPLITUDE,
+					Math.sin(offsetStart * Math.PI * 2) *
+					Line.ANIMATION_AMPLITUDE
+				);
+				this.endOffset.set(
+					Math.cos(offsetEnd * Math.PI * 2) *
+					-Line.ANIMATION_AMPLITUDE,
+					Math.sin(offsetEnd * Math.PI * 2) *
+					-Line.ANIMATION_AMPLITUDE
+				);
+			}
+
+			render(context, scale) {
+				const startPosition = this.start.clone()
+					.add(this.startOffset)
+					.multiply(scale);
+				const endPosition = this.end.clone()
+					.add(this.endOffset)
+					.multiply(scale);
+
+				context.moveTo(startPosition.x, startPosition.y);
+				context.lineTo(endPosition.x, endPosition.y);
+			}
+		}
+
+		Line.ANIMATION_AMPLITUDE = 1 / 32;
+
+		class App {
+			constructor() {
+				this.canvas = document.createElement('canvas');
+				this.context = this.canvas.getContext('2d');
+				this.lines = App.createLines(512);
+			}
+
+			setSize(width, height) {
+				this.canvas.height = height;
+				this.canvas.width = width;
+			}
+
+			render() {
+				requestAnimationFrame(this.render.bind(this));
+
+				const scale = new Vector2(
+					this.canvas.width,
+					this.canvas.height
+				);
+
+				this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+				this.context.save();
+				this.context.beginPath();
+
+				this.lines.forEach((line) => {
+					line.update();
+					line.render(this.context, scale);
+				});
+
+				this.context.lineWidth = 2;
+				this.context.strokeStyle = 'hsl(185, 60%, 55%)';
+				this.context.shadowColor = 'rgba(0, 0, 0, .5)';
+				this.context.shadowBlur = 20;
+
+				this.context.stroke();
+				this.context.restore();
+			}
+
+			static createLines(n = 1) {
+				const step = 1 / n;
+				const lines = [];
+
+				const padding = .1;
+
+				while (n--) {
+					const y = (step * n * (1 - padding * 2)) + padding;
+					lines.push(new Line(
+						new Vector2(padding, y),
+						new Vector2(1 - padding, y)
+					));
+				}
+
+				return lines;
+			}
+		}
+
+		const app = new App;
+		app.setSize(window.innerWidth, window.innerHeight);
+		app.render();
+
+		document.body.appendChild(app.canvas);
+
+		window.addEventListener('resize', () => app.setSize(window.innerWidth, window.innerHeight));
+	</script>
+</body>
+
+</html>

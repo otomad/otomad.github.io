@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tearable Cloth</title>
+	<meta name="reference" content="http://codepen.io/stuffit/pen/KrAwx">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.1/dat.gui.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.4.2/pixi.min.js"></script>
+	<style>
+		canvas {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: -1;
+		}
+
+		canvas+canvas {
+			opacity: 0.3;
+			z-index: -2;
+		}
+
+		.desc {
+			position: absolute;
+			z-index: 10;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: 1em;
+			font-size: 10px;
+			color: #aaa;
+			text-align: center;
+		}
+
+		.loading:before {
+			position: absolute;
+			top: 0;
+			left: 0;
+			padding: 1em;
+			content: 'Loading...';
+			color: #aaa;
+			font-family: monospace;
+		}
+		
+		body {
+			background-color: black;
+			width: 100vw;
+			height: 100vh;
+		}
+	</style>
+</head>
+
+<body>
+	<script>
+		console.clear();
+
+		let mesh;
+		let cloth;
+		let spacingX = 10;
+		let spacingY = 10;
+		let accuracy = 1;
+
+		let opts = {
+			image: '',
+			gravity: 200,
+			tearDist: 60,
+			friction: 0.99,
+			bounce: 0.3,
+			pointsX: 40,
+			pointsY: 30,
+			renderCloth: true,
+			mouseInfluence: 35,
+			pinCorners: true,
+			randomImage() {
+				this.image = 'https://unsplash.it/400/400?image=' + Math.floor(Math.random() * 1100);
+				loadTexture();
+			},
+			uploadImage() {
+				openFile().then(image => {
+					this.image = image;
+					loadTexture();
+				});
+			},
+			refresh() {
+				loadTexture();
+			},
+		};
+		
+		async function openFile() {
+			return await new Promise(resolve => {
+				const input = document.createElement('input');
+				input.type = 'file';
+				input.accept = 'image/*';
+				input.onchange = async _this => {
+					const file = input.files[0];
+					let blob = URL.createObjectURL(file);
+					console.log(file);
+					blob = await changeImgResolution(blob);
+					resolve(blob);
+				};
+				input.click();
+			})
+		}
+		
+		async function changeImgResolution(blob, maxWidth = 400, maxHeight = 400) {
+			const img = new Image();
+			img.src = blob;
+			await new Promise(resolve => img.onload = () => resolve());
+			if (img.width <= maxWidth && img.height <= maxHeight) return blob;
+			
+			let newWidth = maxWidth, newHeight = img.height / img.width * newWidth;
+			if (newHeight > img.height) {
+				newHeight = img.height; newWidth = img.width / img.height * newHeight;
+			}
+			const canvas = document.createElement("canvas");
+			const ctx = canvas.getContext("2d");
+			canvas.width = newWidth; canvas.height = newHeight;
+			ctx.drawImage(img, 0, 0, newWidth, newHeight);
+			const newBlob = await new Promise(resolve => canvas.toBlob(blob => resolve(URL.createObjectURL(blob))));
+			return newBlob;
+		}
+
+		let gui = new dat.GUI();
+		gui.closed = window.innerWidth < 600;
+		let renderCloth = gui.add(opts, 'renderCloth');
+
+		let image = gui.add(opts, 'image', {
+			Face: 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/39255/face.png',
+			Water: 'https://unsplash.it/400/400?image=1053',
+			YellowCurtain: 'https://unsplash.it/400/400?image=855',
+			Tunnel: 'https://unsplash.it/400/400?image=137'
+		});
+		image.onChange(loadTexture);
+
+		let random = gui.add(opts, 'randomImage');
+		let upload = gui.add(opts, 'uploadImage');
+		let influence = gui.add(opts, 'mouseInfluence', 0, 200).step(1);
+		let gravity = gui.add(opts, 'gravity', 0, 1000).step(20);
+		let tearDist = gui.add(opts, 'tearDist', 0, 120).step(1);
+		let friction = gui.add(opts, 'friction', 0.5, 1.2).step(0.005);
+		let bounce = gui.add(opts, 'bounce', 0, 2).step(0.1);
+
+		let pin = gui.add(opts, 'pinCorners');
+		pin.onChange(loadTexture);
+		gui.add(opts, 'refresh');
+
+		let canvas = document.createElement('canvas');
+		let ctx = canvas.getContext('2d');
+		document.body.appendChild(canvas);
+
+		let mouse = {
+			cut: 8,
+			influence: 36,
+			down: false,
+			button: 1,
+			x: 0,
+			y: 0,
+			px: 0,
+			py: 0
+		}
+
+		/*////////////////////////////////////////*/
+
+		let stage = new PIXI.Container();
+		let renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: true });
+
+		document.body.insertBefore(renderer.view, canvas);
+		renderer.render(stage);
+
+		canvas.width = renderer.width;
+		canvas.height = renderer.height;
+
+		/*////////////////////////////////////////*/
+
+		function loadTexture() {
+
+			console.log('loading texture', opts.image);
+
+			document.body.className = 'loading';
+			
+			const hasImage = opts.image;
+			if (!hasImage) {
+				if (document.readyState === "complete") _update();
+				else window.addEventListener("load", _update);
+				return;
+			}
+
+			let texture = new PIXI.Texture.fromImage(opts.image);
+			if (!texture.requiresUpdate) { texture.update(); }
+
+			texture.on('error', function () { console.error('AGH!'); });
+
+			texture.on('update', _update);
+			
+			function _update() {
+				document.body.className = '';
+
+				console.log('texture loaded');
+
+				if (mesh) { stage.removeChild(mesh); }
+
+				if (hasImage) {
+					mesh = new PIXI.mesh.Plane(this, opts.pointsX, opts.pointsY);
+					mesh.width = this.width;
+					mesh.height = this.height;
+
+					spacingX = mesh.width / (opts.pointsX - 1);
+					spacingY = mesh.height / (opts.pointsY - 1);
+				}
+
+				ctx.strokeStyle = '#fffb';
+				cloth = new Cloth(opts.pointsX - 1, opts.pointsY - 1, !opts.pinCorners);
+
+				if (hasImage)
+					stage.addChild(mesh);
+			}
+		}
+
+		loadTexture(opts.image);
+
+		; (function update() {
+			requestAnimationFrame(update);
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			if (cloth) { cloth.update(0.016) }
+			renderer.render(stage);
+		})(0)
+		
+		/*////////////////////////////////////////*/
+
+		class Point {
+			constructor(x, y) {
+				this.x = x
+				this.y = y
+				this.px = x
+				this.py = y
+				this.vx = 0
+				this.vy = 0
+				this.pinX = null
+				this.pinY = null
+
+				this.constraints = []
+			}
+
+			update(delta) {
+				if (this.pinX && this.pinY) return this
+
+				if (mouse.down) {
+					let dx = this.x - mouse.x
+					let dy = this.y - mouse.y
+					let dist = Math.sqrt(dx * dx + dy * dy)
+
+					if (false || mouse.button === 1 && dist < opts.mouseInfluence) {
+						this.px = this.x - (mouse.x - mouse.px)
+						this.py = this.y - (mouse.y - mouse.py)
+					} else if (dist < mouse.cut) {
+						this.constraints = []
+					}
+				}
+
+				this.addForce(0, opts.gravity)
+
+				let nx = this.x + (this.x - this.px) * opts.friction + this.vx * delta
+				let ny = this.y + (this.y - this.py) * opts.friction + this.vy * delta
+
+				this.px = this.x
+				this.py = this.y
+
+				this.x = nx
+				this.y = ny
+
+				this.vy = this.vx = 0
+
+				if (this.x >= canvas.width) {
+					this.px = canvas.width + (canvas.width - this.px) * opts.bounce
+					this.x = canvas.width
+				} else if (this.x <= 0) {
+					this.px *= -1 * opts.bounce
+					this.x = 0
+				}
+
+				if (this.y >= canvas.height) {
+					this.py = canvas.height + (canvas.height - this.py) * opts.bounce
+					this.y = canvas.height
+				} else if (this.y <= 0) {
+					this.py *= -1 * opts.bounce
+					this.y = 0
+				}
+
+				return this
+			}
+
+			draw() {
+				let i = this.constraints.length
+				while (i--) this.constraints[i].draw()
+			}
+
+			resolve() {
+				if (this.pinX && this.pinY) {
+					this.x = this.pinX
+					this.y = this.pinY
+					return
+				}
+
+				this.constraints.forEach((constraint) => constraint.resolve())
+			}
+
+			attach(point) {
+				this.constraints.push(new Constraint(this, point))
+			}
+
+			free(constraint) {
+				this.constraints.splice(this.constraints.indexOf(constraint), 1)
+			}
+
+			addForce(x, y) {
+				this.vx += x
+				this.vy += y
+			}
+
+			pin(pinx, piny) {
+				this.pinX = pinx
+				this.pinY = piny
+			}
+
+			unpin() {
+				this.pinX = null;
+				this.pinY = null;
+			}
+		}
+
+		/*////////////////////////////////////////*/
+
+		class Constraint {
+			constructor(p1, p2, length) {
+				this.p1 = p1
+				this.p2 = p2
+				this.length = length || spacingX
+			}
+
+			resolve() {
+				let dx = this.p1.x - this.p2.x
+				let dy = this.p1.y - this.p2.y
+				let dist = Math.sqrt(dx * dx + dy * dy)
+
+				if (dist < this.length) return
+
+				let diff = (this.length - dist) / dist
+
+				if (opts.tearDist < 120)
+					if (dist > opts.tearDist) this.p1.free(this)
+
+				let mul = diff * 0.5 * (1 - this.length / dist)
+
+				let px = dx * mul
+				let py = dy * mul
+
+				!this.p1.pinX && (this.p1.x += px)
+				!this.p1.pinY && (this.p1.y += py)
+				!this.p2.pinX && (this.p2.x -= px)
+				!this.p2.pinY && (this.p2.y -= py)
+
+				return this
+			}
+
+			draw() {
+				ctx.moveTo(this.p1.x, this.p1.y)
+				ctx.lineTo(this.p2.x, this.p2.y)
+			}
+		}
+
+		/*////////////////////////////////////////*/
+
+		let count = 0;
+
+		class Cloth {
+			constructor(clothX, clothY, free) {
+				this.points = []
+
+				let startX = canvas.width / 2 - clothX * spacingX / 2;
+				let startY = canvas.height * 0.2;
+
+				for (let y = 0; y <= clothY; y++) {
+					for (let x = 0; x <= clothX; x++) {
+						let point = new Point(
+							startX + x * spacingX - (spacingX * Math.sin(y)),
+							y * spacingY + startY + (y !== 0 ? 5 * Math.cos(x) : 0)
+						)
+						!free && y === 0 && point.pin(point.x, point.y)
+						x !== 0 && point.attach(this.points[this.points.length - 1])
+						y !== 0 && point.attach(this.points[x + (y - 1) * (clothX + 1)])
+
+						this.points.push(point)
+					}
+				}
+
+			}
+
+			update(delta) {
+				let i = accuracy
+
+				while (i--) {
+					this.points.forEach((point) => {
+						point.resolve()
+					})
+				}
+
+				ctx.beginPath();
+
+				this.points.forEach((point, i) => {
+					point.update(delta * delta)
+
+					if (opts.renderCloth) { point.draw(); }
+
+					if (mesh) {
+						i *= 2;
+						mesh.vertices[i] = point.x;
+						mesh.vertices[i + 1] = point.y;
+					}
+				});
+
+				ctx.stroke()
+			}
+		}
+
+		function pointerMove(e) {
+			const pointer = e.touches ? e.touches[0] : e;
+			const rect = document.querySelector("canvas").getClientRects()[0];
+			mouse.px = (mouse.x || pointer.clientX)
+			mouse.py = (mouse.y || pointer.clientY)
+			mouse.x = pointer.clientX - rect.x
+			mouse.y = pointer.clientY - rect.y
+		}
+
+		function pointerDown(e) {
+			mouse.button = e.which
+			mouse.down = true
+			pointerMove(e);
+		}
+
+		function pointerUp(e) {
+			mouse.down = false;
+			mouse.px = null;
+			mouse.py = null;
+			console.log('pointer up');
+		}
+
+		document.body.addEventListener('mousedown', pointerDown);
+		document.body.addEventListener('touchstart', pointerDown);
+
+		document.body.addEventListener('mousemove', pointerMove);
+		document.body.addEventListener('touchmove', pointerMove);
+
+		document.body.addEventListener('mouseup', pointerUp);
+		document.body.addEventListener('touchend', pointerUp);
+		document.body.addEventListener('mouseleave', pointerUp);
+		
+		document.body.addEventListener('contextmenu', e => e.preventDefault());
+		
+		cloth = new Cloth(opts.pointsX - 1, opts.pointsY - 1, !opts.pinCorners);
+	</script>
+</body>
+
+</html>
