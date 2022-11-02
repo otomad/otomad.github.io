@@ -1,11 +1,12 @@
 :root {
 	--quarter: 625ms;
+	--ease-out: cubic-bezier(0, 0, 0, 1);
 }
 
 * {
 	font-weight: 500;
 	white-space: nowrap !important;
-	transition: all cubic-bezier(0, 0, 0, 1) 250ms, color cubic-bezier(0, 0, 0, 1) 100ms, fill cubic-bezier(0, 0, 0, 1) 100ms !important;
+	transition: all var(--ease-out) 250ms, color var(--ease-out) 100ms, fill var(--ease-out) 100ms !important;
 	user-select: none;
 	outline: none !important;
 }
@@ -21,6 +22,7 @@ html:lang(zh-CN) :not(i) {
 header {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	margin-bottom: 1rem;
 }
 
@@ -53,9 +55,11 @@ legend::before {
 .input {
 	border-bottom: black 1px solid;
 	width: fit-content;
+	display: flex;
 }
 
-.input input[type="text"] {
+.input input[type="text"],
+.input [contenteditable] {
 	border: none;
 	outline: none !important;
 	font-size: 1rem;
@@ -68,6 +72,11 @@ legend::before {
 	margin-right: 0.5rem;
 }
 
+#name {
+	width: 100%;
+	min-width: 12em;
+}
+
 .grids {
 	display: grid;
 	grid-template-columns: auto auto auto;
@@ -76,6 +85,10 @@ legend::before {
 .fields {
 	display: grid;
 	grid-template-columns: max-content auto max-content min-content 1.5rem;
+}
+
+.fields > fieldset {
+	overflow: hidden;
 }
 
 .fields > fieldset:nth-of-type(1) {
@@ -236,6 +249,10 @@ html:lang(zh-CN) span:lang(zh-CN) {
 	font-size: 4rem;
 }
 
+.devices svg {
+	height: 4rem;
+}
+
 .systems > * {
 	font-size: 80%;
 }
@@ -246,15 +263,16 @@ html:lang(zh-CN) span:lang(zh-CN) {
 	align-items: center;
 }
 
-.systems > *:not([data-count])::before,
+.systems > :not([data-count])::before,
 .count-checkbox:not([data-count])::before {
 	height: var(--size);
 	border: black 2px solid;
 }
 
-.systems > *::before,
+.systems > ::before,
 .count-checkbox::before {
 	--size: 0.5rem;
+	--translate-distance: 0.25rem;
 	width: var(--size);
 	content: attr(data-count);
 	margin-right: 0.25rem;
@@ -262,6 +280,21 @@ html:lang(zh-CN) span:lang(zh-CN) {
 	border-width: 0 2px;
 	display: flex;
 	justify-content: right;
+}
+
+.systems > [data-count].increase::before,
+.count-checkbox[data-count].increase::before {
+	animation: increase-device 250ms var(--ease-out);
+}
+
+.systems > [data-count].decrease::before,
+.count-checkbox[data-count].decrease::before {
+	animation: decrease-device 250ms var(--ease-out);
+}
+
+.systems > :not([data-count]).decrease::before,
+.count-checkbox:not([data-count]).decrease::before {
+	animation: no-device 250ms var(--ease-out);
 }
 
 .specifications {
@@ -307,91 +340,6 @@ button:disabled {
 	cursor: no-drop;
 }
 
-@keyframes horizontal-flip {
-	0%,
-	100% {
-		transform: scaleX(1);
-	}
-	50% {
-		transform: scaleX(-1);
-	}
-}
-
-@keyframes clockwise-rotate {
-	0% {
-		transform: rotate(0);
-	}
-	25% {
-		transform: rotate(90deg);
-	}
-	50% {
-		transform: rotate(180deg);
-	}
-	75% {
-		transform: rotate(270deg);
-	}
-	100% {
-		transform: rotate(360deg);
-	}
-}
-
-@keyframes zoom-out {
-	from {
-		transform: scale(1);
-	}
-	to {
-		transform: scale(0);
-	}
-}
-
-@keyframes longer {
-	from {
-		transform: scaleX(1);
-	}
-	to {
-		transform: scaleX(3);
-	}
-}
-
-@keyframes blur-out {
-	from {
-		filter: blur(0);
-	}
-	to {
-		filter: blur(10px);
-	}
-}
-
-@keyframes skewing {
-	0%,
-	100% {
-		transform: skew(-20deg, 0);
-	}
-	25% {
-		transform: skew(0, -10deg);
-	}
-	50% {
-		transform: skew(20deg, 0);
-	}
-	75% {
-		transform: skew(0, 10deg);
-	}
-}
-
-@keyframes shaking {
-	0%,
-	100% {
-		transform: translate(calc(-1 * var(--range)), calc(-1 * var(--range)));
-	}
-	50% {
-		transform: translate(var(--range), var(--range));
-	}
-}
-
-.animate.stage {
-	overflow: hidden;
-}
-
 .animate .fields > fieldset:nth-of-type(1) {
 	animation: horizontal-flip calc(2 * var(--quarter)) infinite step-start;
 }
@@ -405,7 +353,9 @@ button:disabled {
 }
 
 .animate .fields > fieldset:nth-of-type(4) {
-	animation: skewing calc(4 * var(--quarter)) infinite cubic-bezier(0, 0, 0, 1);
+	/* animation: skewing calc(4 * var(--quarter)) infinite var(--ease-out); */
+	animation: inverting calc(1 * var(--quarter)) infinite step-start;
+	background-color: white;
 }
 
 .animate .fields > fieldset:nth-of-type(5) {
@@ -424,4 +374,32 @@ button:disabled {
 .animate header h1 {
 	--range: 20px;
 	animation: shaking calc(0.125 * var(--quarter)) infinite linear;
+}
+
+.disable-scroll-x {
+	overflow-x: hidden !important;
+}
+
+[hidden] {
+	display: none !important;
+}
+
+.out-screen {
+	position: fixed;
+	left: -100vw;
+}
+
+header > .left {
+	display: flex;
+	align-items: center;
+}
+
+header img {
+	height: 5rem;
+	float: right;
+	margin: -1.5rem 0 -1rem;
+}
+
+.animate header img {
+	animation: horizontal-flip calc(0.5 * var(--quarter)) infinite step-start;
 }

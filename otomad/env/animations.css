@@ -1,0 +1,121 @@
+/* 将动画移动到单独的文件，以免在截图时将动画也截进去。 */
+
+@keyframes increase-device {
+	from {
+		transform: translateY(var(--translate-distance));
+	}
+	to {
+		transform: none;
+	}
+}
+
+@keyframes decrease-device {
+	from {
+		transform: translateY(calc(-1 * var(--translate-distance)));
+	}
+	to {
+		transform: none;
+	}
+}
+
+@keyframes no-device {
+	from {
+		box-shadow: inset black 0 0 0 calc(var(--size) / 2);
+		transform: translateY(calc(-1 * var(--translate-distance)));
+	}
+	to {
+		box-shadow: none;
+		transform: none;
+	}
+}
+
+@keyframes horizontal-flip {
+	0%,
+	100% {
+		transform: scaleX(1);
+	}
+	50% {
+		transform: scaleX(-1);
+	}
+}
+
+@keyframes clockwise-rotate {
+	0% {
+		transform: rotate(0);
+	}
+	25% {
+		transform: rotate(90deg);
+	}
+	50% {
+		transform: rotate(180deg);
+	}
+	75% {
+		transform: rotate(270deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes zoom-out {
+	from {
+		transform: scale(1);
+	}
+	to {
+		transform: scale(0);
+	}
+}
+
+@keyframes longer {
+	from {
+		transform: scaleX(1);
+	}
+	to {
+		transform: scaleX(3);
+	}
+}
+
+@keyframes blur-out {
+	from {
+		filter: blur(0);
+	}
+	to {
+		filter: blur(10px);
+	}
+}
+
+@keyframes skewing {
+	0%,
+	100% {
+		transform: skew(-20deg, 0);
+	}
+	25% {
+		transform: skew(0, -10deg);
+	}
+	50% {
+		transform: skew(20deg, 0);
+	}
+	75% {
+		transform: skew(0, 10deg);
+	}
+}
+
+@keyframes shaking {
+	0%,
+	100% {
+		transform: translate(calc(-1 * var(--range)), calc(-1 * var(--range)));
+	}
+	50% {
+		transform: translate(var(--range), var(--range));
+	}
+}
+
+@keyframes inverting {
+	0%,
+	100% {
+		filter: invert(0);
+	}
+	50% {
+		filter: invert(1);
+	}
+}

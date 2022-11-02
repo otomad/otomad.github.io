@@ -21,6 +21,8 @@ function getFirstText(node) {
 }
 
 const easing = "cubic-bezier(0, 0, 0, 1)";
+const animateOption = { duration: 250, easing };
+let marginLeft = "2rem";
 
 $("#other-audio, #other-video, #other-fun").on("keydown", function (e) {
 	if (e.key === "Enter") {
@@ -30,13 +32,15 @@ $("#other-audio, #other-video, #other-fun").on("keydown", function (e) {
 		initLabelFor();
 		this.textContent = "";
 		const checkGroup = this.parentElement.previousElementSibling;
+		marginLeft = `${getAnimationMarginLeft(this, checkGroup)}px`;
 		checkGroup.animate([
-			{ marginLeft: `${getAnimationMarginLeft(this, checkGroup)}px` },
+			{ marginLeft },
 			{ },
-		], {
-			duration: 250,
-			easing,
-		});
+		], animateOption);
+		this.parentElement.animate([
+			{ transform: `translateX(-${marginLeft})` },
+			{ },
+		], animateOption);
 	}
 });
 
@@ -57,17 +61,38 @@ $(document).on("mousedown", GRID_ITEM, function (e) {
 		$(this).addClass(PRESS_WHEEL);
 }).on("mouseup", GRID_ITEM, function (e) {
 	if (e.button === 1 && $(this).hasClass(PRESS_WHEEL)) {
-		this.animate([
-			{ opacity: 1 },
-			{ opacity: 0, transform: "scale(0.8)" },
-		], {
-			duration: 250,
-			easing,
-		}).onfinish = () => this.remove();
+		removeItem.apply(this);
 	}
 }).on("mouseup", function () {
 	$(`.${PRESS_WHEEL}`).removeClass(PRESS_WHEEL);
+}).contextmenu(function (e) {
+	if (isMobile()) {
+		e.preventDefault();
+		removeItem.apply(this);
+	}
 });
+
+function removeItem() {
+	this.animate([
+		{ opacity: 1 },
+		{ opacity: 0, transform: "scale(0.8)" },
+	], animateOption).onfinish = () => {
+		const index = $(this).index();
+		const parent = this.parentElement;
+		this.remove();
+		const afters = [...parent.children].slice(index);
+		for (const element of afters) {
+			element.animate([
+				{ transform: `translateX(${marginLeft})` },
+				{ },
+			], animateOption);
+		}
+	};
+}
+
+function isMobile() {
+	return typeof window.orientation !== "undefined";
+}
 
 window.addEventListener("mousedown", e => {
 	if (e.button === 1)
@@ -94,11 +119,24 @@ function onHashChange() {
 	$(`#${id}`).click();
 }
 
+function replayAnimation(element, ...className) {
+	element.classList.remove(...className);
+	window.requestAnimationFrame(() => {
+		window.requestAnimationFrame(() => {
+			element.classList.add(...className);
+		});
+	});
+}
+
+const removeCrease = element => element.classList.remove("increase", "decrease");
+
 $(".systems > *, .count-checkbox").click(function (e) {
 	let count = parseInt(this.dataset.count);
 	if (!isFinite(count)) count = 0;
 	count++;
 	this.dataset.count = count;
+	removeCrease(this);
+	replayAnimation(this, "increase");
 }).contextmenu(function (e) {
 	e.preventDefault();
 	let count = parseInt(this.dataset.count);
@@ -106,7 +144,9 @@ $(".systems > *, .count-checkbox").click(function (e) {
 	if (count <= 0) return;
 	count--;
 	this.dataset.count = count;
+	removeCrease(this);
 	if (count === 0) delete this.dataset.count;
+	replayAnimation(this, "decrease");
 });
 
 $("label[for]").click(function () {
@@ -118,7 +158,7 @@ $(".input input[type=text], .input [contenteditable]").filter(function () {
 	return this.nextElementSibling instanceof HTMLLabelElement;
 }).css("text-align", "right");
 
-function saveImage(yeshu) {
+function saveImage_legacy(yeshu) {
 	//创建一个新的canvas
 	const canvas = document.createElement("canvas");
 
@@ -151,6 +191,55 @@ function saveImage(yeshu) {
 	});
 };
 
+/** @param {HTMLElement} yeshu */
+function saveImage(yeshu) {
+	const hidden = document.createElement("div");
+	hidden.classList.add("out-screen")
+	document.body.append(hidden);
+	const result = document.createElement("html");
+	result.lang = document.documentElement.lang;
+	result.style.backgroundColor = "white";
+	hidden.append(result);
+	result.append(yeshu.cloneNode(true));
+	document.querySelectorAll(".style").forEach(style => result.prepend(style.cloneNode(true)));
+	result.querySelectorAll("input").forEach(input => {
+		if (input.checked)
+			input.setAttribute("checked", "checked");
+	});
+	const scaleFactor = backingScale();
+	const canvas = document.createElement("canvas");
+	canvas.width = $(".stage")[0].scrollWidth * scaleFactor;
+	canvas.height = $(".stage")[0].scrollHeight * scaleFactor;
+	hidden.append(canvas);
+	rasterizeHTML.drawDocument(result, canvas, { zoom: scaleFactor }).then(() => {
+		const dataURL = canvas.toDataURL("image/png", 1);
+		$("#banner").attr({ src: dataURL }).addClass("img-responsive");
+		$("#save-image").addClass("is-saving");
+		$("#otomading")[0].disabled = true;
+		hidden.remove();
+	}).then(() => {
+		const elink = document.createElement("a");
+		elink.style.display = "none";
+		elink.href = document.querySelector("#banner").src;
+		const lang = document.documentElement.lang;
+		const of = lang.startsWith("ja") ? "の" : "的";
+		let fileName = $("h1").children(`:lang(${lang})`).text().replaceAll("#", "") + "_" + new Date().toJSON().replace(/\..*|[^\d]/g, "");
+		const name = $("#name").text().trim();
+		if (name) fileName = name + of + fileName;
+		elink.download = fileName;
+		document.body.appendChild(elink);
+		elink.click();
+		document.body.removeChild(elink);
+	});
+}
+
+function backingScale () {
+	if (window.devicePixelRatio && window.devicePixelRatio > 1) {
+		return window.devicePixelRatio;
+	}
+	return 1;
+};
+
 function back() {
 	$("#banner").removeClass("img-responsive");
 	$("#save-image").removeClass("is-saving");
@@ -166,10 +255,11 @@ $("#save-image").click(function () {
 
 $("#otomading").click(function () {
 	if (!$(".stage").hasClass("animate")) {
-		$(".stage").addClass("animate");
+		const isDisableScroll = $(".stage")[0].scrollWidth > $(".stage")[0].offsetWidth ? "" : " disable-scroll-x";
+		$(".stage").addClass("animate" + isDisableScroll);
 		$("#bgm")[0].play();
 	} else {
-		$(".stage").removeClass("animate");
+		$(".stage").removeClass("animate disable-scroll-x");
 		$("#bgm")[0].pause();
 		$("#bgm")[0].currentTime = 0;
 	}
@@ -178,10 +268,8 @@ $("#otomading").click(function () {
 $("#bgm").on("timeupdate", function () {
 	const buffer = 0.2;
 	if (this.currentTime > this.duration - buffer) {
-		$(".stage").removeClass("animate");
-		void $(".stage").offsetWidth;
 		this.currentTime = 0;
 		this.play();
-		$(".stage").addClass("animate");
+		replayAnimation($(".stage")[0], "animate")
 	}
 });
