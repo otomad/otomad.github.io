@@ -355,7 +355,7 @@ button:disabled {
 .animate .fields > fieldset:nth-of-type(4) {
 	/* animation: skewing calc(4 * var(--quarter)) infinite var(--ease-out); */
 	animation: inverting calc(1 * var(--quarter)) infinite step-start;
-	background-color: white;
+	/* background-color: white; */
 }
 
 .animate .fields > fieldset:nth-of-type(5) {
@@ -397,9 +397,19 @@ header > .left {
 header img {
 	height: 5rem;
 	float: right;
-	margin: -1.5rem 0 -1rem;
+	margin: -1.5rem 0 -1rem 2rem;
+	transition: none !important;
 }
 
-.animate header img {
-	animation: horizontal-flip calc(0.5 * var(--quarter)) infinite step-start;
+header img:active {
+	filter: invert(1);
+}
+
+.animate header img,
+.animate ~ * #otomading {
+	animation: shibamata-lead-flip calc(32 * var(--quarter)) infinite step-start;
+}
+
+img#avatar:not([src]) {
+	display: none;
 }

@@ -215,7 +215,7 @@ function saveImage(yeshu) {
 		const dataURL = canvas.toDataURL("image/png", 1);
 		$("#banner").attr({ src: dataURL }).addClass("img-responsive");
 		$("#save-image").addClass("is-saving");
-		$("#otomading")[0].disabled = true;
+		$(".buttons > :not(#save-image)").each(function () { this.disabled = true; });
 		hidden.remove();
 	}).then(() => {
 		const elink = document.createElement("a");
@@ -243,7 +243,7 @@ function backingScale () {
 function back() {
 	$("#banner").removeClass("img-responsive");
 	$("#save-image").removeClass("is-saving");
-	$("#otomading")[0].disabled = false;
+	$(".buttons > :not(#save-image)").each(function () { this.disabled = false; });
 }
 
 $("#save-image").click(function () {
@@ -273,3 +273,24 @@ $("#bgm").on("timeupdate", function () {
 		replayAnimation($(".stage")[0], "animate")
 	}
 });
+
+$("#add-avatar").click(async function () {
+	const image = await openFile();
+	$("#avatar").attr("src", image);
+});
+
+async function openFile() {
+	return await new Promise(resolve => {
+		const input = document.createElement("input");
+		input.type = "file";
+		input.accept = "image/*";
+		input.onchange = async () => {
+			const file = input.files[0];
+			console.log(file);
+			const fileReader = new FileReader();
+			fileReader.onload = function () { resolve(this.result); };
+			fileReader.readAsDataURL(file);
+		};
+		input.click();
+	})
+}
