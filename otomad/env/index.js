@@ -65,7 +65,7 @@ $(document).on("mousedown", GRID_ITEM, function (e) {
 	}
 }).on("mouseup", function () {
 	$(`.${PRESS_WHEEL}`).removeClass(PRESS_WHEEL);
-}).contextmenu(function (e) {
+}).on("contextmenu", GRID_ITEM, function (e) {
 	if (isMobile()) {
 		e.preventDefault();
 		removeItem.apply(this);
