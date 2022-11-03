@@ -200,7 +200,9 @@ function saveImage(yeshu) {
 	result.lang = document.documentElement.lang;
 	result.style.backgroundColor = "white";
 	hidden.append(result);
-	result.append(yeshu.cloneNode(true));
+	const clone = yeshu.cloneNode(true);
+	clone.querySelectorAll("input[type=radio][name]").forEach(radio => radio.removeAttribute("name")); // 修复单选框选中消失的问题。
+	result.append(clone);
 	document.querySelectorAll(".style").forEach(style => result.prepend(style.cloneNode(true)));
 	result.querySelectorAll("input").forEach(input => {
 		if (input.checked)
