@@ -218,6 +218,7 @@ function saveImage(yeshu) {
 		$(".buttons > :not(#save-image)").each(function () { this.disabled = true; });
 		hidden.remove();
 	}).then(() => {
+		if (isWeixin() || isQq()) return;
 		const elink = document.createElement("a");
 		elink.style.display = "none";
 		elink.href = document.querySelector("#banner").src;
@@ -294,3 +295,6 @@ async function openFile() {
 		input.click();
 	})
 }
+
+function isWeixin() { return navigator.userAgent.toLowerCase().includes("micromessenger"); }
+function isQq() { return navigator.userAgent.toLowerCase().includes("qq"); }
