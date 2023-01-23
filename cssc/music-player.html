@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+		<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+		<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+		<style>
+			audio#audio {
+				width: inherit;
+			}
+			
+			.range-form-control {
+				display: flex;
+			}
+			
+			.after-range-text {
+				min-width: 4.2em;
+				text-align: center;
+				display: block;
+			}
+			
+			* {
+				user-select: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<title class="h4">音乐播放器</title>
+			<meta name="discription" class="h6" content="一个非常简陋的音乐播放器" class="mb-3" />
+			<div class="row">
+				<div class="mb-2">
+					<input class="form-control" type="file" accept="audio/*,video/*,.mp3,.ogg,.flac,.wav,.ape,.aac,.m4a,.mp4,.mpg,.flv" id="music-file">
+				</div>
+				<div class="mb-2">
+					<audio id="audio" controls loop></audio>
+				</div>
+				<div class="input-group mb-2">
+					<label class="input-group-text" for="volume-range">音量</label>
+					<div class="form-control range-form-control">
+						<input type="range" class="form-range" id="volume-range" min="0" max="100" value="100" />
+					</div>
+					<span class="input-group-text after-range-text" for="volume-range" id="volume-label">100%</span>
+				</div>
+				<div class="input-group mb-2">
+					<label class="input-group-text" for="speed-range">速度</label>
+					<div class="form-control range-form-control">
+						<input type="range" class="form-range" id="speed-range" min="-200" max="200" value="0" step="4" />
+					</div>
+					<span class="input-group-text after-range-text" for="speed-range" id="speed-label">1×</span>
+				</div>
+				<div class="btn-group mb-2" role="group" id="speed-group">
+					<button type="button" class="btn btn-outline-secondary">0.25×</button>
+					<button type="button" class="btn btn-outline-secondary">0.5×</button>
+					<button type="button" class="btn btn-outline-secondary">0.75×</button>
+					<button type="button" class="btn btn-outline-secondary">1×</button>
+					<button type="button" class="btn btn-outline-secondary">1.25×</button>
+					<button type="button" class="btn btn-outline-secondary">1.5×</button>
+					<button type="button" class="btn btn-outline-secondary">2×</button>
+					<button type="button" class="btn btn-outline-secondary">3×</button>
+					<button type="button" class="btn btn-outline-secondary">4×</button>
+				</div>
+				<div class="input-group mb-2">
+					<label class="input-group-text" for="preserves-pitch-check">速度保持音高</label>
+					<div class="form-control" id="preserves-pitch-check-form-control">
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox" role="switch" id="preserves-pitch-check" />
+							<label class="form-check-label" id="preserves-pitch-label">关</label>
+						</div>
+					</div>
+				</div>
+				<div class="input-group mb-2">
+					<label class="input-group-text" for="loop-check">循环播放</label>
+					<div class="form-control" id="loop-check-form-control">
+						<div class="form-check form-switch">
+							<input class="form-check-input" type="checkbox" role="switch" id="loop-check" checked />
+							<label class="form-check-label" id="loop-label">开</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
+			["preserves-pitch", "loop"].forEach(check => {
+				$(`#${check}-check-form-control`).click(function (e) {
+					if (e.target instanceof HTMLInputElement) return;
+					const check = $(`#${check}-check`)[0];
+					check.checked = !check.checked;
+					check.dispatchEvent(new Event("change"));
+					check.focus();
+				});
+			})
+			
+			$("[for]").click(function () {
+				$("#" + $(this).attr("for")).focus();
+			});
+			
+			const internalChange = {
+				event: new Event("internalchange"),
+				emit(el) {
+					if (el instanceof jQuery)
+						el = el[0];
+					el.dispatchEvent(this.event);
+				},
+				is(event) {
+					return event.type = this.event.type;
+				},
+			}
+			
+			/** @type HTMLAudioElement */
+			const audio = $("#audio")[0];
+			audio.preservesPitch = false;
+			
+			$("#volume-range").bind("input propertychange change", function (e) {
+				console.log(e);
+				const volume = +this.value;
+				$("#volume-label").text(volume + "%");
+				audio.volume = volume / 100;
+			});
+			
+			$("#speed-range").bind("input propertychange change", function (e) {
+				const speed = 2 ** (+this.value / 100);
+				audio.playbackRate = speed;
+			});
+			
+			$("#preserves-pitch-check").change(function () {
+				const preserve = this.checked;
+				$("#preserves-pitch-label").text(preserve ? "开" : "关");
+				audio.preservesPitch = preserve;
+			});
+			
+			$("#loop-check").change(function () {
+				const loop = this.checked;
+				$("#loop-label").text(loop ? "开" : "关");
+				audio.loop = loop;
+			});
+			
+			function removeTrailingZero(numberString) {
+				return numberString.replace(/\.?0+$/, "");
+			}
+			
+			$("#speed-group button").click(function () {
+				const speed = parseFloat(this.textContent);
+				setPlaybackRate(speed);
+			});
+			
+			$(audio).on("volumechange", function () {
+				const volume = this.volume * 100;
+				$("#volume-range").val(volume).change();
+			});
+			
+			$(audio).on("ratechange", function () {
+				const speed = this.playbackRate;
+				setPlaybackRate(speed);
+			});
+			
+			function setPlaybackRate(rate) {
+				const rangeValue = Math.log2(rate) * 100;
+				$("#speed-range").val(rangeValue);
+				$("#speed-label").text(removeTrailingZero(rate.toFixed(2)) + "×");
+				audio.playbackRate = rate;
+			}
+			
+			$("#music-file").change(function () {
+				/** @type HTMLInputElement */
+				const thi = this;
+				const file = thi.files[0];
+				if (!file) return;
+				const blob = URL.createObjectURL(file);
+				audio.src = blob;
+			});
+		</script>
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>
