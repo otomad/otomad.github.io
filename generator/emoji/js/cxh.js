@@ -1,14 +1,12 @@
 // for (const key in emoji) emoji[key] += '\ufe0f';
 
 function getPinyin(s) {
-	// console.log("本源码来自宇露网 www.duylw.com");
 	if(pinyin[s] != undefined)
 		return pinyin[s]
 	else
 		return "none";
 }
 function chouxiang(s) {
-	// console.log("本源码来自宇露网 www.duylw.com");
 	var h=[];
 	for(let v of s){
 		h.push(v);
@@ -21,10 +19,8 @@ function chouxiang(s) {
 		}
 		else if(emoji[getPinyin(h[index])] != undefined) {
 			cxresult+=emoji[getPinyin(h[index])];
-			// console.log("本源码来自宇露网 www.duylw.com");
 		}
 		else{
-			// console.log("本源码来自宇露网 www.duylw.com");
 			cxresult+=h[index];
 		}
 	}
@@ -32,7 +28,6 @@ function chouxiang(s) {
 }
 
 function rawPinyin(s) {
-	// console.log("本源码来自宇露网 www.duylw.com");
 	console.log(s);
 	var sr =[];
 	for (var index in emoji){
@@ -60,4 +55,4 @@ function dechouxiang(s) {
 
 $("#create").removeAttr("disabled");
 $("#create").text("生成抽象话");
-console.log("本源码来自宇露网 www.duylw.com");
+// console.log("本源码来自宇露网 www.duylw.com");
