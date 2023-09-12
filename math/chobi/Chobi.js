@@ -1160,6 +1160,23 @@ class Chobi {
 		}
 		return this;
 	}
+	toHsv(amount, channel = defaultChannel) {
+		const imageData = this.imageData;
+		for (let i = 0; i < imageData.width; i++) {
+			for (let j = 0; j < imageData.height; j++) {
+				const index = (j * 4) * imageData.width + (i * 4),
+					red = imageData.data[index],
+					green = imageData.data[index + 1],
+					blue = imageData.data[index + 2],
+					alpha = imageData.data[index + 3];
+				const [nred, ngreen, nblue] = HSV2RGB(blue / 255 * 359, green / 255, red / 255);
+				imageData.data[index] = nred;
+				imageData.data[index + 1] = ngreen;
+				imageData.data[index + 2] = nblue;
+			}
+		}
+		return this;
+	}
 	/**
 	 * 为图片加密马赛克。
 	 * @param {string} password - 为图片加密的密码字符串。
@@ -1466,7 +1483,7 @@ Chobi.myFilterList = {
  * @param {number} H - 色相，取值范围为 [0,360) 。
  * @param {number} S - 饱和度，取值范围为 [0,1] 。
  * @param {number} L - 亮度，取值范围为 [0,1] 。
- * @param {bool} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
+ * @param {boolean} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
  * @returns 返回 RGB 颜色值。
  */
 function HSL2RGB(H = 0, S = 0, L = 0, stringMode = false) {
@@ -1511,7 +1528,7 @@ function HSL2RGB(H = 0, S = 0, L = 0, stringMode = false) {
  * @param {number} R - 红色参量，取值范围为 [0,255] 。
  * @param {number} G - 绿色参量，取值范围为 [0,255] 。
  * @param {number} B - 蓝色参量，取值范围为 [0,255] 。
- * @param {bool} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
+ * @param {boolean} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
  * @returns 返回 HSL 颜色值。
  */
 function RGB2HSL(R = 0, G = 0, B = 0, stringMode = false) {
@@ -1546,6 +1563,66 @@ function RGB2HSL(R = 0, G = 0, B = 0, stringMode = false) {
 		S,
 		L
 	};
+}
+
+/**
+ * HSB/HSV 颜色模型转 RGB 颜色模型。
+ * @param {number} h - 色相，取值范围为 [0,360) 。
+ * @param {number} s - 饱和度，取值范围为 [0,1] 。
+ * @param {number} v - 明度，取值范围为 [0,1] 。
+ * @param {boolean} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
+ * @returns 返回 RGB 颜色值。
+ */
+function HSV2RGB(h, s, v) {
+	let r, g, b;
+
+	h /= 360;
+
+	const i = Math.floor(h * 6);
+	const f = h * 6 - i;
+	const p = v * (1 - s);
+	const q = v * (1 - f * s);
+	const t = v * (1 - (1 - f) * s);
+
+	switch (i % 6) {
+		default:
+		case 0: r = v; g = t; b = p; break;
+		case 1: r = q; g = v; b = p; break;
+		case 2: r = p; g = v; b = t; break;
+		case 3: r = p; g = q; b = v; break;
+		case 4: r = t; g = p; b = v; break;
+		case 5: r = v; g = p; b = q; break;
+	}
+
+	return [r * 255, g * 255, b * 255];
+}
+
+/**
+ * RGB 颜色模型转 HSB/HSV 颜色模型。
+ * @param {number} r - 红色参量，取值范围为 [0,255] 。
+ * @param {number} g - 绿色参量，取值范围为 [0,255] 。
+ * @param {number} b - 蓝色参量，取值范围为 [0,255] 。
+ * @param {boolean} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
+ * @returns 返回 HSB/HSV 颜色值。
+ */
+function RGBTOHSV(r, g, b) {
+	const
+		max = Math.max(r, g, b),
+		min = Math.min(r, g, b),
+		d = max - min,
+		s = max === 0 ? 0 : d / max,
+		v = max / 255;
+	let h;
+
+	switch (max) {
+		default:
+		case min: h = 0; break;
+		case r: h = (g - b) + d * (g < b ? 6 : 0); h /= 6 * d; break;
+		case g: h = (b - r) + d * 2; h /= 6 * d; break;
+		case b: h = (r - g) + d * 4; h /= 6 * d; break;
+	}
+
+	return [h * 360, s, v];
 }
 
 // utils
