@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+	<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+	<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+	<style>
+		p {
+			margin-bottom: 0;
+		}
+
+		.image-box {
+			height: 500px;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		@media (width >= 992px) and (height >= 375px) {
+			.container-fluid {
+				display: flex;
+				flex-direction: column;
+				height: 100dvh;
+			}
+			
+			.image-box {
+				height: 100%;
+			}
+		}
+
+		.image-box img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+		}
+		
+		#y-axis {
+			position: absolute;
+			width: 2px;
+			height: 100%;
+			top: 0;
+			backdrop-filter: invert(1);
+		}
+		
+		#result-image:active {
+			filter: invert(1);
+		}
+		
+		#result-image > * {
+			width: 100%;
+			height: 100%;
+		}
+		
+		#img-right-wrapper {
+			position: absolute;
+			top: 0;
+			left: 0;
+			clip-path: inset(0 0 0 50%);
+		}
+		
+		#img-right-wrapper.ref-right {
+			clip-path: inset(0 50% 0 0);
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<title class="h4">对称图</title>
+		<div class="row">
+			<div class="col-lg">
+				<div class="mb-2">
+					<input class="form-control" type="file" accept="image/*" id="image-file">
+				</div>
+				<div class="input-group mb-2">
+					<label class="input-group-text" for="axis-range">轴线</label>
+					<div class="form-control range-form-control">
+						<input type="range" class="form-range" id="axis-range" min="0" max="100" value="50" step="0.1" data-default="50" disabled />
+					</div>
+				</div>
+				<div class="input-group mb-2">
+					<label class="input-group-text" for="straighten-range">拉直</label>
+					<div class="form-control range-form-control">
+						<input type="range" class="form-range" id="straighten-range" min="-180" max="180" value="0" step="0.1" data-default="0" disabled />
+					</div>
+				</div>
+			</div>
+			<div class="col-lg">
+				<div class="mb-2 row align-items-center">
+					<p class="col">参照</p>
+					<div class="btn-group col" role="group">
+						<input type="radio" class="btn-check" name="btnradio" id="ref-left" checked>
+						<label class="btn btn-outline-primary" for="ref-left">左</label>
+
+						<input type="radio" class="btn-check" name="btnradio" id="ref-right">
+						<label class="btn btn-outline-primary" for="ref-right">右</label>
+					</div>
+				</div>
+				<div class="d-grid mb-2">
+					<button class="btn btn-primary" type="button" id="ok-btn" disabled>完成</button>
+				</div>
+			</div>
+		</div>
+		<div id="edit-image" class="image-box" style="display: none;">
+			<img id="img" />
+			<div id="y-axis"></div>
+		</div>
+		<div id="result-image" class="image-box" style="display: none;">
+			<div>
+				<img id="img-left" />
+			</div>
+			<div id="img-right-wrapper">
+				<img id="img-right" />
+			</div>
+		</div>
+	</div>
+	<script>
+		function resetSlider(slider) {
+			$(slider).val(slider.dataset.default).change();
+		}
+		$("input[type=range]").on("auxclick", function () {
+			resetSlider(this);
+		});
+
+		let imageFile;
+		$("#image-file").change(function () {
+			const file = this.files[0];
+			if (!file) return;
+			URL.revokeObjectURL(imageFile);
+			imageFile = URL.createObjectURL(this.files[0]);
+			$("img").attr("src", imageFile);
+			$("#edit-image").show();
+			$("input[type=range], #ok-btn").removeAttr("disabled");
+			for (const slider of $("input[type=range]"))
+				resetSlider(slider);
+			updateAxis();
+			if (showResult)
+				$("#ok-btn").click();
+		});
+		
+		let straighten = 0;
+		$("#straighten-range").on("input change", function () {
+			straighten = +this.value;
+			$("#img").css("rotate", `${straighten}deg`);
+		});
+		
+		let yAxis = 50, translateX = 0;
+		function getImageActualSize(img) {
+			const { naturalWidth, naturalHeight } = img;
+			img = img.parentElement;
+			const { offsetWidth, offsetHeight } = img;
+			let { left, width } = img.getBoundingClientRect();
+			const offsetLeft = left;
+			let newWidth = offsetWidth, newHeight = naturalHeight / naturalWidth * offsetWidth;
+			if (newHeight > offsetHeight) {
+				newHeight = offsetHeight; newWidth = naturalWidth / naturalHeight * offsetHeight;
+				const x = (width - newWidth) / 2;
+				left += x;
+			}
+			return { left, offsetLeft, newWidth };
+		}
+		function updateAxis() {
+			yAxis = +$("#axis-range").val();
+			if (!imageFile) return;
+			const img = $("#img")[0];
+			const { left, offsetLeft, newWidth } = getImageActualSize(img);
+			translateX = -(yAxis / 100 - 0.5) * newWidth;
+			const lineThickness = $("#y-axis").width();
+			$("#y-axis").css("left", yAxis / 100 * newWidth + left - offsetLeft - lineThickness / 2);
+		}
+		$("#axis-range").on("input change", updateAxis);
+		$(window).on("resize", updateAxis);
+		
+		let showResult = false;
+		$("#ok-btn").click(function () {
+			if (!showResult) {
+				showResult = true;
+				$("#result-image").show();
+				$("#edit-image").hide();
+				$(this).text("返回编辑").removeClass("btn-primary").addClass("btn-outline-primary");
+				$("input[type=range]").attr("disabled", "disabled");
+				getResult();
+			} else {
+				showResult = false;
+				$("#result-image").hide();
+				$("#edit-image").show();
+				$(this).text("完成").removeClass("btn-outline-primary").addClass("btn-primary");
+				$("input[type=range]").removeAttr("disabled");
+				updateAxis();
+			}
+		});
+		$("input[type=radio]").change(function () {
+			const refRight = $("#ref-right").is(":checked");
+			$("#img-right-wrapper").toggleClass("ref-right", refRight);
+		});
+		
+		function getResult() {
+			const { newWidth } = getImageActualSize($("#img")[0]);
+			$("#img-left").css("transform", `translateX(${translateX}px) rotate(${straighten}deg)`);
+			$("#img-right").css("transform", `scale(-1, 1) translateX(${translateX}px) rotate(${straighten}deg)`);
+		}
+		
+		// 阻止鼠标中键按下滚动
+		$("body").mousedown(function (e) { if (e.button == 1) return false });
+		
+		// test
+		// imageFile = "./test.jpg";
+		// $("img").attr("src", imageFile);
+		// $("#edit-image").show();
+		// $("input[type=range], #ok-btn").removeAttr("disabled");
+		// updateAxis();
+	</script>
+</body>
+<script src="/basis/NightTime.js"></script>
+
+</html>
