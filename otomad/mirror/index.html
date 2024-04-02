@@ -122,7 +122,8 @@
 		function resetSlider(slider) {
 			$(slider).val(slider.dataset.default).change();
 		}
-		$("input[type=range]").on("auxclick", function () {
+		$("input[type=range]").on("auxclick contextmenu", function (e) {
+			e.preventDefault();
 			resetSlider(this);
 		});
 
@@ -206,6 +207,8 @@
 		
 		// 阻止鼠标中键按下滚动
 		$("body").mousedown(function (e) { if (e.button == 1) return false });
+		
+		$("img").contextmenu(function (e) { e.preventDefault(); });
 		
 		// test
 		// imageFile = "./test.jpg";
