@@ -35,63 +35,88 @@
 				<div class="row">
 					<div class="col-lg-4">
 						<div class="input-group mb-3">
-								<label class="input-group-text input-group-addon" id="basic-addon1" for="text-str">生成文字</label><br />
-									<button class="btn btn-outline-secondary btn-sm sm" type="button" id="reset" data-bs-placement="bottom" title="重设" data-bs-toggle="tooltip">
-										<i class="bi bi-arrow-counterclockwise" style="margin: 0;"></i>
-									</button>
-							<textarea id="text-str" class="form-control" rows="3" style="min-height:78px;height:125px" autofocus placeholder="请在这里填写需要生成的文字内容（最多140个字）"></textarea>
+							<label class="input-group-text input-group-addon" for="text-str">生成文字</label><br />
+								<button class="btn btn-outline-secondary btn-sm sm" type="button" id="reset" data-bs-placement="bottom" title="重设" data-bs-toggle="tooltip">
+									<i class="bi bi-arrow-counterclockwise" style="margin: 0;"></i>
+								</button>
+							<div id="text-str" class="form-control" rows="3" style="min-height:125px" autofocus placeholder="请在这里填写需要生成的文字内容" contenteditable="true"></div>
 						</div>
 						<div class="input-group mb-3">
-								<label class="input-group-text input-group-addon" id="basic-addon1">预设颜色</label>
-							<div class="form-control" style="height:inherit">
-								<div class="form-check" onclick="wr_style(1);">
-									<input class="form-check-input input1" id="win_rainbow_style1" type="radio" checked="" value="radiobutton" name="win_rainbow_style1">
-									<label class="form-check-label label1" for="win_rainbow_style1">
-										<font color="#FF2800">彩</font><font color="#FF5000">虹</font><font color="#FF7800">七</font><font color="#FFA000">色</font>
-									</label>
+							<label class="input-group-text input-group-addon">设定格式</label>
+							<div class="form-control format-form-control">
+								<div class="btn-group format-btn-group" role="group">
+									<button type="button" class="btn btn-outline-secondary" data-format="bold" title="加粗" data-bs-toggle="tooltip" data-bs-placement="bottom">
+										<i class="bi bi-type-bold"></i>
+									</button>
+									<button type="button" class="btn btn-outline-secondary" data-format="italic" title="倾斜" data-bs-toggle="tooltip" data-bs-placement="bottom">
+										<i class="bi bi-type-italic"></i>
+									</button>
+									<button type="button" class="btn btn-outline-secondary" data-format="underline" title="下划线" data-bs-toggle="tooltip" data-bs-placement="bottom">
+										<i class="bi bi-type-underline"></i>
+									</button>
+									<button type="button" class="btn btn-outline-secondary" data-format="strikeThrough" title="删除线" data-bs-toggle="tooltip" data-bs-placement="bottom">
+										<i class="bi bi-type-strikethrough"></i>
+									</button>
 								</div>
-								<div class="form-check" onclick="wr_style(2);">
-									<input class="form-check-input input2" id="win_rainbow_style2" type="radio" value="radiobutton" name="win_rainbow_style2">
-									<label class="form-check-label label2" for="win_rainbow_style2">
-										<font color="#555555">黑</font><font color="#AAAAAA">白</font>
-									</label>
+								<p style="flex-shrink: 0; margin-bottom: 0; display: grid; place-self: center;">字号</p>
+								<select class="form-select" data-format="fontSize">
+									<option value="1"><font size="1">12</font></option>
+									<option value="2"><font size="2">13</font></option>
+									<option value="3" selected><font size="3">16</font></option>
+									<option value="4"><font size="4">18</font></option>
+									<option value="5"><font size="5">24</font></option>
+									<option value="6"><font size="6">32</font></option>
+									<option value="7"><font size="7">48</font></option>
+								</select>
+							</div>
+						</div>
+						<div class="input-group mb-3">
+							<label class="input-group-text input-group-addon">预设颜色</label>
+							<div class="form-control" id="preset-colors" style="height:inherit">
+								<div class="form-check">
+									<input class="form-check-input rainbow" id="win_rainbow_style0" type="radio" checked="" value="radiobutton" name="win-rainbow-style">
+									<label class="form-check-label rainbow" for="win_rainbow_style0">彩虹七色固定</label>
 								</div>
-								<div class="form-check" onclick="wr_style(3);">
-									<input class="form-check-input input3" id="win_rainbow_style3" type="radio" value="radiobutton" name="win_rainbow_style3">
-									<label class="form-check-label label3" for="win_rainbow_style3">
-										<font color="#7F1D24">黑</font><font color="#FF1D24">红</font>
-									</label>
+								<div class="form-check">
+									<input class="form-check-input rainbow" id="win_rainbow_style1" type="radio" checked="" value="radiobutton" name="win-rainbow-style">
+									<label class="form-check-label" for="win_rainbow_style1" style="--fg: #FF2800; --bg: #FFC800;">彩虹七色循环</label>
 								</div>
-								<div class="form-check" onclick="wr_style(4);">
-									<input class="form-check-input input4" id="win_rainbow_style4" type="radio" value="radiobutton" name="win_rainbow_style4">
-									<label class="form-check-label label4" for="win_rainbow_style4">
-										<font color="#00AE7F">蓝</font><font color="#00AE00">绿</font>
-									</label>
+								<div class="form-check" data-fg-color="#000000" data-bg-color="#FFFFFF">
+									<input class="form-check-input" id="win_rainbow_style2" type="radio" value="radiobutton" name="win-rainbow-style">
+									<label class="form-check-label" for="win_rainbow_style2" style="--fg: #555555; --bg: #AAAAAA;">黑白</label>
 								</div>
-								<div class="form-check" onclick="wr_style(5);">
-									<input class="form-check-input" id="win_rainbow_style5" type="radio" value="radiobutton" name="win_rainbow_style5">
-									<label class="form-check-label" for="win_rainbow_style5">自定义</label>
+								<div class="form-check" data-fg-color="#001D24" data-bg-color="#FF1D24">
+									<input class="form-check-input" id="win_rainbow_style3" type="radio" value="radiobutton" name="win-rainbow-style">
+									<label class="form-check-label" for="win_rainbow_style3" style="--fg: #7F1D24; --bg: #FF1D24;">黑红</label>
+								</div>
+								<div class="form-check" data-fg-color="#00AEFF" data-bg-color="#00AE00">
+									<input class="form-check-input" id="win_rainbow_style4" type="radio" value="radiobutton" name="win-rainbow-style">
+									<label class="form-check-label" for="win_rainbow_style4" style="--fg: #00AEFF; --bg: #00AE00;">蓝绿</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" id="win_rainbow_style5" type="radio" value="radiobutton" name="win-rainbow-style">
+									<label class="form-check-label" for="win_rainbow_style5" style="--fg: #0000FF; --bg: #FF0000;">自定义</label>
 								</div>
 							</div>
 						</div>
 						<div class="input-group mb-3">
-								<label class="input-group-text input-group-addon" id="view-color-tag">预览颜色</label>
+							<label class="input-group-text input-group-addon" id="view-color-tag">预览颜色</label>
 							<div class="form-control view-color" style="padding:0;height:inherit">
 								<span id="color-picker">
 									<input id="text-fore-color" class="form-control color choose-color" value="#0000FF" style="float:left ;width:50%" disabled="">
 									<input id="text-back-color" class="form-control color choose-color" value="#FF0000" style="float:right;width:50%;text-align:right" disabled="">
 								</span>
-								<div class="form-control cover-color" id="linear5" style="background-color:rgb(34,34,34)"></div>
-								<div class="form-control cover-color" id="linear4" style="background-image:linear-gradient(to right, #00AEFF, #00AE00)"></div>
-								<div class="form-control cover-color" id="linear3" style="background-image:linear-gradient(to right, #001D24, #FF1D24)"></div>
-								<div class="form-control cover-color" id="linear2" style="background-image:linear-gradient(to right, black, white)"></div>
-								<div class="form-control cover-color" id="linear1" style="background-image:linear-gradient(to right, red, yellow, green, cyan, blue, fuchsia)"></div>
+								<div class="form-control cover-color" id="linear5" style="background-color: #222222"></div>
+								<div class="form-control cover-color" id="linear4" style="background-image: linear-gradient(to right, #00AEFF, #00AE00)"></div>
+								<div class="form-control cover-color" id="linear3" style="background-image: linear-gradient(to right, #001D24, #FF1D24)"></div>
+								<div class="form-control cover-color" id="linear2" style="background-image: linear-gradient(to right, black, white)"></div>
+								<div class="form-control cover-color" id="linear1" style="background-image: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red)"></div>
 							</div>
 						</div>
 						<div class="input-group mb-3">
-								<label class="input-group-text input-group-addon" id="sizing-addon3" for="select-type">代码类型</label>
+							<label class="input-group-text input-group-addon" id="sizing-addon3" for="select-type">代码类型</label>
 							<select class="form-select" id="select-type">
-								<option value="ubb">UBB（论坛）</option>
+								<option value="ubb">BBCode (UBB)（论坛）</option>
 								<option value="html" selected>HTML（网页）</option>
 							</select>
 						</div>
@@ -114,7 +139,7 @@
 											<td><h5 class="card-title">代码</h5></td>
 											<td style="text-align:right;padding-bottom:12px"><a href="javascript:void(0);" id="copy-code" style="text-decoration:none" data-clipboard-action="copy" data-clipboard-target="#xmp-html" title="复制到剪贴板" data-toggle="tooltip">复制代码</a></td>
 										</table>
-										<xmp class="card-content" id="xmp-html" style="white-space: normal;"></xmp>
+										<pre><code class="card-content" id="xmp-html" style="white-space: normal; word-break: break-all;"></code></pre>
 									</div>
 								</div>
 							</div>
@@ -122,14 +147,22 @@
 					</div>
 				</div>
 				<content-info>
-					<p>彩虹文字生成器，这个在线工具可以将你输入的文字转换成颜色线性渐变过渡的效果，输出的文字色彩就如同彩虹一般缤纷绚丽，故取名为“彩虹字”。</p>
-					<p>输出的代码中的每一个字都被加上了一段颜色代码，正是这些代码使得文字在网页上呈现出颜色渐变过渡效果。本工具默认生成的是UBB代码，也被称为安全代码，这种代码通常在论坛、博客、网络社区、留言板等都可以获得较好的支持。你也可以手动选择输出HTML代码，它在网页中具有更广泛的支持。</p>
+					<p>彩虹文字生成器<small>（不是彩虹屁文字生成器）</small>，这个在线工具可以将你输入的文字转换成颜色线性渐变过渡的效果，输出的文字色彩就如同彩虹一般缤纷绚丽，故取名为“彩虹字”。</p>
+					<p>输出的代码中的每一个字都被加上了一段颜色代码，正是这些代码使得文字在网页上呈现出颜色渐变过渡效果。本工具默认生成的是<b>HTML</b> (<b>H</b>yper<b>T</b>ext <b>M</b>arkup <b>L</b>anguage)代码，它在网页中具有更广泛的支持。你也可以手动选择输出<b>BBCode</b> (<b>B</b>ulletin <b>B</b>oard <b>Code</b>)代码，也被称为安全代码，这种代码通常在论坛、博客、网络社区、留言板等都可以获得较好的支持。BBCode最初由<b>U</b>ltimate <b>B</b>ulletin <b>B</b>oard讨论区系统发展出来，因此常见<b>UBB代码</b>的称呼。</p>
 					<p>彩虹字可以使文字更醒目、更好看。不过由于彩虹字的代码量较多，故不宜对字数过多的文章进行全篇生成，实际上对一篇文章中的部分文字彩虹化更合适宜。</p>
 					<p>彩虹文字生成器使用说明：</p>
 					<p>在文本框中输入需要转换的文字，然后选择你喜欢的过渡颜色，然后点击“生成”按钮即可输出对应的预览效果，同时在下方输出代码，满意后即可复制代码粘贴到需要的地方。如果对输出的效果不满意，则改变色彩样式后再重新生成。</p>
 				</content-info>
 				<br />
+				<script src="/basis/Color.js" type="module"></script>
 				<script>
+					var NightTime = {};
+					NightTime.darkDo = NightTime.lightDo = () => {
+						const action = () => $(".format-form-control select").css("color", $(".btn-outline-secondary").css("color"));
+						action();
+						setTimeout(action, 500);
+					};
+					
 					var clipboard = new ClipboardJS("#copy-code");
 					$("#copy-code").click(function () {
 						clipboardReact("已复制");
@@ -155,38 +188,37 @@
 					});
 
 					$(function () {
-						wr_style(1);
-						$(".color").colorPicker({
-							opacity: false
-						});
+						wrStyle(1);
+						$(".color").colorPicker({ opacity: false });
 					});
 
 					$("#reset").click(function () {
-						$("#text-str").val("");
+						$("#text-str").text("");
 						$("#text-str").focus();
 						$("#text-str").select();
+						updateFormatButtonsSelected();
 					});
 
 					var haveText = false,
-						frcolor = $("#text-fore-color").val(),
-						bgcolor = $("#text-back-color").val();
+						fgColor = $("#text-fore-color").val(),
+						bgColor = $("#text-back-color").val();
 					$("#preview").click(function () {
-						$('#viewCardName')[0].innerHTML = "生成后在此处预览";
-						$('#row-view').css("height", "68px");
-						$('#row-html').css({
+						$("#viewCardName")[0].innerHTML = "生成后在此处预览";
+						$("#row-view").css("height", "68px");
+						$("#row-html").css({
 							"height": "0",
 							"border": "0px solid rgba(0,0,0,.125)"
 						});
-						$('.card').css("margin-bottom", "0");
-						$('.card-content').css({
+						$(".card").css("margin-bottom", "0");
+						$(".card-content").css({
 							"opacity": "0",
 							"user-select": "none"
 						});
 						haveText = false;
 
-						const str = $("#text-str").val();
-						frcolor = $("#text-fore-color").val();
-						bgcolor = $("#text-back-color").val();
+						const str = $("#text-str").text();
+						fgColor = $("#text-fore-color").val();
+						bgColor = $("#text-back-color").val();
 						const type = $("#select-type").val();
 
 						if (str == "") {
@@ -195,25 +227,49 @@
 						}
 
 						if (typeof str == "undefined" || str == null || str == "") {
-							$('#alert-message').html('请填写需要生成的文字内容（最多140个字）');
-							$('#row-alert').show();
+							$("#alert-message").html("请填写需要生成的文字内容");
+							$("#row-alert").show();
 							return false;
-						} else if (!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(frcolor))) {
-							$('#alert-message').html('请填写正确的开始颜色代码');
-							$('#row-alert').show();
+						} else if (!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(fgColor))) {
+							$("#alert-message").html("请填写正确的开始颜色代码");
+							$("#row-alert").show();
 							return false;
-						} else if (!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(bgcolor))) {
-							$('#alert-message').html('请填写正确的结束颜色代码');
-							$('#row-alert').show();
+						} else if (!(/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i.test(bgColor))) {
+							$("#alert-message").html("请填写正确的结束颜色代码");
+							$("#row-alert").show();
 							return false;
 						} else {
-							$('#row-alert').hide();
-							set_rainbow(str, frcolor.replace("#", ""), bgcolor.replace("#", ""), type);
-							$('#viewCardName')[0].innerHTML = "预览";
+							$("#row-alert").hide();
+							let ubb = "", html = "";
+							const texts = walkTextStr();
+							for (const [i, line] of texts.entries()) {
+								if (i) {
+									ubb += "\n";
+									html += "<br />\n";
+								}
+								let startLengths = [0], totalLength = 0;
+								for (const [j, format] of line.entries()) {
+									const length = format.text.length;
+									totalLength += length;
+									startLengths[j + 1] = totalLength;
+								}
+								for (const [j, format] of line.entries()) {
+									// const plain = set_rainbow(format.text, fgColor.replace("#", ""), bgColor.replace("#", ""), type);
+									const plain = setRainbow(format.text, startLengths[j], totalLength);
+									const rich = addFormatToCode(plain, format);
+									ubb += rich.ubb;
+									html += rich.html;
+								}
+							}
+							setTextWithLineBreak($("#xmp-html"), type === "ubb" ? ubb : html);
+							$("#panel-preview").html(html);
+							
+							$("#viewCardName")[0].innerHTML = "预览";
 							cardResize();
-							$('#row-html').css("border", "1px solid rgba(0,0,0,.125)");
-							$('.card').css("margin-bottom", "1rem");
-							$('.card-content').css({
+							setTimeout(() => cardResize(), 500);
+							$("#row-html").css("border", "1px solid rgba(0,0,0,.125)");
+							$(".card").css("margin-bottom", "1rem");
+							$(".card-content").css({
 								"opacity": "1",
 								"user-select": "text"
 							});
@@ -226,7 +282,7 @@
 						for (var i = 0; i < 2; i++) {
 							var el = $(row2[i]),
 								curHeight = el.height(),
-								autoHeight = el.css('height', 'auto').height();
+								autoHeight = el.css("height", "auto").height();
 							el.height(curHeight).animate({
 								height: autoHeight
 							}, 250);
@@ -242,33 +298,101 @@
 
 					var interval = 0;
 					$(".choose-color").focus(function () {
-						interval = setInterval("wr_style(5)", 10 /* 150 */);
+						interval = setInterval(() => wrStyle(5), 10 /* 150 */);
 					});
 					$(".choose-color").blur(function () {
 						clearInterval(interval);
 						var color2 = ["#text-fore-color", "#text-back-color"];
 
-						function colorNANDo(i) {
+						function colorNaNDo(i) {
 							$(color2[i]).val("#000000");
-							wr_style(5);
+							wrStyle(5);
 						}
 						for (var i = 0; i < 2; i++) {
 							if ($(color2[i]).val().search("N") != -1) {
-								setTimeout(colorNANDo, 250, i);
+								setTimeout(colorNaNDo, 250, i);
 								errorValue(".view-color");
 							}
 						}
 					});
+					
+					/**
+					 * @param {string[]} text - 被设定格式分割后的文本片段。
+					 * @param {number} startLength - 该文本片段的首个字符在整段文本的第几个。
+					 * @param {number} totalLength - 整段文本的字符数。
+					 */
+					function setRainbow(text, startLength, totalLength) {
+						totalLength--;
+						text = Array.from(text);
+						const checked = $("input[name=win-rainbow-style]:checked");
+						if (!checked.length) return;
+						/** @type {{ char: string; color: string; }[]} */
+						const code = [];
+						const appendChar = (char, color) => code.push({ char, color });
+						const isWhiteSpace = text => text.trim().length === 0;
+						const id = +checked[0].id.match(/\d+$/)[0];
+						if (id !== 1) {
+							if (!checked.hasClass("rainbow")) {
+								let { fgColor, bgColor } = checked.parent()[0].dataset;
+								fgColor = Color.fromHex(fgColor);
+								bgColor = Color.fromHex(bgColor);
+								const { r: r1, g: g1, b: b1 } = fgColor.rgb;
+								const { r: r2, g: g2, b: b2 } = bgColor.rgb;
+								text.forEach((char, i) => {
+									if (!isWhiteSpace(char)) {
+										const
+											r = (r2 - r1) / totalLength * (startLength + i) + r1,
+											g = (g2 - g1) / totalLength * (startLength + i) + g1,
+											b = (b2 - b1) / totalLength * (startLength + i) + b1;
+										appendChar(char, Color.fromRgb(r, g, b).hex);
+									} else appendChar(char);
+								});
+							} else {
+								text.forEach((char, i) => {
+									if (!isWhiteSpace(char)) {
+										const hue = 360 / totalLength * (startLength + i);
+										appendChar(char, Color.fromHsv(hue, 100, 100).hex);
+									} else appendChar(char);
+								});
+							}
+						} else {
+							const step = Color.fromHex("#ff2800").h;
+							text.forEach((char, i) => {
+								if (!isWhiteSpace(char)) {
+									const hue = (startLength + i) * step;
+									appendChar(char, Color.fromHsv(hue, 100, 100).hex);
+								} else appendChar(char);
+							});
+						}
+						let ubb = "", html = "";
+						for (const { char, color } of code) {
+							if (!color) {
+								ubb += char;
+								html += char;
+							} else {
+								ubb += `[color=#${color}]${char}[/color]`;
+								html += `<font color="#${color}">${char}</font>`;
+							}
+						}
+						return { ubb, html };
+					}
 
-					function set_rainbow(wr_text, wr_rgb1, wr_rgb2, type) { //设置彩虹文字
-						var wr_code, wr_rgb, r, g, b, i, j, istep;
+					/**
+					 * @deprecated
+					 */
+					function set_rainbow(wr_text, wr_rgb1, wr_rgb2) { //设置彩虹文字
+						var wr_rgb, r, g, b, i, j, istep;
 						var r1, g1, b1, r2, g2, b2;
 						r1 = g1 = b1 = r2 = g2 = b2 = 0;
 						r = 0;
 						g = 0;
 						b = 0;
 						istep = 0;
-						wr_code = '';
+						wr_text = Array.from(wr_text);
+						/** @type {{ char: string; color: string; }[]} */
+						const wr_code = [];
+						const appendChar = (char, color) => wr_code.push({ char, color });
+						const isWhiteSpace = text => text.trim().length === 0;
 
 						if (win_rainbow_style1.checked) {
 							istep = 40;
@@ -276,7 +400,7 @@
 							i = 1;
 							j = 0;
 							do {
-								if (wr_text[j] !== ' ' && wr_text[j] !== '\n') { // wr_text.charCodeAt(j) != 32
+								if (!isWhiteSpace(wr_text[j])) { // wr_text.charCodeAt(j) != 32
 									if (g + istep < 256) {
 										if (i == 1) g += istep;
 									} else if (i == 1) {
@@ -313,92 +437,75 @@
 										i = 1;
 										b = 0;
 									}
-									wr_rgb = '';
+									wr_rgb = "";
 									wr_rgb += parseInt(r).toString(16).length == 1 ? 0 + parseInt(r).toString(16) : parseInt(r).toString(16);
 									wr_rgb += parseInt(g).toString(16).length == 1 ? 0 + parseInt(g).toString(16) : parseInt(g).toString(16);
 									wr_rgb += parseInt(b).toString(16).length == 1 ? 0 + parseInt(b).toString(16) : parseInt(b).toString(16);
 									wr_rgb = wr_rgb.toUpperCase();
-									if (type == "ubb") {
-										wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(j) + '[/color]';
-									} else {
-										wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(j) + '</font>';
-									}
+									appendChar(wr_text[j], wr_rgb);
 								} else {
-									wr_code += wr_text.charAt(j);
+									appendChar(wr_text[j]);
 								}
 								j++;
 							} while (j < wr_text.length);
 						} else if (win_rainbow_style2.checked) {
 							istep = 255 / wr_text.length;
-							for (i = 1; i < wr_text.length + 1; i++) {
-								if (wr_text.charCodeAt(i - 1) != 32) {
+							for (i = 0; i < wr_text.length; i++) {
+								if (!isWhiteSpace(wr_text[i])) {
 									r += istep;
 									g += istep;
 									b += istep;
 									if (r > 255) r = 255;
 									if (g > 255) g = 255;
 									if (b > 255) b = 255;
-									wr_rgb = '';
+									wr_rgb = "";
 									wr_rgb += parseInt(r).toString(16).length == 1 ? 0 + parseInt(r).toString(16) : parseInt(r).toString(16);
 									wr_rgb += parseInt(g).toString(16).length == 1 ? 0 + parseInt(g).toString(16) : parseInt(g).toString(16);
 									wr_rgb += parseInt(b).toString(16).length == 1 ? 0 + parseInt(b).toString(16) : parseInt(b).toString(16);
 									wr_rgb = wr_rgb.toUpperCase();
-									if (type == "ubb") {
-										wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(i - 1) + '[/color]';
-									} else {
-										wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(i - 1) + '</font>';
-									}
+									appendChar(wr_text[i], wr_rgb);
 								} else {
-									wr_code += wr_text.charAt(i - 1);
+									appendChar(wr_text[i]);
 								}
 							}
 						} else if (win_rainbow_style3.checked) {
 							istep = 255 / wr_text.length;
-							for (i = 1; i < wr_text.length + 1; i++) {
-								if (wr_text.charCodeAt(i - 1) != 32) {
+							for (i = 0; i < wr_text.length; i++) {
+								if (!isWhiteSpace(wr_text[i])) {
 									r += istep;
 									g = 29;
 									b = 36;
 									if (r > 255) r = 255;
 									if (g > 255) g = 255;
 									if (b > 255) b = 255;
-									wr_rgb = '';
+									wr_rgb = "";
 									wr_rgb += parseInt(r).toString(16).length == 1 ? 0 + parseInt(r).toString(16) : parseInt(r).toString(16);
 									wr_rgb += parseInt(g).toString(16).length == 1 ? 0 + parseInt(g).toString(16) : parseInt(g).toString(16);
 									wr_rgb += parseInt(b).toString(16).length == 1 ? 0 + parseInt(b).toString(16) : parseInt(b).toString(16);
 									wr_rgb = wr_rgb.toUpperCase();
-									if (type == "ubb") {
-										wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(i - 1) + '[/color]';
-									} else {
-										wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(i - 1) + '</font>';
-									}
+									appendChar(wr_text[i], wr_rgb);
 								} else {
-									wr_code += wr_text.charAt(i - 1);
+									appendChar(wr_text[i]);
 								}
 							}
 						} else if (win_rainbow_style4.checked) {
 							istep = 255 / wr_text.length;
-							for (i = 1; i < wr_text.length + 1; i++) {
-								if (wr_text.charCodeAt(i - 1) != 32) {
+							for (i = 0; i < wr_text.length; i++) {
+								if (!isWhiteSpace(wr_text[i])) {
 									r = 0;
 									g = 174;
 									b += istep;
 									if (r > 255) r = 255;
 									if (g > 255) g = 255;
 									if (b > 255) b = 255;
-									wr_rgb = '';
+									wr_rgb = "";
 									wr_rgb += parseInt(r).toString(16).length == 1 ? 0 + parseInt(r).toString(16) : parseInt(r).toString(16);
 									wr_rgb += parseInt(g).toString(16).length == 1 ? 0 + parseInt(g).toString(16) : parseInt(g).toString(16);
-									wr_rgb += parseInt(255 - b).toString(16).length == 1 ? 0 + parseInt(255 - b).toString(16) : parseInt(255 - b)
-										.toString(16);
+									wr_rgb += parseInt(255 - b).toString(16).length == 1 ? 0 + parseInt(255 - b).toString(16) : parseInt(255 - b).toString(16);
 									wr_rgb = wr_rgb.toUpperCase();
-									if (type == "ubb") {
-										wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(i - 1) + '[/color]';
-									} else {
-										wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(i - 1) + '</font>';
-									}
+									appendChar(wr_text[i], wr_rgb);
 								} else {
-									wr_code += wr_text.charAt(i - 1);
+									appendChar(wr_text[i]);
 								}
 							}
 						} else if (win_rainbow_style5.checked) {
@@ -415,18 +522,14 @@
 							if (isNaN(g2)) g2 = 0;
 							if (isNaN(b2)) b2 = 0;
 							istep = 255 / wr_text.length;
-							for (i = 1; i < wr_text.length + 1; i++) {
-								if (wr_text.charCodeAt(i - 1) != 32) {
-									wr_rgb = '';
+							for (i = 0; i < wr_text.length; i++) {
+								if (!isWhiteSpace(wr_text[i])) {
+									wr_rgb = "";
 									wr_rgb += parseInt(r1).toString(16).length == 1 ? 0 + parseInt(r1).toString(16) : parseInt(r1).toString(16);
 									wr_rgb += parseInt(g1).toString(16).length == 1 ? 0 + parseInt(g1).toString(16) : parseInt(g1).toString(16);
 									wr_rgb += parseInt(b1).toString(16).length == 1 ? 0 + parseInt(b1).toString(16) : parseInt(b1).toString(16);
 									wr_rgb = wr_rgb.toUpperCase();
-									if (type == "ubb") {
-										wr_code += '[color=#' + wr_rgb + ']' + wr_text.charAt(i - 1) + '[/color]';
-									} else {
-										wr_code += '<font color="#' + wr_rgb + '">' + wr_text.charAt(i - 1) + '</font>';
-									}
+									appendChar(wr_text[i], wr_rgb);
 									r1 > r2 ? r1 -= istep : r1 += istep;
 									g1 > g2 ? g1 -= istep : g1 += istep;
 									b1 > b2 ? b1 -= istep : b1 += istep;
@@ -437,30 +540,41 @@
 									if (b1 > 255) b1 = 255;
 									if (b1 < 0) b1 = 0;
 								} else {
-									wr_code += wr_text.charAt(i - 1);
+									appendChar(wr_text[i]);
 								}
 							}
 						}
-						wr_code = wr_code.replace(/\n/g, "<br \/>");
-						$("#xmp-html").text(wr_code);
-						if (type == "ubb") {
-							wr_code = wr_code.replace(/\[color=#/g, '<font color="#');
-							wr_code = wr_code.replace(/\[\/color]/g, "<\/font>");
-							wr_code = wr_code.replace(/\]/g, '">');
-							$("#panel-preview").html(wr_code);
-						} else {
-							$("#panel-preview").html(wr_code);
+						let ubb = "", html = "";
+						for (const { char, color } of wr_code) {
+							if (!color) {
+								ubb += char;
+								html += char;
+							} else {
+								ubb += `[color=#${color}]${char}[/color]`;
+								html += `<font color="#${color}">${char}</font>`;
+							}
 						}
+						return { ubb, html };
 					}
+					
+					$("#preset-colors .form-check").click(function () {
+						$(this).find("input:radio").prop("checked", true).change().focus();
+					});
+					
+					$("#preset-colors input:radio").change(function () {
+						wrStyle(+this.id.match(/\d+$/)[0]);
+					});
 
-					function wr_style(num) {
-						frcolor = $("#text-fore-color").val();
-						bgcolor = $("#text-back-color").val();
+					function wrStyle(num) {
+						fgColor = $("#text-fore-color").val();
+						bgColor = $("#text-back-color").val();
 						var view = $(".view-color");
 						if (num < 5) linearHide(num);
 						else {
 							$("#color-picker").css("opacity", "1");
-							view.css("background-image", "linear-gradient(to right," + frcolor + "," + bgcolor + ")");
+							view.css("background-image", `linear-gradient(to right, ${fgColor}, ${bgColor})`);
+							const { dataset } = $("[for=win_rainbow_style5]").css({ "--fg": fgColor, "--bg": bgColor }).parent()[0];
+							Object.assign(dataset, { fgColor, bgColor });
 							for (var i = 1; i <= 5; i++)
 								$("#linear" + i).css("opacity", "0");
 							setTimeout(function () {
@@ -469,24 +583,16 @@
 							}, 250);
 							$("#view-color-tag")[0].innerHTML = "设定颜色";
 							$(".choose-color").css("opacity", "1");
-							// $("body").append("test ");
 						}
-						for (var i = 1; i < 6; i++) {
-							document.getElementById("win_rainbow_style" + i).checked = false;
-						}
-						document.getElementById("win_rainbow_style" + num).checked = true;
-						if (num === 5) {
-							document.getElementById("text-fore-color").disabled = "";
-							document.getElementById("text-back-color").disabled = "";
-						} else {
-							document.getElementById("text-fore-color").disabled = "disabled";
-							document.getElementById("text-back-color").disabled = "disabled";
-						}
+						const textColor = $("#text-fore-color, #text-back-color");
+						if (num === 5) textColor.removeAttr("disabled");
+						else textColor.attr("disabled", "disabled");
 					}
 
 					function linearHide(id) {
-						if ($("#linear1").is(':hidden')) {
-							for (var i = 1; i <= 5; i++)
+						if (id === 0) id = 1;
+						if ($("#linear1").is(":hidden")) {
+							for (var i = 0; i <= 5; i++)
 								$("#linear" + i).css("display", "");
 							setTimeout(function () {
 								$("#linear" + id).css("opacity", "1");
@@ -497,7 +603,7 @@
 						else {
 							$("#linear" + id).css("opacity", "1");
 							//setTimeout(function() {
-							for (var i = 1; i <= 4; i++)
+							for (var i = 0; i <= 4; i++)
 								if (i != id)
 									$("#linear" + i).css("opacity", "0");
 							$("#color-picker").css("opacity", "0");
@@ -510,10 +616,179 @@
 					}
 
 					$(".cp-color-picker").click(function () {
-						wr_style(5);
+						wrStyle(5);
 					});
+					
+					function setFormatButtonSelected(format, selected) {
+						$(`[data-format="${format}"]`).toggleClass("btn-outline-secondary", !selected).toggleClass("btn-primary", selected);
+					}
+					
+					function updateFormatButtonsSelected() {
+						for (const button of $(".format-form-control [data-format]")) {
+							const format = button.dataset.format;
+							if (button instanceof HTMLButtonElement) {
+								const selected = document.queryCommandState(format);
+								setFormatButtonSelected(format, selected);
+							} else if (button instanceof HTMLSelectElement) {
+								const value = document.queryCommandValue(format);
+								button.value = value;
+							}
+						}
+					}
+
+					$(".format-btn-group .btn").click(function () {
+						const format = this.dataset.format;
+						$("#text-str").focus();
+						document.execCommand(format);
+						updateFormatButtonsSelected();
+					});
+					
+					$(".format-form-control select").change(function () {
+						const format = this.dataset.format;
+						const value = this.value;
+						$("#text-str").focus();
+						document.execCommand(format, false, value);
+						updateFormatButtonsSelected();
+					});
+					
+					$(document).on("selectionchange input change", function () {
+						if ($("#text-str")[0] !== document.activeElement) return;
+						updateFormatButtonsSelected();
+					});
+					
+					class Format {
+						/** @type {string} */
+						text;
+						/** @type {boolean | undefined} */
+						bold;
+						/** @type {boolean | undefined} */
+						italic;
+						/** @type {boolean | undefined} */
+						underline;
+						/** @type {boolean | undefined} */
+						strikethrough;
+						/** @type {number | undefined} */
+						fontSize;
+						/**
+						 * @param {string} text
+						 * @param {Format} format
+						 */
+						constructor(text, format) {
+							this.text = text;
+							if (format) Object.assign(this, format);
+						}
+						/**
+						 * @param {Format} options
+						 */
+						cloneWith(options = {}) {
+							const format = new Format();
+							return Object.assign(format, this, options);
+						}
+					}
+					
+					function walkTextStr() {
+						const root = $("#text-str")[0];
+						/** @type {Format[][]} */
+						const tagged = [];
+						const lines = (() => {
+							/** @type {Node[][]} */
+							const result = [];
+							/** @type {Node[]} */
+							let currentLine = [];
+							const submitCurrentLine = () => {
+								if (currentLine.length) {
+									result.push(currentLine);
+									currentLine = [];
+								}
+							};
+							root.childNodes.forEach(node => {
+								if (!(node.tagName === "DIV"))
+									currentLine.push(node);
+								else {
+									submitCurrentLine();
+									result.push([...node.childNodes]);
+								}
+							});
+							submitCurrentLine();
+							return result;
+						})();
+						const defaultFontSize = parseFloat(getComputedStyle(document.body).fontSize);
+						
+						function walk(nodes, parentFormat = new Format()) {
+							/** @type {Format[]} */
+							const result = [];
+							for (const node of nodes) {
+								if (node instanceof Comment)
+									continue;
+								else if (node instanceof Text && node.textContent)
+									result.push(parentFormat.cloneWith({ text: node.textContent }));
+								else if (node instanceof Element) {
+									const style = getComputedStyle(node);
+									if (node.hidden || style.display === "none") continue;
+									// const isBlock = !style.display.includes("inline") && style.display !== "contents"; // 懒得做检测是否是块元素了
+									result.push(...walk(node.childNodes, getFormatFromStyle(style, parentFormat)));
+								}
+							}
+							return result;
+						}
+						
+						/**
+						 * @param {CSSStyleDeclaration} style
+						 * @param {Format} parentFormat
+						 */
+						function getFormatFromStyle(style, parentFormat) {
+							const format = parentFormat.cloneWith();
+							format.bold = +style.fontWeight > 500;
+							format.italic = style.fontStyle !== "normal";
+							if (style.textDecorationLine === "underline") format.underline = true;
+							if (style.textDecorationLine === "line-through") format.strikethrough = true;
+							if (parseFloat(style.fontSize) !== defaultFontSize) format.fontSize = parseFloat(style.fontSize);
+							return format;
+						}
+						
+						lines.forEach(line => {
+							tagged.push(walk(line));
+						});
+						
+						return tagged;
+					}
+					
+					/**
+					 * @param {{ ubb: string; html: string }} param0
+					 * @param {Format} format
+					 */
+					function addFormatToCode({ ubb, html }, format) {
+						if (format.fontSize !== undefined) {
+							ubb = `[style size="${format.fontSize}px"]${ubb}[/style]`;
+							html = `<span style="font-size:${format.fontSize}px">${html}</span>`;
+						}
+						if (format.strikethrough) {
+							ubb = `[s]${ubb}[/s]`;
+							html = `<s>${html}</s>`;
+						}
+						if (format.underline) {
+							ubb = `[u]${ubb}[/u]`;
+							html = `<u>${html}</u>`;
+						}
+						if (format.italic) {
+							ubb = `[i]${ubb}[/i]`;
+							html = `<i>${html}</i>`;
+						}
+						if (format.bold) {
+							ubb = `[b]${ubb}[/b]`;
+							html = `<b>${html}</b>`;
+						}
+						return { ubb, html };
+					}
+					
+					function setTextWithLineBreak(jq, text) {
+						const dom = jq[0];
+						const withBr = text.split("\n").flatMap((line, i) => i ? [document.createElement("br"), line] : line);
+						dom.replaceChildren(...withBr);
+						return jq;
+					}
 				</script>
-				<script src="/basis/NightTime.js"></script>
+				<!-- <script src="/basis/NightTime.js"></script> -->
 			</div>
 		</div>
 	</div>

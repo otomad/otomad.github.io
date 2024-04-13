@@ -395,7 +395,7 @@ interface Document {
 			}));
 		}
 	}
-	globalThis.NightTime = new NightTime();
+	globalThis.NightTime = new NightTime(profile);
 
 	/**
 	 * 底部的资源文件。

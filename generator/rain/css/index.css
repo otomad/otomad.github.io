@@ -41,13 +41,12 @@ td {
 	margin-top: 0;
 }
 
-
 .margintb-6 {
 	margin-top: 6px;
 	margin-bottom: 6px;
 }
 
-.form-control>span {
+.form-control > span {
 	cursor: pointer;
 }
 
@@ -55,10 +54,11 @@ td {
 	width: 100%;
 }
 
-xmp {
-	font-family: "Cascadia Mono", "Cascadia Code", Iosevka, Consolas, "Microsoft YaHei Mono", "Courier New", "Noto Sans Mono CJK SC", "微软雅黑", monospace;
+code, pre, kbd, samp, xmp {
+	font-family: "Cascadia Code", "Cascadia Mono", Iosevka, Consolas, "Microsoft YaHei Mono", "Courier New", "Noto Sans Mono CJK SC", "微软雅黑", monospace;
 	font-size: 14px;
 	margin: 0;
+	color: var(--bs-code-color);
 }
 
 .card {
@@ -70,12 +70,12 @@ xmp {
 #row-view {
 	height: 68px;
 	/* 49px */
-	border-bottom: 1px solid rgba(0, 0, 0, .125);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 #row-html {
 	height: 0;
-	border: 0 solid rgba(0, 0, 0, .125);
+	border: 0 solid rgba(0, 0, 0, 0.125);
 }
 
 .card-content {
@@ -98,7 +98,7 @@ xmp {
 }
 
 .clearfix:after {
-	content: '\20';
+	content: "\20";
 	display: block;
 	height: 0;
 	clear: both;
@@ -128,26 +128,26 @@ xmp {
 
 .error-value {
 	border-color: var(--danger) !important;
-	box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, .25) !important;
+	box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
 	transition: all 250ms ease-in-out;
 }
 
-.input1:checked~.label1::before {
+.input1:checked ~ .label1::before {
 	background-color: rgb(227, 69, 6) !important;
 	border-color: rgb(227, 69, 6) !important;
 }
 
-.input2:checked~.label2::before {
+.input2:checked ~ .label2::before {
 	background-color: rgb(68, 68, 68) !important;
 	border-color: rgb(68, 68, 68) !important;
 }
 
-.input3:checked~.label3::before {
+.input3:checked ~ .label3::before {
 	background-color: rgb(78, 29, 36) !important;
 	border-color: rgb(78, 29, 36) !important;
 }
 
-.input4:checked~.label4::before {
+.input4:checked ~ .label4::before {
 	background-color: rgb(0, 174, 142) !important;
 	border-color: rgb(0, 174, 142) !important;
 }
@@ -179,10 +179,40 @@ xmp {
 	/* overflow-y: hidden; */
 }
 
-#text-str {
-	transition: all 250ms ease-out, height 0ms;
-}
-
 .card-body {
 	overflow: hidden;
+}
+
+.format-btn-group .btn {
+	min-width: 40px;
+}
+
+.format-btn-group .btn-outline-secondary:not(:hover, :active) {
+	border-color: var(--bs-border-color);
+}
+
+.format-form-control {
+	display: flex;
+	align-items: stretch;
+	padding: 8px 10px;
+	gap: 10px;
+}
+
+#preset-colors label {
+	-webkit-background-clip: text !important;
+	-moz-background-clip: text !important;
+	background-clip: text !important;
+	-webkit-text-fill-color: transparent;
+}
+
+#preset-colors label:not(.rainbow) {
+	background: linear-gradient(to right, var(--fg), var(--bg));
+}
+
+#preset-colors label.rainbow {
+	background: linear-gradient(to right, red, yellow, lime, cyan, blue, magenta, red);
+}
+
+content-info small {
+	font-size: 70%;
 }

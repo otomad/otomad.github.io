@@ -378,7 +378,7 @@
             }));
         }
     }
-    globalThis.NightTime = new NightTime();
+	globalThis.NightTime = new NightTime(profile);
     /**
      * 底部的资源文件。
      * 利用函数提升特性。
