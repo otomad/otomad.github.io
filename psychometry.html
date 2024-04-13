@@ -352,7 +352,7 @@
 				if (parseInt(unlockSlider.style.left) + unlockSliderLeft > OK_percent * innerWidth) {
 					// unlockSlider.style.left = innerWidth - unlockSliderLeft / 2 - unlockSlider.clientWidth + "px";
 					alert("键盘已解锁！");
-					location.href = "option.html";
+					setTimeout(() => location.href = "option.html", 350);
 					return document.body.classList.add("finish");
 				}
 				const el = [unlockSlider, unlockInfo];
