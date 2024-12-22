@@ -8,7 +8,6 @@
 	<!-- <meta http-equiv="refresh" content="0;url=bv2av/index.html"> -->
 	<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
-	<script src="bv2av/BV 号跋扈　～ Who done it!.js"></script>
 	<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
 	<link id="css" data-theme="bootstrap" rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
@@ -27,7 +26,7 @@
 			padding-left: 10px;
 			padding-right: 10px;
 		}
-		
+
 		a.btn.btn-info {
 			margin-right: .25em;
 		}
@@ -69,7 +68,8 @@
 			Theme by <a href="https://www.drblack-system.com" target="_blank">DrBlackの锦里</a>
 		</div>
 	</div>
-	<script>
+	<script type="module">
+		import { bv2av, av2bv } from "./bv2av/BV 号跋扈　～ Who done it!.mjs";
 		const ERROR = "¿你在想桃子？"
 		// $("label").click(() => $("#" + $(this).attr("for")).select());
 		$("[id$=v]").on('input propertychange change', () => $("#get-info")[0].disabled = true);
@@ -91,6 +91,8 @@
 			}
 			if (av.value != ERROR && bv.value != ERROR) setTimeout(() => $("#get-info")[0].disabled = false, 50); // 这里要弄一个延迟是因为如果键盘按下 Enter 键，上面的改变文本触发命令也会生效，这样按钮又会被接着禁用了
 		});
+	</script>
+	<script>
 		function goLink() {
 			location.href = "https://www.bilibili.com/video/" + $("#av").val().trim();
 		}
