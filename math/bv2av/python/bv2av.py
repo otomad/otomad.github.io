@@ -1,45 +1,56 @@
 #!/usr/bin/env python3
 import sys
 
-table = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF'
-transform: dict[str, int] = {}
-for i in range(58):
-	transform[table[i]] = i
-slots = [11, 10, 3, 8, 4, 6]
-xor = 177451812
-add = 8728348608
-error = '¿你在想桃子？'
+# 原转换代码针对 2023 年 3 月 28 日 19:45:02 (av99999999) 之后的新视频出现了转换为负数 av 号的 bug，此处使用新的算法来实现：
+# https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/bvid_desc.md
 
-def decode(input: str) -> int:
-	try:
-		result: int = 0
-		for i in range(6):
-			result += transform[input[slots[i]]] * 58 ** i
-		return (result - add) ^ xor
-	except:
-		print(error)
-		exit()
+XOR_CODE = 23442827791579
+MASK_CODE = 2251799813685247
+MAX_AID = 1 << 51
+ALPHABET = "FcwAPNKTMug3GV5Lj7EJnHpWsx4tb8haYeviqBz6rkCy12mUSDQX9RdoZf"
+ENCODE_MAP = 8, 7, 0, 5, 1, 3, 2, 4, 6
+DECODE_MAP = tuple(reversed(ENCODE_MAP))
 
-def encode(input: int) -> str:
-	input = (input ^ xor) + add
-	result = list('BV1  4 1 7  ')
-	for i in range(6):
-		result[slots[i]] = table[input // 58 ** i % 58]
-	return ''.join(result)
+BASE = len(ALPHABET)
+PREFIX = "BV1"
+PREFIX_LEN = len(PREFIX)
+CODE_LEN = len(ENCODE_MAP)
+ERROR = "¿你在想桃子？"
 
-if __name__ == '__main__':
+def av2bv(aid: int) -> str:
+	bvid = [""] * 9
+	tmp = (MAX_AID | aid) ^ XOR_CODE
+	for i in range(CODE_LEN):
+		bvid[ENCODE_MAP[i]] = ALPHABET[tmp % BASE]
+		tmp //= BASE
+	return PREFIX + "".join(bvid)
+
+def bv2av(bvid: str) -> int:
+	assert bvid[:3] == PREFIX
+
+	bvid = bvid[3:]
+	tmp = 0
+	for i in range(CODE_LEN):
+		idx = ALPHABET.index(bvid[DECODE_MAP[i]])
+		tmp = tmp * BASE + idx
+	return (tmp & MASK_CODE) ^ XOR_CODE
+
+if __name__ == "__main__":
 	if len(sys.argv) < 2:
-		print('Please enter av/bv number!')
+		print("Please input av/BV number!")
 		exit()
 	original = sys.argv[1].strip()
-	result = error
-	if original[:2].lower() == 'bv':
-		result = 'av' + str(decode(original))
-	elif original[:2].lower() == 'av':
-		result = encode(int(original[2:]))
+	result = ERROR
+	if original[:2].lower() == "bv":
+		result = "av" + str(bv2av(original))
+	elif original[:2].lower() == "av":
+		result = av2bv(int(original[2:]))
 	elif original.isdigit():
-		result = encode(int(original))
+		result = av2bv(int(original))
 	else:
-		print('Please enter a legal av/bv number!')
+		print("Please input a valid av/BV number!")
 		exit()
 	print(result)
+
+# assert av2bv(111298867365120) == "BV1L9Uoa9EUx"
+# assert bv2av("BV1L9Uoa9EUx") == 111298867365120
