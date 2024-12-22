@@ -258,7 +258,7 @@ class Chobi {
 				var red = imageData.data[index];
 				var green = imageData.data[index + 1];
 				var blue = imageData.data[index + 2];
-				var avg = RGB2HSL(red, green, blue).L * 255;
+				var avg = rgb2hsl(red, green, blue).L * 255;
 				if (amount < 0)
 					avg = 255 - avg;
 				if (channel.R)
@@ -301,7 +301,7 @@ class Chobi {
 								ch('B') ? 2 : NaN
 					)]));
 					else {
-						let hsl = RGB2HSL.apply(null, imageData.data.slice(index, index + 3));
+						let hsl = rgb2hsl.apply(null, imageData.data.slice(index, index + 3));
 						setColor(
 							ch('H') ? this.map(hsl.H, 0, 360, 0, 255) :
 								ch('S') ? this.map(hsl.S, 0, 1, 0, 255) :
@@ -367,6 +367,49 @@ class Chobi {
 					imageData.data[index + 1] = green * amount / 255 + ngreen * (255 - amount) / 255;
 				if (channel.B)
 					imageData.data[index + 2] = blue * amount / 255 + nblue * (255 - amount) / 255;
+			}
+		}
+		return this;
+	}
+	negativeOklch(amount = 0, channel = defaultChannel) {
+		amount = Math.abs(amount);
+		const imageData = this.imageData;
+		for (let i = 0; i < imageData.width; i++) {
+			for (let j = 0; j < imageData.height; j++) {
+				const index = (j * 4) * imageData.width + (i * 4),
+					red = imageData.data[index],
+					green = imageData.data[index + 1],
+					blue = imageData.data[index + 2],
+					alpha = imageData.data[index + 3];
+				// const [lightness, chroma, hue] = rgb2oklch(red, green, blue);
+				// const newLightness = rgb2oklch.maxLightness - lightness,
+				// 	newHue = (hue + 180) % 360;
+				// const [newRed, newGreen, newBlue] = oklch2rgb(newLightness, chroma, newHue);
+
+				// const { H: hue, S: saturation, L: luminance } = rgb2hsl(red, green, blue);
+				// const newLuminance = 1 - luminance,
+				// 	newHue = (x =>
+				// 		x < 30 ? x * 3 + 120 :
+				// 		x < 60 ? x * 2 + 150 :
+				// 		x < 120 ? x * 1.5 + 180 :
+				// 		x < 210 ? x / 3 + 320 :
+				// 		x < 270 ? x / 2 + 285 :
+				// 		x * 2 / 3 + 240
+				// 	)(hue) % 360;
+				// const { R: newRed, G: newGreen, B: newBlue } = hsl2rgb(newHue, saturation, newLuminance);
+
+				// const [hue, saturation, brightness] = rgb2hsv(red, green, blue);
+				// const [newRed, newGreen, newBlue] = hsv2rgb((hue + 180) % 360, saturation, 1 - brightness);
+
+				const [lightness, a, b] = rgb2lab(red, green, blue);
+				const [newRed, newGreen, newBlue] = lab2rgb(/* 100 -  */lightness, -a, -b);
+
+				if (channel.R)
+					imageData.data[index] = red * amount / 255 + newRed * (255 - amount) / 255;
+				if (channel.G)
+					imageData.data[index + 1] = green * amount / 255 + newGreen * (255 - amount) / 255;
+				if (channel.B)
+					imageData.data[index + 2] = blue * amount / 255 + newBlue * (255 - amount) / 255;
 			}
 		}
 		return this;
@@ -622,8 +665,8 @@ class Chobi {
 			for (var j = 0; j < imageData.height; j++) {
 				var index = (j * 4) * imageData.width + (i * 4);
 				var rgb = [imageData.data[index], imageData.data[index + 1], imageData.data[index + 2]];
-				// var hsl=RGB2HSL(red,green,blue);
-				// var newrgb=HSL2RGB((hsl.H+180)%360,hsl.S,hsl.L)
+				// var hsl=rgb2hsl(red,green,blue);
+				// var newrgb=hsl2rgb((hsl.H+180)%360,hsl.S,hsl.L)
 				if (rgb[0] == rgb[1] && rgb[1] == rgb[2])
 					continue;
 				var max = Math.max(rgb[0], rgb[1], rgb[2]),
@@ -719,8 +762,8 @@ class Chobi {
 				var green = imageData.data[index + 1];
 				var blue = imageData.data[index + 2];
 				var alpha = imageData.data[index + 3];
-				var hsl = RGB2HSL(red, green, blue);
-				var newrgb = HSL2RGB(hsl.H, hsl.S, light);
+				var hsl = rgb2hsl(red, green, blue);
+				var newrgb = hsl2rgb(hsl.H, hsl.S, light);
 				red = newrgb.R;
 				green = newrgb.G;
 				blue = newrgb.B;
@@ -744,8 +787,8 @@ class Chobi {
 				var green = imageData.data[index + 1];
 				var blue = imageData.data[index + 2];
 				var alpha = imageData.data[index + 3];
-				var hsl = RGB2HSL(red, green, blue);
-				var newrgb = HSL2RGB(hsl.H, saturate, hsl.L);
+				var hsl = rgb2hsl(red, green, blue);
+				var newrgb = hsl2rgb(hsl.H, saturate, hsl.L);
 				red = newrgb.R;
 				green = newrgb.G;
 				blue = newrgb.B;
@@ -772,7 +815,7 @@ class Chobi {
 				var green = imageData.data[index + 1];
 				var blue = imageData.data[index + 2];
 				var alpha = imageData.data[index + 3];
-				var hsl = RGB2HSL(red, green, blue);
+				var hsl = rgb2hsl(red, green, blue);
 				var s = hsl.S;
 				if (amount <= 1)
 					s *= amount;
@@ -780,7 +823,7 @@ class Chobi {
 				// else s=1-s*(2-amount);
 				else
 					s *= (amount - 1) * 5 + 1;
-				var newrgb = HSL2RGB(hsl.H, s, hsl.L);
+				var newrgb = hsl2rgb(hsl.H, s, hsl.L);
 				red = newrgb.R;
 				green = newrgb.G;
 				blue = newrgb.B;
@@ -803,8 +846,8 @@ class Chobi {
 				var green = imageData.data[index + 1];
 				var blue = imageData.data[index + 2];
 				var alpha = imageData.data[index + 3];
-				var hsl = RGB2HSL(red, green, blue);
-				var newrgb = HSL2RGB(hsl.H, 1 - hsl.S, hsl.L);
+				var hsl = rgb2hsl(red, green, blue);
+				var newrgb = hsl2rgb(hsl.H, 1 - hsl.S, hsl.L);
 				red = newrgb.R;
 				green = newrgb.G;
 				blue = newrgb.B;
@@ -882,10 +925,10 @@ class Chobi {
 				var alpha = imageData.data[index + 3];
 				if (alpha == 0)
 					continue;
-				var hsl = RGB2HSL(red, green, blue);
+				var hsl = rgb2hsl(red, green, blue);
 				if (hsl.L > light) {
 					alpha = hsl.L * (-510) + 510;
-					var newrgb = HSL2RGB(hsl.H, hsl.S, light);
+					var newrgb = hsl2rgb(hsl.H, hsl.S, light);
 					red = newrgb.R;
 					green = newrgb.G;
 					blue = newrgb.B;
@@ -912,8 +955,8 @@ class Chobi {
 				var green = imageData.data[index + 1];
 				var blue = imageData.data[index + 2];
 				var alpha = imageData.data[index + 3];
-				var hsl = RGB2HSL(red, green, blue);
-				var newrgb = HSL2RGB((hsl.H + 360 + amount) % 360, hsl.S, hsl.L);
+				var hsl = rgb2hsl(red, green, blue);
+				var newrgb = hsl2rgb((hsl.H + 360 + amount) % 360, hsl.S, hsl.L);
 				red = newrgb.R;
 				green = newrgb.G;
 				blue = newrgb.B;
@@ -1072,10 +1115,10 @@ class Chobi {
 				var green = imageData.data[index + 1];
 				var blue = imageData.data[index + 2];
 				var alpha = imageData.data[index + 3];
-				var hsl = RGB2HSL(red, green, blue);
+				var hsl = rgb2hsl(red, green, blue);
 				var newl = this.map(hsl.L, 0, 1, 0, 360);
 				var newh = this.map(hsl.H, 0, 360, 0, 1);
-				var newrgb = amount >= 0 ? HSL2RGB(channel.H ? newl : hsl.H, hsl.S, channel.L ? newh : hsl.L) : HSL2RGB(channel.H ? 0 : hsl.H, channel.S ? 0 : hsl.S, channel.L ? newh : hsl.L);
+				var newrgb = amount >= 0 ? hsl2rgb(channel.H ? newl : hsl.H, hsl.S, channel.L ? newh : hsl.L) : hsl2rgb(channel.H ? 0 : hsl.H, channel.S ? 0 : hsl.S, channel.L ? newh : hsl.L);
 				red = newrgb.R;
 				green = newrgb.G;
 				blue = newrgb.B;
@@ -1126,13 +1169,13 @@ class Chobi {
 					green = imageData.data[index + 1],
 					blue = imageData.data[index + 2],
 					alpha = imageData.data[index + 3];
-				// var hsl=RGB2HSL(red,green,blue);
+				// var hsl=rgb2hsl(red,green,blue);
 				if (amount >= 0) {
 					red = posterize(red, amount);
 					green = posterize(green, amount);
 					blue = posterize(blue, amount);
 				} else {
-					var hsl = RGB2HSL(red, green, blue),
+					var hsl = rgb2hsl(red, green, blue),
 						hue = this.map(hsl.H, 0, 360, 0, 255),
 						saturation = this.map(hsl.S, 0, 1, 0, 255),
 						luminance = this.map(hsl.L, 0, 1, 0, 255);
@@ -1142,7 +1185,7 @@ class Chobi {
 					hue = this.map(hue, 0, 255, 0, 360);
 					saturation = this.map(saturation, 0, 255, 0, 1);
 					luminance = this.map(luminance, 0, 255, 0, 1);
-					var newrgb = HSL2RGB(channel.H ? hue : hsl.H, channel.S ? saturation : hsl.S, channel.L ? luminance : hsl.L);
+					var newrgb = hsl2rgb(channel.H ? hue : hsl.H, channel.S ? saturation : hsl.S, channel.L ? luminance : hsl.L);
 					red = newrgb.R;
 					green = newrgb.G;
 					blue = newrgb.B;
@@ -1169,7 +1212,7 @@ class Chobi {
 					green = imageData.data[index + 1],
 					blue = imageData.data[index + 2],
 					alpha = imageData.data[index + 3];
-				const [nred, ngreen, nblue] = HSV2RGB(blue / 255 * 359, green / 255, red / 255);
+				const [nred, ngreen, nblue] = hsv2rgb(blue / 255 * 359, green / 255, red / 255);
 				imageData.data[index] = nred;
 				imageData.data[index + 1] = ngreen;
 				imageData.data[index + 2] = nblue;
@@ -1272,7 +1315,7 @@ class Chobi {
 				if (red == green && green == blue)
 					continue;
 				// alpha = imageData.data[index + 3],
-				var hue = RGB2HSL(red, green, blue).H;
+				var hue = rgb2hsl(red, green, blue).H;
 				if (hue >= 270 || hue < 90)
 					red = 255; else
 					red = 0;
@@ -1486,7 +1529,7 @@ Chobi.myFilterList = {
  * @param {boolean} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
  * @returns 返回 RGB 颜色值。
  */
-function HSL2RGB(H = 0, S = 0, L = 0, stringMode = false) {
+function hsl2rgb(H = 0, S = 0, L = 0, stringMode = false) {
 	H = H % 360;
 	S = restrict(S, 0, 1);
 	L = restrict(L, 0, 1);
@@ -1531,7 +1574,7 @@ function HSL2RGB(H = 0, S = 0, L = 0, stringMode = false) {
  * @param {boolean} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
  * @returns 返回 HSL 颜色值。
  */
-function RGB2HSL(R = 0, G = 0, B = 0, stringMode = false) {
+function rgb2hsl(R = 0, G = 0, B = 0, stringMode = false) {
 	const _R = R / 255;
 	const _G = G / 255;
 	const _B = B / 255;
@@ -1573,7 +1616,7 @@ function RGB2HSL(R = 0, G = 0, B = 0, stringMode = false) {
  * @param {boolean} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
  * @returns 返回 RGB 颜色值。
  */
-function HSV2RGB(h, s, v) {
+function hsv2rgb(h, s, v) {
 	let r, g, b;
 
 	h /= 360;
@@ -1605,7 +1648,7 @@ function HSV2RGB(h, s, v) {
  * @param {boolean} stringMode - 是否输出为字符串？如是输出字符串，如否输出对象。默认为否。
  * @returns 返回 HSB/HSV 颜色值。
  */
-function RGBTOHSV(r, g, b) {
+function rgb2hsv(r, g, b) {
 	const
 		max = Math.max(r, g, b),
 		min = Math.min(r, g, b),
@@ -1623,6 +1666,133 @@ function RGBTOHSV(r, g, b) {
 	}
 
 	return [h * 360, s, v];
+}
+
+const multiplyMatrices = (A, B) => {
+	return [
+		A[0] * B[0] + A[1] * B[1] + A[2] * B[2],
+		A[3] * B[0] + A[4] * B[1] + A[5] * B[2],
+		A[6] * B[0] + A[7] * B[1] + A[8] * B[2]
+	];
+}
+
+const oklch2oklab = ([l, c, h]) => [
+	l,
+	isNaN(h) ? 0 : c * Math.cos(h * Math.PI / 180),
+	isNaN(h) ? 0 : c * Math.sin(h * Math.PI / 180)
+]
+const oklab2oklch = ([l, a, b]) => [
+	l,
+	Math.sqrt(a ** 2 + b ** 2),
+	Math.abs(a) < 0.0002 && Math.abs(b) < 0.0002 ? NaN : (((Math.atan2(b, a) * 180) / Math.PI % 360) + 360) % 360
+];
+
+const rgb2srgbLinear = rgb => rgb.map(c =>
+	Math.abs(c) <= 0.04045 ?
+		c / 12.92 :
+		(c < 0 ? -1 : 1) * (((Math.abs(c) + 0.055) / 1.055) ** 2.4)
+)
+const srgbLinear2rgb = rgb => rgb.map(c =>
+	Math.abs(c) > 0.0031308 ?
+		(c < 0 ? -1 : 1) * (1.055 * (Math.abs(c) ** (1 / 2.4)) - 0.055) :
+		12.92 * c
+)
+
+const oklab2xyz = lab => {
+	const LMSg = multiplyMatrices([
+		1, 0.3963377773761749, 0.2158037573099136,
+		1, -0.1055613458156586, -0.0638541728258133,
+		1, -0.0894841775298119, -1.2914855480194092,
+	], lab)
+	const LMS = LMSg.map(val => val ** 3)
+	return multiplyMatrices([
+		1.2268798758459243, -0.5578149944602171, 0.2813910456659647,
+		-0.0405757452148008, 1.1122868032803170, -0.0717110580655164,
+		-0.0763729366746601, -0.4214933324022432, 1.5869240198367816
+	], LMS)
+}
+const xyz2oklab = xyz => {
+	const LMS = multiplyMatrices([
+		0.8190224379967030, 0.3619062600528904, -0.1288737815209879,
+		0.0329836539323885, 0.9292868615863434, 0.0361446663506424,
+		0.0481771893596242, 0.2642395317527308, 0.6335478284694309
+	], xyz);
+	const LMSg = LMS.map(val => Math.cbrt(val));
+	return multiplyMatrices([
+		0.2104542683093140, 0.7936177747023054, -0.0040720430116193,
+		1.9779985324311684, -2.4285922420485799, 0.4505937096174110,
+		0.0259040424655478, 0.7827717124575296, -0.8086757549230774
+	], LMSg);
+}
+const xyz2rgbLinear = xyz => {
+	return multiplyMatrices([
+		3.2409699419045226, -1.537383177570094, -0.4986107602930034,
+		-0.9692436362808796, 1.8759675015077202, 0.04155505740717559,
+		0.05563007969699366, -0.20397695888897652, 1.0569715142428786
+	], xyz)
+}
+const rgbLinear2xyz = rgb => {
+	return multiplyMatrices([
+		0.41239079926595934, 0.357584339383878, 0.1804807884018343,
+		0.21263900587151027, 0.715168678767756, 0.07219231536073371,
+		0.01933081871559182, 0.11919477979462598, 0.9505321522496607
+	], rgb)
+}
+
+const oklch2rgb = (...lch) =>
+	srgbLinear2rgb(xyz2rgbLinear(oklab2xyz(oklch2oklab(lch))))
+		.map(c => !isFinite(c) ? 0 : Math.round(c));
+const rgb2oklch = (...rgb) =>
+	oklab2oklch(xyz2oklab(rgbLinear2xyz(rgb2srgbLinear(rgb))))
+rgb2oklch.maxLightness = rgb2oklch(255, 255, 255)[0];
+const oklab2rgb = (...lab) =>
+	srgbLinear2rgb(xyz2rgbLinear(oklab2xyz(lab)));
+const rgb2oklab = (...rgb) =>
+	xyz2oklab(rgbLinear2xyz(rgb2srgbLinear(rgb)));
+
+function lab2rgb(...lab) {
+	var y = (lab[0] + 16) / 116,
+		x = lab[1] / 500 + y,
+		z = y - lab[2] / 200,
+		r, g, b;
+
+	x = 0.95047 * ((x * x * x > 0.008856) ? x * x * x : (x - 16 / 116) / 7.787);
+	y = 1.00000 * ((y * y * y > 0.008856) ? y * y * y : (y - 16 / 116) / 7.787);
+	z = 1.08883 * ((z * z * z > 0.008856) ? z * z * z : (z - 16 / 116) / 7.787);
+
+	r = x * 3.2406 + y * -1.5372 + z * -0.4986;
+	g = x * -0.9689 + y * 1.8758 + z * 0.0415;
+	b = x * 0.0557 + y * -0.2040 + z * 1.0570;
+
+	r = (r > 0.0031308) ? (1.055 * Math.pow(r, 1 / 2.4) - 0.055) : 12.92 * r;
+	g = (g > 0.0031308) ? (1.055 * Math.pow(g, 1 / 2.4) - 0.055) : 12.92 * g;
+	b = (b > 0.0031308) ? (1.055 * Math.pow(b, 1 / 2.4) - 0.055) : 12.92 * b;
+
+	return [Math.max(0, Math.min(1, r)) * 255,
+	Math.max(0, Math.min(1, g)) * 255,
+	Math.max(0, Math.min(1, b)) * 255]
+}
+
+
+function rgb2lab(...rgb) {
+	var r = rgb[0] / 255,
+		g = rgb[1] / 255,
+		b = rgb[2] / 255,
+		x, y, z;
+
+	r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+	g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+	b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+
+	x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+	y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+	z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+
+	x = (x > 0.008856) ? Math.pow(x, 1 / 3) : (7.787 * x) + 16 / 116;
+	y = (y > 0.008856) ? Math.pow(y, 1 / 3) : (7.787 * y) + 16 / 116;
+	z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116;
+
+	return [(116 * y) - 16, 500 * (x - y), 200 * (y - z)]
 }
 
 // utils

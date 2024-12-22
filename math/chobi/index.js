@@ -9,7 +9,7 @@ const btns = ".btn-group-04 button",
 	smallScreen = 992;
 
 testpic = "test.jpg";
-// testMode();
+testMode();
 // showButtons();
 
 $(document).ready(function () {
@@ -107,7 +107,7 @@ function myFilter() {
 				return (${v(i)});
 			}
 			`;
-		scriptTag += "</script\>"; 
+		scriptTag += "</script\>";
 		//script 关标签最好加一个转义符号，否则可能会被 HTML 检测到，把现在目前的整个 script 标签给关了。
 		$("body").append(scriptTag); */
 		let tempVar = {};
@@ -122,7 +122,7 @@ function myFilter() {
 						g = imageData.data[index + 1],
 						b = imageData.data[index + 2],
 						a = imageData.data[index + 3],
-						hsl = RGB2HSL(r,g,b),
+						hsl = rgb2hsl(r,g,b),
 						h = this.map(hsl.H,0,360,0,255),
 						s = this.map(hsl.S,0,1,0,255),
 						l = this.map(hsl.L,0,1,0,255);
@@ -134,7 +134,7 @@ function myFilter() {
 					var nh = (channel.H ? imgObj.map(${tempVar.h},0,255,0,360) : imgObj.map(h,0,255,0,360)),
 						ns = (channel.S ? imgObj.map(${tempVar.s},0,255,0,1) : imgObj.map(s,0,255,0,1)),
 						nl = (channel.L ? imgObj.map(${tempVar.l},0,255,0,1) : imgObj.map(l,0,255,0,1)),
-						nrgb = HSL2RGB(nh,ns,nl),
+						nrgb = hsl2rgb(nh,ns,nl),
 						nr = nrgb.R,
 						ng = nrgb.G,
 						nb = nrgb.B;
@@ -176,15 +176,15 @@ function myFilter() {
 	filterId = "custom"
 	filter();
 	imgObj.loadImageToCanvas();
-	
-	
+
+
 	function filter() {
 		var height = imgObj.imageData.height,
 			width = imgObj.imageData.width;
 		for (var i = 0; i < width; i++) {
 			for (var j = 0; j < height; j++) {
 				var pixel = imgObj.getColorAt(i, j),
-					pixelhsl=RGB2HSL(pixel.red,pixel.green,pixel.blue);
+					pixelhsl=rgb2hsl(pixel.red,pixel.green,pixel.blue);
 					var r=pixel.red,
 						g=pixel.green,
 						b=pixel.blue,
@@ -202,7 +202,7 @@ function myFilter() {
 					var newH=imgObj.map(tempH(c),0,255,0,360),
 						newS=imgObj.map(tempS(c),0,255,0,1),
 						newL=imgObj.map(tempL(c),0,255,0,1),
-						newC=HSL2RGB(newH,newS,newL);
+						newC=hsl2rgb(newH,newS,newL);
 					newR=newC.R;
 					newG=newC.G;
 					newB=newC.B;
