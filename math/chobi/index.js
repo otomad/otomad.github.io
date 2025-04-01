@@ -9,7 +9,7 @@ const btns = ".btn-group-04 button",
 	smallScreen = 992;
 
 testpic = "test.jpg";
-testMode();
+// testMode();
 // showButtons();
 
 $(document).ready(function () {
@@ -158,7 +158,8 @@ function myFilter() {
 					<span>${filterName}</span>
 				</button>
 			`;
-			$("[value='custom']").before(newFilterButton);
+			// $("[value='custom']").before(newFilterButton);
+			$(".btn-group-04 .btn-outline-warning").first().before(newFilterButton);
 			newFilterThumb = $("#new-filter-thumb");
 		} else {
 			newFilterThumb = $(`[value='${filterName}']`).children("canvas");
@@ -236,7 +237,7 @@ function loadImage(elem) {
 		if (enableThumb) {	//缩略图部分
 			let orig = $("#fx-orig canvas")[0];
 			this.thumbImageData(orig, orig.width, orig.height);
-			for (let i = 0; i < 2; i++)
+			for (let i = 0; i < $(".btn-group-04 .btn-outline-warning").length; i++)
 				this.copyImageData(orig, $(".btn-group-04 .btn-outline-warning canvas")[i]);
 			imgThumb = new Chobi(orig);
 			imgThumb.ready(function (orig) {

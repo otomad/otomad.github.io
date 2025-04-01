@@ -371,7 +371,7 @@ class Chobi {
 		}
 		return this;
 	}
-	negativeOklch(amount = 0, channel = defaultChannel) {
+	aberrationOklch(amount = 0, channel = defaultChannel) {
 		amount = Math.abs(amount);
 		const imageData = this.imageData;
 		for (let i = 0; i < imageData.width; i++) {
@@ -1216,6 +1216,29 @@ class Chobi {
 				imageData.data[index] = nred;
 				imageData.data[index + 1] = ngreen;
 				imageData.data[index + 2] = nblue;
+			}
+		}
+		return this;
+	}
+	saturationToLightness(amount = -255, channel = defaultChannel) {
+		const imageData = this.imageData;
+		for (let i = 0; i < imageData.width; i++) {
+			for (let j = 0; j < imageData.height; j++) {
+				const index = (j * 4) * imageData.width + (i * 4);
+				const red = imageData.data[index];
+				const green = imageData.data[index + 1];
+				const blue = imageData.data[index + 2];
+				const alpha = imageData.data[index + 3];
+				const hsl = rgb2hsl(red, green, blue);
+				// New saturation:
+				// -255 ≤ amount < -128 → Old lightness;
+				// -128 ≤ amount < 0 → Old saturation;
+				// amount > 0 → Static value: amount / 255.
+				const newS = amount < -128 ? hsl.L : amount < 0 ? hsl.S : amount / 255;
+				const newRgb = hsl2rgb(hsl.H, newS, hsl.S);
+				if (channel.R) imageData.data[index] = newRgb.R;
+				if (channel.G) imageData.data[index + 1] = newRgb.G;
+				if (channel.B) imageData.data[index + 2] = newRgb.B;
 			}
 		}
 		return this;
