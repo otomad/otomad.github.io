@@ -71,6 +71,7 @@
 				身高计算器 | math/index.html?stature
 				百度密文 | math/index.html?baidu-code
 				编码转换 | math/index.html?code-converse
+				JS 代码隐形加密 | math/index.html?hide-code
 			$照片滤镜 | photo
 				Chobi | math/chobi/index.html
 				Flickty | math/flickity/index.html
@@ -206,7 +207,7 @@
 			position: relative;
 			font-size: 72px;
 		}
-		
+
 		@media (pointer: coarse) {
 			.logo::before {
 				line-height: 90px;
@@ -657,7 +658,7 @@
 		.alert button:focus {
 			box-shadow: 0 0 5px 0 var(--primary-color);
 		}
-		
+
 		.alert > .backdrop {
 			width: 100vw;
 			height: var(--inner-height);
@@ -669,13 +670,13 @@
 			transition: all 250ms ease-out;
 			backdrop-filter: blur(5px) grayscale(0.85);
 		}
-		
+
 		.alert.hidden > .backdrop {
 			opacity: 0;
 			pointer-events: none;
 			transition: all 250ms ease-in;
 		}
-		
+
 		.alert > .alert-window * {
 			color: white;
 		}

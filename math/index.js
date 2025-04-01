@@ -41,13 +41,15 @@ $(".nav-link").not("#nav-full-size").click(function() {
 	window.history.pushState("", "", "?" + state);
 	document.body.style.cssText = "";
 	document.documentElement.className = "";
+	scrollIntoView(this);
 }).dblclick(function () {
 	location.href = this.id.slice(2) + ".html";
 });
 
 function findActive(name) {
 	$(".active").removeClass("active");
-	$("#v-" + name).addClass("active");
+	const activeTab = $("#v-" + name).addClass("active");
+	scrollIntoView(activeTab);
 	// document.title = $("#iframe").contents().attr("title") + " - " + title;
 }
 
@@ -59,3 +61,10 @@ $("#nav-full-size").click(() => {
 setInterval(() => {
 	document.title = $("#iframe").contents().attr("title") + " - " + title;
 }, 1000);
+
+function scrollIntoView(el) {
+	if (el instanceof jQuery) el = el[0];
+	if (!el) return;
+	if ("scrollIntoViewIfNeeded" in el) el.scrollIntoViewIfNeeded();
+	else el.scrollIntoView?.();
+}

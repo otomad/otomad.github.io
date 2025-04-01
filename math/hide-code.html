@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans-CN">
+	<head>
+		<meta charset="utf-8">
+		<!-- js code invisible encryption -->
+		<meta name="discription" content="一种奇特的 JS 代码加密方式，加密后的代码是隐形的……" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+		<script src="https://cdn.staticfile.org/twitter-bootstrap/5.0.2/js/bootstrap.bundle.min.js"></script>
+		<script src="./autosize.min.js"></script>
+		<link rel="stylesheet" href="https://bootswatch.com/_vendor/bootstrap/dist/css/bootstrap.min.css" />
+		<link id="css" data-theme="bootstrap" rel="stylesheet" crossorigin="anonymous" />
+		<link rel="stylesheet" href="/basis/css/bootstrap-init.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
+		<!-- <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/4.7.0/css/font-awesome.css" /> -->
+		<style>
+			.input-group-addon {
+				min-width: 6em;
+				text-align: center;
+				justify-content: center;
+			}
+			code,
+			textarea {
+				word-break: break-all;
+				font-family: var(--bs-font-monospace);
+				font-size: 0.875em !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<title class="h4">JS 代码隐形加密</title>
+			<h6 class="mb-3">一种奇特的 JS 代码加密方式，加密后的代码是<b>隐形</b>的……</h6>
+			<p>JS 隐形加密 效果示例：</p>
+			<p><code id="example-code"></code></p>
+			<p>示例代码说明：上面的代码看起来只有短短的一行，但实际上，它包含的内容远比看到的长，<a href="javascript:alertExampleCodeLength();">点此查看示例代码长度</a>。<br />
+			或者也可亲自测试，<a href="javascript:copyExampleCode();">点此复制</a>然后粘贴到网页 JS 环境中运行（alert 代码，需要网页中运行），或<a href="javascript:runExampleCode();">点此调用 Eval 执行</a>。</p>
+			<p>此方法可加密前端 Web 浏览器、后端 Node.JS 环境下的标准 JS 代码。</p>
+			<p>被加密 JS 代码量建议不超过 <b>16KB</b>。</p>
+			<div class="input-group mb-2">
+				<label class="input-group-text input-group-addon" for="algorithm-input">算法</label>
+				<select class="form-select" id="algorithm-input">
+					<option value="original" selected>原版</option>
+					<!-- <option value="simplify">精简</option> -->
+				</select>
+			</div>
+			<div class="input-group mb-2">
+				<label class="input-group-text input-group-addon" for="txt-input">JS 源代码</label>
+				<textarea type="text" class="form-control" id="txt-input"></textarea>
+			</div>
+			<div class="input-group mb-2">
+				<label class="input-group-text input-group-addon" for="txt-result">加密结果</label>
+				<textarea type="text" class="form-control" readonly id="txt-result"></textarea>
+			</div>
+			<a class="btn btn-danger" onclick="clearInput()">清空 JS 源代码</a>
+			<a class="btn btn-info" onclick="$('#read').click()">从文件读取 JS 源代码</a>
+			<a class="btn btn-success" onclick="save()">保存 JS 加密结果</a>
+			<a class="btn btn-primary" onclick="copyResult()">复制加密结果</a>
+			<input type="file" id="read" hidden onchange="read()" accept="text/javascript,.js,.mjs,.cjs,.jsm,.jsx,.mjsx,.cjsx,.ts,.mts,.cts,.tsx,.mtsx,.ctsx" />
+			<footer>
+				<hr />
+				<small>来源：<a href="https://www.jshaman.com/tools/hide-jsjiami.html">JS 加密工具：JS 代码隐形加密</a></small>
+			</footer>
+		</div>
+		<script>
+			/* $(document).ready(() => {
+				$('[data-bs-toggle="tooltip"]').tooltip();
+			}); */
+
+			$(document).ready(() => autosize($("textarea")));
+
+			$("#txt-input").on("input propertychange change", function () {
+				const result = !this.value.trim() ? "" :
+					encode(this.value, $("#algorithm-input").val());
+				$("#txt-result").val(result);
+				autosize.update($("#txt-result"));
+			});
+
+			/**
+			 * @param {string} code
+			 * @param {"original" | "simplify"} algorithm
+			 */
+			function encode(code, algorithm) {
+				let binary = Array.from(code, char => Array.from(char.codePointAt(0).toString(2), bit => bit === "1" ? "\u200b" : "\u200c").join("")).join("\u200d");
+				binary = Array.from(binary).join("\ufeff");
+				switch (algorithm) {
+					case "original":
+						// return `eval(${binary}.split('\\ufeff').map(function(c){return c==='\\u200b'?'1':c==='\\u200c'?'0':' ';}).join('').split(' ').reduce(function(a,n){return a +String.fromCharCode(parseInt(n,2));},''));`;
+						return `eval("${binary}".split("\ufeff").map(c=>c==="\u200b"?"1":c==="\u200c"?"0":" ").join("").split(" ").reduce((a,n)=>a+String.fromCodePoint(parseInt(n,2)),""))`;
+					default:
+						return code;
+				}
+			}
+
+			function copy(str) {
+				if (!str) {
+					alert("没有内容可复制。")
+					return;
+				}
+				const el = document.createElement("textarea");
+				el.style.opacity = 0;
+				document.body.append(el);
+				el.value = str;
+				el.select();
+				document.execCommand("copy");
+				el.remove();
+				alert("复制成功！");
+			}
+
+			const exampleRaw = 'alert("唧唧复唧唧，木兰当户织。不闻机杼声，唯闻女叹息。")';
+			const exampleCode = encode(exampleRaw, "original");
+			$("#example-code").text(exampleCode);
+			const alertExampleCodeLength = () => alert(`示例代码长度：${exampleCode.length} 字节。`);
+			const copyExampleCode = () => copy(exampleCode);
+			const runExampleCode = () => eval(exampleCode);
+			const clearInput = () => $("#txt-input").val("").change();
+			const copyResult = () => copy($("#txt-result").val());
+
+			function save() {
+				const textToSave = $("#txt-result").val();
+
+				if (textToSave.length === 0) {
+					alert("没有内容可保存。")
+					return;
+				}
+
+				const textToSaveAsBlob = new Blob([textToSave], {
+					type: "text/plain"
+				});
+				const textToSaveAsURL = window.URL.createObjectURL(textToSaveAsBlob);
+				const fileNameToSaveAs = (new Date).getTime() + ".js";
+
+				const a = document.createElement("a");
+				a.download = fileNameToSaveAs;
+				a.href = textToSaveAsURL;
+				a.style.display = "none";
+				document.body.appendChild(a);
+
+				a.click();
+				document.body.removeChild(a)
+			}
+
+			function read() {
+				const fileToRead = document.getElementById("read").files[0];
+				const fileReader = new FileReader();
+				fileReader.onload = fileLoadedEvent => {
+					const textFromFileLoaded = fileLoadedEvent.target.result;
+					$("#txt-input").val(textFromFileLoaded).change();
+				};
+				fileReader.readAsText(fileToRead);
+			}
+
+			// eval("".split('\ufeff').map(function(c){return c==='\u200b'?'1':c==='\u200c'?'0':' ';}).join('').split(' ').reduce(function(a,n){return a +String.fromCharCode(parseInt(n,2));},''));
+			// 呃，先split(feff)再映射200b为1，200c为0，再join再split("")？你都会split("")了为什么不一开始就这么做呢，目测在.replace(/[\s\S]/g, e=>String.formcharcode())里面映射就可以节约很多不必要的步骤还降低了隐藏字符的大小，但是你一定是为了混淆所以才写那么长的吧
+			// https://www.zhihu.com/question/59434612/answer/1888671803804739275
+		</script>
+		<script src="/basis/NightTime.js"></script>
+	</body>
+</html>
