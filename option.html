@@ -37,6 +37,7 @@
 				抽象话生成器 | generator/index.html?emoji | 生成时请注意温文儒雅。
 				拼音格式化 | generator/index.html?pyfmt
 				彩虹文字生成器 | generator/index.html?rain
+				UBB 特效文字生成器 | generator/index.html?ubb
 				营销号生成器 | generator/index.html?various&saying=营销号生成器
 				狗屁不通文章生成器 | generator/index.html?various&saying=狗屁不通文章生成器
 				明哥体生成器 | generator/index.html?various&saying=明哥体生成器
@@ -116,6 +117,7 @@
 		}
 
 		:root {
+			color-scheme: dark;
 			--page-background: #3c3c3c;
 			--container-background: #222d;
 			--logo-title-color: #222;
@@ -1304,6 +1306,7 @@
 			/* 要是改这里就不能手动改主题了 */
 		}
 		:root[data-theme=light] {
+			color-scheme: only light;
 			--page-background: linear-gradient(to bottom, #f1f4f9, #dff1ff);
 			--container-background: #ffffff5a;
 			--logo-title-color: #ddd;

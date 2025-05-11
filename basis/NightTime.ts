@@ -24,7 +24,7 @@ interface Document {
 	 * @returns 指定文件的绝对路径。
 	 */
 	const path = (href: string = ""): string => thisPath + href;
-	
+
 	/**
 	 * 返回指定对象的类型。对于非原生对象依然有效。
 	 * @param {object} obj - 对象。
@@ -37,7 +37,7 @@ interface Document {
 		isLight: boolean;
 	};
 	type onThemeChangeEventAction = (e: onThemeChangeEvent) => void;
-	
+
 	/**
 	 * 自定义参数配置属性接口。
 	 */
@@ -59,11 +59,11 @@ interface Document {
 		/** 设定浅色主题的层叠式样式表路径 */
 		lightCSS?: string;
 	}
-	
+
 	let profile: IProfile = { };
 	if (type(globalThis.NightTime) === "Object")
 		Object.assign(profile, globalThis.NightTime);
-	
+
 	//#region 扩展方法
 	/**
 	 * 对字符串的某个字符进行替换。
@@ -73,7 +73,7 @@ interface Document {
 	 * @returns 输出的新字符串。
 	 */
 	const replaceChar = (string: string, index: number, character: string = "") => string.slice(0, index) + character + string.slice(index + 1);
-	
+
 	/**
 	 * 将小驼峰型名称转换为连字符型名称。
 	 * @param {string} camelCase - 小驼峰型名称。
@@ -89,7 +89,7 @@ interface Document {
 	}
 	//#endregion
 	//#endregion
-	
+
 	class NightTime {
 		static instance?: NightTime;
 		#isDark: boolean = false;
@@ -136,7 +136,7 @@ interface Document {
 					this.#themeChangeActions.splice(index, 1);
 			});
 		}
-		
+
 		constructor(profile: IProfile = { }) {
 			if (new.target.instance != undefined) return new.target.instance; // throw new Error("NightTime is a singleton, please use NightTime.instance instead.");
 			new.target.instance = this;
@@ -180,7 +180,7 @@ interface Document {
 			this.#isDark = isDark;
 			this.#apply();
 		}
-		
+
 		/**
 		 * 根据是否为深色来应用并切换主题。
 		 */
@@ -328,7 +328,7 @@ interface Document {
 			document.adoptedStyleSheets = sheets;
 		}
 		//#endregion
-		
+
 		/**
 		 * 强制切换到深色主题
 		 */
@@ -349,6 +349,7 @@ interface Document {
 			this.removeStyle("light-root");
 			this.appendStyle({
 				":root": {
+					"color-scheme": "dark",
 					"--text-color": "white",
 					"--background-color": this.#darkBackgroundColor
 				}
@@ -378,6 +379,7 @@ interface Document {
 			this.removeStyle("dark-root");
 			this.appendStyle({
 				":root": {
+					"color-scheme": "only light",
 					"--text-color": "black",
 					"--background-color": this.#lightBackgroundColor
 				}

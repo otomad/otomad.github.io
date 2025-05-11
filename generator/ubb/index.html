@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<title>UBB内容生成器</title>
+	<style>
+		.container {
+			width: 800px;
+			margin: 20px auto;
+			padding: 25px;
+			border: 1px solid #ddd;
+			font-family: 微软雅黑;
+			background: #f9f9f9;
+		}
+
+		.control-group {
+			margin: 15px 0;
+			padding: 15px;
+			border: 1px solid #eee;
+			background: white;
+		}
+
+		.preview-area {
+			background: #fff;
+			border: 2px dashed #aaa;
+			min-height: 120px;
+			padding: 20px;
+			margin: 15px 0;
+		}
+
+		.color-btn {
+			width: 35px;
+			height: 35px;
+			border-radius: 5px;
+			margin: 3px;
+			cursor: pointer;
+		}
+
+		.format-btn {
+			padding: 8px 12px;
+			margin: 3px;
+			min-width: 70px;
+		}
+
+		.active-format {
+			background: #2196F3 !important;
+			color: white !important;
+		}
+
+		code {
+			background: #333;
+			color: #fff;
+			padding: 15px;
+			display: block;
+			margin: 10px 0;
+			white-space: pre-wrap;
+		}
+
+		.gradient-controls {
+			display: none;
+			margin-top: 10px;
+			padding: 10px;
+			background: #f0f0f0;
+		}
+
+		.font-select-wrapper {
+			margin-top: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h2>UBB特效文字生成器</h2>
+
+		<!-- 输入区域 -->
+		<div class="control-group">
+			<textarea id="inputText" placeholder="请输入文字内容" style="width: 95%; height: 80px; padding: 10px; margin-bottom: 10px;"></textarea>
+			<div>
+				<button class="format-btn" onclick="insertTag('img')">插入图片</button>
+				<button class="format-btn" onclick="insertTag('url')">插入网址</button>
+				<button class="format-btn" onclick="insertTag('quote')">引用</button>
+				<button class="format-btn" onclick="insertTag('code')">代码段</button>
+			</div>
+		</div>
+
+		<!-- 格式控制 -->
+		<div class="control-group">
+			<div>
+				<strong>预设字体：</strong>
+				<button class="format-btn" onclick="setFont('黑体')">黑体</button>
+				<button class="format-btn" onclick="setFont('楷体')">楷体</button>
+				<button class="format-btn" onclick="setFont('宋体')">宋体</button>
+				<button class="format-btn" onclick="setFont('隶书')">隶书</button>
+				<button class="format-btn" onclick="setFont('微软雅黑')">微软雅黑</button>
+			</div>
+
+			<div class="font-select-wrapper">
+				<strong>其他字体：</strong>
+				<select id="customFont" onchange="setFont(this.value)" style="padding:5px; width:200px">
+					<option value="">选择系统字体</option>
+					<option value="Arial">Arial</option>
+					<option value="Times New Roman">Times New Roman</option>
+					<option value="Verdana">Verdana</option>
+					<option value="Georgia">Georgia</option>
+					<option value="Courier New">Courier New</option>
+					<option value="Impact">Impact</option>
+					<option value="Comic Sans MS">Comic Sans MS</option>
+				</select>
+			</div>
+
+			<div style="margin-top:10px">
+				<strong>字号选择：</strong>
+				<select id="fontSize" onchange="setFormat('size', this.value)" style="padding:5px">
+					<option value="">选择字号</option>
+					<option value="8">8px</option>
+					<option value="9">9px</option>
+					<option value="10">10px</option>
+					<option value="11">11px</option>
+					<option value="12">12px</option>
+					<option value="13">13px</option>
+					<option value="14">14px</option>
+					<option value="15">15px</option>
+					<option value="16">16px</option>
+					<option value="17">17px</option>
+					<option value="18">18px</option>
+					<option value="19">19px</option>
+					<option value="20">20px</option>
+					<option value="21">21px</option>
+					<option value="22">22px</option>
+					<option value="23">23px</option>
+					<option value="24">24px</option>
+					<option value="25">25px</option>
+					<option value="26">26px</option>
+					<option value="27">27px</option>
+					<option value="28">28px</option>
+					<option value="29">29px</option>
+					<option value="30">30px</option>
+				</select>
+			</div>
+		</div>
+
+		<!-- 颜色控制 -->
+		<div class="control-group">
+			<div>
+				<strong>颜色模式：</strong>
+				<button class="color-btn" style="background:linear-gradient(to right,red,orange,yellow,green,blue,indigo,violet)"
+					onclick="setColorMode('rainbow-fixed')" title="固定彩虹"></button>
+				<button class="color-btn" style="background:conic-gradient(red,orange,yellow,green,blue,indigo,violet)"
+					onclick="setColorMode('rainbow-cycle')" title="循环彩虹"></button>
+				<button class="color-btn" style="background:#000" onclick="setColorMode('single','000000')" title="默认黑色"></button>
+				<input type="color" id="customColor" onchange="setColorMode('custom', this.value)" style="vertical-align:middle">
+				<button class="format-btn" onclick="toggleGradientControls()">渐变生成</button>
+			</div>
+
+			<div class="gradient-controls" id="gradientControls">
+				<input type="color" id="startColor">
+				<input type="color" id="endColor">
+				<button class="format-btn" onclick="confirmGradient()">确认</button>
+				<button class="format-btn" onclick="cancelGradient()">取消</button>
+			</div>
+		</div>
+
+		<!-- 格式按钮 -->
+		<div class="control-group">
+			<strong>文本格式：</strong>
+			<button class="format-btn" id="boldBtn" onclick="toggleFormat('bold')">粗体</button>
+			<button class="format-btn" id="italicBtn" onclick="toggleFormat('italic')">斜体</button>
+			<button class="format-btn" id="underlineBtn" onclick="toggleFormat('underline')">下划线</button>
+			<button class="format-btn" id="strikeBtn" onclick="toggleFormat('strike')">删除线</button>
+		</div>
+
+		<!-- 对齐控制 -->
+		<div class="control-group">
+			<strong>对齐方式：</strong>
+			<button class="format-btn" onclick="setFormat('align','left')">左对齐</button>
+			<button class="format-btn" onclick="setFormat('align','center')">居中</button>
+			<button class="format-btn" onclick="setFormat('align','right')">右对齐</button>
+		</div>
+
+		<!-- 预览区域 -->
+		<div class="preview-area">
+			<h4>实时预览：</h4>
+			<div id="livePreview" style="margin:10px 0; min-height:50px"></div>
+			<h4>UBB代码：</h4>
+			<code id="ubbCode"></code>
+		</div>
+
+		<button style="padding:12px 40px;background:#4CAF50;color:white" onclick="generateUBB()">生成代码</button>
+		<button style="padding:12px 30px;margin-left:10px" onclick="clearAll()">清除所有</button>
+	</div>
+
+	<script>
+		const rainbowColors = ['FF0000', 'FFA500', 'FFFF00', '00FF00', '00FFFF', '0000FF', '8B00FF'];
+		let currentFormat = {
+			font: '',
+			size: '',
+			color: [],
+			colorMode: 'single',
+			align: '',
+			bold: false,
+			italic: false,
+			underline: false,
+			strike: false,
+			gradient: null
+		};
+
+		// 新增字体设置函数
+		function setFont(value) {
+			currentFormat.font = value;
+			// 同步下拉菜单选择状态
+			document.getElementById('customFont').value = value;
+			generateUBB();
+		}
+
+		// 格式设置函数
+		function setFormat(type, value) {
+			if (type === 'font') {
+				setFont(value);
+				return;
+			}
+			currentFormat[type] = value;
+			generateUBB();
+		}
+
+		function toggleFormat(type) {
+			currentFormat[type] = !currentFormat[type];
+			document.getElementById(type + 'Btn').classList.toggle('active-format');
+			generateUBB();
+		}
+
+		// 颜色模式设置
+		function setColorMode(mode, value) {
+			currentFormat.colorMode = mode;
+			if (mode === 'custom') {
+				currentFormat.color = [value.replace('#', '')];
+			} else if (mode === 'single') {
+				currentFormat.color = [value];
+			} else {
+				currentFormat.color = [];
+			}
+			generateUBB();
+		}
+
+		// 渐变控制
+		function toggleGradientControls() {
+			const controls = document.getElementById('gradientControls');
+			controls.style.display = controls.style.display === 'none' ? 'block' : 'none';
+		}
+
+		function confirmGradient() {
+			const start = document.getElementById('startColor').value;
+			const end = document.getElementById('endColor').value;
+			const text = document.getElementById('inputText').value;
+			currentFormat.color = generateGradient(start, end, text.length);
+			currentFormat.colorMode = 'gradient';
+			toggleGradientControls();
+			generateUBB();
+		}
+
+		function cancelGradient() {
+			toggleGradientControls();
+		}
+
+		function generateGradient(start, end, steps) {
+			const colors = [];
+			for (let i = 0; i < steps; i++) {
+				const ratio = i / (steps - 1 || 1);
+				const r = Math.round(parseInt(start.substr(1, 2), 16) * (1 - ratio) + parseInt(end.substr(1, 2), 16) * ratio);
+				const g = Math.round(parseInt(start.substr(3, 2), 16) * (1 - ratio) + parseInt(end.substr(3, 2), 16) * ratio);
+				const b = Math.round(parseInt(start.substr(5, 2), 16) * (1 - ratio) + parseInt(end.substr(5, 2), 16) * ratio);
+				const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+				colors.push(hex.replace('#', ''));
+			}
+			return colors;
+		}
+
+		// 插入标签
+		function insertTag(type) {
+			const input = document.getElementById('inputText');
+			switch (type) {
+				case 'img':
+					const imgUrl = prompt('请输入图片地址：');
+					if (imgUrl) input.value += `[img]${imgUrl}[/img]`;
+					break;
+				case 'url':
+					const linkUrl = prompt('请输入网址：');
+					const linkText = prompt('请输入链接文本：');
+					if (linkUrl) input.value += `[url=${linkUrl}]${linkText || '链接'}[/url]`;
+					break;
+				case 'quote':
+				case 'code':
+					const content = prompt('请输入内容：');
+					if (content) input.value += `[${type}]${content}[/${type}]`;
+					break;
+			}
+			generateUBB();
+		}
+
+		// 生成UBB代码
+		function generateUBB() {
+			let code = '';
+			const text = document.getElementById('inputText').value;
+
+			// 对齐标签
+			if (currentFormat.align) code += `[align=${currentFormat.align}]`;
+
+			// 字体标签
+			if (currentFormat.font) code += `[font=${currentFormat.font}]`;
+			if (currentFormat.size) code += `[size=${currentFormat.size}]`;
+
+			// 颜色处理
+			let colors = [];
+			if (currentFormat.colorMode === 'rainbow-fixed') {
+				colors = Array.from({ length: text.length }, (_, i) => rainbowColors[i % 7]);
+			} else if (currentFormat.colorMode === 'rainbow-cycle') {
+				colors = Array.from({ length: text.length }, (_, i) => rainbowColors[i % 7]);
+			} else if (currentFormat.colorMode === 'gradient') {
+				colors = currentFormat.color;
+			} else if (currentFormat.color.length > 0) {
+				colors = Array(text.length).fill(currentFormat.color[0]);
+			}
+
+			// 格式标签
+			if (currentFormat.bold) code += '[b]';
+			if (currentFormat.italic) code += '[i]';
+			if (currentFormat.underline) code += '[u]';
+			if (currentFormat.strike) code += '[s]';
+
+			// 处理每个字符的颜色
+			if (colors.length > 0) {
+				code += text.split('').map((char, index) => {
+					const color = colors[index % colors.length];
+					return `[color=${color}]${char}[/color]`;
+				}).join('');
+			} else {
+				code += text;
+			}
+
+			// 闭合格式标签
+			if (currentFormat.strike) code += '[/s]';
+			if (currentFormat.underline) code += '[/u]';
+			if (currentFormat.italic) code += '[/i]';
+			if (currentFormat.bold) code += '[/b]';
+			if (currentFormat.size) code += '[/size]';
+			if (currentFormat.font) code += '[/font]';
+			if (currentFormat.align) code += '[/align]';
+
+			document.getElementById('ubbCode').textContent = code;
+			updateLivePreview(code);
+		}
+
+		// 实时预览
+		function updateLivePreview(code) {
+			const preview = document.getElementById('livePreview');
+			preview.innerHTML = code
+				.replace(/\[b\]/g, '<b>').replace(/\[\/b\]/g, '</b>')
+				.replace(/\[i\]/g, '<i>').replace(/\[\/i\]/g, '</i>')
+				.replace(/\[u\]/g, '<u>').replace(/\[\/u\]/g, '</u>')
+				.replace(/\[s\]/g, '<s>').replace(/\[\/s\]/g, '</s>')
+				.replace(/\[size=(\d+)\]/g, '<span style="font-size:$1px">')
+				.replace(/\[\/size\]/g, '</span>')
+				.replace(/\[color=([^\]]+)\]/g, (match, color) => `<span style="color:#${color}">`)
+				.replace(/\[\/color\]/g, '</span>')
+				.replace(/\[font=([^\]]+)\]/g, '<span style="font-family:$1">')
+				.replace(/\[\/font\]/g, '</span>')
+				.replace(/\[align=([^\]]+)\]/g, '<div style="text-align:$1">')
+				.replace(/\[\/align\]/g, '</div>');
+		}
+
+		// 清除所有
+		function clearAll() {
+			currentFormat = {
+				font: '',
+				size: '',
+				color: [],
+				colorMode: 'single',
+				align: '',
+				bold: false,
+				italic: false,
+				underline: false,
+				strike: false,
+				gradient: null
+			};
+			document.getElementById('inputText').value = '';
+			document.querySelectorAll('.active-format').forEach(btn => btn.classList.remove('active-format'));
+			document.getElementById('ubbCode').textContent = '';
+			document.getElementById('livePreview').innerHTML = '';
+			document.getElementById('fontSize').value = '';
+		}
+	</script>
+</body>
+
+</html>
