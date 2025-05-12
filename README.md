@@ -2,23 +2,23 @@
 
 Navigation Optional for 217.
 
-This is my personal webpage for school years, about what I seen and heard. 
+This is my personal webpage for school years, about what I seen and heard.
 Almost everything is full of local area jokes.
 
 Hope it can interested you. Have fun!
 
 ![Badge](https://img.shields.io/badge/STATE-UPDATING-green?style=flat-square)
-![Badge](https://img.shields.io/badge/VERSION-4.1.23.0-orange?style=flat-square)
+![Badge](https://img.shields.io/badge/VERSION-6.5.12.0-orange?style=flat-square)
 
 ----
 
 ## Usage
 
 * Enter the [mainpage](//otomad.github.io).
-* You may see that **your browser needs to be updated**! 
+* You may see that **your browser needs to be updated**!
 <span style="color: red;">It just a joke. </span>
-Just click the **"OK"** botton for **10 times**. Then you will see a close button 
-on the **right-top corner** of the page. Just click it. Then you will see the 
+Just click the **"OK"** botton for **10 times**. Then you will see a close button
+on the **right-top corner** of the page. Just click it. Then you will see the
 main page.
 * Now it's easy to click the **three stripes** to toggle the menu.
 
