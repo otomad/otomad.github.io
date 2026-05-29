@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>HRHR 风格精神污染拼贴生成器 (v2.0)</title>
+	<style>
+		body {
+			font-family: -apple-system, sans-serif;
+			background: #121212;
+			color: #e0e0e0;
+			padding: 20px;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+
+		h1 {
+			text-align: center;
+			color: #ff3333;
+			text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+			margin-bottom: 5px;
+		}
+
+		.upload-section {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			margin-bottom: 20px;
+		}
+
+		.box {
+			border: 2px dashed #444;
+			padding: 20px;
+			text-align: center;
+			background: #1e1e1e;
+			border-radius: 8px;
+		}
+
+		input[type="file"] {
+			margin-top: 10px;
+			color: #aaa;
+		}
+
+		.controls {
+			background: #1e1e1e;
+			padding: 20px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+		}
+
+		.control-group {
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		label {
+			font-size: 14px;
+			color: #aaa;
+		}
+
+		button {
+			background: #ff3333;
+			color: white;
+			border: none;
+			padding: 12px 24px;
+			font-size: 16px;
+			font-weight: bold;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: 0.2s;
+			width: 100%;
+			grid-column: span 2;
+		}
+
+		button:hover {
+			background: #ff5555;
+			box-shadow: 0 0 15px rgba(255, 51, 51, 0.7);
+		}
+
+		button:disabled {
+			background: #444;
+			color: #888;
+			cursor: not-allowed;
+		}
+
+		.preview-section {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 20px;
+			margin-top: 20px;
+		}
+
+		canvas {
+			max-width: 100%;
+			background: #000;
+			border: 1px solid #333;
+			border-radius: 4px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+		}
+
+		.status {
+			text-align: center;
+			color: #ffaa00;
+			font-weight: bold;
+			min-height: 24px;
+		}
+
+		/* 新增：剪贴画库展示区域样式 */
+		.gallery-title {
+			margin-top: 40px;
+			color: #00ffcc;
+			text-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+			border-bottom: 1px solid #333;
+			padding-bottom: 10px;
+		}
+
+		.cutout-gallery {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+			gap: 12px;
+			margin-top: 15px;
+		}
+
+		.cutout-item {
+			background: #1a1a1a;
+			border: 1px solid #333;
+			border-radius: 4px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 5px;
+			aspect-ratio: 1;
+			overflow: hidden;
+		}
+
+		.cutout-item canvas {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+			background: repeating-conic-gradient(#252525 0% 25%, #1a1a1a 0% 50%) 50% / 10px 10px;
+			border: none;
+			box-shadow: none;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>HRHR 风格精神污染拼贴生成器</h1>
+	<p style="text-align:center; color:#888; font-size:14px; margin-top: 0;">纯前端算法驱动 · 无后端 · 像素级形状解构与重组</p>
+
+	<div class="upload-section">
+		<div class="box">
+			<h3>1. 素材图片 (Source)</h3>
+			<p style="font-size:12px; color:#666;">用于抠出肢体、器官、饰品等小部件</p>
+			<input type="file" id="sourceFile" accept="image/*">
+		</div>
+		<div class="box">
+			<h3>2. 目标图片 (Target)</h3>
+			<p style="font-size:12px; color:#666;">你想要拼贴出来的不明生物骨架/轮廓</p>
+			<input type="file" id="targetFile" accept="image/*">
+		</div>
+	</div>
+
+	<div class="controls">
+		<div class="control-group">
+			<label for="colorThreshold">素材分割敏感度 (颜色差异阈值, 越小抠图越细):</label>
+			<input type="range" id="colorThreshold" min="10" max="120" value="35">
+		</div>
+		<div class="control-group">
+			<label for="minAreaRatio">忽略过小图层阈值 (占总像素万分之比):</label>
+			<input type="range" id="minAreaRatio" min="1" max="100" value="10">
+		</div>
+		<div class="control-group">
+			<label for="posterizeSteps">目标图片色块细致度 (采样网格步长):</label>
+			<input type="range" id="posterizeSteps" min="4" max="20" value="12">
+		</div>
+		<div class="control-group">
+			<label for="density">碎片拼接密度 (每个采样点叠加数量):</label>
+			<input type="range" id="density" min="1" max="8" value="3">
+		</div>
+		<button id="generateBtn" disabled>开始解构并生成生物</button>
+	</div>
+
+	<div class="status" id="statusText">请先上传两张图片...</div>
+
+	<div class="preview-section">
+		<h3>生成结果 (画布)</h3>
+		<canvas id="outputCanvas"></canvas>
+	</div>
+
+	<!-- 新增：展示切割出来的剪贴画部件 -->
+	<h3 class="gallery-title">已提取的解构部件 (剪贴画库)</h3>
+	<div class="cutout-gallery" id="cutoutGallery">
+		<p style="color: #666; grid-column: 1/-1; text-align: center;">暂无已分割的素材部件，请上传并点击生成...</p>
+	</div>
+
+	<script>
+		const sourceFile = document.getElementById('sourceFile');
+		const targetFile = document.getElementById('targetFile');
+		const generateBtn = document.getElementById('generateBtn');
+		const statusText = document.getElementById('statusText');
+		const canvas = document.getElementById('outputCanvas');
+		const gallery = document.getElementById('cutoutGallery');
+		const ctx = canvas.getContext('2d');
+
+		let srcImg = null;
+		let tgtImg = null;
+
+		// 1. 修正：获取真实的单个文件 File 对象
+		sourceFile.onchange = (e) => { loadImage(e, (img) => { srcImg = img; checkReady(); }); };
+		targetFile.onchange = (e) => { loadImage(e, (img) => { tgtImg = img; checkReady(); }); };
+
+		function loadImage(e, callback) {
+			if (!e.target.files || e.target.files.length === 0) return;
+			const file = e.target.files[0]; // 修复此处：获取单个文件
+			const reader = new FileReader();
+			reader.onload = (event) => {
+				const img = new Image();
+				img.onload = () => callback(img);
+				img.src = event.target.result;
+			};
+			reader.readAsDataURL(file);
+		}
+
+		function checkReady() {
+			if (srcImg && tgtImg) {
+				generateBtn.disabled = false;
+				statusText.innerText = "图片就绪，点击上方按钮开始生成！";
+			}
+		}
+
+		generateBtn.onclick = async () => {
+			generateBtn.disabled = true;
+			statusText.innerText = "正在分析素材并自动抠图，请稍候...";
+			await new Promise(r => setTimeout(r, 50));
+
+			try {
+				processImages();
+			} catch (err) {
+				console.error(err);
+				statusText.innerText = "❌ 生成失败，请尝试检查图片或调整参数。";
+			}
+			generateBtn.disabled = false;
+		};
+
+		function processImages() {
+			const MAX_SIZE = 500;
+
+			// 标准化素材图片
+			const srcCanvas = document.createElement('canvas');
+			const srcCtx = srcCanvas.getContext('2d');
+			let sW = srcImg.width, sH = srcImg.height;
+			if (sW > MAX_SIZE || sH > MAX_SIZE) {
+				if (sW > sH) {
+					sH = Math.round((MAX_SIZE / sW) * sH);
+					sW = MAX_SIZE;
+				} else {
+					sW = Math.round((MAX_SIZE / sH) * sW);
+					sH = MAX_SIZE;
+				}
+			}
+			srcCanvas.width = sW; srcCanvas.height = sH;
+			srcCtx.drawImage(srcImg, 0, 0, sW, sH);
+
+			// 标准化目标画布
+			canvas.width = tgtImg.width > MAX_SIZE ? MAX_SIZE : tgtImg.width;
+			canvas.height = Math.round((canvas.width / tgtImg.width) * tgtImg.height);
+			ctx.fillStyle = '#000000';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			const tgtCanvas = document.createElement('canvas');
+			const tgtCtx = tgtCanvas.getContext('2d');
+			tgtCanvas.width = canvas.width; tgtCanvas.height = canvas.height;
+			tgtCtx.drawImage(tgtImg, 0, 0, tgtCanvas.width, tgtCanvas.height);
+
+			// 分割素材剪贴画
+			const srcData = srcCtx.getImageData(0, 0, sW, sH);
+			const cutouts = segmentSource(srcData, sW, sH);
+
+			if (cutouts.length === 0) {
+				statusText.innerText = "❌ 分割失败：未能从素材中分离出部件，请调低敏感度滑块！";
+				return;
+			}
+
+			renderGallery(cutouts);
+
+			// 提取目标大色块轮廓
+			const tgtData = tgtCtx.getImageData(0, 0, tgtCanvas.width, tgtCanvas.height);
+			const targetBlocks = segmentTargetBlocks(tgtData, tgtCanvas.width, tgtCanvas.height);
+
+			if (targetBlocks.length === 0) {
+				statusText.innerText = "❌ 分割失败：未能在目标图片中识别出有效轮廓色块！";
+				return;
+			}
+
+			// 执行精确特征拟合拼贴
+			drawFittedCreature(cutouts, targetBlocks);
+			statusText.innerText = `✅ 生成成功！提取素材部件 ${cutouts.length} 个，精准拟合了 ${targetBlocks.length} 个大型轮廓区块！`;
+		}
+
+		// 素材图片连通域分割
+		function segmentSource(imgData, w, h) {
+			const data = imgData.data;
+			const visited = new Uint8Array(w * h);
+			const cutouts = [];
+
+			const threshold = parseInt(document.getElementById('colorThreshold').value);
+			const minArea = (w * h) * (parseInt(document.getElementById('minAreaRatio').value) / 10000);
+
+			const corners = [0, (w - 1) * 4, (w * (h - 1)) * 4, (w * h - 1) * 4];
+			let bgR = 0, bgG = 0, bgB = 0;
+			corners.forEach(idx => { bgR += data[idx]; bgG += data[idx + 1]; bgB += data[idx + 2]; });
+			bgR /= 4; bgG /= 4; bgB /= 4;
+
+			for (let y = 0; y < h; y++) {
+				for (let x = 0; x < w; x++) {
+					const idx = y * w + x;
+					if (visited[idx]) continue;
+
+					const pIdx = idx * 4;
+					const r = data[pIdx], g = data[pIdx + 1], b = data[pIdx + 2], a = data[pIdx + 3];
+
+					if (a < 30 || (Math.abs(r - bgR) < threshold && Math.abs(g - bgG) < threshold && Math.abs(b - bgB) < threshold)) {
+						visited[idx] = 1;
+						continue;
+					}
+
+					const queue = [x, y];
+					const componentPixels = [];
+					visited[idx] = 1;
+
+					let head = 0;
+					let minX = x, maxX = x, minY = y, maxY = y;
+
+					while (head < queue.length) {
+						const cx = queue[head++];
+						const cy = queue[head++];
+						componentPixels.push({ x: cx, y: cy });
+
+						if (cx < minX) minX = cx; if (cx > maxX) maxX = cx;
+						if (cy < minY) minY = cy; if (cy > maxY) maxY = cy;
+
+						const neighbors = [cx + 1, cy, cx - 1, cy, cx, cy + 1, cx, cy - 1];
+						for (let i = 0; i < 8; i += 2) {
+							const nx = neighbors[i], ny = neighbors[i + 1];
+							if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+								const nIdx = ny * w + nx;
+								if (!visited[nIdx]) {
+									const npIdx = nIdx * 4;
+									if (Math.abs(data[npIdx] - r) < threshold &&
+										Math.abs(data[npIdx + 1] - g) < threshold &&
+										Math.abs(data[npIdx + 2] - b) < threshold && data[npIdx + 3] > 30) {
+										visited[nIdx] = 1;
+										queue.push(nx, ny);
+									}
+								}
+							}
+						}
+					}
+
+					if (componentPixels.length >= minArea) {
+						const cW = maxX - minX + 1;
+						const cH = maxY - minY + 1;
+
+						const cCanvas = document.createElement('canvas');
+						cCanvas.width = cW; cCanvas.height = cH;
+						const cCtx = cCanvas.getContext('2d');
+						const cData = cCtx.createImageData(cW, cH);
+
+						let sumR = 0, sumG = 0, sumB = 0;
+						componentPixels.forEach(p => {
+							const srcPIdx = (p.y * w + p.x) * 4;
+							const destPIdx = ((p.y - minY) * cW + (p.x - minX)) * 4;
+							cData.data[destPIdx] = data[srcPIdx];
+							cData.data[destPIdx + 1] = data[srcPIdx + 1];
+							cData.data[destPIdx + 2] = data[srcPIdx + 2];
+							cData.data[destPIdx + 3] = data[srcPIdx + 3];
+							sumR += data[srcPIdx]; sumG += data[srcPIdx + 1]; sumB += data[srcPIdx + 2];
+						});
+						cCtx.putImageData(cData, 0, 0);
+
+						cutouts.push({
+							canvas: cCanvas,
+							aspectRatio: cW / cH,
+							width: cW,
+							height: cH,
+							avgColor: { r: sumR / componentPixels.length, g: sumG / componentPixels.length, b: sumB / componentPixels.length }
+						});
+					}
+				}
+			}
+			return cutouts;
+		}
+
+		// 目标图片宏观大色块识别与主轴方向倾角分析
+		function segmentTargetBlocks(imgData, w, h) {
+			const data = imgData.data;
+			const visited = new Uint8Array(w * h);
+			const blocks = [];
+
+			const corners = [0, (w - 1) * 4, (w * (h - 1)) * 4, (w * h - 1) * 4];
+			let bgR = 0, bgG = 0, bgB = 0;
+			corners.forEach(idx => { bgR += data[idx]; bgG += data[idx + 1]; bgB += data[idx + 2]; });
+			bgR /= 4; bgG /= 4; bgB /= 4;
+
+			const targetSense = 140 - parseInt(document.getElementById('posterizeSteps').value) * 5;
+
+			for (let y = 0; y < h; y += 3) { // 步进加快扫描
+				for (let x = 0; x < w; x += 3) {
+					const idx = y * w + x;
+					if (visited[idx]) continue;
+
+					const pIdx = idx * 4;
+					const r = data[pIdx], g = data[pIdx + 1], b = data[pIdx + 2], a = data[pIdx + 3];
+
+					if (a < 40 || (Math.abs(r - bgR) < 35 && Math.abs(g - bgG) < 35 && Math.abs(b - bgB) < 35)) {
+						visited[idx] = 1;
+						continue;
+					}
+
+					const queue = [x, y];
+					const pixels = [];
+					visited[idx] = 1;
+					let head = 0;
+					let minX = x, maxX = x, minY = y, maxY = y;
+					let sumR = r, sumG = g, sumB = b;
+
+					while (head < queue.length) {
+						const cx = queue[head++];
+						const cy = queue[head++];
+						pixels.push({ x: cx, y: cy });
+
+						if (cx < minX) minX = cx; if (cx > maxX) maxX = cx;
+						if (cy < minY) minY = cy; if (cy > maxY) maxY = cy;
+
+						const neighbors = [cx + 5, cy, cx - 5, cy, cx, cy + 5, cx, cy - 5];
+						for (let i = 0; i < 8; i += 2) {
+							const nx = neighbors[i], ny = neighbors[i + 1];
+							if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+								const nIdx = ny * w + nx;
+								if (!visited[nIdx]) {
+									const npIdx = nIdx * 4;
+									if (data[npIdx + 3] > 40 && Math.abs(data[npIdx] - r) < targetSense &&
+										Math.abs(data[npIdx + 1] - g) < targetSense && Math.abs(data[npIdx + 2] - b) < targetSense) {
+										visited[nIdx] = 1;
+										queue.push(nx, ny);
+										sumR += data[npIdx]; sumG += data[npIdx + 1]; sumB += data[npIdx + 2];
+									}
+								}
+							}
+						}
+					}
+
+					const count = pixels.length;
+					if (count > 12) {
+						const bW = maxX - minX + 1;
+						const bH = maxY - minY + 1;
+
+						// 计算色块重心
+						let cx = 0, cy = 0;
+						pixels.forEach(p => { cx += p.x; cy += p.y; });
+						cx = Math.round(cx / count);
+						cy = Math.round(cy / count);
+
+						// 通过二阶矩(Image Moments)算法，精确测算色块的倾斜角度（轴向）
+						let mu20 = 0, mu02 = 0, mu11 = 0;
+						pixels.forEach(p => {
+							const dx = p.x - cx;
+							const dy = p.y - cy;
+							mu20 += dx * dx;
+							mu02 += dy * dy;
+							mu11 += dx * dy;
+						});
+						// 获得色块主轴的偏转弧度
+						let angle = 0;
+						if (Math.abs(mu20 - mu02) > 1e-5) {
+							angle = 0.5 * Math.atan2(2 * mu11, mu20 - mu02);
+						}
+						blocks.push({
+							centerX: cx,
+							centerY: cy,
+							w: bW,
+							h: bH,
+							angle: angle, // 精确提取出来的物体倾斜角度
+							aspectRatio: bW / bH,
+							color: { r: sumR / count, g: sumG / count, b: sumB / count }
+						});
+					}
+				}
+			}
+			return blocks;
+		}
+		// 基于几何特征对齐的大部件契合算法
+		function drawFittedCreature(cutouts, blocks) {
+			const density = parseInt(document.getElementById('density').value);
+			// 限定最小物理尺寸不得低于画布宽度的20%
+			const minPhysicalSize = canvas.width * 0.20;
+			blocks.forEach(block => {
+				// 计算目标长宽比，对候选部件依形状相似度智能排序
+				let candidates = [...cutouts].sort((a, b) => {
+					return Math.abs(a.aspectRatio - block.aspectRatio) - Math.abs(b.aspectRatio - block.aspectRatio);
+				});
+				// 精选前 3 个最契合此色块长宽轮廓的素材
+				const poolSize = Math.min(3, candidates.length);
+				for (let d = 0; d < density; d++) {
+					// 根据密度，轮流或微调选择最佳形态部件
+					const bestCutout = candidates[d % poolSize];
+					ctx.save();
+					// 1. 位置定位：将画笔移动到色块物理中心
+					ctx.translate(block.centerX, block.centerY);
+					// 2. 精准几何对齐（废除随机）：使剪贴画按目标色块的实际倾角旋转
+					ctx.rotate(block.angle);
+					// 3. 缩放与无限制纵横变形计算
+					let targetW = block.w;
+					let targetH = block.h;
+					// 保护机制：如果色块太小，强行约束其最终绘制尺寸不得低于画布的20%，避免像素密铺作弊
+					if (targetW < minPhysicalSize) targetW = minPhysicalSize;
+					if (targetH < minPhysicalSize) targetH = minPhysicalSize;
+					// 允许完全的不等比拉伸：让方形变面条，让圆球变扁片，完美贴合目标块
+					let scaleX = targetW / bestCutout.width;
+					let scaleY = targetH / bestCutout.height;
+					// 轻轻增加多层叠放时的错位感（非盲目无序旋转）
+					if (d > 0) {
+						scaleX *= (0.9 + d * 0.1);
+						scaleY *= (0.9 + d * 0.1);
+					}
+					ctx.scale(scaleX, scaleY);
+					// 4. CSS 色彩滤镜精确对齐转换
+					const srcColor = bestCutout.avgColor;
+					const tgtColor = block.color;
+					let filterParts = [];
+					// 亮度对比反色
+					const srcLum = 0.299 * srcColor.r + 0.587 * srcColor.g + 0.114 * srcColor.b;
+					const tgtLum = 0.299 * tgtColor.r + 0.587 * tgtColor.g + 0.114 * tgtColor.b;
+					let isInverted = false;
+					if (Math.abs(srcLum - tgtLum) > 85) {
+						filterParts.push("invert(100%)");
+						isInverted = true;
+					}
+					// 色相旋转对齐目标色
+					let srcHue = rgbToHue(srcColor.r, srcColor.g, srcColor.b);
+					if (isInverted) srcHue = (srcHue + 180) % 360;
+					const tgtHue = rgbToHue(tgtColor.r, tgtColor.g, tgtColor.b);
+					let hueDiff = Math.round(tgtHue - srcHue);
+					filterParts.push(`hue-rotate(${hueDiff}deg)`);
+					// 饱和度控制
+					const srcSat = Math.max(srcColor.r, srcColor.g, srcColor.b) - Math.min(srcColor.r, srcColor.g, srcColor.b);
+					const tgtSat = Math.max(tgtColor.r, tgtColor.g, tgtColor.b) - Math.min(tgtColor.r, tgtColor.g, tgtColor.b);
+					if (tgtSat < 25) {
+						filterParts.push("saturate(0%)");
+					} else if (srcSat < tgtSat) {
+						filterParts.push("saturate(200%)");
+					} else {
+						filterParts.push("saturate(70%)");
+					}
+					ctx.filter = filterParts.join(" ");
+					// 5. 正中心渲染
+					ctx.drawImage(bestCutout.canvas, -bestCutout.width / 2, -bestCutout.height / 2);
+					ctx.restore();
+				}
+			});
+		}
+		// 渲染底部微型网格展示
+		function renderGallery(cutouts) {
+			gallery.innerHTML = "";
+			cutouts.forEach(item => {
+				const wrapper = document.createElement('div');
+				wrapper.className = 'cutout-item';
+				const viewCanvas = document.createElement('canvas');
+				viewCanvas.width = item.width;
+				viewCanvas.height = item.height;
+				const viewCtx = viewCanvas.getContext('2d');
+				viewCtx.drawImage(item.canvas, 0, 0);
+				wrapper.appendChild(viewCanvas);
+				gallery.appendChild(wrapper);
+			});
+		}
+		// RGB转色相角度
+		function rgbToHue(r, g, b) {
+			r /= 255; g /= 255; b /= 255;
+			const max = Math.max(r, g, b), min = Math.min(r, g, b);
+			let h = 0;
+			if (max !== min) {
+				const d = max - min;
+				switch (max) {
+					case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+					case g: h = (b - r) / d + 2; break;
+					case b: h = (r - g) / d + 4; break;
+				}
+				h /= 6;
+			}
+			return h * 360;
+		}
+
+	</script>
+</body>
+
+</html>

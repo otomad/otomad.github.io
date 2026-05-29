@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>异形生物结构拼贴生成器 Pro</title>
+	<style>
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			background-color: #1a1a1a;
+			color: #e0e0e0;
+			margin: 0;
+			padding: 20px;
+		}
+
+		.container {
+			max-width: 1100px;
+			margin: 0 auto;
+			background: #262626;
+			padding: 25px;
+			border-radius: 12px;
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+		}
+
+		h1 {
+			text-align: center;
+			color: #fff;
+			margin-bottom: 25px;
+			font-size: 24px;
+		}
+
+		.upload-section {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			margin-bottom: 20px;
+		}
+
+		.file-box {
+			border: 2px dashed #444;
+			padding: 15px;
+			text-align: center;
+			border-radius: 8px;
+			background: #1f1f1f;
+			transition: border-color 0.3s;
+		}
+
+		.file-box:hover {
+			border-color: #007bff;
+		}
+
+		.file-box label {
+			display: block;
+			margin-bottom: 10px;
+			font-weight: bold;
+			color: #aaa;
+		}
+
+		.preview-container {
+			margin-top: 10px;
+			height: 150px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			background: #111;
+			border-radius: 4px;
+			overflow: hidden;
+		}
+
+		.preview-container img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		.controls {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 15px;
+			background: #1f1f1f;
+			padding: 15px;
+			border-radius: 8px;
+			margin-bottom: 20px;
+		}
+
+		.control-group {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.control-group label {
+			font-size: 13px;
+			color: #bbb;
+			margin-bottom: 5px;
+		}
+
+		.control-group input[type="range"] {
+			width: 100%;
+		}
+
+		.btn-container {
+			text-align: center;
+			margin-bottom: 20px;
+		}
+
+		#generateBtn {
+			background: #007bff;
+			color: white;
+			border: none;
+			padding: 12px 40px;
+			font-size: 16px;
+			font-weight: bold;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+
+		#generateBtn:disabled {
+			background: #444;
+			cursor: not-allowed;
+		}
+
+		#generateBtn:hover:not(:disabled) {
+			background: #0056b3;
+		}
+
+		#statusText {
+			text-align: center;
+			margin-top: 10px;
+			font-size: 14px;
+			color: #ffc107;
+		}
+
+		.workspace {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 20px;
+		}
+
+		#outputCanvas {
+			background: #000;
+			border-radius: 8px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+			max-width: 100%;
+		}
+
+		.gallery-title {
+			width: 100%;
+			font-size: 14px;
+			color: #aaa;
+			margin-top: 15px;
+			border-bottom: 1px solid #444;
+			padding-bottom: 5px;
+		}
+
+		#cutoutGallery {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			width: 100%;
+			max-height: 120px;
+			overflow-y: auto;
+			background: #1f1f1f;
+			padding: 10px;
+			border-radius: 6px;
+		}
+
+		.cutout-item {
+			width: 50px;
+			height: 50px;
+			background: #111;
+			border: 1px solid #333;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 4px;
+		}
+
+		.cutout-item canvas {
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="container">
+		<h1>👾 异形生物大部件拟合生成器</h1>
+
+		<!-- 1. 上传与预览区 -->
+		<div class="upload-section">
+			<div class="file-box">
+				<label for="sourceFile">✨ 1. 选择部件素材图 (多元素/散件)</label>
+				<input type="file" id="sourceFile" accept="image/*">
+				<div class="preview-container" id="sourcePreview">
+					<span style="color:#555;font-size:12px;">暂无图片预览</span>
+				</div>
+			</div>
+			<div class="file-box">
+				<label for="targetFile">🎯 2. 选择目标骨架轮廓图</label>
+				<input type="file" id="targetFile" accept="image/*">
+				<div class="preview-container" id="targetPreview">
+					<span style="color:#555;font-size:12px;">暂无图片预览</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- 参数控制区 -->
+		<div class="controls">
+			<div class="control-group">
+				<label id="thresholdLabel">素材识别敏感度: 40</label>
+				<input type="range" id="colorThreshold" min="10" max="150" value="40">
+			</div>
+			<div class="control-group">
+				<label id="areaLabel">最小部件过滤大小: 0.5%</label>
+				<input type="range" id="minAreaRatio" min="1" max="100" value="5">
+			</div>
+			<div class="control-group">
+				<label id="stepsLabel">骨架合并跨度 (滑块越小部件越大): 8</label>
+				<input type="range" id="posterizeSteps" min="2" max="20" value="8">
+			</div>
+			<div class="control-group">
+				<label id="densityLabel">单区块覆盖堆叠层数: 2</label>
+				<input type="range" id="density" min="1" max="5" value="2">
+			</div>
+		</div>
+
+		<div class="btn-container">
+			<button id="generateBtn" disabled>🔥 开始宏观形状重组</button>
+			<div id="statusText">请先上传两张图片以激活生成系统</div>
+		</div>
+
+		<!-- 工作台区域 -->
+		<div class="workspace">
+			<canvas id="outputCanvas"></canvas>
+
+			<div class="gallery-title">✂️ 成功分离出来的原色剪贴画库：</div>
+			<div id="cutoutGallery"></div>
+		</div>
+	</div>
+
+	<script>
+		const sourceFile = document.getElementById('sourceFile');
+		const targetFile = document.getElementById('targetFile');
+		const generateBtn = document.getElementById('generateBtn');
+		const statusText = document.getElementById('statusText');
+		const canvas = document.getElementById('outputCanvas');
+		const gallery = document.getElementById('cutoutGallery');
+		const ctx = canvas.getContext('2d');
+
+		const sourcePreview = document.getElementById('sourcePreview');
+		const targetPreview = document.getElementById('targetPreview');
+
+		let srcImg = null;
+		let tgtImg = null;
+
+		// 滑块数值联动显示
+		document.getElementById('colorThreshold').oninput = function () { document.getElementById('thresholdLabel').innerText = `素材识别敏感度: ${this.value}`; };
+		document.getElementById('minAreaRatio').oninput = function () { document.getElementById('areaLabel').innerText = `最小部件过滤大小: ${(this.value / 10).toFixed(1)}%`; };
+		document.getElementById('posterizeSteps').oninput = function () { document.getElementById('stepsLabel').innerText = `骨架合并跨度 (滑块越小部件越大): ${this.value}`; };
+		document.getElementById('density').oninput = function () { document.getElementById('densityLabel').innerText = `单区块覆盖堆叠层数: ${this.value}`; };
+
+		// 绑定上传并触发文件预览
+		sourceFile.onchange = (e) => { handleFileSelect(e, sourcePreview, (img) => { srcImg = img; checkReady(); }); };
+		targetFile.onchange = (e) => { handleFileSelect(e, targetPreview, (img) => { tgtImg = img; checkReady(); }); };
+
+		function handleFileSelect(e, previewContainer, callback) {
+			if (!e.target.files || e.target.files.length === 0) return;
+			const file = e.target.files[0]; // 核心修复：精准拉取单个File文件对象
+
+			const reader = new FileReader();
+			reader.onload = (event) => {
+				// 创建图像实例用于计算
+				const img = new Image();
+				img.onload = () => {
+					// 更新DOM预览图
+					previewContainer.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+					callback(img);
+				};
+				img.src = event.target.result;
+			};
+			reader.readAsDataURL(file);
+		}
+
+		function checkReady() {
+			if (srcImg && tgtImg) {
+				generateBtn.disabled = false;
+				statusText.innerText = "⚡ 图片上传完毕，控制参数已校准。点击上方按钮开始重构！";
+			}
+		}
+
+		generateBtn.onclick = async () => {
+			generateBtn.disabled = true;
+			statusText.innerText = "🔮 正在对边缘进行自适应重映射与几何轴向对齐，请稍候...";
+			await new Promise(r => setTimeout(r, 40));
+
+			try {
+				processImages();
+			} catch (err) {
+				console.error(err);
+				statusText.innerText = "❌ 渲染管线受阻，请尝试精简或更换目标图像。";
+			}
+			generateBtn.disabled = false;
+		};
+
+		function processImages() {
+			const MAX_SIZE = 500;
+
+			// 1. 规范化素材图像大小
+			const srcCanvas = document.createElement('canvas');
+			const srcCtx = srcCanvas.getContext('2d');
+			let sW = srcImg.width, sH = srcImg.height;
+			if (sW > MAX_SIZE || sH > MAX_SIZE) {
+				if (sW > sH) { sH = Math.round((MAX_SIZE / sW) * sH); sW = MAX_SIZE; }
+				else { sW = Math.round((MAX_SIZE / sH) * sH); sH = MAX_SIZE; }
+			}
+			srcCanvas.width = sW; srcCanvas.height = sH;
+			srcCtx.drawImage(srcImg, 0, 0, sW, sH);
+
+			// 2. 规范化主输出画布
+			canvas.width = tgtImg.width > MAX_SIZE ? MAX_SIZE : tgtImg.width;
+			canvas.height = Math.round((canvas.width / tgtImg.width) * tgtImg.height);
+			ctx.fillStyle = '#000000';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+			const tgtCanvas = document.createElement('canvas');
+			const tgtCtx = tgtCanvas.getContext('2d');
+			tgtCanvas.width = canvas.width; tgtCanvas.height = canvas.height;
+			tgtCtx.drawImage(tgtImg, 0, 0, tgtCanvas.width, tgtCanvas.height);
+
+			// 3. 运行优化算法：边缘光滑平整提取
+			const srcData = srcCtx.getImageData(0, 0, sW, sH);
+			const cutouts = segmentSourceSmooth(srcData, sW, sH);
+			if (cutouts.length === 0) {
+				statusText.innerText = "❌ 部件分离失败：未能在素材图提取到闭合形状，请调低敏感度！";
+				return;
+			}
+			renderGallery(cutouts);
+			// 4. 提取目标色块宏观骨架
+			const tgtData = tgtCtx.getImageData(0, 0, tgtCanvas.width, tgtCanvas.height);
+			const targetBlocks = segmentTargetBlocksAdvanced(tgtData, tgtCanvas.width, tgtCanvas.height);
+			if (targetBlocks.length === 0) {
+				statusText.innerText = "❌ 轮廓提取失败：目标图有效区域不足！";
+				return;
+			}
+			// 5. 特征拉伸重组与精确滤镜上色
+			drawFittedCreatureAdvanced(cutouts, targetBlocks);
+			statusText.innerText = `✅ 宏观拼接成功！提取丝滑剪贴画 ${cutouts.length} 个，强力契合形状骨架块 ${targetBlocks.length} 个！`;
+		}
+		// 算法优化：抗边缘粗糙、防撕裂的平滑连通域提取
+		function segmentSourceSmooth(imgData, w, h) {
+			const data = imgData.data;
+			const visited = new Uint8Array(w * h);
+			const cutouts = [];
+			const threshold = parseInt(document.getElementById('colorThreshold').value);
+			const minArea = (w * h) * (parseInt(document.getElementById('minAreaRatio').value) / 10000);
+			// 四角多采样背景色识别
+			const corners = [0, (w - 1) * 4, (w * (h - 1)) * 4, (w * h - 1) * 4];
+			let bgR = 0, bgG = 0, bgB = 0;
+			corners.forEach(idx => { bgR += data[idx]; bgG += data[idx + 1]; bgB += data[idx + 2]; });
+			bgR /= 4; bgG /= 4; bgB /= 4;
+			for (let y = 0; y < h; y++) {
+				for (let x = 0; x < w; x++) {
+					const idx = y * w + x;
+					if (visited[idx]) continue;
+					const pIdx = idx * 4;
+					const r = data[pIdx], g = data[pIdx + 1], b = data[pIdx + 2], a = data[pIdx + 3];
+					// 判断非背景有效像素
+					if (a < 35 || (Math.abs(r - bgR) < threshold && Math.abs(g - bgG) < threshold && Math.abs(b - bgB) < threshold)) {
+						visited[idx] = 1;
+						continue;
+					}
+					const queue = [x, y];
+					const componentPixels = [];
+					visited[idx] = 1;
+					let head = 0;
+					let minX = x, maxX = x, minY = y, maxY = y;
+					while (head < queue.length) {
+						const cx = queue[head++];
+						const cy = queue[head++];
+						componentPixels.push({ x: cx, y: cy });
+						if (cx < minX) minX = cx; if (cx > maxX) maxX = cx;
+						if (cy < minY) minY = cy; if (cy > maxY) maxY = cy;
+						const neighbors = [cx + 1, cy, cx - 1, cy, cx, cy + 1, cx, cy - 1];
+						for (let i = 0; i < 8; i += 2) {
+							const nx = neighbors[i], ny = neighbors[i + 1];
+							if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+								const nIdx = ny * w + nx;
+								if (!visited[nIdx]) {
+									const npIdx = nIdx * 4;
+									if (Math.abs(data[npIdx] - r) < threshold &&
+										Math.abs(data[npIdx + 1] - g) < threshold &&
+										Math.abs(data[npIdx + 2] - b) < threshold && data[npIdx + 3] > 35) {
+										visited[nIdx] = 1;
+										queue.push(nx, ny);
+									}
+								}
+							}
+						}
+					}
+					if (componentPixels.length >= minArea) {
+						const cW = maxX - minX + 1;
+						const cH = maxY - minY + 1;
+						// 新建独立画布提取部件
+						const cCanvas = document.createElement('canvas');
+						cCanvas.width = cW; cCanvas.height = cH;
+						const cCtx = cCanvas.getContext('2d');
+						const cData = cCtx.createImageData(cW, cH);
+						let sumR = 0, sumG = 0, sumB = 0;
+						componentPixels.forEach(p => {
+							const srcPIdx = (p.y * w + p.x) * 4;
+							const destPIdx = ((p.y - minY) * cW + (p.x - minX)) * 4;
+							cData.data[destPIdx] = data[srcPIdx];
+							cData.data[destPIdx + 1] = data[srcPIdx + 1];
+							cData.data[destPIdx + 2] = data[srcPIdx + 2];
+							cData.data[destPIdx + 3] = data[srcPIdx + 3];
+							sumR += data[srcPIdx]; sumG += data[srcPIdx + 1]; sumB += data[srcPIdx + 2];
+						});
+						cCtx.putImageData(cData, 0, 0);
+						// 核心边缘技术：抗锯齿平滑重构（利用二次离线模糊防止边缘撕裂不规整）
+						const smoothCanvas = document.createElement('canvas');
+						smoothCanvas.width = cW; smoothCanvas.height = cH;
+						const smCtx = smoothCanvas.getContext('2d');
+						smCtx.filter = 'blur(1px)'; // 温和模糊边缘防锯齿
+						smCtx.drawImage(cCanvas, 0, 0);
+						cutouts.push({
+							canvas: smoothCanvas,
+							aspectRatio: cW / cH,
+							width: cW,
+							height: cH,
+							avgColor: { r: sumR / componentPixels.length, g: sumG / componentPixels.length, b: sumB / componentPixels.length }
+						});
+					}
+				}
+			}
+			return cutouts;
+		}
+		// 目标图特征聚类提取
+		function segmentTargetBlocksAdvanced(imgData, w, h) {
+			const data = imgData.data;
+			const visited = new Uint8Array(w * h);
+			const blocks = [];
+			const corners = [0, (w - 1) * 4, (w * (h - 1)) * 4, (w * h - 1) * 4];
+			let bgR = 0, bgG = 0, bgB = 0;
+			corners.forEach(idx => { bgR += data[idx]; bgG += data[idx + 1]; bgB += data[idx + 2]; });
+			bgR /= 4; bgG /= 4; bgB /= 4;
+			const stepSize = parseInt(document.getElementById('posterizeSteps').value);
+			for (let y = 0; y < h; y += stepSize) {
+				for (let x = 0; x < w; x += stepSize) {
+					const idx = y * w + x;
+					if (visited[idx]) continue;
+					const pIdx = idx * 4;
+					const r = data[pIdx], g = data[pIdx + 1], b = data[pIdx + 2], a = data[pIdx + 3];
+					if (a < 40 || (Math.abs(r - bgR) < 40 && Math.abs(g - bgG) < 40 && Math.abs(b - bgB) < 40)) {
+						visited[idx] = 1;
+						continue;
+					}
+					const queue = [x, y];
+					const pixels = [];
+					visited[idx] = 1;
+					let head = 0;
+					let minX = x, maxX = x, minY = y, maxY = y;
+					let sumR = r, sumG = g, sumB = b;
+					while (head < queue.length) {
+						const cx = queue[head++];
+						const cy = queue[head++];
+						pixels.push({ x: cx, y: cy });
+						if (cx < minX) minX = cx; if (cx > maxX) maxX = cx;
+						if (cy < minY) minY = cy; if (cy > maxY) maxY = cy;
+						const nOffset = stepSize;
+						const neighbors = [cx + nOffset, cy, cx - nOffset, cy, cx, cy + nOffset, cx, cy - nOffset];
+						for (let i = 0; i < 8; i += 2) {
+							const nx = neighbors[i], ny = neighbors[i + 1];
+							if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+								const nIdx = ny * w + nx;
+								if (!visited[nIdx]) {
+									const npIdx = nIdx * 4;
+									if (data[npIdx + 3] > 40 && Math.abs(data[npIdx] - r) < 90 &&
+										Math.abs(data[npIdx + 1] - g) < 90 && Math.abs(data[npIdx + 2] - b) < 90) {
+										visited[nIdx] = 1;
+										queue.push(nx, ny);
+										sumR += data[npIdx]; sumG += data[npIdx + 1]; sumB += data[npIdx + 2];
+									}
+								}
+							}
+						}
+					}
+					const count = pixels.length;
+					if (count > 8) {
+						const bW = maxX - minX + 1;
+						const bH = maxY - minY + 1;
+						let cx = 0, cy = 0;
+						pixels.forEach(p => { cx += p.x; cy += p.y; });
+						cx = Math.round(cx / count);
+						cy = Math.round(cy / count);
+						// 物理惯性二阶矩测算形状倾角
+						let mu20 = 0, mu02 = 0, mu11 = 0;
+						pixels.forEach(p => {
+							const dx = p.x - cx; const dy = p.y - cy;
+							mu20 += dx * dx; mu02 += dy * dy; mu11 += dx * dy;
+						});
+						let angle = 0;
+						if (Math.abs(mu20 - mu02) > 1e-5) {
+							angle = 0.5 * Math.atan2(2 * mu11, mu20 - mu02);
+						}
+						blocks.push({
+							centerX: cx, centerY: cy,
+							w: bW, h: bH,
+							angle: angle,
+							aspectRatio: bW / bH,
+							color: { r: sumR / count, g: sumG / count, b: sumB / count }
+						});
+					}
+				}
+			}
+			return blocks;
+		}
+		// 精确几何对齐与强制极限长宽比拉伸渲染引擎
+		function drawFittedCreatureAdvanced(cutouts, blocks) {
+			const density = parseInt(document.getElementById('density').value);
+			// 防作弊最小物理下限：必须占据画布横向或纵向空间的 18%
+			const minSizeLimit = canvas.width * 0.18;
+			blocks.forEach(block => {
+				// 不再为了躲避变形而按原本比例匹配！
+				// 按照“谁在不等比长宽拉伸之后能完美覆盖这个骨架块”进行优先级排序
+				let candidates = [...cutouts].sort((a, b) => {
+					return Math.abs(a.aspectRatio - block.aspectRatio) - Math.abs(b.aspectRatio - block.aspectRatio);
+				});
+				const poolSize = Math.min(2, candidates.length);
+				for (let d = 0; d < density; d++) {
+					const bestCutout = candidates[d % poolSize];
+					ctx.save();
+					ctx.translate(block.centerX, block.centerY);
+					// 1. 无误差几何方向轴向对齐，完全废除无意义的完全随机乱转
+					ctx.rotate(block.angle);
+					let reqW = block.w;
+					let reqH = block.h;
+					// 2. 限制最小物理体积（防止退化为小像素密铺）
+					if (reqW < minSizeLimit) reqW = minSizeLimit;
+					if (reqH < minSizeLimit) reqH = minSizeLimit;
+					// 3. 核心强化：放开限制，强制拉伸变形操作！
+					// 不管原图形状，直接计算完全符合目标骨架尺寸所需的拉伸因子
+					let scaleX = reqW / bestCutout.width;
+					let scaleY = reqH / bestCutout.height;
+					// 针对层叠多层时，施加轴向上的轻微错位延展，产生解构组装美感
+					if (d > 0) {
+						scaleX *= (1.0 + d * 0.15);
+						scaleY *= (0.95 - d * 0.05);
+					}
+					// 执行极端的纵横不等比缩放操作（把圆拉成细线、方块压成扁片）
+					ctx.scale(scaleX, scaleY);
+					// 4. 高阶色彩滤镜转换管线
+					const srcColor = bestCutout.avgColor;
+					const tgtColor = block.color;
+					let filterParts = [];
+					const srcLum = 0.299 * srcColor.r + 0.587 * srcColor.g + 0.114 * srcColor.b;
+					const tgtLum = 0.299 * tgtColor.r + 0.587 * tgtColor.g + 0.114 * tgtColor.b;
+					let isInverted = false;
+					if (Math.abs(srcLum - tgtLum) > 90) {
+						filterParts.push("invert(100%)");
+						isInverted = true;
+					}
+					let srcHue = rgbToHue(srcColor.r, srcColor.g, srcColor.b);
+					if (isInverted) srcHue = (srcHue + 180) % 360;
+					const tgtHue = rgbToHue(tgtColor.r, tgtColor.g, tgtColor.b);
+					let hueDiff = Math.round(tgtHue - srcHue);
+					filterParts.push(`hue-rotate(${hueDiff}deg)`);
+					const srcSat = Math.max(srcColor.r, srcColor.g, srcColor.b) - Math.min(srcColor.r, srcColor.g, srcColor.b);
+					const tgtSat = Math.max(tgtColor.r, tgtColor.g, tgtColor.b) - Math.min(tgtColor.r, tgtColor.g, tgtColor.b);
+					if (tgtSat < 30) {
+						filterParts.push("saturate(0%)");
+					} else if (srcSat < tgtSat) {
+						filterParts.push("saturate(220%)");
+					} else {
+						filterParts.push("saturate(75%)");
+					}
+					ctx.filter = filterParts.join(" ");
+					// 5. 将剪贴画精确居中绘制
+					ctx.drawImage(bestCutout.canvas, -bestCutout.width / 2, -bestCutout.height / 2);
+					ctx.restore();
+				}
+			});
+		}
+		// 渲染底栏图集
+		function renderGallery(cutouts) {
+			gallery.innerHTML = "";
+			cutouts.forEach(item => {
+				const wrapper = document.createElement('div');
+				wrapper.className = 'cutout-item';
+				const viewCanvas = document.createElement('canvas');
+				viewCanvas.width = item.width; viewCanvas.height = item.height;
+				const viewCtx = viewCanvas.getContext('2d');
+				viewCtx.drawImage(item.canvas, 0, 0);
+				wrapper.appendChild(viewCanvas);
+				gallery.appendChild(wrapper);
+			});
+		}
+		function rgbToHue(r, g, b) {
+			r /= 255; g /= 255; b /= 255;
+			const max = Math.max(r, g, b), min = Math.min(r, g, b);
+			let h = 0;
+			if (max !== min) {
+				const d = max - min;
+				switch (max) {
+					case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+					case g: h = (b - r) / d + 2; break;
+					case b: h = (r - g) / d + 4; break;
+				}
+				h /= 6;
+			}
+			return h * 360;
+		}
+
+	</script>
+</body>
+
+</html>
