@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>波普艺术(Pop Art)风格生成器</title>
+	<style>
+		:root {
+			--bg-color: #121212;
+			--panel-bg: #1e1e1e;
+			--accent-color: #ff007f;
+			--text-color: #ffffff;
+			--input-bg: #2d2d2d;
+		}
+
+		body {
+			font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			background-color: var(--bg-color);
+			color: var(--text-color);
+			margin: 0;
+			padding: 20px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+
+		h1 {
+			margin-bottom: 5px;
+			color: var(--accent-color);
+			text-transform: uppercase;
+			letter-spacing: 2px;
+			font-size: 2.3rem;
+			text-shadow: 3px 3px 0px #00ffff;
+			text-align: center;
+		}
+
+		.subtitle {
+			margin-bottom: 30px;
+			color: #aaa;
+			font-size: 0.95rem;
+			text-align: center;
+		}
+
+		.container {
+			display: flex;
+			flex-direction: column;
+			gap: 20px;
+			width: 100%;
+			max-width: 1200px;
+			align-items: center;
+		}
+
+		@media (min-width: 850px) {
+			.container {
+				flex-direction: row;
+				align-items: flex-start;
+			}
+		}
+
+		.control-panel {
+			background-color: var(--panel-bg);
+			padding: 20px;
+			border-radius: 12px;
+			box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+			flex: 1;
+			width: 100%;
+			box-sizing: border-box;
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.preview-panel {
+			flex: 2;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #090909;
+			border: 4px solid var(--accent-color);
+			box-shadow: 5px 5px 0px #00ffff;
+			border-radius: 8px;
+			overflow: hidden;
+			position: relative;
+			min-height: 450px;
+			width: 100%;
+		}
+
+		.control-group {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
+
+		.grid-inputs {
+			display: flex;
+			gap: 10px;
+		}
+
+		.grid-inputs>div {
+			flex: 1;
+		}
+
+		label {
+			font-weight: bold;
+			font-size: 0.85rem;
+			color: #ccc;
+		}
+
+		.file-input-wrapper {
+			position: relative;
+			overflow: hidden;
+			display: inline-block;
+			width: 100%;
+		}
+
+		.btn {
+			border: 2px solid var(--accent-color);
+			color: white;
+			background-color: transparent;
+			padding: 10px 15px;
+			border-radius: 6px;
+			font-size: 0.95rem;
+			font-weight: bold;
+			cursor: pointer;
+			width: 100%;
+			transition: all 0.2s ease;
+			box-sizing: border-box;
+			text-align: center;
+		}
+
+		.btn:hover {
+			background-color: var(--accent-color);
+			box-shadow: 0 0 12px var(--accent-color);
+		}
+
+		.file-input-wrapper input[type=file] {
+			font-size: 100px;
+			position: absolute;
+			left: 0;
+			top: 0;
+			opacity: 0;
+			cursor: pointer;
+		}
+
+		select,
+		input[type=range],
+		input[type=number] {
+			width: 100%;
+			padding: 8px 10px;
+			background: var(--input-bg);
+			border: 1px solid #444;
+			color: white;
+			border-radius: 6px;
+			box-sizing: border-box;
+			font-size: 0.9rem;
+		}
+
+		.range-header {
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.range-val {
+			color: var(--accent-color);
+			font-weight: bold;
+		}
+
+		.switch-group {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			padding: 5px 0;
+		}
+
+		.switch-group input[type="checkbox"] {
+			width: auto;
+			cursor: pointer;
+			transform: scale(1.2);
+		}
+
+		.ref-image-box {
+			display: none;
+			text-align: center;
+			border-top: 1px solid #333;
+			padding-top: 15px;
+			margin-top: 5px;
+		}
+
+		.ref-image-box img {
+			max-width: 100px;
+			max-height: 100px;
+			border: 2px solid #555;
+			border-radius: 4px;
+			object-fit: contain;
+		}
+
+		canvas {
+			max-width: 100%;
+			max-height: 75vh;
+			object-fit: contain;
+			display: none;
+		}
+
+		.placeholder {
+			color: #555;
+			text-align: center;
+			font-size: 1.1rem;
+			padding: 40px;
+		}
+
+		.loading {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: rgba(0, 0, 0, 0.85);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 1.3rem;
+			color: var(--accent-color);
+			display: none;
+			z-index: 10;
+		}
+
+		img:active,
+		canvas:active {
+			filter: invert(1);
+		}
+	</style>
+</head>
+
+<body>
+
+	<h1>Pop Art Canvas Pro</h1>
+	<div class="subtitle">安迪·沃霍尔风格 —— 经典波普艺术滤镜生成器</div>
+
+	<div class="container">
+		<!-- 控制面板 -->
+		<div class="control-panel">
+			<div class="control-group">
+				<div class="file-input-wrapper">
+					<button class="btn">选择并上传图片</button>
+					<input type="file" id="imageLoader" accept="image/*">
+				</div>
+			</div>
+
+			<!-- 原图参考缩略图容器 -->
+			<div class="ref-image-box" id="refImageBox">
+				<label style="margin-bottom: 5px;">原图参考：</label><br>
+				<img id="refImage" src="" alt="原图参考">
+			</div>
+
+			<div class="control-group">
+				<label>自定义拼贴排列(行 × 列)</label>
+				<div class="grid-inputs">
+					<div>
+						<input type="number" id="gridRows" min="1" max="10" value="3" placeholder="行数">
+					</div>
+					<div style="display:flex; align-items:center; justify-content:center; max-width:20px; color:#aaa;">×</div>
+					<div>
+						<input type="number" id="gridCols" min="1" max="10" value="3" placeholder="列数">
+					</div>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label>单宫格最大宽度（输入数值太大会导致崩溃）</label>
+				<div class="grid-inputs">
+					<div>
+						<input type="number" id="maxCellWidth" min="1" max="10000" value="1000" placeholder="单宫格最大宽度">
+					</div>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<div class="range-header">
+					<label>原图前置饱和度提升:</label>
+					<span class="range-val" id="saturationVal">+50%</span>
+				</div>
+				<input type="range" id="saturationBoost" min="0" max="200" value="50" step="5">
+			</div>
+
+			<div class="control-group">
+				<div class="range-header">
+					<label>色彩细节数量 (聚类数):</label>
+					<span class="range-val" id="colorCountVal">5</span>
+				</div>
+				<input type="range" id="colorCount" min="2" max="8" value="5" step="1">
+			</div>
+
+			<div class="control-group switch-group">
+				<label for="colorProtection" style="cursor:pointer;">启用色彩邻近性保护</label>
+				<input type="checkbox" id="colorProtection">
+			</div>
+
+			<div class="control-group">
+				<div class="range-header">
+					<label>极端极性反转概率:</label>
+					<span class="range-val" id="invertVal">30%</span>
+				</div>
+				<input type="range" id="invertProb" min="0" max="100" value="30" step="5">
+			</div>
+
+			<button class="btn" id="regenerateBtn" style="background-color: #00ffff; color: #000; border-color: #00ffff;">随机乱序重组色彩</button>
+			<button class="btn" id="downloadBtn" style="border-color: #00ff00; display: none;">下载波普拼贴大图</button>
+		</div>
+
+		<!-- 预览面板 -->
+		<div class="preview-panel">
+			<div class="loading" id="loadingHint">正在进行智能色调分离与色彩重组...</div>
+			<div class="placeholder" id="placeholderText">请在左侧上传一张人像或物品照片开始</div>
+			<canvas id="outputCanvas"></canvas>
+		</div>
+	</div>
+
+	<!-- 核心逻辑脚本引入 -->
+	<script>
+		// 获取所有DOM元素
+		const imageLoader = document.getElementById('imageLoader');
+		const canvas = document.getElementById('outputCanvas');
+		const ctx = canvas.getContext('2d');
+		const loadingHint = document.getElementById('loadingHint');
+		const placeholderText = document.getElementById('placeholderText');
+		const downloadBtn = document.getElementById('downloadBtn');
+		const regenerateBtn = document.getElementById('regenerateBtn');
+		const refImageBox = document.getElementById('refImageBox');
+		const refImage = document.getElementById('refImage');
+
+		// 控件元素
+		const gridRowsInput = document.getElementById('gridRows');
+		const gridColsInput = document.getElementById('gridCols');
+		const colorCountInput = document.getElementById('colorCount');
+		const colorCountVal = document.getElementById('colorCountVal');
+		const colorProtectionCheckbox = document.getElementById('colorProtection');
+		const invertProbInput = document.getElementById('invertProb');
+		const invertVal = document.getElementById('invertVal');
+		const saturationBoostInput = document.getElementById('saturationBoost');
+		const saturationVal = document.getElementById('saturationVal');
+		const maxCellWidthInput = document.getElementById('maxCellWidth');
+
+		let originalImage = null;
+		let indexedCachedData = null; // 缓存解耦后的索引和质心
+
+		// 绑定输入框与滑块的数值更新与自动重绘
+		saturationBoostInput.addEventListener('input', (e) => {
+			saturationVal.innerText = '+' + e.target.value + '%';
+		});
+		saturationBoostInput.addEventListener('change', () => { indexedCachedData = null; processPopArt(); });
+
+		colorCountInput.addEventListener('input', (e) => {
+			colorCountVal.innerText = e.target.value;
+		});
+		colorCountInput.addEventListener('change', () => { indexedCachedData = null; processPopArt(); });
+
+		invertProbInput.addEventListener('input', (e) => {
+			invertVal.innerText = e.target.value + '%';
+			// 拖拽滑块时直接进行颜色级实时随机更新
+			processPopArt(true);
+		});
+
+		colorProtectionCheckbox.addEventListener('change', () => {
+			processPopArt(true); // 开关切换，直接重组调色板
+		});
+
+		gridRowsInput.addEventListener('change', () => { processPopArt(); });
+		gridColsInput.addEventListener('change', () => { processPopArt(); });
+		maxCellWidthInput.addEventListener('change', () => { processPopArt(); });
+		regenerateBtn.addEventListener('click', () => { processPopArt(true); });
+
+		// 上传图片处理
+		imageLoader.addEventListener('change', handleImage, false);
+
+		function handleImage(e) {
+			const reader = new FileReader();
+			reader.onload = function (event) {
+				originalImage = new Image();
+				originalImage.onload = function () {
+					// 显示原图参考缩略图
+					refImage.src = event.target.result;
+					refImageBox.style.display = 'block';
+
+					// 切换工作台状态
+					placeholderText.style.display = 'none';
+					canvas.style.display = 'block';
+					downloadBtn.style.display = 'block';
+
+					indexedCachedData = null; // 重置缓存
+					processPopArt();
+				}
+				originalImage.src = event.target.result;
+			}
+			if (e.target.files[0]) {
+				reader.readAsDataURL(e.target.files[0]);
+			}
+		}
+
+		// 调整图像饱和度的核心离屏算法
+		function adjustSaturation(ctx, width, height, amount) {
+			const imgData = ctx.getImageData(0, 0, width, height);
+			const data = imgData.data;
+			const factor = 1 + (amount / 100);
+
+			for (let i = 0; i < data.length; i += 4) {
+				const r = data[i];
+				const g = data[i + 1];
+				const b = data[i + 2];
+
+				// 使用标准亮度公式转为灰度值
+				const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+
+				// 围绕灰度值进行色彩拉伸
+				data[i] = Math.max(0, Math.min(255, gray + (r - gray) * factor));
+				data[i + 1] = Math.max(0, Math.min(255, gray + (g - gray) * factor));
+				data[i + 2] = Math.max(0, Math.min(255, gray + (b - gray) * factor));
+			}
+			ctx.putImageData(imgData, 0, 0);
+		}
+
+		// 主渲染逻辑
+		async function processPopArt(onlyRegenerateColors = false) {
+			if (!originalImage) return;
+			loadingHint.style.display = 'flex';
+
+			// 极小延迟用于确保让浏览器渲染出Loading浮层
+			await new Promise(resolve => setTimeout(resolve, 30));
+
+			const rows = Math.max(1, parseInt(gridRowsInput.value) || 1);
+			const cols = Math.max(1, parseInt(gridColsInput.value) || 1);
+			const K = parseInt(colorCountInput.value);
+			const invertProb = parseInt(invertProbInput.value) / 100;
+			const isProtected = colorProtectionCheckbox.checked;
+			const satAmount = parseInt(saturationBoostInput.value);
+
+			// 单格分辨率约束，防止巨幅输入导致崩溃
+			const maxCellWidth = +maxCellWidthInput.value;
+			let cellW = originalImage.width;
+			let cellH = originalImage.height;
+			if (cellW > maxCellWidth) {
+				cellH = Math.round((maxCellWidth / cellW) * cellH);
+				cellW = maxCellWidth;
+			}
+
+			canvas.width = cellW * cols;
+			canvas.height = cellH * rows;
+
+			// 如果未产生色调分离缓存或要求完全重新计算，进行核心图像分析（K-Means聚类）
+			if (!indexedCachedData || onlyRegenerateColors === false) {
+				const tempCanvas = document.createElement('canvas');
+				tempCanvas.width = cellW;
+				tempCanvas.height = cellH;
+				const tempCtx = tempCanvas.getContext('2d');
+				tempCtx.drawImage(originalImage, 0, 0, cellW, cellH);
+
+				// 如果用户要求提升饱和度，优先进行饱和度预处理
+				if (satAmount > 0) {
+					adjustSaturation(tempCtx, cellW, cellH, satAmount);
+				}
+
+				const imgData = tempCtx.getImageData(0, 0, cellW, cellH);
+				indexedCachedData = kmeansQuantize(imgData.data, K);
+				indexedCachedData.width = cellW;
+				indexedCachedData.height = cellH;
+			}
+
+			const { indices, centroids } = indexedCachedData;
+
+			// 遍历每一个网格空间（行 × 列）进行差异色彩喷涂
+			for (let rIdx = 0; rIdx < rows; rIdx++) {
+				for (let cIdx = 0; cIdx < cols; cIdx++) {
+
+					// 基于参数策略动态产生该宫格专用调色板
+					const popPalette = generatePopPalette(centroids, K, isProtected);
+					const shouldInvert = Math.random() < invertProb;
+
+					const cellImgData = ctx.createImageData(cellW, cellH);
+					const pixels = cellImgData.data;
+
+					for (let i = 0; i < indices.length; i++) {
+						const clusterId = indices[i];
+						const targetColor = popPalette[clusterId];
+
+						let r = targetColor[0];
+						let g = targetColor[1];
+						let b = targetColor[2];
+
+						// 极端极性反转逻辑
+						if (shouldInvert) {
+							r = 255 - r;
+							g = 255 - g;
+							b = 255 - b;
+						}
+
+						const pixelPos = i * 4;
+						pixels[pixelPos] = r;
+						pixels[pixelPos + 1] = g;
+						pixels[pixelPos + 2] = b;
+						pixels[pixelPos + 3] = 255; // Alpha通道
+					}
+
+					// 渲染到对应大画布坐标轴上
+					ctx.putImageData(cellImgData, cIdx * cellW, rIdx * cellH);
+				}
+			}
+
+			loadingHint.style.display = 'none';
+		}
+
+		// 核心自适应色彩聚类 K-Means 算法
+		function kmeansQuantize(pixels, K) {
+			const len = pixels.length / 4;
+			const indices = new Uint8Array(len);
+
+			// 初始化随机质心
+			let centroids = [];
+			for (let k = 0; k < K; k++) {
+				const targetIdx = Math.floor(Math.random() * len) * 4;
+				centroids.push([pixels[targetIdx], pixels[targetIdx + 1], pixels[targetIdx + 2]]);
+			}
+
+			const maxIterations = 6;
+			for (let iter = 0; iter < maxIterations; iter++) {
+				const nextCentroids = Array.from({ length: K }, () => [0, 0, 0, 0]);
+
+				for (let i = 0; i < len; i++) {
+					const idx = i * 4;
+					const r = pixels[idx];
+					const g = pixels[idx + 1];
+					const b = pixels[idx + 2];
+
+					let minDist = Infinity;
+					let clusterId = 0;
+
+					for (let k = 0; k < K; k++) {
+						const dist = Math.pow(r - centroids[k][0], 2) +
+							Math.pow(g - centroids[k][1], 2) +
+							Math.pow(b - centroids[k][2], 2);
+						if (dist < minDist) {
+							minDist = dist;
+							clusterId = k;
+						}
+					}
+
+					indices[i] = clusterId;
+					nextCentroids[clusterId][0] += r;
+					nextCentroids[clusterId][1] += g;
+					nextCentroids[clusterId][2] += b;
+					nextCentroids[clusterId][3] += 1;
+				}
+
+				for (let k = 0; k < K; k++) {
+					if (nextCentroids[k][3] > 0) {
+						centroids[k] = [
+							Math.round(nextCentroids[k][0] / nextCentroids[k][3]),
+							Math.round(nextCentroids[k][1] / nextCentroids[k][3]),
+							Math.round(nextCentroids[k][2] / nextCentroids[k][3])
+						];
+					}
+				}
+			}
+
+			// 默认按光影亮度重排序质心
+			const indexedCentroids = centroids.map((c, i) => ({ color: c, id: i }));
+			indexedCentroids.sort((a, b) => {
+				const lumA = 0.299 * a.color[0] + 0.587 * a.color[1] + 0.114 * a.color[2];
+				const lumB = 0.299 * b.color[0] + 0.587 * b.color[1] + 0.114 * b.color[2];
+				return lumA - lumB;
+			});
+
+			const map = {};
+			indexedCentroids.forEach((item, newId) => { map[item.id] = newId; });
+			for (let i = 0; i < indices.length; i++) {
+				indices[i] = map[indices[i]];
+			}
+
+			return {
+				indices: indices,
+				centroids: indexedCentroids.map(item => item.color)
+			};
+		}
+
+		// 升级版波普艺术调色板分发算法
+		function generatePopPalette(baseCentroids, K, isProtected) {
+			const palette = new Array(K);
+
+			// 经典的安迪沃霍尔高艳度霓虹波普色池
+			const neonColors = [
+				[255, 0, 127],   // 烈艳玫红
+				[0, 255, 255],   // 荧光青蓝
+				[255, 235, 0],   // 柠檬鲜黄
+				[0, 255, 64],    // 极光亮绿
+				[255, 90, 0],    // 烈火鲜橙
+				[140, 0, 255],   // 深邃魅紫
+				[255, 255, 255], // 极简纯白
+				[0, 30, 255],    // 皇家纯蓝
+				[255, 0, 0],     // 饱满正红
+				[255, 100, 200]  // 少女芭比粉
+			];
+
+			// 全随机打乱备用色池
+			const shuffledNeon = [...neonColors].sort(() => Math.random() - 0.5);
+
+			// 情况 A：关闭邻近性保护 —— 进入完全混沌的高反差沃霍尔波普乱序状态
+			if (!isProtected) {
+				for (let k = 0; k < K; k++) {
+					// 给每一个色彩层级（哪怕是原本相近的明暗）完全随机分配反差极大的高亮颜色
+					palette[k] = shuffledNeon[k % shuffledNeon.length];
+				}
+				return palette;
+			}
+
+			// 情况 B：开启邻近性保护 —— 按原图光影逻辑进行柔和渐变过渡保护
+			let lastColor = null;
+			for (let k = 0; k < K; k++) {
+				if (k === 0 && Math.random() < 0.5) {
+					palette[k] = Math.random() < 0.4 ? [0, 0, 0] : [20, 20, 40];
+					lastColor = palette[k];
+					continue;
+				}
+				if (k > 0 && Math.random() < 0.75) {
+					// 邻近色彩衍生微调
+					const driftR = (Math.random() - 0.3) * 65;
+					const driftG = (Math.random() - 0.3) * 65;
+					const driftB = (Math.random() - 0.3) * 65;
+					palette[k] = [
+						Math.max(0, Math.min(255, lastColor[0] + driftR)),
+						Math.max(0, Math.min(255, lastColor[1] + driftG)),
+						Math.max(0, Math.min(255, lastColor[2] + driftB))
+					];
+				} else {
+					palette[k] = shuffledNeon[k % shuffledNeon.length];
+				}
+				lastColor = palette[k];
+			}
+			return palette;
+		}
+		// 图片导出下载逻辑
+		downloadBtn.addEventListener('click', () => {
+			if (!originalImage) return;
+			const link = document.createElement('a');
+			link.download = `Pop_Art_Rows${gridRowsInput.value}_Cols${gridColsInput.value}.png`;
+			link.href = canvas.toDataURL('image/png');
+			link.click();
+		});
+	</script>
+</body>
+
+</html>
